@@ -53,6 +53,7 @@ export class SynchronizationRule {
             "userAccesses",
             "userGroupAccesses",
             "type",
+            "ondemand",
         ]);
 
         if (!this.syncRule.id) this.syncRule.id = generateUid();
@@ -241,6 +242,10 @@ export class SynchronizationRule {
         return this.syncRule.builder?.dataParams ?? {};
     }
 
+    public get ondemand(): boolean {
+        return this.syncRule.ondemand ?? false;
+    }
+
     public static create(type: SynchronizationType = "metadata"): SynchronizationRule {
         return new SynchronizationRule({
             id: "",
@@ -272,11 +277,26 @@ export class SynchronizationRule {
     }
 
     public static createOnDemand(type: SynchronizationType = "metadata"): SynchronizationRule {
-        return SynchronizationRule.create(type).updateName("__MANUAL__");
+        return SynchronizationRule.create(type).updateName("__MANUAL__").updateOndemand(true);
     }
 
     public static build(syncRule: SynchronizationRuleData | undefined): SynchronizationRule {
-        return syncRule ? new SynchronizationRule(syncRule) : this.create();
+        if (syncRule) {
+            return syncRule.builder?.dataParams?.period === "SINCE_LAST_EXECUTED_DATE"
+                ? new SynchronizationRule({
+                      ...syncRule,
+                      builder: {
+                          ...syncRule.builder,
+                          dataParams: {
+                              ...syncRule.builder.dataParams,
+                              startDate: syncRule.lastExecuted ?? new Date(),
+                          },
+                      },
+                  })
+                : new SynchronizationRule(syncRule);
+        } else {
+            return this.create();
+        }
     }
 
     public toBuilder(): SynchronizationBuilder {
@@ -320,6 +340,10 @@ export class SynchronizationRule {
 
     public updateFilterRules(filterRules: FilterRule[]): SynchronizationRule {
         return this.updateBuilder({ filterRules });
+    }
+
+    public updateOndemand(ondemand: boolean): SynchronizationRule {
+        return this.update({ ondemand });
     }
 
     public markToUseDefaultIncludeExclude(): SynchronizationRule {
@@ -726,4 +750,5 @@ export interface SynchronizationRuleData extends SharedRef {
     lastExecutedBy?: NamedRef;
     frequency?: string;
     type: SynchronizationType;
+    ondemand?: boolean;
 }
