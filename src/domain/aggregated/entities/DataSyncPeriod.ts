@@ -1,6 +1,6 @@
-import { GetSchemaType, Schema } from "../../../utils/codec";
+import { Codec, Schema } from "../../../utils/codec";
 
-export const DataSyncPeriodModel = Schema.oneOf([
+export const DataSyncPeriodModel: Codec<DataSyncPeriod> = Schema.oneOf([
     Schema.exact("ALL"),
     Schema.exact("FIXED"),
     Schema.exact("TODAY"),
@@ -17,4 +17,18 @@ export const DataSyncPeriodModel = Schema.oneOf([
     Schema.exact("LAST_YEAR"),
 ]);
 
-export type DataSyncPeriod = GetSchemaType<typeof DataSyncPeriodModel>;
+export type DataSyncPeriod =
+    | "ALL"
+    | "FIXED"
+    | "TODAY"
+    | "YESTERDAY"
+    | "LAST_7_DAYS"
+    | "LAST_14_DAYS"
+    | "THIS_WEEK"
+    | "LAST_WEEK"
+    | "THIS_MONTH"
+    | "LAST_MONTH"
+    | "THIS_QUARTER"
+    | "LAST_QUARTER"
+    | "THIS_YEAR"
+    | "LAST_YEAR";

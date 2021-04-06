@@ -1,9 +1,15 @@
-import { GetSchemaType, Schema } from "../../../utils/codec";
-import { DataSynchronizationParamsModel } from "../../aggregated/entities/DataSynchronizationParams";
-import { FilterRuleModel } from "../../metadata/entities/FilterRule";
-import { MetadataSynchronizationParamsModel } from "../../metadata/entities/MetadataSynchronizationParams";
+import { Codec, Schema } from "../../../utils/codec";
+import {
+    DataSynchronizationParams,
+    DataSynchronizationParamsModel,
+} from "../../aggregated/entities/DataSynchronizationParams";
+import { FilterRule, FilterRuleModel } from "../../metadata/entities/FilterRule";
+import {
+    MetadataSynchronizationParams,
+    MetadataSynchronizationParamsModel,
+} from "../../metadata/entities/MetadataSynchronizationParams";
 
-export const SynchronizationBuilderModel = Schema.object({
+export const SynchronizationBuilderModel: Codec<SynchronizationBuilder> = Schema.object({
     originInstance: Schema.string,
     targetInstances: Schema.optionalSafe(Schema.array(Schema.string), []),
     metadataIds: Schema.optionalSafe(Schema.array(Schema.string), []),
@@ -15,7 +21,17 @@ export const SynchronizationBuilderModel = Schema.object({
     dataParams: Schema.optional(DataSynchronizationParamsModel),
 });
 
-export type SynchronizationBuilder = GetSchemaType<typeof SynchronizationBuilderModel>;
+export interface SynchronizationBuilder {
+    originInstance: string;
+    targetInstances: string[];
+    metadataIds: string[];
+    filterRules?: FilterRule[];
+    excludedIds: string[];
+    metadataTypes?: string[];
+    syncRule?: string;
+    syncParams?: MetadataSynchronizationParams;
+    dataParams?: DataSynchronizationParams;
+}
 
 // TODO: When migration to fully defined schemas, this should be removed and use Schema.decode instead
 export const defaultSynchronizationBuilder: SynchronizationBuilder = {

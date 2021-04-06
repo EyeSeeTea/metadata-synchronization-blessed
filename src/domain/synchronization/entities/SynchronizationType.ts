@@ -1,13 +1,15 @@
-import { GetSchemaType, Schema } from "../../../utils/codec";
+import { Codec, Schema } from "../../../utils/codec";
 
-export const SynchronizationTypeModel = Schema.oneOf([
+export const SynchronizationTypeModel: Codec<SynchronizationType> = Schema.oneOf([
     Schema.exact("metadata"),
     Schema.exact("aggregated"),
     Schema.exact("events"),
     Schema.exact("deleted"),
 ]);
 
-export const SynchronizationResultTypeModel = Schema.oneOf([
+export type SynchronizationType = "metadata" | "aggregated" | "events" | "deleted";
+
+export const SynchronizationResultTypeModel: Codec<SynchronizationResultType> = Schema.oneOf([
     Schema.exact("metadata"),
     Schema.exact("aggregated"),
     Schema.exact("events"),
@@ -15,5 +17,9 @@ export const SynchronizationResultTypeModel = Schema.oneOf([
     Schema.exact("trackedEntityInstances"),
 ]);
 
-export type SynchronizationType = GetSchemaType<typeof SynchronizationTypeModel>;
-export type SynchronizationResultType = GetSchemaType<typeof SynchronizationResultTypeModel>;
+export type SynchronizationResultType =
+    | "metadata"
+    | "aggregated"
+    | "events"
+    | "deleted"
+    | "trackedEntityInstances";

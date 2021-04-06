@@ -1,6 +1,6 @@
-import { GetSchemaType, Schema } from "../../../utils/codec";
+import { Schema, Codec } from "../../../utils/codec";
 
-export const DataSyncAggregationModel = Schema.oneOf([
+export const DataSyncAggregationModel: Codec<DataSyncAggregation> = Schema.oneOf([
     Schema.exact("DAILY"),
     Schema.exact("WEEKLY"),
     Schema.exact("MONTHLY"),
@@ -8,4 +8,4 @@ export const DataSyncAggregationModel = Schema.oneOf([
     Schema.exact("YEARLY"),
 ]);
 
-export type DataSyncAggregation = GetSchemaType<typeof DataSyncAggregationModel>;
+export type DataSyncAggregation = "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY";

@@ -1,17 +1,23 @@
-import { GetSchemaType, Schema } from "../../../utils/codec";
+import { Codec, Schema } from "../../../utils/codec";
 
-export const ExcludeIncludeRulesModel = Schema.object({
+export const ExcludeIncludeRulesModel: Codec<ExcludeIncludeRules> = Schema.object({
     excludeRules: Schema.optionalSafe(Schema.array(Schema.string), []),
     includeRules: Schema.optionalSafe(Schema.array(Schema.string), []),
 });
 
-export const MetadataIncludeExcludeRulesModel = Schema.dictionary(
+export interface ExcludeIncludeRules {
+    excludeRules: string[];
+    includeRules: string[];
+}
+
+export const MetadataIncludeExcludeRulesModel: Codec<MetadataIncludeExcludeRules> = Schema.dictionary(
     Schema.string,
     ExcludeIncludeRulesModel
 );
 
-export type ExcludeIncludeRules = GetSchemaType<typeof ExcludeIncludeRulesModel>;
-export type MetadataIncludeExcludeRules = GetSchemaType<typeof MetadataIncludeExcludeRulesModel>;
+export interface MetadataIncludeExcludeRules {
+    [metadataType: string]: ExcludeIncludeRules;
+}
 
 export interface NestedRules {
     [metadataType: string]: string[][];

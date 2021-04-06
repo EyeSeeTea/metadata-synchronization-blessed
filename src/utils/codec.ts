@@ -117,10 +117,9 @@ export const Schema = {
     lazy,
 };
 
-export { parseError as parseSchemaError } from "purify-ts";
-export type {
-    Codec,
-    DecodeError as SchemaDecodeError,
-    FromType as GetTypeFromSchema,
-    GetType as GetSchemaType,
-} from "purify-ts";
+export declare type FromType<T> = {
+    [P in keyof Required<T>]: Pick<T, P> extends Required<Pick<T, P>> ? T[P] : T[P] | undefined;
+};
+
+export { Codec, parseError as parseSchemaError } from "purify-ts";
+export type { DecodeError as SchemaDecodeError } from "purify-ts";

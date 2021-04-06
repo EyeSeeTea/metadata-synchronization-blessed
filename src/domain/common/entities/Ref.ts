@@ -1,18 +1,26 @@
-import { GetSchemaType, Schema } from "../../../utils/codec";
-import { SharingSettingModel } from "./SharingSetting";
+import { Codec, Schema } from "../../../utils/codec";
+import { SharingSetting, SharingSettingModel } from "./SharingSetting";
 
-export const RefModel = Schema.object({
+export const RefModel: Codec<Ref> = Schema.object({
     id: Schema.dhis2Id,
 });
 
-export const NamedRefModel = Schema.extend(
+export interface Ref {
+    id: string;
+}
+
+export const NamedRefModel: Codec<NamedRef> = Schema.extend(
     RefModel,
     Schema.object({
         name: Schema.string,
     })
 );
 
-export const DatedRefModel = Schema.extend(
+export interface NamedRef extends Ref {
+    name: string;
+}
+
+export const DatedRefModel: Codec<DatedRef> = Schema.extend(
     NamedRefModel,
     Schema.object({
         user: NamedRefModel,
@@ -22,7 +30,14 @@ export const DatedRefModel = Schema.extend(
     })
 );
 
-export const SharedRefModel = Schema.extend(
+export interface DatedRef extends NamedRef {
+    user: NamedRef;
+    created: Date;
+    lastUpdated: Date;
+    lastUpdatedBy: NamedRef;
+}
+
+export const SharedRefModel: Codec<SharedRef> = Schema.extend(
     DatedRefModel,
     Schema.object({
         publicAccess: Schema.string,
@@ -31,10 +46,11 @@ export const SharedRefModel = Schema.extend(
     })
 );
 
-export type Ref = GetSchemaType<typeof RefModel>;
-export type NamedRef = GetSchemaType<typeof NamedRefModel>;
-export type DatedRef = GetSchemaType<typeof DatedRefModel>;
-export type SharedRef = GetSchemaType<typeof SharedRefModel>;
+export interface SharedRef extends DatedRef {
+    publicAccess: string;
+    userAccesses: SharingSetting[];
+    userGroupAccesses: SharingSetting[];
+}
 
 export interface IdentifiableRef extends NamedRef {
     shortName?: string;

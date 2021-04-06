@@ -1,8 +1,8 @@
-import { GetSchemaType, Schema } from "../../../utils/codec";
-import { DataSyncAggregationModel } from "./DataSyncAggregation";
-import { DataSyncPeriodModel } from "./DataSyncPeriod";
+import { Codec, Schema } from "../../../utils/codec";
+import { DataSyncAggregation, DataSyncAggregationModel } from "./DataSyncAggregation";
+import { DataSyncPeriod, DataSyncPeriodModel } from "./DataSyncPeriod";
 
-export const DataImportParamsModel = Schema.object({
+export const DataImportParamsModel: Codec<DataImportParams> = Schema.object({
     idScheme: Schema.optional(Schema.oneOf([Schema.exact("UID"), Schema.exact("CODE")])),
     dataElementIdScheme: Schema.optional(
         Schema.oneOf([Schema.exact("UID"), Schema.exact("CODE"), Schema.exact("NAME")])
@@ -24,7 +24,18 @@ export const DataImportParamsModel = Schema.object({
     ),
 });
 
-export const DataSynchronizationParamsModel = Schema.extend(
+export interface DataImportParams {
+    idScheme?: "UID" | "CODE";
+    dataElementIdScheme?: "UID" | "CODE" | "NAME";
+    orgUnitIdScheme?: "UID" | "CODE" | "NAME";
+    dryRun?: boolean;
+    preheatCache?: boolean;
+    skipExistingCheck?: boolean;
+    skipAudit?: boolean;
+    strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
+}
+
+export const DataSynchronizationParamsModel: Codec<DataSynchronizationParams> = Schema.extend(
     DataImportParamsModel,
     Schema.object({
         attributeCategoryOptions: Schema.optional(Schema.array(Schema.string)),
@@ -48,5 +59,23 @@ export const DataSynchronizationParamsModel = Schema.extend(
     })
 );
 
-export type DataImportParams = GetSchemaType<typeof DataImportParamsModel>;
-export type DataSynchronizationParams = GetSchemaType<typeof DataSynchronizationParamsModel>;
+export interface DataSynchronizationParams extends DataImportParams {
+    attributeCategoryOptions?: string[];
+    allAttributeCategoryOptions?: boolean;
+    orgUnitPaths?: string[];
+    period?: DataSyncPeriod;
+    startDate?: Date;
+    endDate?: Date;
+    lastUpdated?: Date;
+    events?: string[];
+    teis?: string[];
+    allEvents?: boolean;
+    excludeTeiRelationships?: boolean;
+    generateNewUid?: boolean;
+    enableAggregation?: boolean;
+    aggregationType?: DataSyncAggregation;
+    runAnalytics?: boolean;
+    includeAnalyticsZeroValues?: boolean;
+    analyticsYears?: number;
+    ignoreDuplicateExistingValues?: boolean;
+}

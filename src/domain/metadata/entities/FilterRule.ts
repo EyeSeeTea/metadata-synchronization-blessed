@@ -3,29 +3,42 @@ import _ from "lodash";
 import moment from "moment";
 import i18n from "../../../locales";
 import { NonNullableValues } from "../../../types/utils";
-import { GetSchemaType, Schema } from "../../../utils/codec";
+import { Codec, Schema } from "../../../utils/codec";
 import { availablePeriods } from "../../../utils/synchronization";
-import { DataSyncPeriodModel } from "../../aggregated/entities/DataSyncPeriod";
+import { DataSyncPeriod, DataSyncPeriodModel } from "../../aggregated/entities/DataSyncPeriod";
 import { ValidationError } from "../../common/entities/Validations";
 
-export const DateFilterModel = Schema.object({
+export const DateFilterModel: Codec<DateFilter> = Schema.object({
     period: DataSyncPeriodModel,
     startDate: Schema.optional(Schema.date),
     endDate: Schema.optional(Schema.date),
 });
 
-export const FilterWhereModel = Schema.oneOf([
+export interface DateFilter {
+    period: DataSyncPeriod;
+    startDate?: Date;
+    endDate?: Date;
+}
+
+export const FilterWhereModel: Codec<FilterWhere> = Schema.oneOf([
     Schema.exact("startsWith"),
     Schema.exact("contains"),
     Schema.exact("endsWith"),
 ]);
 
-export const StringMatchModel = Schema.object({
+export type FilterWhere = "startsWith" | "contains" | "endsWith";
+
+export const StringMatchModel: Codec<StringMatch> = Schema.object({
     where: Schema.nullable(FilterWhereModel),
     value: Schema.string,
 });
 
-export const FilterRuleModel = Schema.object({
+export interface StringMatch {
+    where: FilterWhere | null;
+    value: string;
+}
+
+export const FilterRuleModel: Codec<FilterRule> = Schema.object({
     id: Schema.string,
     metadataType: Schema.string,
     created: DateFilterModel,
@@ -33,10 +46,13 @@ export const FilterRuleModel = Schema.object({
     stringMatch: StringMatchModel,
 });
 
-export type DateFilter = GetSchemaType<typeof DateFilterModel>;
-export type FilterWhere = GetSchemaType<typeof FilterWhereModel>;
-export type StringMatch = GetSchemaType<typeof StringMatchModel>;
-export type FilterRule = GetSchemaType<typeof FilterRuleModel>;
+export interface FilterRule {
+    id: string;
+    metadataType: string;
+    created: DateFilter;
+    lastUpdated: DateFilter;
+    stringMatch: StringMatch;
+}
 
 export type FilterRuleField = keyof FilterRule;
 export type ValidStringMatch = NonNullableValues<StringMatch>;

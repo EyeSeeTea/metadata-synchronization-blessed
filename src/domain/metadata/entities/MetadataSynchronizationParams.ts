@@ -1,7 +1,10 @@
-import { GetSchemaType, Schema } from "../../../utils/codec";
-import { MetadataIncludeExcludeRulesModel } from "./MetadataExcludeIncludeRules";
+import { Codec, Schema } from "../../../utils/codec";
+import {
+    MetadataIncludeExcludeRules,
+    MetadataIncludeExcludeRulesModel,
+} from "./MetadataExcludeIncludeRules";
 
-export const MetadataImportParamsModel = Schema.object({
+export const MetadataImportParamsModel: Codec<MetadataImportParams> = Schema.object({
     atomicMode: Schema.optional(Schema.oneOf([Schema.exact("ALL"), Schema.exact("NONE")])),
     flushMode: Schema.optional(Schema.oneOf([Schema.exact("AUTO"), Schema.exact("OBJECT")])),
     identifier: Schema.optional(
@@ -31,7 +34,22 @@ export const MetadataImportParamsModel = Schema.object({
     username: Schema.optional(Schema.string),
 });
 
-export const MetadataSynchronizationParamsModel = Schema.extend(
+export interface MetadataImportParams {
+    atomicMode?: "ALL" | "NONE";
+    flushMode?: "AUTO" | "OBJECT";
+    identifier?: "UID" | "CODE" | "AUTO";
+    importMode?: "COMMIT" | "VALIDATE";
+    importStrategy?: "CREATE_AND_UPDATE" | "CREATE" | "UPDATE" | "DELETE";
+    importReportMode?: "ERRORS" | "FULL" | "DEBUG";
+    mergeMode?: "MERGE" | "REPLACE";
+    preheatMode?: "REFERENCE" | "ALL" | "NONE";
+    skipSharing?: boolean;
+    skipValidation?: boolean;
+    userOverrideMode?: "NONE" | "CURRENT" | "SELECTED";
+    username?: string;
+}
+
+export const MetadataSynchronizationParamsModel: Codec<MetadataSynchronizationParams> = Schema.extend(
     MetadataImportParamsModel,
     Schema.object({
         enableMapping: Schema.boolean,
@@ -42,7 +60,10 @@ export const MetadataSynchronizationParamsModel = Schema.extend(
     })
 );
 
-export type MetadataImportParams = GetSchemaType<typeof MetadataImportParamsModel>;
-export type MetadataSynchronizationParams = GetSchemaType<
-    typeof MetadataSynchronizationParamsModel
->;
+export interface MetadataSynchronizationParams extends MetadataImportParams {
+    enableMapping: boolean;
+    includeSharingSettings: boolean;
+    removeOrgUnitReferences: boolean;
+    useDefaultIncludeExclude: boolean;
+    metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
+}
