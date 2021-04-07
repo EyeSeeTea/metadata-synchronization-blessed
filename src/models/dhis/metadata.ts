@@ -554,6 +554,7 @@ export class ProgramModel extends D2Model {
         "trackedEntityAttributes.optionSets",
         "trackedEntityAttributes.optionSets.options",
         "programNotificationTemplates",
+        "programSections",
     ];
 }
 

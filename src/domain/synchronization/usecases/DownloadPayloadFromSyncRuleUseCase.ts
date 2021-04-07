@@ -29,8 +29,8 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         protected readonly encryptionKey: string
     ) {}
 
-    async execute(syncRuleId: string): Promise<Either<DownloadErrors, true>> {
-        const rule = await this.getSyncRule(syncRuleId);
+    async execute(syncRule: string | SynchronizationRule): Promise<Either<DownloadErrors, true>> {
+        const rule = await this.getSyncRule(syncRule);
         if (!rule) return Either.success(true);
 
         const sync: GenericSyncUseCase = this.compositionRoot.sync[rule.type](rule.toBuilder());
@@ -174,10 +174,16 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         return [...downloadItemsByEvents, ...downloadItemsByTEIS, ...downloadItemsByAggregated];
     }
 
-    private async getSyncRule(id?: string): Promise<SynchronizationRule | undefined> {
-        if (!id) return undefined;
-
-        return this.repositoryFactory.rulesRepository(this.localInstance).getById(id);
+    private async getSyncRule(
+        syncRule: string | SynchronizationRule
+    ): Promise<SynchronizationRule | undefined> {
+        if (typeof syncRule === "string") {
+            return this.repositoryFactory.rulesRepository(this.localInstance).getById(syncRule);
+        } else if (syncRule.id) {
+            return syncRule;
+        } else {
+            return undefined;
+        }
     }
 
     protected async getMetadataRepository(remoteInstance: Instance) {
