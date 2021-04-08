@@ -21,6 +21,18 @@ import { GenericSyncUseCase } from "./GenericSyncUseCase";
 
 type DownloadErrors = string[];
 
+type SynRuleIdParam = {
+    kind: "syncRuleId";
+    id: string;
+};
+
+type SynRuleParam = {
+    kind: "syncRule";
+    syncRule: SynchronizationRule;
+};
+
+type DownloadPayloadParams = SynRuleIdParam | SynRuleParam;
+
 export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
@@ -29,8 +41,8 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         protected readonly encryptionKey: string
     ) {}
 
-    async execute(syncRuleId: string): Promise<Either<DownloadErrors, true>> {
-        const rule = await this.getSyncRule(syncRuleId);
+    async execute(params: DownloadPayloadParams): Promise<Either<DownloadErrors, true>> {
+        const rule = await this.getSyncRule(params);
         if (!rule) return Either.success(true);
 
         const sync: GenericSyncUseCase = this.compositionRoot.sync[rule.type](rule.toBuilder());
@@ -174,10 +186,19 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         return [...downloadItemsByEvents, ...downloadItemsByTEIS, ...downloadItemsByAggregated];
     }
 
-    private async getSyncRule(id?: string): Promise<SynchronizationRule | undefined> {
-        if (!id) return undefined;
-
-        return this.repositoryFactory.rulesRepository(this.localInstance).getById(id);
+    private async getSyncRule(
+        params: DownloadPayloadParams
+    ): Promise<SynchronizationRule | undefined> {
+        switch (params.kind) {
+            case "syncRuleId": {
+                return this.repositoryFactory
+                    .rulesRepository(this.localInstance)
+                    .getById(params.id);
+            }
+            case "syncRule": {
+                return params.syncRule;
+            }
+        }
     }
 
     protected async getMetadataRepository(remoteInstance: Instance) {
