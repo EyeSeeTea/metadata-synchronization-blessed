@@ -24,6 +24,7 @@ export interface DataSynchronizationParams extends DataImportParams {
 export type DataSyncPeriod =
     | "ALL"
     | "FIXED"
+    | "SINCE_LAST_EXECUTED_DATE"
     | "TODAY"
     | "YESTERDAY"
     | "LAST_7_DAYS"
