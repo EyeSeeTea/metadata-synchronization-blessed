@@ -83,7 +83,10 @@ export const SummaryStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
     const downloadJSON = async () => {
         try {
             loading.show(true, "Generating JSON file");
-            const result = await compositionRoot.rules.downloadPayloads(syncRule);
+            const result = await compositionRoot.rules.downloadPayloads({
+                kind: "syncRule",
+                syncRule,
+            });
 
             result.match({
                 success: () => {
