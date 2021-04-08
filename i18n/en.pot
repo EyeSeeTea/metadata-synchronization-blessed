@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-04-05T07:06:15.478Z\n"
-"PO-Revision-Date: 2021-04-05T07:06:15.478Z\n"
+"POT-Creation-Date: 2021-04-08T05:33:15.201Z\n"
+"PO-Revision-Date: 2021-04-08T05:33:15.201Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -996,6 +996,15 @@ msgstr ""
 msgid "Ignore data with same value on destination"
 msgstr ""
 
+msgid "You have uploaded {{n}} rules with a wrong type."
+msgstr ""
+
+msgid "All the uploaded rules are invalid and cannot be imported."
+msgstr ""
+
+msgid "Sync rule {{idx}}: {{name}} ({{id}})"
+msgstr ""
+
 msgid "Imported"
 msgstr ""
 
@@ -1204,9 +1213,6 @@ msgstr ""
 msgid "An error has ocurred during the download"
 msgstr ""
 
-msgid "Invalid origin instance"
-msgstr ""
-
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -1216,6 +1222,15 @@ msgid ""
 msgstr ""
 
 msgid "Yes"
+msgstr ""
+
+msgid "Save as sync Rule"
+msgstr ""
+
+msgid "Download JSON"
+msgstr ""
+
+msgid "Invalid origin instance"
 msgstr ""
 
 msgid "Target instances [{{total}}]"
@@ -1276,12 +1291,6 @@ msgid "Run Analytics before sync"
 msgstr ""
 
 msgid "Frequency"
-msgstr ""
-
-msgid "Save as sync Rule"
-msgstr ""
-
-msgid "Download JSON"
 msgstr ""
 
 msgid "Daily"
@@ -1888,15 +1897,6 @@ msgid "Importing rule(s)"
 msgstr ""
 
 msgid "Importing {{n}} rules"
-msgstr ""
-
-msgid "You have uploaded {{n}} rules with a wrong type."
-msgstr ""
-
-msgid "All the uploaded rules are invalid and cannot be imported."
-msgstr ""
-
-msgid "Existing (will be overwritten)"
 msgstr ""
 
 msgid "Imported {{n}} rules"

@@ -1,4 +1,3 @@
-import { Icon } from "@material-ui/core";
 import {
     ConfirmationDialog,
     ConfirmationDialogProps,
@@ -16,6 +15,7 @@ import {
     useLoading,
     useSnackbar,
 } from "@eyeseetea/d2-ui-components";
+import { Icon } from "@material-ui/core";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FileRejection } from "react-dropzone";
@@ -46,6 +46,7 @@ import {
     PullRequestCreationDialog,
 } from "../../../../react/core/components/pull-request-creation-dialog/PullRequestCreationDialog";
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
+import { SyncRuleImportSummary } from "../../../../react/core/components/sync-rule-import-summary/SyncRuleImportSummary";
 import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
@@ -71,7 +72,7 @@ const enabledFilterData = [
     { id: "disabled", name: i18n.t("Disabled") },
 ];
 
-const SyncRulesPage: React.FC = () => {
+export const SyncRulesListPage: React.FC = () => {
     const { api, compositionRoot } = useAppContext();
     const loading = useLoading();
     const snackbar = useSnackbar();
@@ -230,7 +231,7 @@ const SyncRulesPage: React.FC = () => {
 
             loading.show(true, i18n.t("Generating JSON file"));
 
-            const result = await compositionRoot.rules.downloadPayloads(id);
+            const result = await compositionRoot.rules.downloadPayloads({ kind: "syncRuleId", id });
 
             result.match({
                 success: () => {
@@ -479,26 +480,12 @@ const SyncRulesPage: React.FC = () => {
 
                     updateDialog({
                         title: i18n.t("Importing {{n}} rules", { n: validRules.length }),
-                        description: _.compact([
-                            invalidRuleCount > 0
-                                ? i18n.t("You have uploaded {{n}} rules with a wrong type.")
-                                : undefined,
-                            validRules.length > 0
-                                ? i18n.t(
-                                      "You're about to import the following synchronization rules:"
-                                  )
-                                : i18n.t(
-                                      "All the uploaded rules are invalid and cannot be imported."
-                                  ),
-                            ...validRules.map(
-                                rule =>
-                                    `- ${rule.name} (${rule.id}): ${
-                                        rows.find(row => row.id === rule.id)
-                                            ? i18n.t("Existing (will be overwritten)")
-                                            : i18n.t("New")
-                                    }`
-                            ),
-                        ]).join("\n"),
+                        description: (
+                            <SyncRuleImportSummary
+                                validRules={validRules}
+                                invalidRuleCount={invalidRuleCount}
+                            />
+                        ),
                         onSave: async () => {
                             await compositionRoot.rules.save(validRules);
                             snackbar.success(
@@ -520,7 +507,7 @@ const SyncRulesPage: React.FC = () => {
                 }
             }
         },
-        [snackbar, compositionRoot, loading, rows, type]
+        [snackbar, compositionRoot, loading, type]
     );
 
     const actions: TableAction<SynchronizationRule>[] = [
@@ -732,5 +719,3 @@ const SyncRulesPage: React.FC = () => {
         </TestWrapper>
     );
 };
-
-export default SyncRulesPage;
