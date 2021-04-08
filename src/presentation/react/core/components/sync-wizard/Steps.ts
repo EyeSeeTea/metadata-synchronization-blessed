@@ -6,7 +6,7 @@ import InstanceSelectionStep from "./common/InstanceSelectionStep";
 import MetadataFilterRulesStep from "./common/MetadataFilterRulesStep";
 import MetadataSelectionStep from "./common/MetadataSelectionStep";
 import SchedulerStep from "./common/SchedulerStep";
-import SummaryStep from "./common/SummaryStep";
+import { SummaryStep } from "./common/SummaryStep";
 import AggregationStep from "./data/AggregationStep";
 import CategoryOptionsSelectionStep from "./data/CategoryOptionsSelectionStep";
 import EventsSelectionStep from "./data/EventsSelectionStep";

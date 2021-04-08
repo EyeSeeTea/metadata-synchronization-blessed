@@ -22,7 +22,7 @@ import StoreListPage from "./core/pages/store-list/StoreListPage";
 import SyncRulesCreationPage, {
     SyncRulesCreationParams,
 } from "./core/pages/sync-rules-creation/SyncRulesCreationPage";
-import SyncRulesPage from "./core/pages/sync-rules-list/SyncRulesListPage";
+import { SyncRulesListPage } from "./core/pages/sync-rules-list/SyncRulesListPage";
 import { MSFHistoryPage } from "./msf-aggregate-data/pages/MSFHistoryPage";
 import { MSFHomePage } from "./msf-aggregate-data/pages/MSFHomePage";
 
@@ -72,7 +72,7 @@ const Root: React.FC = () => {
 
                 <RouteWithSession
                     path="/sync-rules/:type(metadata|aggregated|events)"
-                    render={() => <SyncRulesPage />}
+                    render={() => <SyncRulesListPage />}
                 />
 
                 <RouteWithSession
