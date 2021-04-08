@@ -503,7 +503,7 @@ export const SyncRulesListPage: React.FC = () => {
                             updateDialog(null);
                         },
                         onCancel: () => updateDialog(null),
-                        disableSave: validRules.length === 0,
+                        disableSave: errors.length !== 0,
                         saveText: i18n.t("Import"),
                         maxWidth: "lg",
                         fullWidth: true,

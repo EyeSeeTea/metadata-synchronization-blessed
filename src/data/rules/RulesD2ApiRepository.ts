@@ -25,30 +25,28 @@ export class RulesD2ApiRepository implements RulesRepository {
         const user = await this.userRepository.getCurrent();
 
         // Rules can be either JSON files or zip files with multiple JSON files
-        const items: Either<string, SynchronizationRuleData>[] = await promiseMap(
-            files,
-            async file => {
-                if (file.type === "application/json") {
-                    try {
-                        const data = await file.text();
-                        const payload = JSON.parse(data);
-                        return payload;
-                    } catch (error) {
-                        return undefined;
-                    }
+        const items = await promiseMap(files, async file => {
+            if (file.type === "application/json") {
+                try {
+                    const text = await file.text();
+                    return decodeModel(SynchronizationRuleModel, text).mapError(
+                        error => `${file.name}: ${error}`
+                    );
+                } catch (error) {
+                    return Either.error(`${file.name}: Couldn't read file`);
                 }
-
-                const zip = new JSZip();
-                const contents = await zip.loadAsync(file);
-                const modulePaths = this.getModulePaths(contents);
-
-                return promiseMap(modulePaths, async modulePath =>
-                    this.getJsonFromFile(zip, modulePath)
-                );
             }
-        );
 
-        const rules = _(items)
+            const zip = new JSZip();
+            const contents = await zip.loadAsync(file);
+            const modulePaths = this.getModulePaths(contents);
+
+            return promiseMap(modulePaths, async modulePath =>
+                this.getJsonFromFile(zip, modulePath)
+            );
+        });
+
+        return _(items)
             .compact()
             .flatten()
             .map(result =>
@@ -57,8 +55,6 @@ export class RulesD2ApiRepository implements RulesRepository {
                 )
             )
             .value();
-
-        return rules;
     }
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {
