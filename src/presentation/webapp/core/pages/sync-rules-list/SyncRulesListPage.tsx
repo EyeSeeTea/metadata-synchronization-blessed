@@ -475,21 +475,25 @@ export const SyncRulesListPage: React.FC = () => {
                 loading.show(true, i18n.t("Importing rule(s)"));
                 try {
                     const result = await compositionRoot.rules.readFiles(files);
-                    const errors = _.compact(result.map(either => either.value.error));
                     const rules = _.compact(result.map(either => either.value.data));
-
                     const validRules = rules.filter(rule => rule.type === type);
-                    const invalidRuleCount = rules.length - validRules.length;
+                    const invalidRules = rules.filter(rule => rule.type !== type);
+
+                    const errors = _.compact([
+                        ...invalidRules.map(rule =>
+                            i18n.t("{{name}} ({{id}}): Invalid type found: {{type}}", {
+                                name: rule.name,
+                                id: rule.id,
+                                type: rule.type,
+                                nsSeparator: false,
+                            })
+                        ),
+                        ...result.map(either => either.value.error),
+                    ]);
 
                     updateDialog({
                         title: i18n.t("Importing {{n}} rules", { n: validRules.length }),
-                        description: (
-                            <SyncRuleImportSummary
-                                validRules={validRules}
-                                invalidRuleCount={invalidRuleCount}
-                                errors={errors}
-                            />
-                        ),
+                        description: <SyncRuleImportSummary rules={validRules} errors={errors} />,
                         onSave: async () => {
                             await compositionRoot.rules.save(validRules);
                             snackbar.success(

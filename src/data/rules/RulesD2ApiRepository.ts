@@ -121,7 +121,9 @@ export class RulesD2ApiRepository implements RulesRepository {
         if (!obj) return Either.error(i18n.t("Couldn't read file"));
         const blob = await obj.async("blob");
         const text = await blob.text();
-        return decodeModel(SynchronizationRuleModel, text).mapError(error => `${filename}: ${error}`);
+        return decodeModel(SynchronizationRuleModel, text).mapError(
+            error => `${filename}: ${error}`
+        );
     }
 
     private getModulePaths(contents: JSZip) {
