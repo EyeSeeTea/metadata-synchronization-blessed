@@ -3,16 +3,9 @@ import _ from "lodash";
 import moment from "moment";
 import i18n from "../../../locales";
 import { NonNullableValues } from "../../../types/utils";
-import { Codec, Schema } from "../../../utils/codec";
 import { availablePeriods } from "../../../utils/synchronization";
-import { DataSyncPeriod, DataSyncPeriodModel } from "../../aggregated/entities/DataSyncPeriod";
+import { DataSyncPeriod } from "../../aggregated/entities/DataSyncPeriod";
 import { ValidationError } from "../../common/entities/Validations";
-
-export const DateFilterModel: Codec<DateFilter> = Schema.object({
-    period: DataSyncPeriodModel,
-    startDate: Schema.optional(Schema.date),
-    endDate: Schema.optional(Schema.date),
-});
 
 export interface DateFilter {
     period: DataSyncPeriod;
@@ -20,31 +13,12 @@ export interface DateFilter {
     endDate?: Date;
 }
 
-export const FilterWhereModel: Codec<FilterWhere> = Schema.oneOf([
-    Schema.exact("startsWith"),
-    Schema.exact("contains"),
-    Schema.exact("endsWith"),
-]);
-
 export type FilterWhere = "startsWith" | "contains" | "endsWith";
-
-export const StringMatchModel: Codec<StringMatch> = Schema.object({
-    where: Schema.nullable(FilterWhereModel),
-    value: Schema.string,
-});
 
 export interface StringMatch {
     where: FilterWhere | null;
     value: string;
 }
-
-export const FilterRuleModel: Codec<FilterRule> = Schema.object({
-    id: Schema.string,
-    metadataType: Schema.string,
-    created: DateFilterModel,
-    lastUpdated: DateFilterModel,
-    stringMatch: StringMatchModel,
-});
 
 export interface FilterRule {
     id: string;

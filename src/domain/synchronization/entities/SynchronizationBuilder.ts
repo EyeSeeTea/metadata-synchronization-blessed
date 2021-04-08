@@ -1,25 +1,6 @@
-import { Codec, Schema } from "../../../utils/codec";
-import {
-    DataSynchronizationParams,
-    DataSynchronizationParamsModel,
-} from "../../aggregated/entities/DataSynchronizationParams";
-import { FilterRule, FilterRuleModel } from "../../metadata/entities/FilterRule";
-import {
-    MetadataSynchronizationParams,
-    MetadataSynchronizationParamsModel,
-} from "../../metadata/entities/MetadataSynchronizationParams";
-
-export const SynchronizationBuilderModel: Codec<SynchronizationBuilder> = Schema.object({
-    originInstance: Schema.string,
-    targetInstances: Schema.optionalSafe(Schema.array(Schema.string), []),
-    metadataIds: Schema.optionalSafe(Schema.array(Schema.string), []),
-    excludedIds: Schema.optionalSafe(Schema.array(Schema.string), []),
-    metadataTypes: Schema.optional(Schema.array(Schema.string)),
-    syncRule: Schema.optional(Schema.string),
-    filterRules: Schema.optional(Schema.array(FilterRuleModel)),
-    syncParams: Schema.optional(MetadataSynchronizationParamsModel),
-    dataParams: Schema.optional(DataSynchronizationParamsModel),
-});
+import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
+import { FilterRule } from "../../metadata/entities/FilterRule";
+import { MetadataSynchronizationParams } from "../../metadata/entities/MetadataSynchronizationParams";
 
 export interface SynchronizationBuilder {
     originInstance: string;

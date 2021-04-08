@@ -1,34 +1,11 @@
-import { Codec, Schema } from "../../../utils/codec";
-import { SharingSetting, SharingSettingModel } from "./SharingSetting";
-
-export const RefModel: Codec<Ref> = Schema.object({
-    id: Schema.dhis2Id,
-});
-
+import { SharingSetting } from "./SharingSetting";
 export interface Ref {
     id: string;
 }
 
-export const NamedRefModel: Codec<NamedRef> = Schema.extend(
-    RefModel,
-    Schema.object({
-        name: Schema.string,
-    })
-);
-
 export interface NamedRef extends Ref {
     name: string;
 }
-
-export const DatedRefModel: Codec<DatedRef> = Schema.extend(
-    NamedRefModel,
-    Schema.object({
-        user: NamedRefModel,
-        created: Schema.date,
-        lastUpdated: Schema.date,
-        lastUpdatedBy: NamedRefModel,
-    })
-);
 
 export interface DatedRef extends NamedRef {
     user: NamedRef;
@@ -36,15 +13,6 @@ export interface DatedRef extends NamedRef {
     lastUpdated: Date;
     lastUpdatedBy: NamedRef;
 }
-
-export const SharedRefModel: Codec<SharedRef> = Schema.extend(
-    DatedRefModel,
-    Schema.object({
-        publicAccess: Schema.string,
-        userAccesses: Schema.array(SharingSettingModel),
-        userGroupAccesses: Schema.array(SharingSettingModel),
-    })
-);
 
 export interface SharedRef extends DatedRef {
     publicAccess: string;
