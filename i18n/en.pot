@@ -2053,6 +2053,9 @@ msgstr ""
 msgid "Fixed period"
 msgstr ""
 
+msgid "Since last execution"
+msgstr ""
+
 msgid "Today"
 msgstr ""
 
