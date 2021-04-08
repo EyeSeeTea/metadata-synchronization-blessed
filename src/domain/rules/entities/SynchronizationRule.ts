@@ -232,6 +232,8 @@ export class SynchronizationRule {
             enableMapping: false,
             includeSharingSettings: true,
             removeOrgUnitReferences: false,
+            removeUserObjects: false,
+            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             ...params,
         };
@@ -546,7 +548,14 @@ export class SynchronizationRule {
     }
 
     public updateSyncParams(syncParams: MetadataSynchronizationParams): SynchronizationRule {
-        return this.updateBuilder({ syncParams });
+        return this.updateBuilder({
+            syncParams: {
+                ...syncParams,
+                removeOrgUnitObjects: syncParams.removeOrgUnitReferences
+                    ? true
+                    : syncParams.removeOrgUnitObjects,
+            },
+        });
     }
 
     public updateDataParams(dataParams: DataSynchronizationParams): SynchronizationRule {
