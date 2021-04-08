@@ -230,7 +230,7 @@ const SyncRulesPage: React.FC = () => {
 
             loading.show(true, i18n.t("Generating JSON file"));
 
-            const result = await compositionRoot.rules.downloadPayloads(id);
+            const result = await compositionRoot.rules.downloadPayloads({ kind: "syncRuleId", id });
 
             result.match({
                 success: () => {
