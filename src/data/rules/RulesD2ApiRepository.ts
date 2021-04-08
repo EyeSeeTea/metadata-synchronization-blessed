@@ -27,14 +27,10 @@ export class RulesD2ApiRepository implements RulesRepository {
         // Rules can be either JSON files or zip files with multiple JSON files
         const items = await promiseMap(files, async file => {
             if (file.type === "application/json") {
-                try {
-                    const text = await file.text();
-                    return decodeModel(SynchronizationRuleModel, text).mapError(
-                        error => `${file.name}: ${error}`
-                    );
-                } catch (error) {
-                    return Either.error(`${file.name}: Couldn't read file`);
-                }
+                const text = await file.text();
+                return decodeModel(SynchronizationRuleModel, text).mapError(
+                    error => `${file.name}: ${error}`
+                );
             }
 
             const zip = new JSZip();
