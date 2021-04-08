@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-04-08T04:39:02.928Z\n"
-"PO-Revision-Date: 2021-04-08T04:39:02.928Z\n"
+"POT-Creation-Date: 2021-04-08T08:41:30.727Z\n"
+"PO-Revision-Date: 2021-04-08T08:41:30.727Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -976,6 +976,18 @@ msgid "Synchronize"
 msgstr ""
 
 msgid "Create and update"
+msgstr ""
+
+msgid "Include owner and sharing settings"
+msgstr ""
+
+msgid "Remove organisation units and references (UID)"
+msgstr ""
+
+msgid "Remove organisation units and keep organisation units references (UID)"
+msgstr ""
+
+msgid "Remove users and keep user references (UID)"
 msgstr ""
 
 msgid "Disable atomic verification"
