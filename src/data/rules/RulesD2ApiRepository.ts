@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import _ from "lodash";
+import { Either } from "../../domain/common/entities/Either";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import {
     SynchronizationRule,
@@ -8,8 +9,11 @@ import {
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { UserRepository } from "../../domain/user/repositories/UserRepository";
+import i18n from "../../locales";
+import { decodeModel } from "../../utils/codec";
 import { promiseMap } from "../../utils/common";
 import { Namespace } from "../storage/Namespaces";
+import { SynchronizationRuleModel } from "./models/SynchronizationRuleModel";
 
 export class RulesD2ApiRepository implements RulesRepository {
     constructor(
@@ -17,33 +21,41 @@ export class RulesD2ApiRepository implements RulesRepository {
         private userRepository: UserRepository
     ) {}
 
-    public async readFiles(files: File[]): Promise<SynchronizationRule[]> {
+    public async readFiles(files: File[]): Promise<Either<string, SynchronizationRule>[]> {
+        const user = await this.userRepository.getCurrent();
+
         // Rules can be either JSON files or zip files with multiple JSON files
-        const items = await promiseMap(files, async file => {
-            if (file.type === "application/json") {
-                try {
-                    const data = await file.text();
-                    const payload = JSON.parse(data);
-                    return payload;
-                } catch (error) {
-                    return undefined;
+        const items: Either<string, SynchronizationRuleData>[] = await promiseMap(
+            files,
+            async file => {
+                if (file.type === "application/json") {
+                    try {
+                        const data = await file.text();
+                        const payload = JSON.parse(data);
+                        return payload;
+                    } catch (error) {
+                        return undefined;
+                    }
                 }
+
+                const zip = new JSZip();
+                const contents = await zip.loadAsync(file);
+                const modulePaths = this.getModulePaths(contents);
+
+                return promiseMap(modulePaths, async modulePath =>
+                    this.getJsonFromFile(zip, modulePath)
+                );
             }
+        );
 
-            const zip = new JSZip();
-            const contents = await zip.loadAsync(file);
-            const modulePaths = this.getModulePaths(contents);
-
-            return promiseMap(modulePaths, async modulePath =>
-                this.getJsonFromFile<SynchronizationRuleData>(zip, modulePath)
-            );
-        });
-
-        // TODO: Add validation and update owner
         const rules = _(items)
             .compact()
             .flatten()
-            .map(data => SynchronizationRule.build(data).update({ created: new Date() }))
+            .map(result =>
+                result.map(data =>
+                    SynchronizationRule.build(data).update({ created: new Date(), user })
+                )
+            )
             .value();
 
         return rules;
@@ -101,12 +113,15 @@ export class RulesD2ApiRepository implements RulesRepository {
         return this.configRepository.getStorageClient();
     }
 
-    private async getJsonFromFile<T>(zip: JSZip, filename: string): Promise<T | undefined> {
+    private async getJsonFromFile(
+        zip: JSZip,
+        filename: string
+    ): Promise<Either<string, SynchronizationRuleData>> {
         const obj = zip.file(filename);
-        if (!obj) return;
+        if (!obj) return Either.error(i18n.t("Couldn't read file"));
         const blob = await obj.async("blob");
         const text = await blob.text();
-        return JSON.parse(text) as T;
+        return decodeModel(SynchronizationRuleModel, text).mapError(error => `${filename}: ${error}`);
     }
 
     private getModulePaths(contents: JSZip) {

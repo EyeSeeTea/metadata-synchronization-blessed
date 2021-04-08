@@ -13,7 +13,7 @@ import i18n from "../../../../../locales";
 import { SummaryStepContent } from "../sync-wizard/common/SummaryStep";
 
 export const SyncRuleImportSummary = (props: SyncRuleImportSummaryProps) => {
-    const { validRules, invalidRuleCount } = props;
+    const { validRules, invalidRuleCount, errors } = props;
     const classes = useStyles();
 
     return (
@@ -48,6 +48,20 @@ export const SyncRuleImportSummary = (props: SyncRuleImportSummaryProps) => {
                     </Accordion>
                 );
             })}
+
+            {errors.length > 0 ? (
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography className={classes.heading}>{i18n.t("Errors")}</Typography>
+                    </AccordionSummary>
+
+                    {errors.map((error, idx) => (
+                        <AccordionDetails key={`error-${idx}`} className={classes.details}>
+                            {error}
+                        </AccordionDetails>
+                    ))}
+                </Accordion>
+            ) : null}
         </React.Fragment>
     );
 };
@@ -55,6 +69,7 @@ export const SyncRuleImportSummary = (props: SyncRuleImportSummaryProps) => {
 export interface SyncRuleImportSummaryProps {
     validRules: SynchronizationRule[];
     invalidRuleCount: number;
+    errors: string[];
 }
 
 const useStyles = makeStyles(theme => ({

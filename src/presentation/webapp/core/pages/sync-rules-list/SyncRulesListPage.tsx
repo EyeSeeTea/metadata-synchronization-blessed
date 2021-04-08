@@ -474,7 +474,10 @@ export const SyncRulesListPage: React.FC = () => {
             } else {
                 loading.show(true, i18n.t("Importing rule(s)"));
                 try {
-                    const rules = await compositionRoot.rules.readFiles(files);
+                    const result = await compositionRoot.rules.readFiles(files);
+                    const errors = _.compact(result.map(either => either.value.error));
+                    const rules = _.compact(result.map(either => either.value.data));
+
                     const validRules = rules.filter(rule => rule.type === type);
                     const invalidRuleCount = rules.length - validRules.length;
 
@@ -484,6 +487,7 @@ export const SyncRulesListPage: React.FC = () => {
                             <SyncRuleImportSummary
                                 validRules={validRules}
                                 invalidRuleCount={invalidRuleCount}
+                                errors={errors}
                             />
                         ),
                         onSave: async () => {

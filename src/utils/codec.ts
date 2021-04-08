@@ -3,7 +3,7 @@ import {
     array,
     Codec,
     date,
-    Either,
+    Either as PurifyEither,
     enumeration,
     exactly,
     identity,
@@ -36,14 +36,30 @@ import {
     RegExpMatchedString,
     StringLengthRangedIn,
 } from "purify-ts-extra-codec";
+import { Either } from "../domain/common/entities/Either";
 
 type DefaultValue<T> = T | (() => T);
 
+export const decodeModel = <T>(model: Codec<T>, value: string): Either<string, T> => {
+    try {
+        const either = model.decode(JSON.parse(value));
+
+        if (either.isRight()) {
+            return Either.success(either.extract());
+        }
+
+        return Either.error(either.leftOrDefault("Couldn't decode input"));
+    } catch (error) {
+        console.error(error);
+        return Either.error("Couldn't read JSON");
+    }
+};
+
 const optionalSafe = <T>(codec: Codec<T>, defaultValue: DefaultValue<T>): Codec<T> => {
-    const decode = (input: unknown): Either<string, T> => {
+    const decode = (input: unknown): PurifyEither<string, T> => {
         if (input === undefined) {
             const value = isFunction(defaultValue) ? defaultValue() : defaultValue;
-            return Either.of(value);
+            return PurifyEither.of(value);
         } else {
             return codec.decode(input);
         }

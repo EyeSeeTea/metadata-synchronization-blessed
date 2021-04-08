@@ -3,7 +3,7 @@ import { Codec, Schema } from "../../../utils/codec";
 import { SharingSettingModel } from "./SharingSettingModel";
 
 export const RefModel: Codec<Ref> = Schema.object({
-    id: Schema.dhis2Id,
+    id: Schema.string,
 });
 
 export const NamedRefModel: Codec<NamedRef> = Schema.extend(
