@@ -14,6 +14,9 @@ msgid ""
 "INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
 msgstr ""
 
+msgid "Couldn't read file"
+msgstr ""
+
 msgid "Field {{field}} cannot be blank"
 msgstr ""
 
@@ -1011,13 +1014,13 @@ msgstr ""
 msgid "Ignore data with same value on destination"
 msgstr ""
 
-msgid "You have uploaded {{n}} rules with a wrong type."
-msgstr ""
-
 msgid "All the uploaded rules are invalid and cannot be imported."
 msgstr ""
 
 msgid "Sync rule {{idx}}: {{name}} ({{id}})"
+msgstr ""
+
+msgid "Errors"
 msgstr ""
 
 msgid "Imported"
@@ -1912,6 +1915,9 @@ msgstr ""
 msgid "Importing rule(s)"
 msgstr ""
 
+msgid "{{name}} ({{id}}): Invalid type found: {{type}}"
+msgstr ""
+
 msgid "Importing {{n}} rules"
 msgstr ""
 
@@ -2067,6 +2073,9 @@ msgid "All time"
 msgstr ""
 
 msgid "Fixed period"
+msgstr ""
+
+msgid "Since last execution"
 msgstr ""
 
 msgid "Today"

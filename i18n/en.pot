@@ -5,13 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-04-08T08:41:30.727Z\n"
-"PO-Revision-Date: 2021-04-08T08:41:30.727Z\n"
+"POT-Creation-Date: 2021-04-08T10:03:54.616Z\n"
+"PO-Revision-Date: 2021-04-08T10:03:54.616Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
 "TO WORK PROPERLY, YOU WILL HAVE TO SET THE SHARING SETTINGS FOR EACH "
 "INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
+msgstr ""
+
+msgid "Couldn't read file"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
@@ -1008,13 +1011,13 @@ msgstr ""
 msgid "Ignore data with same value on destination"
 msgstr ""
 
-msgid "You have uploaded {{n}} rules with a wrong type."
-msgstr ""
-
 msgid "All the uploaded rules are invalid and cannot be imported."
 msgstr ""
 
 msgid "Sync rule {{idx}}: {{name}} ({{id}})"
+msgstr ""
+
+msgid "Errors"
 msgstr ""
 
 msgid "Imported"
@@ -1908,6 +1911,9 @@ msgstr ""
 msgid "Importing rule(s)"
 msgstr ""
 
+msgid "{{name}} ({{id}}): Invalid type found: {{type}}"
+msgstr ""
+
 msgid "Importing {{n}} rules"
 msgstr ""
 
@@ -2063,6 +2069,9 @@ msgid "All time"
 msgstr ""
 
 msgid "Fixed period"
+msgstr ""
+
+msgid "Since last execution"
 msgstr ""
 
 msgid "Today"
