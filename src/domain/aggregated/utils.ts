@@ -1,6 +1,6 @@
 import moment, { Moment } from "moment";
 import { availablePeriods } from "../../utils/synchronization";
-import { DataSynchronizationParams } from "./types";
+import { DataSynchronizationParams } from "./entities/DataSynchronizationParams";
 
 export function buildPeriodFromParams(
     params: Pick<DataSynchronizationParams, "period" | "startDate" | "endDate">

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { modelFactory } from "../../../models/dhis/factory";
-import { ExportBuilder, NestedRules } from "../../../types/synchronization";
+import { ExportBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
@@ -10,6 +10,7 @@ import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { Document, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
+import { NestedRules } from "../entities/MetadataExcludeIncludeRules";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {

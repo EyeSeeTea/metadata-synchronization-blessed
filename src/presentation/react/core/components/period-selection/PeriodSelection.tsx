@@ -3,7 +3,7 @@ import { DatePicker } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import moment, { Moment } from "moment";
 import React, { useCallback, useMemo } from "react";
-import { DataSyncPeriod } from "../../../../../domain/aggregated/types";
+import { DataSyncPeriod } from "../../../../../domain/aggregated/entities/DataSyncPeriod";
 import i18n from "../../../../../locales";
 import { Maybe } from "../../../../../types/utils";
 import { availablePeriods, PeriodType } from "../../../../../utils/synchronization";

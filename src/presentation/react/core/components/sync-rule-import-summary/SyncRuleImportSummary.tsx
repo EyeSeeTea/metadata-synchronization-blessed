@@ -3,33 +3,32 @@ import {
     AccordionDetails,
     AccordionSummary,
     makeStyles,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import _ from "lodash";
 import React from "react";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../locales";
 import { SummaryStepContent } from "../sync-wizard/common/SummaryStep";
 
 export const SyncRuleImportSummary = (props: SyncRuleImportSummaryProps) => {
-    const { validRules, invalidRuleCount } = props;
+    const { rules, errors } = props;
     const classes = useStyles();
 
     return (
         <React.Fragment>
             <p className={classes.overview}>
-                {_.compact([
-                    invalidRuleCount > 0
-                        ? i18n.t("You have uploaded {{n}} rules with a wrong type.")
-                        : undefined,
-                    validRules.length > 0
-                        ? i18n.t("You're about to import the following synchronization rules:")
-                        : i18n.t("All the uploaded rules are invalid and cannot be imported."),
-                ]).join("\n")}
+                {rules.length > 0
+                    ? i18n.t("You're about to import the following synchronization rules:")
+                    : i18n.t("All the uploaded rules are invalid and cannot be imported.")}
             </p>
 
-            {validRules.map((rule, idx) => {
+            {rules.map((rule, idx) => {
                 const name = i18n.t("Sync rule {{idx}}: {{name}} ({{id}})", {
                     idx: idx + 1,
                     name: rule.name,
@@ -48,13 +47,42 @@ export const SyncRuleImportSummary = (props: SyncRuleImportSummaryProps) => {
                     </Accordion>
                 );
             })}
+
+            {errors.length > 0 ? (
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography className={classes.heading}>{i18n.t("Errors")}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails className={classes.details}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>{i18n.t("Identifier")}</TableCell>
+                                    <TableCell>{i18n.t("Error")}</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {errors.map((error, idx) => {
+                                    const [file, ...errors] = error.split(":");
+                                    return (
+                                        <TableRow key={`row-${idx}`}>
+                                            <TableCell>{file}</TableCell>
+                                            <TableCell>{errors.join(":")}</TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </AccordionDetails>
+                </Accordion>
+            ) : null}
         </React.Fragment>
     );
 };
 
 export interface SyncRuleImportSummaryProps {
-    validRules: SynchronizationRule[];
-    invalidRuleCount: number;
+    rules: SynchronizationRule[];
+    errors: string[];
 }
 
 const useStyles = makeStyles(theme => ({

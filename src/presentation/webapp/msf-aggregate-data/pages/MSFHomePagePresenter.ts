@@ -1,6 +1,7 @@
 import _ from "lodash";
 import moment from "moment";
-import { DataSyncAggregation, DataSyncPeriod } from "../../../../domain/aggregated/types";
+import { DataSyncAggregation } from "../../../../domain/aggregated/entities/DataSyncAggregation";
+import { DataSyncPeriod } from "../../../../domain/aggregated/entities/DataSyncPeriod";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
 import { Instance, PublicInstance } from "../../../../domain/instance/entities/Instance";
 import { ProgramIndicator } from "../../../../domain/metadata/entities/MetadataEntities";
