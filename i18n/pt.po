@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-04-08T09:35:26.368Z\n"
+"POT-Creation-Date: 2021-04-09T10:22:01.068Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,9 +12,6 @@ msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
 "TO WORK PROPERLY, YOU WILL HAVE TO SET THE SHARING SETTINGS FOR EACH "
 "INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
-msgstr ""
-
-msgid "Couldn't read file"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"
