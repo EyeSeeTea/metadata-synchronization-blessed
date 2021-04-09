@@ -134,6 +134,40 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "dataApprovalWorkflow.dataApprovalLevels": "Data approval levels in data approval workflow",
     programStages: "Program stages",
     "programStages.programStageSections": "Program stage sections in program stages",
+    "programStages.programStageSections.dataElements":
+        "Data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.attributes":
+        "Attributes of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.legendSets":
+        "Legends of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.legendSets.attributes":
+        "Attributes of legends of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.optionSets":
+        "Option sets of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.optionSets.attributes":
+        "Attributes of option sets of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.optionSets.options":
+        "Options of option sets of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.optionSets.options.attributes":
+        "Attributes of options of option sets of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.categoryCombos":
+        "Category combos of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.categoryCombos.attributes":
+        "Attributes of category combos of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.categoryCombos.categoryOptionCombos":
+        "Category option combos of category combos of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.categoryCombos.categoryOptionCombos.categoryOptions":
+        "Category options of category option combos of category combos of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.categoryCombos.categories":
+        "Categories of category combos of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.dataElementGroups":
+        "Data element groups of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.dataElementGroups.attributes":
+        "Attributes of data element groups of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.dataElementGroups.dataElementGroupSets":
+        "Data element group sets of data element groups of data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements.dataElementGroups.dataElementGroupSets.attributes":
+        "Attributes of data element group sets of data element groups of data elements of program stage sections in program stages",
     "programStages.attributes": "Attributes of program stages",
     "programStages.dataElements": "Data elements in program stages",
     "programStages.dataElements.attributes": "Attributes of data elements in program stages",
