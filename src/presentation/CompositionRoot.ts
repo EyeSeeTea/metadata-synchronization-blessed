@@ -2,7 +2,7 @@ import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRep
 import { ConfigAppRepository } from "../data/config/ConfigAppRepository";
 import { CustomDataD2ApiRepository } from "../data/custom-data/CustomDataD2ApiRepository";
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
-import { FileD2Repository } from "../data/file/FileD2Repository";
+import { InstanceFileD2Repository } from "../data/instance/InstanceFileD2Repository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
@@ -105,6 +105,7 @@ import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemIn
 import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/ListTEIsUseCase";
 import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { cache } from "../utils/cache";
+import { FileDataRepository } from "../data/file/FileDataRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -112,6 +113,7 @@ export class CompositionRoot {
     constructor(public readonly localInstance: Instance, private encryptionKey: string) {
         this.repositoryFactory = new RepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
         this.repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
         this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
@@ -119,7 +121,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
         this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.FileRepository, FileD2Repository);
+        this.repositoryFactory.bind(Repositories.FileRepository, FileDataRepository);
         this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
         this.repositoryFactory.bind(Repositories.StoreRepository, StoreD2ApiRepository);
