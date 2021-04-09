@@ -12,6 +12,7 @@ import {
 import { FileRepositoryConstructor } from "../../file/repositories/FileRepository";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
+import { InstanceFileRepositoryConstructor } from "../../instance/repositories/InstanceFileRepository";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import {
     MetadataRepository,
@@ -84,6 +85,13 @@ export class RepositoryFactory {
             config,
             instance,
             this.encryptionKey,
+        ]);
+    }
+
+    @cache()
+    public instanceFileRepository(instance: Instance) {
+        return this.get<InstanceFileRepositoryConstructor>(Repositories.InstanceFileRepository, [
+            instance,
         ]);
     }
 

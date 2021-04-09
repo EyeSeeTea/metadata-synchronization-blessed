@@ -4,7 +4,7 @@ import { ConfigRepository } from "../../domain/config/repositories/ConfigReposit
 import { FileRepository } from "../../domain/file/repositories/FileRepository";
 import {
     SynchronizationRule,
-    SynchronizationRuleData
+    SynchronizationRuleData,
 } from "../../domain/rules/entities/SynchronizationRule";
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";

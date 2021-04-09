@@ -180,9 +180,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         if (documents) {
             const newDocuments = await promiseMap(documents, async (document: Document) => {
                 if (!document.external) {
-                    const fileRepository = await this.getFileRepository();
+                    const fileRepository = await this.getInstanceFileRepository();
                     const file = await fileRepository.getById(document.id);
-                    const fileRemoteRepository = await this.getFileRepository(instance);
+                    const fileRemoteRepository = await this.getInstanceFileRepository(instance);
                     const fileId = await fileRemoteRepository.save(file);
                     return { ...document, url: fileId };
                 } else {

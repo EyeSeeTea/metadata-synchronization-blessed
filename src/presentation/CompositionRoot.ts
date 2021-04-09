@@ -2,8 +2,9 @@ import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRep
 import { ConfigAppRepository } from "../data/config/ConfigAppRepository";
 import { CustomDataD2ApiRepository } from "../data/custom-data/CustomDataD2ApiRepository";
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
-import { InstanceFileD2Repository } from "../data/instance/InstanceFileD2Repository";
+import { FileDataRepository } from "../data/file/FileDataRepository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
+import { InstanceFileD2Repository } from "../data/instance/InstanceFileD2Repository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
 import { MigrationsAppRepository } from "../data/migrations/MigrationsAppRepository";
@@ -105,7 +106,6 @@ import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemIn
 import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/ListTEIsUseCase";
 import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { cache } from "../utils/cache";
-import { FileDataRepository } from "../data/file/FileDataRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
