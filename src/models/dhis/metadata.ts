@@ -586,6 +586,23 @@ export class ProgramStageModel extends D2Model {
     protected static includeRules = [
         "programs",
         "programStageSections",
+        "programStageSections.dataElements",
+        "programStageSections.dataElements.attributes",
+        "programStageSections.dataElements.legendSets",
+        "programStageSections.dataElements.legendSets.attributes",
+        "programStageSections.dataElements.optionSets",
+        "programStageSections.dataElements.optionSets.attributes",
+        "programStageSections.dataElements.optionSets.options",
+        "programStageSections.dataElements.optionSets.options.attributes",
+        "programStageSections.dataElements.categoryCombos",
+        "programStageSections.dataElements.categoryCombos.attributes",
+        "programStageSections.dataElements.categoryCombos.categoryOptionCombos",
+        "programStageSections.dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        "programStageSections.dataElements.categoryCombos.categories",
+        "programStageSections.dataElements.dataElementGroups",
+        "programStageSections.dataElements.dataElementGroups.attributes",
+        "programStageSections.dataElements.dataElementGroups.dataElementGroupSets",
+        "programStageSections.dataElements.dataElementGroups.dataElementGroupSets.attributes",
         "attributes",
         "dataElements",
         "dataElements.attributes",
@@ -615,7 +632,26 @@ export class ProgramStageSectionModel extends D2Model {
     protected static collectionName = "programStageSections" as const;
 
     protected static excludeRules = [];
-    protected static includeRules = ["attributes"];
+    protected static includeRules = [
+        "attributes",
+        "dataElements",
+        "dataElements.attributes",
+        "dataElements.legendSets",
+        "dataElements.legendSets.attributes",
+        "dataElements.optionSets",
+        "dataElements.optionSets.attributes",
+        "dataElements.optionSets.options",
+        "dataElements.optionSets.options.attributes",
+        "dataElements.categoryCombos",
+        "dataElements.categoryCombos.attributes",
+        "dataElements.categoryCombos.categoryOptionCombos",
+        "dataElements.categoryCombos.categoryOptionCombos.categoryOptions",
+        "dataElements.categoryCombos.categories",
+        "dataElements.dataElementGroups",
+        "dataElements.dataElementGroups.attributes",
+        "dataElements.dataElementGroups.dataElementGroupSets",
+        "dataElements.dataElementGroups.dataElementGroupSets.attributes",
+    ];
 }
 
 export class ProgramIndicatorModel extends D2Model {

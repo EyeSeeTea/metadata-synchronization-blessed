@@ -194,6 +194,39 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "programStages.dataElements.dataElementGroups.dataElementGroupSets.attributes":
         "Atrributes of data element group sets of data element groups of data elements in program stages",
     "programStages.programNotificationTemplates": "Notification templates of program",
+    "programStageSections.dataElements": "Data elements in program stage sections",
+    "programStageSections.dataElements.attributes":
+        "Attributes of data elements in program stage sections",
+    "programStageSections.dataElements.legendSets":
+        "Legends of data elements in program stage sections",
+    "programStageSections.dataElements.legendSets.attributes":
+        "Attributes of legends of data elements in program stage sections",
+    "programStageSections.dataElements.optionSets":
+        "Option sets of data elements in program stage sections",
+    "programStageSections.dataElements.optionSets.attributes":
+        "Attributes of option sets of data elements in program stage sections",
+    "programStageSections.dataElements.optionSets.options":
+        "Options of option sets of data elements in program stage sections",
+    "programStageSections.dataElements.optionSets.options.attributes":
+        "Attributes of options of option sets of data elements in program stage sections",
+    "programStageSections.dataElements.categoryCombos":
+        "Category combos of data elements in program stage sections",
+    "programStageSections.dataElements.categoryCombos.attributes":
+        "Attributes of category combos of data elements in program stage sections",
+    "programStageSections.dataElements.categoryCombos.categoryOptionCombos":
+        "Category option combos of category combos of data elements in program stage sections",
+    "programStageSections.dataElements.categoryCombos.categoryOptionCombos.categoryOptions":
+        "Category options of category option combos of category combos of data elements in program stage sections",
+    "programStageSections.dataElements.categoryCombos.categories":
+        "Categories of category option combos of category combos of data elements in program stage sections",
+    "programStageSections.dataElements.dataElementGroups":
+        "Data element groups of data elements in program stage sections",
+    "programStageSections.dataElements.dataElementGroups.attributes":
+        "Attributes of data element groups of data elements in program stage sections",
+    "programStageSections.dataElements.dataElementGroups.dataElementGroupSets":
+        "Data element group sets of data element groups of data elements in program stage sections",
+    "programStageSections.dataElements.dataElementGroups.dataElementGroupSets.attributes":
+        "Attributes of data element group sets of data element groups of data elements in program stage sections",
     programRuleVariables: "Program rule variables",
     trackedEntityTypes: "Tracked entity types",
     "trackedEntityTypes.trackedEntityAttributes":
@@ -240,7 +273,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     programStageSections: "Program stage sections",
     "dataElements.categoryCombos.categoryOptionCombos.categoryOptions.attributes":
         "Attributes of category options in category option combos of category combos of data elements",
-    "dataElements.categoryCombos.categories.attributes": "",
+    "dataElements.categoryCombos.categories.attributes": "Attributes of categories of category combos of data elements",
     programNotificationTemplates: "Program notification templates",
     "dataElements.legendSets.attributes": "Attributes of legend sets of data elements",
     "dataElements.optionSets.attributes": "Attributes of option sets of data elements",
