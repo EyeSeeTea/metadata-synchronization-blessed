@@ -278,7 +278,8 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     programStageSections: "Program stage sections",
     "dataElements.categoryCombos.categoryOptionCombos.categoryOptions.attributes":
         "Attributes of category options in category option combos of category combos of data elements",
-    "dataElements.categoryCombos.categories.attributes": "Attributes of categories of category combos of data elements",
+    "dataElements.categoryCombos.categories.attributes":
+        "Attributes of categories of category combos of data elements",
     programNotificationTemplates: "Program notification templates",
     programSections: "Program sections",
     "dataElements.legendSets.attributes": "Attributes of legend sets of data elements",
