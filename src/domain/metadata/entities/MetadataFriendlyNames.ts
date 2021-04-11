@@ -13,7 +13,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "dataElements.attributes": "Attributes of data elements",
     "dataElements.dataElementGroups": "Data element groups of dataElements",
     dataElementGroups: "Data element groups",
-    "dataElementGroups.attributes": "Attributes of Data element groups",
+    "dataElementGroups.attributes": "Attributes of data element groups",
     "dataElementGroups.dataElements": "Data elements of data element groups",
     "dataElementGroups.dataElements.attributes":
         "Attributes of data elements in data element groups",
@@ -122,7 +122,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "dataElements.dataElementGroups.dataElementGroupSets":
         "Data element group sets of data element groups in data elements",
     "dataElements.dataElementGroups.dataElementGroupSets.attributes":
-        "Attributes of Data element group sets of data element groups in data elements",
+        "Attributes of data element group sets of data element groups in data elements",
     "programStages.dataElements.dataElementGroups.dataElements":
         "Data elements of data element groups of data elements in program stages",
     "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups":
@@ -133,6 +133,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     dataApprovalWorkflow: "Data approval workflow",
     "dataApprovalWorkflow.dataApprovalLevels": "Data approval levels in data approval workflow",
     programStages: "Program stages",
+    "programStages.dataEntryForms": "Data entry form in program stages",
     "programStages.programStageSections": "Program stage sections in program stages",
     "programStages.programStageSections.dataElements":
         "Data elements of program stage sections in program stages",
@@ -233,6 +234,10 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
         "Tracked entity attributes of tracked entity types",
     "trackedEntityTypes.trackedEntityAttributes.legendSets":
         "Legends of tracked entity attributes of tracked entity types",
+    "trackedEntityTypes.trackedEntityAttributes.optionSets":
+        "Option sets of tracked entity attributes of tracked entity types",
+    "trackedEntityTypes.trackedEntityAttributes.optionSets.options":
+        "Options of option sets of tracked entity attributes of tracked entity types",
     trackedEntityAttributes: "Tracked entity attributes",
     "trackedEntityAttributes.legendSets": "Legends of tracked entity attributes",
     "users.userRoles": "User roles of users",
@@ -275,6 +280,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
         "Attributes of category options in category option combos of category combos of data elements",
     "dataElements.categoryCombos.categories.attributes": "Attributes of categories of category combos of data elements",
     programNotificationTemplates: "Program notification templates",
+    programSections: "Program sections",
     "dataElements.legendSets.attributes": "Attributes of legend sets of data elements",
     "dataElements.optionSets.attributes": "Attributes of option sets of data elements",
     "dataElements.optionSets.options.attributes":
