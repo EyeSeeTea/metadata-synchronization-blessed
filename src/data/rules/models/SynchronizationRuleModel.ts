@@ -1,12 +1,25 @@
 import { SynchronizationRuleData } from "../../../domain/rules/entities/SynchronizationRule";
 import { Codec, Schema } from "../../../utils/codec";
-import { NamedRefModel, SharedRefModel } from "../../common/models/RefModel";
+import { NamedRefModel } from "../../common/models/RefModel";
+import { SharingSettingModel } from "../../common/models/SharingSettingModel";
 import { SynchronizationBuilderModel } from "../../synchronization/models/SynchronizationBuilderModel";
 import { SynchronizationTypeModel } from "../../synchronization/models/SynchronizationTypeModel";
 
+const BaseModel = Schema.object({
+    user: Schema.optionalSafe(NamedRefModel, { id: "unknown", name: "Unknown user" }),
+    created: Schema.optionalSafe(Schema.date, () => new Date()),
+    lastUpdated: Schema.optionalSafe(Schema.date, () => new Date()),
+    lastUpdatedBy: NamedRefModel,
+    publicAccess: Schema.optionalSafe(Schema.string, "--------"),
+    userAccesses: Schema.optionalSafe(Schema.array(SharingSettingModel), []),
+    userGroupAccesses: Schema.optionalSafe(Schema.array(SharingSettingModel), []),
+});
+
 export const SynchronizationRuleModel: Codec<SynchronizationRuleData> = Schema.extend(
-    SharedRefModel,
+    BaseModel,
     Schema.object({
+        id: Schema.string,
+        name: Schema.string,
         code: Schema.optional(Schema.string),
         created: Schema.optionalSafe(Schema.date, () => new Date()),
         description: Schema.optional(Schema.string),
