@@ -9,7 +9,7 @@ const BaseModel = Schema.object({
     user: Schema.optionalSafe(NamedRefModel, { id: "unknown", name: "Unknown user" }),
     created: Schema.optionalSafe(Schema.date, () => new Date()),
     lastUpdated: Schema.optionalSafe(Schema.date, () => new Date()),
-    lastUpdatedBy: NamedRefModel,
+    lastUpdatedBy: Schema.optionalSafe(NamedRefModel, { id: "unknown", name: "Unknown user" }),
     publicAccess: Schema.optionalSafe(Schema.string, "--------"),
     userAccesses: Schema.optionalSafe(Schema.array(SharingSettingModel), []),
     userGroupAccesses: Schema.optionalSafe(Schema.array(SharingSettingModel), []),
@@ -29,6 +29,6 @@ export const SynchronizationRuleModel: Codec<SynchronizationRuleData> = Schema.e
         lastExecuted: Schema.optional(Schema.date),
         lastExecutedBy: Schema.optional(NamedRefModel),
         frequency: Schema.optional(Schema.string),
-        type: SynchronizationTypeModel,
+        type: Schema.optionalSafe(SynchronizationTypeModel, "metadata"),
     })
 );
