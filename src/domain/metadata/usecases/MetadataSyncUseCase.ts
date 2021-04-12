@@ -9,7 +9,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { Document, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
+import { Document, MetadataEntities, MetadataPackage, Program } from "../entities/MetadataEntities";
 import { NestedRules } from "../entities/MetadataExcludeIncludeRules";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
@@ -42,11 +42,18 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const elements = syncMetadata[collectionName] || [];
 
             for (const element of elements) {
+                //ProgramRules is not included in programs items in the response by the dhis2 API
+                //we request it manually and insert it in the element
+                const fixedElement =
+                    type === "programs"
+                        ? await this.requestAndIncludeProgramRules(element as Program)
+                        : element;
+
                 // Store metadata object in result
                 const object = cleanObject(
                     this.api,
                     schema.name,
-                    element,
+                    fixedElement,
                     excludeRules,
                     includeSharingSettings,
                     removeOrgUnitReferences
@@ -58,6 +65,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 // Get all the referenced metadata
                 const references = getAllReferences(this.api, object, schema.name);
                 const includedReferences = cleanReferences(references, includeRules);
+
                 const partialResults = await promiseMap(includedReferences, type =>
                     recursiveExport({
                         type: type as keyof MetadataEntities,
@@ -202,5 +210,15 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         } else {
             return payload;
         }
+    }
+
+    private async requestAndIncludeProgramRules(program: Program) {
+        const metadataRepository = await this.getMetadataRepository();
+        const programRules = await metadataRepository.listAllMetadata({
+            type: "programRules",
+            fields: { id: true },
+            program: program.id,
+        });
+        return { ...program, programRules };
     }
 }
