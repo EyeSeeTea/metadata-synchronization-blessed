@@ -1,3 +1,4 @@
+import { ConfirmationDialog, useLoading } from "@eyeseetea/d2-ui-components";
 import {
     Accordion,
     AccordionDetails,
@@ -13,7 +14,6 @@ import {
     Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { ConfirmationDialog, useLoading } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";

@@ -50,6 +50,7 @@ export async function sync({
     );
 
     local.get("/metadata", async () => metadata);
+    local.get("/programRules", async () => []);
     remote.get("/metadata", async () => ({}));
 
     local.get("/dataStore/metadata-synchronization/instances", async () => [
