@@ -1,7 +1,4 @@
-import _ from "lodash";
-import { Either } from "../../domain/common/entities/Either";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
-import { FileRepository } from "../../domain/file/repositories/FileRepository";
 import {
     SynchronizationRule,
     SynchronizationRuleData,
@@ -9,39 +6,13 @@ import {
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { UserRepository } from "../../domain/user/repositories/UserRepository";
-import { decodeModel } from "../../utils/codec";
-import { promiseMap } from "../../utils/common";
 import { Namespace } from "../storage/Namespaces";
-import { SynchronizationRuleModel } from "./models/SynchronizationRuleModel";
 
 export class RulesD2ApiRepository implements RulesRepository {
     constructor(
         private configRepository: ConfigRepository,
-        private userRepository: UserRepository,
-        private fileDataRepository: FileRepository
+        private userRepository: UserRepository
     ) {}
-
-    public async readFiles(files: File[]): Promise<Either<string, SynchronizationRule>[]> {
-        const user = await this.userRepository.getCurrent();
-
-        const items = await promiseMap(files, async file => {
-            const objects = await this.fileDataRepository.readObjectsInFile(file, file.name);
-            return objects.map(({ name, value }) =>
-                decodeModel(SynchronizationRuleModel, value)
-                    .map(data =>
-                        SynchronizationRule.build(data).update({
-                            created: new Date(),
-                            user,
-                            lastUpdated: new Date(),
-                            lastExecutedBy: user,
-                        })
-                    )
-                    .mapError(error => `${name}: ${error}`)
-            );
-        });
-
-        return _.flatten(items);
-    }
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {
         const storageClient = await this.getStorageClient();

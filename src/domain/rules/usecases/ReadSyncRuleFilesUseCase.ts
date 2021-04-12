@@ -8,6 +8,6 @@ export class ReadSyncRuleFilesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(files: File[]): Promise<Either<string, SynchronizationRule>[]> {
-        return this.repositoryFactory.rulesRepository(this.localInstance).readFiles(files);
+        return this.repositoryFactory.fileRulesRepository(this.localInstance).readFiles(files);
     }
 }
