@@ -514,6 +514,16 @@ describe("SyncRule", () => {
 
             expect(errorFunction).toThrow(Error);
         });
+        it("should activate remove Org Units Objects if we activate remove OrgUnits Objects And References", () => {
+            const syncRule = givenASyncRule();
+
+            const editedSyncRule = syncRule.updateSyncParams({
+                ...syncRule.syncParams,
+                removeOrgUnitReferences: true,
+            });
+
+            expect(editedSyncRule.syncParams.removeOrgUnitObjects).toEqual(true);
+        });
     });
 
     describe("startDate", () => {
@@ -602,6 +612,10 @@ function givenASyncRuleWithMetadataIncludeExcludeRules(
 
 function givenASyncRuleWithoutMetadataIncludeExcludeRules(): SynchronizationRule {
     return SynchronizationRule.create("metadata").updateMetadataIds(["id1", "id2"]);
+}
+
+function givenASyncRule(): SynchronizationRule {
+    return SynchronizationRule.create("metadata");
 }
 
 function givenASyncRuleWithoutPeriod(): SynchronizationRule {

@@ -116,8 +116,16 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             _.uniqBy(elements, "id")
         );
 
-        debug("Metadata package", metadataWithoutDuplicates);
-        return metadataWithoutDuplicates;
+        const { organisationUnits, users, ...rest } = metadataWithoutDuplicates;
+
+        const finalMetadataPackage = {
+            organisationUnits: !syncParams?.removeOrgUnitObjects ? organisationUnits : undefined,
+            users: !syncParams?.removeUserObjects ? users : undefined,
+            ...rest,
+        };
+
+        debug("Metadata package", finalMetadataPackage);
+        return finalMetadataPackage;
     });
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
