@@ -29,6 +29,6 @@ export const SynchronizationRuleModel: Codec<SynchronizationRuleData> = Schema.e
         lastExecuted: Schema.optional(Schema.date),
         lastExecutedBy: Schema.optional(NamedRefModel),
         frequency: Schema.optional(Schema.string),
-        type: Schema.optionalSafe(SynchronizationTypeModel, "metadata"),
+        type: SynchronizationTypeModel,
     })
 );

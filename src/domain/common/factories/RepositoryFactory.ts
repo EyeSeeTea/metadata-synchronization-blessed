@@ -21,6 +21,7 @@ import {
 import { MigrationsRepositoryConstructor } from "../../migrations/repositories/MigrationsRepository";
 import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubRepository";
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
+import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
@@ -151,10 +152,16 @@ export class RepositoryFactory {
     public rulesRepository(instance: Instance) {
         const config = this.configRepository(instance);
         const user = this.userRepository(instance);
+
+        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config, user]);
+    }
+
+    @cache()
+    public fileRulesRepository(instance: Instance) {
+        const user = this.userRepository(instance);
         const file = this.fileRepository();
 
-        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [
-            config,
+        return this.get<FileRulesRepositoryConstructor>(Repositories.FileRulesRepository, [
             user,
             file,
         ]);
@@ -195,6 +202,7 @@ export const Repositories = {
     FileRepository: "fileRepository",
     ReportsRepository: "reportsRepository",
     RulesRepository: "rulesRepository",
+    FileRulesRepository: "fileRulesRepository",
     SystemInfoRepository: "systemInfoRepository",
     MigrationsRepository: "migrationsRepository",
     TEIsRepository: "teisRepository",

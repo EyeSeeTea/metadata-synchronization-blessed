@@ -10,6 +10,7 @@ import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository"
 import { MigrationsAppRepository } from "../data/migrations/MigrationsAppRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
+import { FileRulesDefaultRepository } from "../data/rules/FileRulesDefaultRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
@@ -124,6 +125,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.FileRepository, FileDataRepository);
         this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.FileRulesRepository, FileRulesDefaultRepository);
         this.repositoryFactory.bind(Repositories.StoreRepository, StoreD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
