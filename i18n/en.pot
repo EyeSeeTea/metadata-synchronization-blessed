@@ -5,16 +5,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-04-08T10:03:54.616Z\n"
-"PO-Revision-Date: 2021-04-08T10:03:54.616Z\n"
+"POT-Creation-Date: 2021-04-09T10:22:01.068Z\n"
+"PO-Revision-Date: 2021-04-09T10:22:01.068Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
 "TO WORK PROPERLY, YOU WILL HAVE TO SET THE SHARING SETTINGS FOR EACH "
 "INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
-msgstr ""
-
-msgid "Couldn't read file"
 msgstr ""
 
 msgid "Field {{field}} cannot be blank"

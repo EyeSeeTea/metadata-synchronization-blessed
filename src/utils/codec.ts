@@ -40,9 +40,9 @@ import { Either } from "../domain/common/entities/Either";
 
 type DefaultValue<T> = T | (() => T);
 
-export const decodeModel = <T>(model: Codec<T>, value: string): Either<string, T> => {
+export const decodeModel = <T>(model: Codec<T>, value: unknown): Either<string, T> => {
     try {
-        const either = model.decode(JSON.parse(value));
+        const either = model.decode(value);
 
         if (either.isRight()) {
             return Either.success(either.extract());
