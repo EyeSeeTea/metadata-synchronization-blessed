@@ -328,7 +328,7 @@ export class SynchronizationRule {
     }
 
     public updateMetadataIds(metadataIds: string[]): SynchronizationRule {
-        return this.updateBuilder({ metadataIds })
+        return this.updateBuilder({ metadataIds });
     }
 
     public updateFilterRules(filterRules: FilterRule[]): SynchronizationRule {
