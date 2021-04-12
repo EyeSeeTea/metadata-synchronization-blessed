@@ -492,7 +492,7 @@ export const SyncRulesListPage: React.FC = () => {
                     ]);
 
                     updateDialog({
-                        title: i18n.t("Importing {{n}} rules", { n: validRules.length }),
+                        title: i18n.t("Importing {{n}} rules", { n: rules.length }),
                         description: <SyncRuleImportSummary rules={validRules} errors={errors} />,
                         onSave: async () => {
                             await compositionRoot.rules.save(validRules);

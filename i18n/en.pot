@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-04-09T10:22:01.068Z\n"
-"PO-Revision-Date: 2021-04-09T10:22:01.068Z\n"
+"POT-Creation-Date: 2021-04-12T07:34:07.976Z\n"
+"PO-Revision-Date: 2021-04-12T07:34:07.976Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1006,9 +1006,6 @@ msgid "Ignore data with same value on destination (only for program indicators)"
 msgstr ""
 
 msgid "Ignore data with same value on destination"
-msgstr ""
-
-msgid "All the uploaded rules are invalid and cannot be imported."
 msgstr ""
 
 msgid "Sync rule {{idx}}: {{name}} ({{id}})"
