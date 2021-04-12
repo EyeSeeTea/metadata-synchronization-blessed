@@ -186,20 +186,18 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async save(
         data: EventsPackage,
-        additionalParams: DataImportParams = {}
+        params: DataImportParams = {}
     ): Promise<SynchronizationResult> {
         try {
             const { response } = await this.api.events
                 .postAsync(
                     {
-                        idScheme: "UID",
-                        dataElementIdScheme: "UID",
-                        orgUnitIdScheme: "UID",
-                        eventIdScheme: "UID",
-                        preheatCache: false,
-                        skipExistingCheck: false,
-                        dryRun: false,
-                        ...additionalParams,
+                        idScheme: params.idScheme ?? "UID",
+                        dataElementIdScheme: params.dataElementIdScheme ?? "UID",
+                        orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
+                        dryRun: params.dryRun ?? false,
+                        preheatCache: params.preheatCache ?? false,
+                        skipExistingCheck: params.skipExistingCheck ?? false,
                     },
                     data
                 )

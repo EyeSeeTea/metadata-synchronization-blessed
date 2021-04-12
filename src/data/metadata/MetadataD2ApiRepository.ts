@@ -517,17 +517,21 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     private async postMetadata(
         payload: Partial<Record<string, unknown[]>>,
-        additionalParams?: MetadataImportParams
+        params: MetadataImportParams = {}
     ): Promise<MetadataResponse | null> {
         const { response } = await this.api.metadata
             .postAsync(payload, {
-                importMode: "COMMIT",
-                identifier: "UID",
-                importReportMode: "FULL",
-                importStrategy: "CREATE_AND_UPDATE",
-                mergeMode: "MERGE",
-                atomicMode: "ALL",
-                ...additionalParams,
+                atomicMode: params.atomicMode ?? "ALL",
+                identifier: params.identifier ?? "UID",
+                importMode: params.importMode ?? "COMMIT",
+                importStrategy: params.importStrategy ?? "CREATE_AND_UPDATE",
+                importReportMode: params.importReportMode ?? "FULL",
+                mergeMode: params.mergeMode ?? "MERGE",
+                flushMode: params.flushMode,
+                preheatMode: params.preheatMode,
+                skipSharing: params.skipSharing,
+                skipValidation: params.skipValidation,
+                userOverrideMode: params.userOverrideMode,
             })
             .getData();
 
