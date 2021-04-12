@@ -1,5 +1,3 @@
-import JSZip from "jszip";
-import _ from "lodash";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import {
     SynchronizationRule,
@@ -8,7 +6,6 @@ import {
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { UserRepository } from "../../domain/user/repositories/UserRepository";
-import { promiseMap } from "../../utils/common";
 import { Namespace } from "../storage/Namespaces";
 
 export class RulesD2ApiRepository implements RulesRepository {
@@ -16,38 +13,6 @@ export class RulesD2ApiRepository implements RulesRepository {
         private configRepository: ConfigRepository,
         private userRepository: UserRepository
     ) {}
-
-    public async readFiles(files: File[]): Promise<SynchronizationRule[]> {
-        // Rules can be either JSON files or zip files with multiple JSON files
-        const items = await promiseMap(files, async file => {
-            if (file.type === "application/json") {
-                try {
-                    const data = await file.text();
-                    const payload = JSON.parse(data);
-                    return payload;
-                } catch (error) {
-                    return undefined;
-                }
-            }
-
-            const zip = new JSZip();
-            const contents = await zip.loadAsync(file);
-            const modulePaths = this.getModulePaths(contents);
-
-            return promiseMap(modulePaths, async modulePath =>
-                this.getJsonFromFile<SynchronizationRuleData>(zip, modulePath)
-            );
-        });
-
-        // TODO: Add validation and update owner
-        const rules = _(items)
-            .compact()
-            .flatten()
-            .map(data => SynchronizationRule.build(data).update({ created: new Date() }))
-            .value();
-
-        return rules;
-    }
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {
         const storageClient = await this.getStorageClient();
@@ -99,21 +64,5 @@ export class RulesD2ApiRepository implements RulesRepository {
 
     private getStorageClient(): Promise<StorageClient> {
         return this.configRepository.getStorageClient();
-    }
-
-    private async getJsonFromFile<T>(zip: JSZip, filename: string): Promise<T | undefined> {
-        const obj = zip.file(filename);
-        if (!obj) return;
-        const blob = await obj.async("blob");
-        const text = await blob.text();
-        return JSON.parse(text) as T;
-    }
-
-    private getModulePaths(contents: JSZip) {
-        return _(contents.files)
-            .pickBy((_zip, path) => path.endsWith(".json"))
-            .keys()
-            .compact()
-            .value();
     }
 }

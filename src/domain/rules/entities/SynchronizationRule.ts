@@ -4,31 +4,28 @@ import _ from "lodash";
 import moment from "moment";
 import { D2Model } from "../../../models/dhis/default";
 import {
-    ExcludeIncludeRules,
-    MetadataIncludeExcludeRules,
-    MetadataSynchronizationParams,
-} from "../../../types/synchronization";
-import {
-    defaultSynchronizationBuilder,
-    SynchronizationBuilder,
-} from "../../synchronization/entities/SynchronizationBuilder";
-import {
     extractChildrenFromRules,
     extractParentsFromRule,
 } from "../../../utils/metadataIncludeExclude";
 import { OldValidation } from "../../../utils/old-validations";
+import { UserInfo } from "../../../utils/permissions";
 import isValidCronExpression from "../../../utils/validCronExpression";
-import {
-    DataSyncAggregation,
-    DataSynchronizationParams,
-    DataSyncPeriod,
-} from "../../aggregated/types";
-import { SharedRef } from "../../common/entities/Ref";
+import { DataSyncAggregation } from "../../aggregated/entities/DataSyncAggregation";
+import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
+import { DataSyncPeriod } from "../../aggregated/entities/DataSyncPeriod";
+import { NamedRef, SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
+import {
+    ExcludeIncludeRules,
+    MetadataIncludeExcludeRules,
+} from "../../metadata/entities/MetadataExcludeIncludeRules";
+import { MetadataSynchronizationParams } from "../../metadata/entities/MetadataSynchronizationParams";
+import {
+    defaultSynchronizationBuilder,
+    SynchronizationBuilder,
+} from "../../synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
-import { NamedRef } from "../../common/entities/Ref";
-import { UserInfo } from "../../../utils/permissions";
 
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;
@@ -233,6 +230,8 @@ export class SynchronizationRule {
             enableMapping: false,
             includeSharingSettings: true,
             removeOrgUnitReferences: false,
+            removeUserObjects: false,
+            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             ...params,
         };
@@ -570,7 +569,14 @@ export class SynchronizationRule {
     }
 
     public updateSyncParams(syncParams: MetadataSynchronizationParams): SynchronizationRule {
-        return this.updateBuilder({ syncParams });
+        return this.updateBuilder({
+            syncParams: {
+                ...syncParams,
+                removeOrgUnitObjects: syncParams.removeOrgUnitReferences
+                    ? true
+                    : syncParams.removeOrgUnitObjects,
+            },
+        });
     }
 
     public updateDataParams(dataParams: DataSynchronizationParams): SynchronizationRule {

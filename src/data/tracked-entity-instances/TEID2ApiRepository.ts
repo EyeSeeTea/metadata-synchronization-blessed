@@ -1,5 +1,8 @@
 import _ from "lodash";
-import { DataSynchronizationParams } from "../../domain/aggregated/types";
+import {
+    DataImportParams,
+    DataSynchronizationParams,
+} from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
@@ -11,7 +14,6 @@ import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TEIsPackage } from "../../domain/tracked-entity-instances/entities/TEIsPackage";
 import { TrackedEntityInstance } from "../../domain/tracked-entity-instances/entities/TrackedEntityInstance";
 import { TEIRepository } from "../../domain/tracked-entity-instances/repositories/TEIRepository";
-import { DataImportParams } from "../../types/d2";
 import { D2Api } from "../../types/d2-api";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 

@@ -2,8 +2,8 @@ import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
 import { D2Api } from "../../types/d2-api";
-import { NestedRules } from "../../types/synchronization";
 import { MetadataEntities } from "./entities/MetadataEntities";
+import { NestedRules } from "./entities/MetadataExcludeIncludeRules";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
