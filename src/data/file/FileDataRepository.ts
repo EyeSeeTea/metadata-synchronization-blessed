@@ -5,10 +5,16 @@ import { promiseMap } from "../../utils/common";
 
 export class FileDataRepository implements FileRepository {
     // Accepts either a zip file that contains a collection of JSONs or a JSON itself
-    public async readObjectsInFile<ReturnType>(file: Blob): Promise<ReturnType[]> {
-        if (mimeTypes.JSON.includes(file.type)) {
+    public async readObjectsInFile<ReturnType>(
+        file: Blob,
+        fileName?: string
+    ): Promise<{ name: string; value: ReturnType }[]> {
+        // Fallback case (if file does not include mime type) is JSON
+        if (!file.type || mimeTypes.JSON.includes(file.type)) {
             const object = await this.readJSONFile<ReturnType>(file);
-            return _.compact([object]);
+            if (!object) return [];
+
+            return [{ name: fileName ?? "Unknown", value: object }];
         }
 
         if (mimeTypes.ZIP.includes(file.type)) {
@@ -21,7 +27,7 @@ export class FileDataRepository implements FileRepository {
                 if (!obj) return [];
 
                 const blob = await obj.async("blob");
-                return this.readObjectsInFile<ReturnType>(blob);
+                return this.readObjectsInFile<ReturnType>(blob, path);
             });
 
             return _.flatten(objects);
