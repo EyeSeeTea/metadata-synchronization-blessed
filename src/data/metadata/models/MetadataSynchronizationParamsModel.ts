@@ -41,6 +41,8 @@ export const MetadataSynchronizationParamsModel: Codec<MetadataSynchronizationPa
         enableMapping: Schema.optionalSafe(Schema.boolean, false),
         includeSharingSettings: Schema.optionalSafe(Schema.boolean, true),
         removeOrgUnitReferences: Schema.optionalSafe(Schema.boolean, false),
+        removeUserObjects: Schema.optionalSafe(Schema.boolean, false),
+        removeOrgUnitObjects: Schema.optionalSafe(Schema.boolean, false),
         useDefaultIncludeExclude: Schema.optionalSafe(Schema.boolean, true),
         metadataIncludeExcludeRules: Schema.optional(MetadataIncludeExcludeRulesModel),
     })
