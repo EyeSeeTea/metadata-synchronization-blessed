@@ -9,8 +9,10 @@ import {
     EventsRepository,
     EventsRepositoryConstructor,
 } from "../../events/repositories/EventsRepository";
+import { FileRepositoryConstructor } from "../../file/repositories/FileRepository";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
+import { InstanceFileRepositoryConstructor } from "../../instance/repositories/InstanceFileRepository";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import {
     MetadataRepository,
@@ -87,6 +89,13 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public instanceFileRepository(instance: Instance) {
+        return this.get<InstanceFileRepositoryConstructor>(Repositories.InstanceFileRepository, [
+            instance,
+        ]);
+    }
+
+    @cache()
     public userRepository(instance: Instance) {
         return this.get<UserRepositoryConstructor>(Repositories.UserRepository, [instance]);
     }
@@ -134,10 +143,21 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public fileRepository() {
+        return this.get<FileRepositoryConstructor>(Repositories.FileRepository, []);
+    }
+
+    @cache()
     public rulesRepository(instance: Instance) {
         const config = this.configRepository(instance);
         const user = this.userRepository(instance);
-        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config, user]);
+        const file = this.fileRepository();
+
+        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [
+            config,
+            user,
+            file,
+        ]);
     }
 
     @cache()
@@ -162,6 +182,7 @@ type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
 
 export const Repositories = {
     InstanceRepository: "instanceRepository",
+    InstanceFileRepository: "instanceFileRepository",
     StoreRepository: "storeRepository",
     ConfigRepository: "configRepository",
     CustomDataRepository: "customDataRepository",

@@ -1,4 +1,7 @@
-import { FileId, FileRepository } from "../../domain/file/FileRepository";
+import {
+    FileId,
+    InstanceFileRepository,
+} from "../../domain/instance/repositories/InstanceFileRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
 import mime from "mime-types";
 import { D2Document } from "../../types/d2-api";
@@ -11,7 +14,7 @@ interface SaveApiResponse {
     };
 }
 
-export class FileD2Repository implements FileRepository {
+export class InstanceFileD2Repository implements InstanceFileRepository {
     constructor(private instance: Instance) {}
 
     public async getById(fileId: FileId): Promise<File> {
