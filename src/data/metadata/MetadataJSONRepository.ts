@@ -13,7 +13,7 @@ import {
     ListMetadataResponse,
     MetadataRepository,
 } from "../../domain/metadata/repositories/MetadataRepository";
-import { MetadataImportParams } from "../../domain/metadata/types";
+import { MetadataImportParams } from "../../domain/metadata/entities/MetadataSynchronizationParams";
 import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import { Dictionary } from "../../types/utils";

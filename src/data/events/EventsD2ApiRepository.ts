@@ -1,7 +1,10 @@
 import { EventsPostResponse } from "@eyeseetea/d2-api/api/events";
 import _ from "lodash";
 import moment from "moment";
-import { DataSynchronizationParams } from "../../domain/aggregated/types";
+import {
+    DataImportParams,
+    DataSynchronizationParams,
+} from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
@@ -12,7 +15,6 @@ import {
     SynchronizationStats,
 } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
-import { DataImportParams } from "../../types/d2";
 import { D2Api } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
@@ -184,20 +186,18 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async save(
         data: EventsPackage,
-        additionalParams: DataImportParams = {}
+        params: DataImportParams = {}
     ): Promise<SynchronizationResult> {
         try {
             const { response } = await this.api.events
                 .postAsync(
                     {
-                        idScheme: "UID",
-                        dataElementIdScheme: "UID",
-                        orgUnitIdScheme: "UID",
-                        eventIdScheme: "UID",
-                        preheatCache: false,
-                        skipExistingCheck: false,
-                        dryRun: false,
-                        ...additionalParams,
+                        idScheme: params.idScheme ?? "UID",
+                        dataElementIdScheme: params.dataElementIdScheme ?? "UID",
+                        orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
+                        dryRun: params.dryRun ?? false,
+                        preheatCache: params.preheatCache ?? false,
+                        skipExistingCheck: params.skipExistingCheck ?? false,
                     },
                     data
                 )

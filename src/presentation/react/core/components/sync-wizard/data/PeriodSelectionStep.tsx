@@ -1,9 +1,14 @@
-import React, { useCallback, useMemo } from "react";
-import { DataSyncPeriod } from "../../../../../../domain/aggregated/types";
+import React, { useCallback, useMemo, useState } from "react";
+import { DataSyncPeriod } from "../../../../../../domain/aggregated/entities/DataSyncPeriod";
+import { PeriodType } from "../../../../../../utils/synchronization";
 import PeriodSelection, { ObjectWithPeriod } from "../../period-selection/PeriodSelection";
 import { SyncWizardStepProps } from "../Steps";
 
 const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
+    const [skipPeriods] = useState<Set<PeriodType> | undefined>(
+        syncRule.ondemand ? new Set(["SINCE_LAST_EXECUTED_DATE"]) : undefined
+    );
+
     const updatePeriod = useCallback(
         (period: DataSyncPeriod) => {
             onChange(
@@ -53,7 +58,13 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
         };
     }, [syncRule]);
 
-    return <PeriodSelection objectWithPeriod={objectWithPeriod} onFieldChange={onFieldChange} />;
+    return (
+        <PeriodSelection
+            objectWithPeriod={objectWithPeriod}
+            onFieldChange={onFieldChange}
+            skipPeriods={skipPeriods}
+        />
+    );
 };
 
 export default PeriodSelectionStep;

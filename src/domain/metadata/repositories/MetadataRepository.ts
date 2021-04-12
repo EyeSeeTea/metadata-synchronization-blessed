@@ -11,7 +11,7 @@ import {
     MetadataEntity,
     MetadataPackage,
 } from "../entities/MetadataEntities";
-import { MetadataImportParams } from "../types";
+import { MetadataImportParams } from "../entities/MetadataSynchronizationParams";
 
 export interface MetadataRepositoryConstructor {
     new (

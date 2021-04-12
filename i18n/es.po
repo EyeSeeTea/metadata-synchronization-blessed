@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-03-26T07:44:52.063Z\n"
+"POT-Creation-Date: 2021-04-12T07:34:07.976Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -980,6 +980,18 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
+msgid "Include owner and sharing settings"
+msgstr ""
+
+msgid "Remove organisation units and references (UID)"
+msgstr ""
+
+msgid "Remove organisation units and keep organisation units references (UID)"
+msgstr ""
+
+msgid "Remove users and keep user references (UID)"
+msgstr ""
+
 msgid "Disable atomic verification"
 msgstr ""
 
@@ -997,6 +1009,12 @@ msgid ""
 msgstr ""
 
 msgid "Ignore data with same value on destination"
+msgstr ""
+
+msgid "Sync rule {{idx}}: {{name}} ({{id}})"
+msgstr ""
+
+msgid "Errors"
 msgstr ""
 
 msgid "Imported"
@@ -1207,9 +1225,6 @@ msgstr ""
 msgid "An error has ocurred during the download"
 msgstr ""
 
-msgid "Invalid origin instance"
-msgstr ""
-
 msgid "Cancel synchronization rule wizard"
 msgstr ""
 
@@ -1219,6 +1234,15 @@ msgid ""
 msgstr ""
 
 msgid "Yes"
+msgstr ""
+
+msgid "Save as sync Rule"
+msgstr ""
+
+msgid "Download JSON"
+msgstr ""
+
+msgid "Invalid origin instance"
 msgstr ""
 
 msgid "Target instances [{{total}}]"
@@ -1279,12 +1303,6 @@ msgid "Run Analytics before sync"
 msgstr ""
 
 msgid "Frequency"
-msgstr ""
-
-msgid "Save as sync Rule"
-msgstr ""
-
-msgid "Download JSON"
 msgstr ""
 
 msgid "Daily"
@@ -1891,16 +1909,10 @@ msgstr ""
 msgid "Importing rule(s)"
 msgstr ""
 
+msgid "{{name}} ({{id}}): Invalid type found: {{type}}"
+msgstr ""
+
 msgid "Importing {{n}} rules"
-msgstr ""
-
-msgid "You have uploaded {{n}} rules with a wrong type."
-msgstr ""
-
-msgid "All the uploaded rules are invalid and cannot be imported."
-msgstr ""
-
-msgid "Existing (will be overwritten)"
 msgstr ""
 
 msgid "Imported {{n}} rules"
@@ -2055,6 +2067,9 @@ msgid "All time"
 msgstr ""
 
 msgid "Fixed period"
+msgstr ""
+
+msgid "Since last execution"
 msgstr ""
 
 msgid "Today"

@@ -1,5 +1,5 @@
 import { ObjectWithPeriod } from "../../../presentation/react/core/components/period-selection/PeriodSelection";
-import { DataSyncPeriod } from "../../aggregated/types";
+import { DataSyncPeriod } from "../../aggregated/entities/DataSyncPeriod";
 import { Either } from "./Either";
 import { ModelValidation, validateModel, ValidationError } from "./Validations";
 
