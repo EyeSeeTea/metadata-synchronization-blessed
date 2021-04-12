@@ -151,9 +151,7 @@ describe("SyncRule", () => {
             const syncRule = givenASyncRuleWithMetadataIncludeExcludeRules();
 
             const editedSyncRule = syncRule.updateMetadataIds(["newId1", "newId2"]);
-
-            expect(editedSyncRule.useDefaultIncludeExclude).toEqual(true);
-            expect(editedSyncRule.metadataIncludeExcludeRules).toEqual({});
+            expect(editedSyncRule.metadataIds).toEqual(["newId1", "newId2"]);
         });
     });
 

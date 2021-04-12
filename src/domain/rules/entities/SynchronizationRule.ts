@@ -328,13 +328,7 @@ export class SynchronizationRule {
     }
 
     public updateMetadataIds(metadataIds: string[]): SynchronizationRule {
-        const data = _(_.cloneDeep(this.syncRule))
-            .set(["builder", "metadataIds"], metadataIds)
-            .set(["builder", "syncParams", "useDefaultIncludeExclude"], true)
-            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], {})
-            .value();
-
-        return SynchronizationRule.build(data);
+        return this.updateBuilder({ metadataIds })
     }
 
     public updateFilterRules(filterRules: FilterRule[]): SynchronizationRule {
