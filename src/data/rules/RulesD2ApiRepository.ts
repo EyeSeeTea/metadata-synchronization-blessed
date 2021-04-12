@@ -25,9 +25,9 @@ export class RulesD2ApiRepository implements RulesRepository {
         const user = await this.userRepository.getCurrent();
 
         const items = await promiseMap(files, async file => {
-            const objects = await this.fileDataRepository.readObjectsInFile(file);
-            return objects.map(item =>
-                decodeModel(SynchronizationRuleModel, item)
+            const objects = await this.fileDataRepository.readObjectsInFile(file, file.name);
+            return objects.map(({ name, value }) =>
+                decodeModel(SynchronizationRuleModel, value)
                     .map(data =>
                         SynchronizationRule.build(data).update({
                             created: new Date(),
@@ -36,7 +36,7 @@ export class RulesD2ApiRepository implements RulesRepository {
                             lastExecutedBy: user,
                         })
                     )
-                    .mapError(error => `${file.name}: ${error}`)
+                    .mapError(error => `${name}: ${error}`)
             );
         });
 

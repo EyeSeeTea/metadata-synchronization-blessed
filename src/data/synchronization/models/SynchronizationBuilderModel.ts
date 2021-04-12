@@ -5,7 +5,7 @@ import { FilterRuleModel } from "../../metadata/models/FilterRuleModel";
 import { MetadataSynchronizationParamsModel } from "../../metadata/models/MetadataSynchronizationParamsModel";
 
 export const SynchronizationBuilderModel: Codec<SynchronizationBuilder> = Schema.object({
-    originInstance: Schema.string,
+    originInstance: Schema.optionalSafe(Schema.string, "LOCAL"),
     targetInstances: Schema.optionalSafe(Schema.array(Schema.string), []),
     metadataIds: Schema.optionalSafe(Schema.array(Schema.string), []),
     excludedIds: Schema.optionalSafe(Schema.array(Schema.string), []),
