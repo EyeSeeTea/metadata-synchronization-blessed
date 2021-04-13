@@ -66,8 +66,6 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                         .filter(({ type }) => type === "dataElementGroup")
                         .map(({ id }) => id);
 
-                    console.log({ dataSet, dataElementGroup, orgUnit });
-
                     return this.api.dataValues
                         .getSet({
                             dataElementIdScheme: "UID",
