@@ -206,6 +206,7 @@ describe("Sync metadata", () => {
             targetInstances: ["DESTINATION"],
             metadataIds: ["dataSet1"],
             excludedIds: [],
+            dataParams: { orgUnitPaths: ["/Global"] },
         };
 
         const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
@@ -235,6 +236,7 @@ describe("Sync metadata", () => {
             targetInstances: ["LOCAL"],
             metadataIds: ["dataSet1"],
             excludedIds: [],
+            dataParams: { orgUnitPaths: ["/Global"] },
         };
 
         const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
