@@ -206,7 +206,7 @@ export abstract class GenericMappingUseCase {
             candidateWithSameName,
         ]).filter(({ id }) => filter?.includes(id) ?? true);
 
-        const matches = _.compact([...filteredCandidates, candidateWithExportCoC]);
+        const matches = _.compact([candidateWithExportCoC, ...filteredCandidates]);
 
         const candidates = _(matches)
             .concat(

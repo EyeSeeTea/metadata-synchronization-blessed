@@ -38,8 +38,15 @@ export class StorageConstantClient extends StorageClient {
 
         // Special scenario, clean history entries
         if (key.startsWith("history")) {
-            const constants = await this.lookupConstants();
-            const toDelete = _(constants)
+            const { objects } = await this.api.models.constants
+                .get({
+                    paging: false,
+                    fields: { id: true, code: true, name: true },
+                    filter: { code: { $like: CONSTANT_PREFIX } },
+                })
+                .getData();
+
+            const toDelete = _(objects)
                 .filter(({ code }) => cleanCode(code).startsWith("history"))
                 .orderBy(["lastUpdated"], ["desc"])
                 .slice(70)
@@ -66,7 +73,7 @@ export class StorageConstantClient extends StorageClient {
             const { objects } = await this.api.models.constants
                 .get({
                     paging: false,
-                    fields: { id: true, code: true, name: true, description: true },
+                    fields: { id: true, code: true, name: true },
                     filter: { code: { $like: CONSTANT_PREFIX } },
                 })
                 .getData();
@@ -80,10 +87,17 @@ export class StorageConstantClient extends StorageClient {
     }
 
     public async clone(): Promise<Dictionary<unknown>> {
-        const constants = await this.lookupConstants();
+        const { objects } = await this.api.models.constants
+            .get({
+                paging: false,
+                fields: apiFields,
+                filter: { code: { $like: CONSTANT_PREFIX } },
+            })
+            .getData();
 
         // Remove constant prefix key
-        return _(constants)
+        return _(objects)
+            .map(constant => this.formatConstant(constant))
             .map(({ code, description }) => [cleanCode(code), JSON.parse(description)])
             .fromPairs()
             .value();
@@ -98,9 +112,15 @@ export class StorageConstantClient extends StorageClient {
     }
 
     public async listKeys(): Promise<string[]> {
-        const constants = await this.lookupConstants();
+        const { objects } = await this.api.models.constants
+            .get({
+                paging: false,
+                fields: { code: true },
+                filter: { code: { $like: CONSTANT_PREFIX } },
+            })
+            .getData();
 
-        return _(constants)
+        return _(objects)
             .map(({ code }) => code.replace(new RegExp(`^${CONSTANT_PREFIX}`, ""), ""))
             .value();
     }
@@ -162,18 +182,6 @@ export class StorageConstantClient extends StorageClient {
             console.error(error);
             return this.formatConstant({ id, description, ...rest });
         }
-    }
-
-    private async lookupConstants(): Promise<Constant[]> {
-        const { objects } = await this.api.models.constants
-            .get({
-                paging: false,
-                fields: apiFields,
-                filter: { code: { $like: CONSTANT_PREFIX } },
-            })
-            .getData();
-
-        return objects.map(constant => this.formatConstant(constant));
     }
 
     private formatConstant(item: SelectedPick<D2ConstantSchema, typeof apiFields>): Constant {

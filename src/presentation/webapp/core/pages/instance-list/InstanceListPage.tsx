@@ -93,7 +93,7 @@ const InstanceListPage = () => {
 
     const testConnection = async (ids: string[]) => {
         const result = await compositionRoot.instances.getById(ids[0]);
-        result.match({
+        await result.match({
             success: async instance => {
                 const validation = await compositionRoot.instances.validate(instance);
                 validation.match({
@@ -105,7 +105,7 @@ const InstanceListPage = () => {
                     },
                 });
             },
-            error: () => {
+            error: async () => {
                 snackbar.error(i18n.t("Instance not found"));
             },
         });
@@ -113,7 +113,7 @@ const InstanceListPage = () => {
 
     const runAnalytics = async (ids: string[]) => {
         const result = await compositionRoot.instances.getById(ids[0]);
-        result.match({
+        await result.match({
             success: async instance => {
                 for await (const message of executeAnalytics(instance)) {
                     loading.show(true, message);
@@ -122,7 +122,7 @@ const InstanceListPage = () => {
                 snackbar.info(i18n.t("Analytics execution finished on {{name}}", instance));
                 loading.reset();
             },
-            error: () => {
+            error: async () => {
                 snackbar.error(i18n.t("Instance not found"));
             },
         });

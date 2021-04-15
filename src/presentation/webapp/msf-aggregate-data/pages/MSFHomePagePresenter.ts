@@ -398,8 +398,8 @@ async function deletePreviousDataValues(
     for (const instanceId of targetInstances) {
         const instanceResult = await compositionRoot.instances.getById(instanceId);
 
-        instanceResult.match({
-            error: () =>
+        await instanceResult.match({
+            error: async () =>
                 addEventToProgress(
                     i18n.t(`Error retrieving instance {{name}} to delete previous data values`, {
                         name: instanceId,
