@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-03-26T07:44:52.063Z\n"
-"PO-Revision-Date: 2021-03-26T07:44:52.063Z\n"
+"POT-Creation-Date: 2021-04-15T15:39:53.662Z\n"
+"PO-Revision-Date: 2021-04-15T15:39:53.662Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1902,6 +1902,9 @@ msgid "MSF Validation"
 msgstr ""
 
 msgid "Do you want to proceed?"
+msgstr ""
+
+msgid "Syncing process will stop if you leave the application"
 msgstr ""
 
 msgid "Retrieving information from the system..."

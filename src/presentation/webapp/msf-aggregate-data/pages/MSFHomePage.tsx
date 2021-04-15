@@ -125,6 +125,10 @@ export const MSFHomePage: React.FC = () => {
         messageList.current.scrollTop = messageList.current.scrollHeight;
     }, [syncProgress, messageList]);
 
+    useEffect(() => {
+        window.onbeforeunload = running ? () => true : null;
+    }, [running]);
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Aggregate Data For HMIS")} />

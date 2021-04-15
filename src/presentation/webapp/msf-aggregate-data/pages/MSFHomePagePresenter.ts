@@ -35,6 +35,10 @@ export async function executeAggregateData(
         onAddProgressMessage(event);
     };
 
+    addEventToProgress(
+        _.toUpper(i18n.t(`Syncing process will stop if you leave the application`))
+    );
+
     addEventToProgress(i18n.t(`Retrieving information from the system...`));
 
     const syncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
