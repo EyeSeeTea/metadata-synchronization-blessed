@@ -1,4 +1,4 @@
-import { useSnackbar } from "d2-ui-components";
+import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { DataSource } from "../../../../../../domain/instance/entities/DataSource";

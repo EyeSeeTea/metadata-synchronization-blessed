@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
-import { D2SchemaProperties } from "d2-api/schemas";
-import { MultiSelector, withSnackbar } from "d2-ui-components";
+import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
+import { MultiSelector, useSnackbar, withSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import {
@@ -31,6 +31,7 @@ const useStyles = makeStyles({
 const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
     const { d2, api } = useAppContext();
+    const snackbar = useSnackbar();
 
     const [modelSelectItems, setModelSelectItems] = useState<DropdownOption[]>([]);
     const [models, setModels] = useState<typeof D2Model[]>([]);
@@ -38,25 +39,34 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     const { compositionRoot } = useAppContext();
 
     useEffect(() => {
-        compositionRoot.metadata
-            .getByIds(syncRule.metadataIds, "id,name, type") //type is required to transform visualizations to charts and report tables
-            .then((metadata: MetadataPackage<MetadataEntity>) => {
-                const models = _.keys(metadata).map((type: string) => modelFactory(type));
+        compositionRoot.instances.getById(syncRule.originInstance).then(result => {
+            result.match({
+                error: () => snackbar.error(i18n.t("Invalid origin instance")),
+                success: instance => {
+                    compositionRoot.metadata
+                        .getByIds(syncRule.metadataIds, instance, "id,name,type") //type is required to transform visualizations to charts and report tables
+                        .then((metadata: MetadataPackage<MetadataEntity>) => {
+                            const models = _.keys(metadata).map((type: string) =>
+                                modelFactory(type)
+                            );
 
-                const options = models
-                    .map((model: typeof D2Model) => {
-                        const apiModel = api.models[model.getCollectionName()];
-                        return apiModel.schema;
-                    })
-                    .map((schema: D2SchemaProperties) => ({
-                        name: schema.displayName,
-                        id: schema.name,
-                    }));
+                            const options = models
+                                .map((model: typeof D2Model) => {
+                                    const apiModel = api.models[model.getCollectionName()];
+                                    return apiModel.schema;
+                                })
+                                .map((schema: D2SchemaProperties) => ({
+                                    name: schema.displayName,
+                                    id: schema.name,
+                                }));
 
-                setModels(models);
-                setModelSelectItems(options);
+                            setModels(models);
+                            setModelSelectItems(options);
+                        });
+                },
             });
-    }, [compositionRoot.metadata, api, syncRule]);
+        });
+    }, [compositionRoot, api, syncRule, snackbar]);
 
     const { includeRules = [], excludeRules = [] } =
         syncRule.metadataIncludeExcludeRules[selectedType] || {};

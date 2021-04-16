@@ -2086,6 +2086,7 @@ export type Program = {
     version: number;
     withoutRegistration: boolean;
     workflow: Ref;
+    programRules?: Ref[];
 };
 
 export type EventChart = {

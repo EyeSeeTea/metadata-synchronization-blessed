@@ -1,5 +1,5 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -250,8 +250,8 @@ export const MSFHomePage: React.FC = () => {
                         {msfValidationErrors.map((error, index) => {
                             return (
                                 <li key={`err-${index}`}>
-                                    {error.split("\n").map(message => (
-                                        <Typography>{message}</Typography>
+                                    {error.split("\n").map((message, index) => (
+                                        <Typography key={index}>{message}</Typography>
                                     ))}
                                 </li>
                             );

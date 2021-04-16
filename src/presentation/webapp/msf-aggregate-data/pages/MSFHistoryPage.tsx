@@ -1,6 +1,6 @@
-import i18n from "d2-ui-components/locales";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import i18n from "../../../../locales";
 import { HistoryTable } from "../../../react/core/components/history-table/HistoryTable";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
 

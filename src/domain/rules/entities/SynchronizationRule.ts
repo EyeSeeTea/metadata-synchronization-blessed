@@ -4,31 +4,28 @@ import _ from "lodash";
 import moment from "moment";
 import { D2Model } from "../../../models/dhis/default";
 import {
-    ExcludeIncludeRules,
-    MetadataIncludeExcludeRules,
-    MetadataSynchronizationParams,
-} from "../../../types/synchronization";
-import {
-    defaultSynchronizationBuilder,
-    SynchronizationBuilder,
-} from "../../synchronization/entities/SynchronizationBuilder";
-import {
     extractChildrenFromRules,
     extractParentsFromRule,
 } from "../../../utils/metadataIncludeExclude";
 import { OldValidation } from "../../../utils/old-validations";
+import { UserInfo } from "../../../utils/permissions";
 import isValidCronExpression from "../../../utils/validCronExpression";
-import {
-    DataSyncAggregation,
-    DataSynchronizationParams,
-    DataSyncPeriod,
-} from "../../aggregated/types";
-import { SharedRef } from "../../common/entities/Ref";
+import { DataSyncAggregation } from "../../aggregated/entities/DataSyncAggregation";
+import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
+import { DataSyncPeriod } from "../../aggregated/entities/DataSyncPeriod";
+import { NamedRef, SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
+import {
+    ExcludeIncludeRules,
+    MetadataIncludeExcludeRules,
+} from "../../metadata/entities/MetadataExcludeIncludeRules";
+import { MetadataSynchronizationParams } from "../../metadata/entities/MetadataSynchronizationParams";
+import {
+    defaultSynchronizationBuilder,
+    SynchronizationBuilder,
+} from "../../synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
-import { NamedRef } from "../../common/entities/Ref";
-import { UserInfo } from "../../../utils/permissions";
 
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;
@@ -53,6 +50,7 @@ export class SynchronizationRule {
             "userAccesses",
             "userGroupAccesses",
             "type",
+            "ondemand",
         ]);
 
         if (!this.syncRule.id) this.syncRule.id = generateUid();
@@ -140,8 +138,16 @@ export class SynchronizationRule {
         return this.syncRule.builder?.dataParams?.events ?? [];
     }
 
+    public get dataSyncTeis(): string[] {
+        return this.syncRule.builder?.dataParams?.teis ?? [];
+    }
+
     public get dataSyncAllEvents(): boolean {
         return this.syncRule.builder?.dataParams?.allEvents ?? true;
+    }
+
+    public get excludeTeiRelationships(): boolean {
+        return this.syncRule.builder?.dataParams?.excludeTeiRelationships ?? false;
     }
 
     public get dataSyncEnableAggregation(): boolean | undefined {
@@ -224,6 +230,8 @@ export class SynchronizationRule {
             enableMapping: false,
             includeSharingSettings: true,
             removeOrgUnitReferences: false,
+            removeUserObjects: false,
+            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             ...params,
         };
@@ -231,6 +239,10 @@ export class SynchronizationRule {
 
     public get dataParams(): DataSynchronizationParams {
         return this.syncRule.builder?.dataParams ?? {};
+    }
+
+    public get ondemand(): boolean {
+        return this.syncRule.ondemand ?? false;
     }
 
     public static create(type: SynchronizationType = "metadata"): SynchronizationRule {
@@ -264,11 +276,26 @@ export class SynchronizationRule {
     }
 
     public static createOnDemand(type: SynchronizationType = "metadata"): SynchronizationRule {
-        return SynchronizationRule.create(type).updateName("__MANUAL__");
+        return SynchronizationRule.create(type).updateName("__MANUAL__").updateOndemand(true);
     }
 
     public static build(syncRule: SynchronizationRuleData | undefined): SynchronizationRule {
-        return syncRule ? new SynchronizationRule(syncRule) : this.create();
+        if (syncRule) {
+            return syncRule.builder?.dataParams?.period === "SINCE_LAST_EXECUTED_DATE"
+                ? new SynchronizationRule({
+                      ...syncRule,
+                      builder: {
+                          ...syncRule.builder,
+                          dataParams: {
+                              ...syncRule.builder.dataParams,
+                              startDate: syncRule.lastExecuted ?? new Date(),
+                          },
+                      },
+                  })
+                : new SynchronizationRule(syncRule);
+        } else {
+            return this.create();
+        }
     }
 
     public toBuilder(): SynchronizationBuilder {
@@ -301,17 +328,15 @@ export class SynchronizationRule {
     }
 
     public updateMetadataIds(metadataIds: string[]): SynchronizationRule {
-        const data = _(_.cloneDeep(this.syncRule))
-            .set(["builder", "metadataIds"], metadataIds)
-            .set(["builder", "syncParams", "useDefaultIncludeExclude"], true)
-            .set(["builder", "syncParams", "metadataIncludeExcludeRules"], {})
-            .value();
-
-        return SynchronizationRule.build(data);
+        return this.updateBuilder({ metadataIds });
     }
 
     public updateFilterRules(filterRules: FilterRule[]): SynchronizationRule {
         return this.updateBuilder({ filterRules });
+    }
+
+    public updateOndemand(ondemand: boolean): SynchronizationRule {
+        return this.update({ ondemand });
     }
 
     public markToUseDefaultIncludeExclude(): SynchronizationRule {
@@ -493,8 +518,16 @@ export class SynchronizationRule {
         return this.updateBuilderDataParams({ events });
     }
 
+    public updateDataSyncTEIs(teis?: string[]): SynchronizationRule {
+        return this.updateBuilderDataParams({ teis });
+    }
+
     public updateDataSyncAllEvents(allEvents?: boolean): SynchronizationRule {
         return this.updateBuilderDataParams({ allEvents });
+    }
+
+    public updateExcludeTeiRelationships(excludeTeiRelationships?: boolean): SynchronizationRule {
+        return this.updateBuilderDataParams({ excludeTeiRelationships });
     }
 
     public updateDataSyncEnableAggregation(enableAggregation?: boolean): SynchronizationRule {
@@ -530,7 +563,14 @@ export class SynchronizationRule {
     }
 
     public updateSyncParams(syncParams: MetadataSynchronizationParams): SynchronizationRule {
-        return this.updateBuilder({ syncParams });
+        return this.updateBuilder({
+            syncParams: {
+                ...syncParams,
+                removeOrgUnitObjects: syncParams.removeOrgUnitReferences
+                    ? true
+                    : syncParams.removeOrgUnitObjects,
+            },
+        });
     }
 
     public updateDataParams(dataParams: DataSynchronizationParams): SynchronizationRule {
@@ -643,13 +683,14 @@ export class SynchronizationRule {
                       }
                     : null,
             ]),
-            dataSyncEvents: _.compact([
+            dataSyncEventsOrTeis: _.compact([
                 this.type === "events" &&
                 !this.dataSyncAllEvents &&
-                this.dataSyncEvents.length === 0
+                this.dataSyncEvents.length === 0 &&
+                this.dataSyncTeis.length === 0
                     ? {
                           key: "cannot_be_empty",
-                          namespace: { element: "event" },
+                          namespace: { element: "event or TEI" },
                       }
                     : null,
             ]),
@@ -709,4 +750,5 @@ export interface SynchronizationRuleData extends SharedRef {
     lastExecutedBy?: NamedRef;
     frequency?: string;
     type: SynchronizationType;
+    ondemand?: boolean;
 }

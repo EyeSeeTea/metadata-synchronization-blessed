@@ -1,9 +1,9 @@
-import { D2SchemaProperties } from "d2-api/schemas";
+import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
 import { isValidUid } from "d2/uid";
 import _ from "lodash";
 import { D2Api } from "../../types/d2-api";
-import { NestedRules } from "../../types/synchronization";
 import { MetadataEntities } from "./entities/MetadataEntities";
+import { NestedRules } from "./entities/MetadataExcludeIncludeRules";
 
 const blacklistedProperties = ["access"];
 const userProperties = ["user", "userAccesses", "userGroupAccesses"];
@@ -74,7 +74,7 @@ export function getAllReferences(
             result = _.deepMerge(result, recursive);
         } else if (isValidUid(value)) {
             const metadataType = _(parents)
-                .map(k => cleanToModelName(api, k, type))
+                .map(parent => cleanToModelName(api, parent, type))
                 .compact()
                 .first();
             if (metadataType) {
@@ -126,6 +126,17 @@ export function cleanToModelName(api: D2Api, id: string, caller?: string): strin
         return "dataElements";
     } else if (id === "programStageDataElements") {
         return "dataElements";
+    } else if (id === "dataElementDimensions") {
+        return "dataElements";
+    } else if (
+        [
+            "organisationUnitGroupSetDimensions",
+            "categoryOptionGroupSetDimensions",
+            "dataElementGroupSetDimensions",
+        ].includes(id)
+    ) {
+        // GroupSet dimensions are not metadata models but include nested types
+        return null;
     } else if (id === "trackedEntityTypeAttributes") {
         return "trackedEntityAttributes";
     } else if (id === "attributeValues") {

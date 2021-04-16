@@ -1,7 +1,7 @@
 import { Provider } from "@dhis2/app-runtime";
 import i18n from "@dhis2/d2-i18n";
 import axios from "axios";
-import { D2Api } from "d2-api/2.30";
+import { D2Api } from "@eyeseetea/d2-api/2.30";
 import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";

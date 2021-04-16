@@ -1,6 +1,6 @@
-import { DataSynchronizationParams } from "../../aggregated/types";
+import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
 import { FilterRule } from "../../metadata/entities/FilterRule";
-import { MetadataSynchronizationParams } from "../../../types/synchronization";
+import { MetadataSynchronizationParams } from "../../metadata/entities/MetadataSynchronizationParams";
 
 export interface SynchronizationBuilder {
     originInstance: string;
@@ -14,6 +14,7 @@ export interface SynchronizationBuilder {
     dataParams?: DataSynchronizationParams;
 }
 
+// TODO: When migration to fully defined schemas, this should be removed and use Schema.decode instead
 export const defaultSynchronizationBuilder: SynchronizationBuilder = {
     originInstance: "LOCAL",
     targetInstances: [],
@@ -26,7 +27,7 @@ export const defaultSynchronizationBuilder: SynchronizationBuilder = {
         allAttributeCategoryOptions: true,
         dryRun: false,
         allEvents: true,
-        enableAggregation: undefined,
+        enableAggregation: false,
         aggregationType: undefined,
     },
     syncParams: {

@@ -1,8 +1,7 @@
-import { Id } from "./Schemas";
 import { SharingSetting } from "./SharingSetting";
 
 export interface Ref {
-    id: Id;
+    id: string;
 }
 
 export interface NamedRef extends Ref {

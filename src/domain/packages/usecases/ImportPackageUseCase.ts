@@ -1,23 +1,17 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { debug } from "../../../utils/debug";
 import { UseCase } from "../../common/entities/UseCase";
-import { Repositories, RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
 import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
-import {
-    MetadataRepository,
-    MetadataRepositoryConstructor,
-} from "../../metadata/repositories/MetadataRepository";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { StorageClient } from "../../storage/repositories/StorageClient";
-
-import { TransformationRepositoryConstructor } from "../../transformations/repositories/TransformationRepository";
 import { User } from "../../user/entities/User";
 import { UserRepository } from "../../user/repositories/UserRepository";
 import { BasePackage, Package } from "../entities/Package";
@@ -156,22 +150,6 @@ export class ImportPackageUseCase implements UseCase {
             const ids: string[] = items ? items.map(item => item.id) : [];
             return [...acc, ...ids];
         }, []);
-    }
-
-    protected getMetadataRepository(
-        remoteInstance: DataSource = this.localInstance
-    ): MetadataRepository {
-        const transformationRepository = this.repositoryFactory.get<
-            TransformationRepositoryConstructor
-        >(Repositories.TransformationRepository, []);
-
-        const tag = remoteInstance.type === "json" ? "json" : undefined;
-
-        return this.repositoryFactory.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [remoteInstance, transformationRepository],
-            tag
-        );
     }
 
     private async getStorageClient(): Promise<StorageClient> {

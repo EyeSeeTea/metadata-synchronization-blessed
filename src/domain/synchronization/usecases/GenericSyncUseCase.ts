@@ -8,9 +8,8 @@ import { promiseMap } from "../../../utils/common";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { Repositories, RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
-import { FileRepositoryConstructor } from "../../file/FileRepository";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
@@ -88,11 +87,9 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getFileRepository(remoteInstance?: Instance) {
+    protected async getInstanceFileRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<FileRepositoryConstructor>(Repositories.FileRepository, [
-            remoteInstance ?? defaultInstance,
-        ]);
+        return this.repositoryFactory.instanceFileRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
@@ -108,7 +105,13 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getOriginInstance(): Promise<Instance> {
+    protected async getTeisRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.teisRepository(remoteInstance ?? defaultInstance);
+    }
+
+    @cache()
+    public async getOriginInstance(): Promise<Instance> {
         const { originInstance: originInstanceId } = this.builder;
         const instance = await this.getInstanceById(originInstanceId);
         if (!instance) throw new Error("Unable to read origin instance");
@@ -116,7 +119,7 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
+    public async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
         const { originInstance: originInstanceId } = this.builder;
 
         // If sync is LOCAL -> REMOTE, use the destination instance mapping
@@ -227,7 +230,7 @@ export abstract class GenericSyncUseCase {
         yield { syncReport };
         for (const instance of targetInstances) {
             yield {
-                message: i18n.t("Start import in instance {{instance}}", {
+                message: i18n.t("Importing in instance {{instance}}", {
                     instance: instance.name,
                     interpolation: { escapeValue: false },
                 }),
@@ -268,7 +271,9 @@ export abstract class GenericSyncUseCase {
                     id: currentUser.id,
                     name: currentUser.userCredentials.name,
                 });
-                await this.repositoryFactory.rulesRepository(this.localInstance).save(updatedRule);
+                await this.repositoryFactory
+                    .rulesRepository(this.localInstance)
+                    .save([updatedRule]);
             }
         }
 
