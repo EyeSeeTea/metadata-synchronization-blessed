@@ -36,7 +36,7 @@ export async function executeAggregateData(
     };
 
     addEventToProgress(
-        _.toUpper(i18n.t(`Syncing process will stop if you leave the application`))
+        _.toUpper(i18n.t(`Syncing process will stop if you leave the current page`))
     );
 
     addEventToProgress(i18n.t(`Retrieving information from the system...`));
