@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { Either } from "../../domain/common/entities/Either";
+import { ShareableEntity } from "../../domain/common/entities/ShareableEntity";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
 import { InstanceMessage } from "../../domain/instance/entities/Message";
@@ -9,6 +10,7 @@ import {
 } from "../../domain/instance/repositories/InstanceRepository";
 import { OrganisationUnit } from "../../domain/metadata/entities/MetadataEntities";
 import { ObjectSharing, StorageClient } from "../../domain/storage/repositories/StorageClient";
+import { UserRepository } from "../../domain/user/repositories/UserRepository";
 import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
@@ -22,6 +24,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     constructor(
         private configRepository: ConfigRepository,
+        private userRepository: UserRepository,
         private instance: Instance,
         private encryptionKey: string
     ) {
@@ -30,6 +33,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     async getAll({ search, ids }: InstancesFilter): Promise<Instance[]> {
         const storageClient = await this.getStorageClient();
+        const currentUser = await this.userRepository.getCurrent();
 
         const objects = await storageClient.listObjectsInCollection<InstanceData>(
             Namespace.INSTANCES
@@ -74,7 +78,9 @@ export class InstanceD2ApiRepository implements InstanceRepository {
             });
         });
 
-        return _.compact(instances);
+        return _.compact(instances).filter(instance =>
+            new ShareableEntity(instance).hasPermissions("read", currentUser)
+        );
     }
 
     async getById(id: string): Promise<Instance | undefined> {
