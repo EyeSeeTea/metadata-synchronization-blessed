@@ -78,11 +78,6 @@ export class PrepareSyncUseCase implements UseCase {
             .userRepository(this.localInstance)
             .getCurrent();
 
-        console.log(
-            instances,
-            _.every(instances, instance => instance.hasPermissions("read", currentUser))
-        );
-
         return _.every(instances, instance => instance.hasPermissions("read", currentUser));
     }
 

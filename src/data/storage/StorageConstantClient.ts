@@ -75,7 +75,7 @@ export class StorageConstantClient extends StorageClient {
                 .post({ constants: objects }, { importStrategy: "DELETE" })
                 .getData();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
