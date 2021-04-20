@@ -1,12 +1,14 @@
 import { D2Api } from "../../../types/d2-api";
 import { ConfigRepository } from "../../config/repositories/ConfigRepository";
 import { OrganisationUnit } from "../../metadata/entities/MetadataEntities";
+import { UserRepository } from "../../user/repositories/UserRepository";
 import { Instance } from "../entities/Instance";
 import { InstanceMessage } from "../entities/Message";
 
 export interface InstanceRepositoryConstructor {
     new (
         configRepository: ConfigRepository,
+        userRepository: UserRepository,
         instance: Instance,
         encryptionKey: string
     ): InstanceRepository;

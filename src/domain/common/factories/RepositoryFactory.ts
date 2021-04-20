@@ -82,8 +82,11 @@ export class RepositoryFactory {
     @cache()
     public instanceRepository(instance: Instance) {
         const config = this.configRepository(instance);
+        const user = this.userRepository(instance);
+
         return this.get<InstanceRepositoryConstructor>(Repositories.InstanceRepository, [
             config,
+            user,
             instance,
             this.encryptionKey,
         ]);
