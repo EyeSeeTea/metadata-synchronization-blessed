@@ -152,7 +152,7 @@ export async function executeMetadataSync(
         excludedIds: [],
     };
 
-    const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+    const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
 
     let done = false;
     for await (const sync of useCase.execute()) {
