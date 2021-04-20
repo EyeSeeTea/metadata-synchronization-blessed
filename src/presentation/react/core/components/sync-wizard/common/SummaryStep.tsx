@@ -4,7 +4,6 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Instance } from "../../../../../../domain/instance/entities/Instance";
 import { filterRuleToString } from "../../../../../../domain/metadata/entities/FilterRule";
 import {
     MetadataEntities,
@@ -162,8 +161,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
     const snackbar = useSnackbar();
 
     const [metadata, updateMetadata] = useState<MetadataPackage<MetadataEntity>>({});
-    const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
-    const instanceOptions = buildInstanceOptions(targetInstances);
+    const [instanceOptions, setInstanceOptions] = useState<{ value: string; text: string }[]>([]);
 
     const aggregationItems = useMemo(buildAggregationItems, []);
 
@@ -200,7 +198,11 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
             });
         });
 
-        compositionRoot.instances.list().then(setTargetInstances);
+        compositionRoot.instances.list().then(instances => {
+            compositionRoot.user
+                .current()
+                .then(user => setInstanceOptions(buildInstanceOptions(instances, user)));
+        });
     }, [compositionRoot, syncRule, snackbar]);
 
     return (

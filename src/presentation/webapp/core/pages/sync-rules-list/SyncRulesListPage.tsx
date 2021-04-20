@@ -381,6 +381,13 @@ export const SyncRulesListPage: React.FC = () => {
                         case "INSTANCE_NOT_FOUND":
                             snackbar.warning(i18n.t("Couldn't connect with instance"));
                             break;
+                        case "NOT_AUTHORIZED":
+                            snackbar.error(
+                                i18n.t(
+                                    "You do not have the authority to one or multiple target instances of the sync rule"
+                                )
+                            );
+                            break;
                         default:
                             snackbar.error(i18n.t("Unknown synchronization error"));
                     }
@@ -392,15 +399,8 @@ export const SyncRulesListPage: React.FC = () => {
             loading.reset();
         } catch (error) {
             loading.reset();
-            if (error.response?.status === 403) {
-                snackbar.error(
-                    i18n.t(
-                        "You do not have the authority to one or multiple target instances of the sync rule"
-                    )
-                );
-            } else {
-                snackbar.error(i18n.t("An error has ocurred during the synchronization"));
-            }
+            console.error(error);
+            snackbar.error(i18n.t("An error has ocurred during the synchronization"));
         }
     };
 

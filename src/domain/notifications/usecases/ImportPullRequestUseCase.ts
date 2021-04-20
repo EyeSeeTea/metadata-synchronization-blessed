@@ -3,7 +3,7 @@ import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Instance, InstanceData } from "../../instance/entities/Instance";
+import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { AppNotification } from "../entities/Notification";
@@ -22,11 +22,7 @@ export type ImportPullRequestError =
     | "NOT_APPROVED";
 
 export class ImportPullRequestUseCase implements UseCase {
-    constructor(
-        private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance,
-        private encryptionKey: string
-    ) {}
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
         notificationId: string
@@ -90,22 +86,7 @@ export class ImportPullRequestUseCase implements UseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
-
-        const objects = await storageClient.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
-        );
-
-        const data = objects.find(data => data.id === id);
-        if (!data) return undefined;
-
-        return Instance.build({
-            ...data,
-            url: data.type === "local" ? this.localInstance.url : data.url,
-            version: data.type === "local" ? this.localInstance.version : data.version,
-        }).decryptPassword(this.encryptionKey);
+        return this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
     }
 
     private async getNotification(

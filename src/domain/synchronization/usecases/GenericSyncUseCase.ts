@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
 import { D2Api } from "../../../types/d2-api";
 import { executeAnalytics } from "../../../utils/analytics";
@@ -10,7 +9,7 @@ import { debug } from "../../../utils/debug";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
-import { Instance, InstanceData } from "../../instance/entities/Instance";
+import { Instance } from "../../instance/entities/Instance";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
@@ -42,8 +41,7 @@ export abstract class GenericSyncUseCase {
     constructor(
         protected readonly builder: SynchronizationBuilder,
         protected readonly repositoryFactory: RepositoryFactory,
-        protected readonly localInstance: Instance,
-        protected readonly encryptionKey: string
+        protected readonly localInstance: Instance
     ) {
         this.api = getD2APiFromInstance(localInstance);
     }
@@ -170,22 +168,8 @@ export abstract class GenericSyncUseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
-
-        const data = await storageClient.getObjectInCollection<InstanceData>(
-            Namespace.INSTANCES,
-            id
-        );
-
-        if (!data) return undefined;
-
-        const instance = Instance.build({
-            ...data,
-            url: data.type === "local" ? this.localInstance.url : data.url,
-            version: data.type === "local" ? this.localInstance.version : data.version,
-        }).decryptPassword(this.encryptionKey);
+        const instance = await this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
+        if (!instance) return undefined;
 
         try {
             const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
