@@ -1,26 +1,31 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
+import { promiseMap } from "../../../utils/common";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Instance, InstanceData } from "../../instance/entities/Instance";
+import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
-export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND";
+export type PrepareSyncError =
+    | "PULL_REQUEST"
+    | "PULL_REQUEST_RESPONSIBLE"
+    | "INSTANCE_NOT_FOUND"
+    | "NOT_AUTHORIZED";
 
 export class PrepareSyncUseCase implements UseCase {
-    constructor(
-        private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance,
-        private encryptionKey: string
-    ) {}
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
         type: SynchronizationType,
-        { originInstance, metadataIds }: SynchronizationBuilder
+        { originInstance, metadataIds, targetInstances }: SynchronizationBuilder
     ): Promise<Either<PrepareSyncError, void>> {
+        // If user does not have read permissions to all targetInstances return error
+        const hasPermissions = await this.userHasPermissionsToExecute(targetInstances);
+        if (!hasPermissions) return Either.error("NOT_AUTHORIZED");
+
         // If sync is not a metadata pull, allow sync
         if (originInstance === "LOCAL" || type !== "metadata") return Either.success(undefined);
 
@@ -66,6 +71,16 @@ export class PrepareSyncUseCase implements UseCase {
         return this.repositoryFactory.userRepository(this.localInstance).getCurrent();
     }
 
+    private async userHasPermissionsToExecute(targetInstances: string[]): Promise<boolean> {
+        const result = await promiseMap(targetInstances, id => this.getInstanceById(id));
+        const instances = _.compact(result.map(either => either.value.data));
+        const currentUser = await this.repositoryFactory
+            .userRepository(this.localInstance)
+            .getCurrent();
+
+        return _.every(instances, instance => instance.hasPermissions("read", currentUser));
+    }
+
     private async getResponsiblesForInstance(
         instanceId: string
     ): Promise<Either<"INSTANCE_NOT_FOUND", MetadataResponsible[]>> {
@@ -84,24 +99,10 @@ export class PrepareSyncUseCase implements UseCase {
     }
 
     private async getInstanceById(id: string): Promise<Either<"INSTANCE_NOT_FOUND", Instance>> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+        const instance = await this.repositoryFactory
+            .instanceRepository(this.localInstance)
+            .getById(id);
 
-        const objects = await storageClient.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
-        );
-
-        const data = objects.find(data => data.id === id);
-        if (!data) return Either.error("INSTANCE_NOT_FOUND");
-
-        const instance = Instance.build({
-            ...data,
-            url: data.type === "local" ? this.localInstance.url : data.url,
-            version: data.type === "local" ? this.localInstance.version : data.version,
-        }).decryptPassword(this.encryptionKey);
-        const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
-
-        return Either.success(instance.update({ version }));
+        return instance ? Either.success(instance) : Either.error("INSTANCE_NOT_FOUND");
     }
 }
