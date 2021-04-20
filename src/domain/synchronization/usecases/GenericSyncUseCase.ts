@@ -168,7 +168,15 @@ export abstract class GenericSyncUseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        return this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
+        const instance = await this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
+        if (!instance) return undefined;
+
+        try {
+            const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
+            return instance.update({ version });
+        } catch (error) {
+            return instance;
+        }
     }
 
     public async *execute() {
