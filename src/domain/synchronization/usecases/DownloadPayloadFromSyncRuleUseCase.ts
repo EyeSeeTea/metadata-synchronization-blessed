@@ -37,8 +37,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
         private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance,
-        protected readonly encryptionKey: string
+        private localInstance: Instance
     ) {}
 
     async execute(params: DownloadPayloadParams): Promise<Either<DownloadErrors, true>> {
@@ -168,8 +167,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         const aggregatedSync = new AggregatedSyncUseCase(
             rule.builder,
             this.repositoryFactory,
-            this.localInstance,
-            this.encryptionKey
+            this.localInstance
         );
 
         const downloadItemsByAggregated =

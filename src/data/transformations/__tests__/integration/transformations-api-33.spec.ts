@@ -1,6 +1,10 @@
 import { sync } from "./helpers";
 
 describe("Transformation 2.30 -> 2.33", () => {
+    beforeAll(() => {
+        jest.setTimeout(30000);
+    });
+
     it("Transforms mapViews", async () => {
         const metadata = {
             mapViews: [

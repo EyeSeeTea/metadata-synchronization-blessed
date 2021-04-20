@@ -27,7 +27,7 @@ export const metadataTransformations: Transformation[] = [
                                     _.identity
                                 );
                             } catch (error) {
-                                console.log(
+                                console.error(
                                     "Error during coordinates conversion OU: " + rest["id"]
                                 );
                             }
@@ -59,7 +59,7 @@ export const metadataTransformations: Transformation[] = [
                                     _.identity
                                 );
                             } catch (error) {
-                                console.log(
+                                console.error(
                                     "Error during coordinates conversion OU: " + rest["id"]
                                 );
                             }

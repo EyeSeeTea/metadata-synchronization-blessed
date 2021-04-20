@@ -1,4 +1,3 @@
-import Cryptr from "cryptr";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
@@ -186,14 +185,4 @@ export class Instance extends ShareableEntity<InstanceData> {
         { property: "url", validation: "isUrl" },
         { property: "url", validation: "hasText" },
     ];
-
-    public decryptPassword(encryptionKey: string): Instance {
-        const password = this.password ? new Cryptr(encryptionKey).decrypt(this.password) : "";
-        return Instance.build({ ...this.data, password });
-    }
-
-    public encryptPassword(encryptionKey: string): Instance {
-        const password = this.password ? new Cryptr(encryptionKey).encrypt(this.password) : "";
-        return Instance.build({ ...this.data, password });
-    }
 }
