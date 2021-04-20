@@ -79,11 +79,9 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     async getById(id: string): Promise<Instance | undefined> {
         const instanceData = await this.getInstanceDataInColletion(id);
-
         if (!instanceData) return undefined;
 
         const storageClient = await this.getStorageClient();
-
         const sharing = await storageClient.getObjectSharing(
             `${Namespace.INSTANCES}-${instanceData.id}`
         );

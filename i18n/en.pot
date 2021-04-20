@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-04-20T08:32:40.454Z\n"
-"PO-Revision-Date: 2021-04-20T08:32:40.454Z\n"
+"POT-Creation-Date: 2021-04-20T10:05:20.063Z\n"
+"PO-Revision-Date: 2021-04-20T10:05:20.063Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -574,6 +574,11 @@ msgid "Create pull request"
 msgstr ""
 
 msgid "Couldn't connect with instance"
+msgstr ""
+
+msgid ""
+"You do not have the authority to one or multiple target instances of the "
+"sync rule"
 msgstr ""
 
 msgid "Unknown synchronization error"
@@ -1215,11 +1220,6 @@ msgid "Cron expression must be valid"
 msgstr ""
 
 msgid "Json files downloaded successfull"
-msgstr ""
-
-msgid ""
-"You do not have the authority to one or multiple target instances of the "
-"sync rule"
 msgstr ""
 
 msgid "An error has ocurred during the download"
