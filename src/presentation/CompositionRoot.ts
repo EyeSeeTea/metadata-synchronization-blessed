@@ -111,7 +111,7 @@ import { cache } from "../utils/cache";
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
 
-    constructor(public readonly localInstance: Instance, private encryptionKey: string) {
+    constructor(public readonly localInstance: Instance, encryptionKey: string) {
         this.repositoryFactory = new RepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
         this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
@@ -162,44 +162,20 @@ export class CompositionRoot {
         // TODO: Sync builder should be part of an execute method
         return {
             ...getExecute({
-                prepare: new PrepareSyncUseCase(
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                prepare: new PrepareSyncUseCase(this.repositoryFactory, this.localInstance),
                 createPullRequest: new CreatePullRequestUseCase(
                     this.repositoryFactory,
                     this.localInstance
                 ),
             }),
             aggregated: (builder: SynchronizationBuilder) =>
-                new AggregatedSyncUseCase(
-                    builder,
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                new AggregatedSyncUseCase(builder, this.repositoryFactory, this.localInstance),
             events: (builder: SynchronizationBuilder) =>
-                new EventsSyncUseCase(
-                    builder,
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                new EventsSyncUseCase(builder, this.repositoryFactory, this.localInstance),
             metadata: (builder: SynchronizationBuilder) =>
-                new MetadataSyncUseCase(
-                    builder,
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                new MetadataSyncUseCase(builder, this.repositoryFactory, this.localInstance),
             deleted: (builder: SynchronizationBuilder) =>
-                new DeletedMetadataSyncUseCase(
-                    builder,
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                new DeletedMetadataSyncUseCase(builder, this.repositoryFactory, this.localInstance),
         };
     }
 
@@ -287,11 +263,7 @@ export class CompositionRoot {
     @cache()
     public get notifications() {
         return getExecute({
-            list: new ListNotificationsUseCase(
-                this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
-            ),
+            list: new ListNotificationsUseCase(this.repositoryFactory, this.localInstance),
             updatePullRequestStatus: new UpdatePullRequestStatusUseCase(
                 this.repositoryFactory,
                 this.localInstance
@@ -302,13 +274,11 @@ export class CompositionRoot {
             ),
             importPullRequest: new ImportPullRequestUseCase(
                 this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
+                this.localInstance
             ),
             cancelPullRequest: new CancelPullRequestUseCase(
                 this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
+                this.localInstance
             ),
         });
     }
@@ -383,8 +353,7 @@ export class CompositionRoot {
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(
                 this,
                 this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
+                this.localInstance
             ),
         });
     }

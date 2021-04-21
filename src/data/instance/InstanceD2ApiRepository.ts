@@ -1,3 +1,4 @@
+import Cryptr from "cryptr";
 import _ from "lodash";
 import { Either } from "../../domain/common/entities/Either";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
@@ -79,11 +80,9 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     async getById(id: string): Promise<Instance | undefined> {
         const instanceData = await this.getInstanceDataInColletion(id);
-
         if (!instanceData) return undefined;
 
         const storageClient = await this.getStorageClient();
-
         const sharing = await storageClient.getObjectSharing(
             `${Namespace.INSTANCES}-${instanceData.id}`
         );
@@ -112,11 +111,9 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     async save(instance: Instance): Promise<void> {
         const storageClient = await this.getStorageClient();
 
-        const instanceEncypted = instance.encryptPassword(this.encryptionKey);
-
         const instanceData = {
             ..._.omit(
-                instanceEncypted.toObject(),
+                instance.toObject(),
                 "publicAccess",
                 "userAccesses",
                 "externalAccess",
@@ -127,6 +124,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
                 "lastUpdatedBy"
             ),
             url: instance.type === "local" ? "" : instance.url,
+            password: this.encryptPassword(instance.password),
         };
 
         await storageClient.saveObjectInCollection(Namespace.INSTANCES, instanceData);
@@ -143,6 +141,14 @@ export class InstanceD2ApiRepository implements InstanceRepository {
             `${Namespace.INSTANCES}-${instanceData.id}`,
             objectSharing
         );
+    }
+
+    private decryptPassword(password?: string): string {
+        return password ? new Cryptr(this.encryptionKey).decrypt(password) : "";
+    }
+
+    private encryptPassword(password?: string): string {
+        return password ? new Cryptr(this.encryptionKey).encrypt(password) : "";
     }
 
     private async getInstanceDataInColletion(id: string): Promise<InstanceData | undefined> {
@@ -214,15 +220,14 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         await this.api.messageConversations.post(message).getData();
     }
 
-    private mapToInstance(instanceData: InstanceData, sharing: ObjectSharing | undefined) {
-        const instance = Instance.build({
-            ...instanceData,
-            url: instanceData.type === "local" ? this.instance.url : instanceData.url,
-            version: instanceData.type === "local" ? this.instance.version : instanceData.version,
+    private mapToInstance(data: InstanceData, sharing: ObjectSharing | undefined) {
+        return Instance.build({
+            ...data,
+            url: data.type === "local" ? this.instance.url : data.url,
+            version: data.type === "local" ? this.instance.version : data.version,
+            password: this.decryptPassword(data.password),
             ...sharing,
-        }).decryptPassword(this.encryptionKey);
-
-        return instance;
+        });
     }
 
     private getStorageClient(): Promise<StorageClient> {

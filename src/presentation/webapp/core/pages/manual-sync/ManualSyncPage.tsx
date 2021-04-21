@@ -229,6 +229,13 @@ const ManualSyncPage: React.FC = () => {
                         case "INSTANCE_NOT_FOUND":
                             snackbar.warning(i18n.t("Couldn't connect with instance"));
                             break;
+                        case "NOT_AUTHORIZED":
+                            snackbar.error(
+                                i18n.t(
+                                    "You do not have the authority to one or multiple target instances of the sync rule"
+                                )
+                            );
+                            break;
                         default:
                             snackbar.error(i18n.t("Unknown synchronization error"));
                     }

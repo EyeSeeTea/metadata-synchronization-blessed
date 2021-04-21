@@ -175,8 +175,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const aggregatedSync = new AggregatedSyncUseCase(
             this.builder,
             this.repositoryFactory,
-            this.localInstance,
-            this.encryptionKey
+            this.localInstance
         );
 
         const mappedPayload = await aggregatedSync.mapPayload(instance, { dataValues });
