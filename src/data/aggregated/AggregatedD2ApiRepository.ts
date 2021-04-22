@@ -58,7 +58,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         try {
             // Chunked request by orgUnits and dimensions (dataSets and dataElementGroups) to avoid 414
             const dataValues = await promiseMap(_.chunk(orgUnits, 100), orgUnit =>
-                promiseMap(_.chunk(dimensions, 300), dimensions => {
+                promiseMap(_.chunk(dimensions, 50), dimensions => {
                     const dataSet = dimensions
                         .filter(({ type }) => type === "dataSet")
                         .map(({ id }) => id);
