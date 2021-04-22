@@ -250,8 +250,8 @@ export const MSFHomePage: React.FC = () => {
                         {msfValidationErrors.map((error, index) => {
                             return (
                                 <li key={`err-${index}`}>
-                                    {error.split("\n").map(message => (
-                                        <Typography>{message}</Typography>
+                                    {error.split("\n").map((message, idx) => (
+                                        <Typography key={`message-${idx}`}>{message}</Typography>
                                     ))}
                                 </li>
                             );
