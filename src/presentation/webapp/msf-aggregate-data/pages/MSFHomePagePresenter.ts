@@ -55,6 +55,8 @@ export async function executeAggregateData(
         return [];
     }
 
+    await compositionRoot.reports.clean();
+
     addEventToProgress(i18n.t(`Synchronizing aggregated data...`));
 
     if (isGlobalInstance() && msfSettings.runAnalytics === "false") {
