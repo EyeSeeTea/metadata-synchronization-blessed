@@ -113,6 +113,8 @@ export async function executeAggregateData(
         onUpdateMsfSettings({ ...msfSettings, lastExecutions });
     }
 
+    await compositionRoot.reports.clean();
+
     return reports;
 }
 
