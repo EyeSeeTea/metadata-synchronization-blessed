@@ -54,6 +54,11 @@ export class ReportsD2ApiRepository implements ReportsRepository {
         );
     }
 
+    public async clean(): Promise<void> {
+        const storageClient = await this.getStorageClient();
+        await storageClient.clean();
+    }
+
     public async delete(id: string): Promise<void> {
         const storageClient = await this.getStorageClient();
         await storageClient.removeObjectInCollection(Namespace.HISTORY, id);

@@ -44,29 +44,28 @@ export class StorageConstantClient extends StorageClient {
         return constants;
     }
 
+    public async clean(): Promise<void> {
+        const objects = await this.getConstants({ id: true, code: true, name: true });
+
+        const toDelete = _(objects)
+            .filter(({ code }) => cleanCode(code).startsWith("history"))
+            .orderBy(["lastUpdated"], ["desc"])
+            .slice(70)
+            .value();
+
+        if (toDelete.length > 0) {
+            await this.api.metadata
+                .post(
+                    { constants: toDelete.map(({ id, code, name }) => ({ id, code, name })) },
+                    { importStrategy: "DELETE" }
+                )
+                .getData();
+        }
+    }
+
     public async saveObject<T extends object>(key: string, keyValue: T): Promise<void> {
         const { id } = await this.getConstant<T>(key);
         await this.updateConstant(id, key, keyValue);
-
-        // Special scenario, clean history entries
-        if (key.startsWith("history")) {
-            const objects = await this.getConstants({ id: true, code: true, name: true });
-
-            const toDelete = _(objects)
-                .filter(({ code }) => cleanCode(code).startsWith("history"))
-                .orderBy(["lastUpdated"], ["desc"])
-                .slice(70)
-                .value();
-
-            if (toDelete.length > 0) {
-                await this.api.metadata
-                    .post(
-                        { constants: toDelete.map(({ id, code, name }) => ({ id, code, name })) },
-                        { importStrategy: "DELETE" }
-                    )
-                    .getData();
-            }
-        }
     }
 
     public async removeObject(key: string): Promise<void> {
