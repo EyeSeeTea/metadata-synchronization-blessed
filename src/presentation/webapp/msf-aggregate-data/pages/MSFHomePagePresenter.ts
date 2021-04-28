@@ -2,7 +2,7 @@ import _ from "lodash";
 import moment from "moment";
 import { DataSyncAggregation, DataSyncPeriod } from "../../../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
-import { Instance, PublicInstance } from "../../../../domain/instance/entities/Instance";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { ProgramIndicator } from "../../../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
@@ -17,6 +17,7 @@ import { formatDateLong } from "../../../../utils/date";
 import { availablePeriods } from "../../../../utils/synchronization";
 import { CompositionRoot } from "../../../CompositionRoot";
 import { AdvancedSettings, MSFSettings } from "./MSFEntities";
+import { NamedRef } from "../../../../domain/common/entities/Ref";
 
 type LoggerFunction = (event: string, userType?: "user" | "admin") => void;
 
@@ -377,12 +378,12 @@ async function getLastAnalyticsExecution(compositionRoot: CompositionRoot): Prom
         : i18n.t("never");
 }
 
-const getOriginName = (source: PublicInstance | Store) => {
+const getOriginName = (source: NamedRef | Store) => {
     if ((source as Store).token) {
         const store = source as Store;
         return store.account + " - " + store.repository;
     } else {
-        const instance = source as PublicInstance;
+        const instance = source as NamedRef;
         return instance.name;
     }
 };

@@ -3,6 +3,8 @@ import _ from "lodash";
 import { PartialBy } from "../../../types/utils";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { SynchronizationResult } from "./SynchronizationResult";
+import { Store } from "../../stores/entities/Store";
+import { PublicInstance } from "../../instance/entities/Instance";
 
 export class SynchronizationReport implements SynchronizationReportData {
     private results: SynchronizationResult[] | null;
@@ -92,7 +94,20 @@ export class SynchronizationReport implements SynchronizationReportData {
     }
 
     public getResults(): SynchronizationResult[] {
-        return this.results ?? [];
+        return (this.results || []).map(({ payload: _payload, instance, origin, ...rest }) => {
+            const originValue =
+                origin && (origin as Store).token
+                    ? origin
+                    : origin && (origin as PublicInstance).name
+                    ? { id: origin.id, name: (origin as PublicInstance).name }
+                    : undefined;
+
+            return {
+                ...rest,
+                instance: { id: instance.id, name: instance.name },
+                origin: originValue,
+            };
+        });
     }
 }
 
