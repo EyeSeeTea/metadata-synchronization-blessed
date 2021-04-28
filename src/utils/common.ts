@@ -3,7 +3,7 @@ export async function promiseMap<T, S>(
     inputValues: T[],
     mapper: (value: T) => Promise<S>
 ): Promise<S[]> {
-    let output: S[] = [];
+    const output: S[] = [];
     for (const value of inputValues) {
         const res = await mapper(value);
         output.push(res);
