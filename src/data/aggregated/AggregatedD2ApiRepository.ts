@@ -153,8 +153,8 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         if (dimensionIds.length === 0 || orgUnits.length === 0) {
             return { dataValues: [] };
         } else if (aggregationType) {
-            const result = await promiseMap(_.chunk(periods, 300), period =>
-                promiseMap(_.chunk(dimensionIds, Math.max(10, 300 - period.length)), ids => {
+            const result = await promiseMap(_.chunk(periods, 5), period =>
+                promiseMap(_.chunk(dimensionIds, Math.max(10, 100 - period.length)), ids => {
                     return this.api
                         .get<AggregatedPackage>("/analytics/dataValueSet.json", {
                             dimension: _.compact([
