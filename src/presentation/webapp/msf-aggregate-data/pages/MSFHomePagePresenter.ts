@@ -122,7 +122,7 @@ export async function executeAggregateData(
 }
 
 export function isGlobalInstance(): boolean {
-    return !window.location.host.includes("localhost");
+    return window.location.host.includes("hmisocba.msf.es");
 }
 
 async function validatePreviousDataValues(
