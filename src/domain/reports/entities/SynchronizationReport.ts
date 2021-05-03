@@ -93,7 +93,7 @@ export class SynchronizationReport implements SynchronizationReportData {
         };
     }
 
-    public getResults(): SynchronizationResult[] {
+    public getResultsForSave(): SynchronizationResult[] {
         return (this.results || []).map(({ payload: _payload, instance, origin, ...rest }) => {
             const originValue =
                 origin && (origin as Store).token
@@ -108,6 +108,10 @@ export class SynchronizationReport implements SynchronizationReportData {
                 origin: originValue,
             };
         });
+    }
+
+    public getResults(): SynchronizationResult[] {
+        return this.results ?? [];
     }
 }
 
