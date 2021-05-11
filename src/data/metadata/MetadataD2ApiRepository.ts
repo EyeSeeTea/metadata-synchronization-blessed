@@ -512,8 +512,10 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         includeDefaults: boolean
     ): Promise<Record<string, T[]>> {
         const promises = [];
-        for (let i = 0; i < elements.length; i += 100) {
-            const requestElements = elements.slice(i, i + 100).toString();
+        const chunkSize = 50;
+
+        for (let i = 0; i < elements.length; i += chunkSize) {
+            const requestElements = elements.slice(i, i + chunkSize).toString();
             promises.push(
                 this.api
                     .get("/metadata", {

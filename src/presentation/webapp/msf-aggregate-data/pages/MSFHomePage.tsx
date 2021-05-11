@@ -1,5 +1,5 @@
 import { Box, Button, List, makeStyles, Paper, Theme, Typography } from "@material-ui/core";
-import { ConfirmationDialog } from "d2-ui-components";
+import { ConfirmationDialog, useSnackbar } from "d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -94,24 +94,33 @@ export const MSFHomePage: React.FC = () => {
         });
     };
 
+    const snackbar = useSnackbar();
+
     const handleAggregateData = async (skipCheckInPreviousPeriods?: boolean) => {
         setRunning(true);
         setSyncReports([]);
 
-        const reports = await executeAggregateData(
-            compositionRoot,
-            advancedSettings,
-            skipCheckInPreviousPeriods
-                ? { ...msfSettings, checkInPreviousPeriods: false }
-                : msfSettings,
-            addEventToProgress,
-            errors => setMsfValidationErrors(errors),
-            handleSaveMSFSettings,
-            globalAdmin
-        );
-
-        setSyncReports(reports);
-        setRunning(false);
+        try {
+            const reports = await executeAggregateData(
+                compositionRoot,
+                advancedSettings,
+                skipCheckInPreviousPeriods
+                    ? { ...msfSettings, checkInPreviousPeriods: false }
+                    : msfSettings,
+                addEventToProgress,
+                errors => setMsfValidationErrors(errors),
+                handleSaveMSFSettings,
+                globalAdmin
+            );
+            setSyncReports(reports);
+        } catch (err) {
+            const errMessage = err ? err.message : i18n.t("Unknown error");
+            const message = `${i18n.t("Server error on aggregation")}: ${errMessage}`;
+            snackbar.error(message);
+            addEventToProgress(message);
+        } finally {
+            setRunning(false);
+        }
     };
 
     const handleDownloadPayload = async () => {

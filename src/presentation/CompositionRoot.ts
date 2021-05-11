@@ -101,6 +101,7 @@ import { cache } from "../utils/cache";
 import { GetMetadataByIdsUseCase } from "../domain/metadata/usecases/GetMetadataByIdsUseCase";
 import { DownloadPayloadFromSyncRuleUseCase } from "../domain/synchronization/usecases/DownloadPayloadFromSyncRuleUseCase";
 import { UserD2ApiRepository } from "../data/user/UserD2ApiRepository";
+import { CleanSyncReportsUseCase } from "../domain/reports/usecases/CleanSyncReporstUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -354,6 +355,7 @@ export class CompositionRoot {
         return getExecute({
             list: new ListSyncReportUseCase(this.repositoryFactory, this.localInstance),
             save: new SaveSyncReportUseCase(this.repositoryFactory, this.localInstance),
+            clean: new CleanSyncReportsUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
