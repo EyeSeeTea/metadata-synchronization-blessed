@@ -303,6 +303,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
     }
 
     async delete(data: AggregatedPackage): Promise<SynchronizationResult> {
+        // TODO: To be refactored. Requires authority F_SKIP_DATA_IMPORT_AUDIT.
         return await this.save(data, { strategy: "DELETES", skipAudit: true });
     }
 

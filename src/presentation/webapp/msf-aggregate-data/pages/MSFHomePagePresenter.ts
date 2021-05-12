@@ -456,6 +456,7 @@ async function deletePreviousDataValues(
                         ),
                         orgUnitPaths: builder.dataParams?.orgUnitPaths,
                         allAttributeCategoryOptions: true,
+                        skipExistingCheck: true,
                     },
                 });
 
