@@ -8,5 +8,5 @@ export type FileId = string;
 
 export interface InstanceFileRepository {
     getById(fileId: FileId): Promise<File>;
-    save(file: File): Promise<FileId>;
+    save(id: string, file: File): Promise<FileId>;
 }

@@ -200,12 +200,13 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     const file = await fileRepository.getById(document.id);
                     debug("File", file);
                     const fileRemoteRepository = await this.getInstanceFileRepository(instance);
-                    const fileId = await fileRemoteRepository.save(file);
+                    const fileId = await fileRemoteRepository.save(document.id, file);
                     return { ...document, url: fileId };
                 } else {
                     return document;
                 }
             });
+            debug("new documents", newDocuments);
 
             return { ...payload, documents: newDocuments };
         } else {
