@@ -7,14 +7,7 @@ import mime from "mime-types";
 import { D2Api } from "../../types/d2-api";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { getUid } from "./uid";
-
-/*interface SaveApiResponse {
-    response: {
-        fileResource: {
-            id: string;
-        };
-    };
-}*/
+import { debug } from "../../utils/debug";
 
 export class InstanceFileD2Repository implements InstanceFileRepository {
     private api: D2Api;
@@ -25,33 +18,25 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
         this.baseUrl = this.api.baseUrl;
     }
 
-
     public async getById(fileId: FileId): Promise<File> {
-        const auth = this.instance.auth;
+        debug("fileId: ", fileId);
+        const response = await this.api.files.get(fileId).getData();
+        debug("Response: ", response);
 
-        const authHeaders: Record<string, string> = auth
-            ? { Authorization: "Basic " + btoa(auth.username + ":" + auth.password) }
-            : {};
-
-        const fetchOptions: RequestInit = {
-            method: "GET",
-            headers: authHeaders,
-            credentials: auth ? "omit" : "include",
-        };
-
-        const response = await fetch(`${this.baseUrl}/api/documents/${fileId}/data`, fetchOptions);
-
-        if (!response.ok) {
+        if (!response) {
             throw Error("An error has ocurred retrieving the file resource of document");
         } else {
-            const blob = await response.blob();
-
-            return this.blobToFile(blob, `document1.${mime.extension(blob.type)}`);
+            //const blob = await response.blob();
+            //const documentName = this.api.models.documents.get({ filter: { id: { eq: fileId } }, fields: { name: true } }).getData();
+            return this.blobToFile(response, `document1.${mime.extension(response.type)}`);
+            //this.blobToFile(blob, `${documentName}.${mime.extension(blob.type)}`);
         }
     }
 
     public async save(file: File): Promise<FileId> {
-        const fileToBlob = new Blob([new Uint8Array(await file.arrayBuffer())], {type: file.type });
+        const fileToBlob = new Blob([new Uint8Array(await file.arrayBuffer())], {
+            type: file.type,
+        });
 
         const ff = await new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
@@ -90,7 +75,7 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
             return id;
         }
     }
-    
+
     private blobToFile = (blob: Blob, fileName: string): File => {
         return new File([blob], fileName, { type: blob.type });
     };

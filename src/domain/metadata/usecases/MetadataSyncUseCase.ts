@@ -198,6 +198,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 if (!document.external) {
                     const fileRepository = await this.getInstanceFileRepository();
                     const file = await fileRepository.getById(document.id);
+                    debug("File", file);
                     const fileRemoteRepository = await this.getInstanceFileRepository(instance);
                     const fileId = await fileRemoteRepository.save(file);
                     return { ...document, url: fileId };
