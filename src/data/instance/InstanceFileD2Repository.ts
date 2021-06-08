@@ -6,16 +6,13 @@ import { Instance } from "../../domain/instance/entities/Instance";
 import mime from "mime-types";
 import { D2Api } from "../../types/d2-api";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
-//import { getUid } from "./uid";
 import { debug } from "../../utils/debug";
 
 export class InstanceFileD2Repository implements InstanceFileRepository {
     private api: D2Api;
-    public baseUrl: string;
 
     constructor(private instance: Instance) {
-        this.api = getD2APiFromInstance(instance);
-        this.baseUrl = this.api.baseUrl;
+        this.api = getD2APiFromInstance(this.instance);
     }
 
     public async getById(fileId: FileId): Promise<File> {
@@ -26,29 +23,27 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
         if (!response) {
             throw Error("An error has ocurred retrieving the file resource of document");
         } else {
-            const documentName = await this.api.models.documents.get({ filter: { id: { eq: fileId } }, fields: { name: true } }).getData();
+            const documentName = await this.api.models.documents
+                .get({ filter: { id: { eq: fileId } }, fields: { name: true } })
+                .getData();
             debug("documentName: ", documentName);
-            return this.blobToFile(response, `${documentName.objects[0].name}.${mime.extension(response.type)}`);
+            return this.blobToFile(
+                response,
+                `${documentName.objects[0].name}.${mime.extension(response.type)}`
+            );
         }
     }
 
     public async save(documentId: string, file: File): Promise<FileId> {
-        const { id } = await this.api.files
+        const { fileResourceId } = await this.api.files
             .upload({
                 id: documentId,
                 name: file.name,
                 data: file,
             })
             .getData();
-
-        if (!id) {
-            throw Error(
-                `An error has ocurred saving the resource file of the document '${file.name}' in ${this.instance.name}`
-            );
-        } else {
-            //const apiResponse: SaveApiResponse = JSON.parse(await response.text());
-            return `${this.api.apiPath}/documents/${id}`;
-        }
+        debug("File ID", fileResourceId);
+        return fileResourceId;
     }
 
     private blobToFile = (blob: Blob, fileName: string): File => {
