@@ -573,6 +573,7 @@ export class ProgramModel extends D2Model {
         "programNotificationTemplates",
         "programSections",
         "programRules",
+        "programRules.programRuleActions",
     ];
 }
 
