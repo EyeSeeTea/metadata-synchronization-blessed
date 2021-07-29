@@ -125,6 +125,10 @@ export const MSFHomePage: React.FC = () => {
         messageList.current.scrollTop = messageList.current.scrollHeight;
     }, [syncProgress, messageList]);
 
+    useEffect(() => {
+        window.onbeforeunload = running ? () => true : null;
+    }, [running]);
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Aggregate Data For HMIS")} />
@@ -171,6 +175,7 @@ export const MSFHomePage: React.FC = () => {
                                 className={classes.actionButton}
                                 onClick={handleOpenAdvancedSettings}
                                 variant="contained"
+                                disabled={running}
                             >
                                 {i18n.t("Advanced Settings")}
                             </Button>
@@ -179,6 +184,7 @@ export const MSFHomePage: React.FC = () => {
                                     className={classes.actionButton}
                                     onClick={handleMSFSettings}
                                     variant="contained"
+                                    disabled={running}
                                 >
                                     {i18n.t("MSF Settings")}
                                 </Button>
@@ -190,6 +196,7 @@ export const MSFHomePage: React.FC = () => {
                                     className={classes.actionButton}
                                     onClick={handleGoToDashboard}
                                     variant="contained"
+                                    disabled={running}
                                 >
                                     {i18n.t("Go To Admin Dashboard")}
                                 </Button>
@@ -198,6 +205,7 @@ export const MSFHomePage: React.FC = () => {
                                 className={classes.actionButton}
                                 onClick={handleGoToHistory}
                                 variant="contained"
+                                disabled={running}
                             >
                                 {i18n.t("Go to History")}
                             </Button>

@@ -36,6 +36,10 @@ export async function executeAggregateData(
         onAddProgressMessage(event);
     };
 
+    addEventToProgress(
+        _.toUpper(i18n.t(`Syncing process will stop if you leave the current page`))
+    );
+
     addEventToProgress(i18n.t(`Retrieving information from the system...`));
 
     const syncRules = await getSyncRules(compositionRoot, advancedSettings, msfSettings);
@@ -410,8 +414,8 @@ async function deletePreviousDataValues(
     for (const instanceId of targetInstances) {
         const instanceResult = await compositionRoot.instances.getById(instanceId);
 
-        instanceResult.match({
-            error: () =>
+        await instanceResult.match({
+            error: async () =>
                 addEventToProgress(
                     i18n.t(`Error retrieving instance {{name}} to delete previous data values`, {
                         name: instanceId,
