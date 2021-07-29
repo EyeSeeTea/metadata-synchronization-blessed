@@ -3,7 +3,7 @@ import moment from "moment";
 import { DataSyncAggregation } from "../../../../domain/aggregated/entities/DataSyncAggregation";
 import { DataSyncPeriod } from "../../../../domain/aggregated/entities/DataSyncPeriod";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
-import { Instance, PublicInstance } from "../../../../domain/instance/entities/Instance";
+import { Instance } from "../../../../domain/instance/entities/Instance";
 import { ProgramIndicator } from "../../../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
@@ -18,6 +18,7 @@ import { formatDateLong } from "../../../../utils/date";
 import { availablePeriods } from "../../../../utils/synchronization";
 import { CompositionRoot } from "../../../CompositionRoot";
 import { AdvancedSettings, MSFSettings } from "./MSFEntities";
+import { NamedRef } from "../../../../domain/common/entities/Ref";
 
 type LoggerFunction = (event: string, userType?: "user" | "admin") => void;
 
@@ -55,6 +56,8 @@ export async function executeAggregateData(
         onValidationError(validationErrors);
         return [];
     }
+
+    await compositionRoot.reports.clean();
 
     addEventToProgress(i18n.t(`Synchronizing aggregated data...`));
 
@@ -114,11 +117,13 @@ export async function executeAggregateData(
         onUpdateMsfSettings({ ...msfSettings, lastExecutions });
     }
 
+    await compositionRoot.reports.clean();
+
     return reports;
 }
 
 export function isGlobalInstance(): boolean {
-    return !window.location.host.includes("localhost");
+    return window.location.host.includes("hmisocba.msf.es");
 }
 
 async function validatePreviousDataValues(
@@ -385,12 +390,12 @@ async function getLastAnalyticsExecution(compositionRoot: CompositionRoot): Prom
         : i18n.t("never");
 }
 
-const getOriginName = (source: PublicInstance | Store) => {
+const getOriginName = (source: NamedRef | Store) => {
     if ((source as Store).token) {
         const store = source as Store;
         return store.account + " - " + store.repository;
     } else {
-        const instance = source as PublicInstance;
+        const instance = source as NamedRef;
         return instance.name;
     }
 };

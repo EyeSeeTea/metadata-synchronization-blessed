@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-04-21T07:35:11.787Z\n"
-"PO-Revision-Date: 2021-04-21T07:35:11.787Z\n"
+"POT-Creation-Date: 2021-07-29T11:02:54.421Z\n"
+"PO-Revision-Date: 2021-07-29T11:02:54.421Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1947,6 +1947,9 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "Synchronization History"
+msgstr ""
+
+msgid "Server error on aggregation"
 msgstr ""
 
 msgid "Aggregate Data For HMIS"

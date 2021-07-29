@@ -87,6 +87,10 @@ export const mapCategoryOptionCombo = (
         const exactMatch = categoryOptionCombos[optionCombo]?.mappedId;
         if (exactMatch) return exactMatch;
 
+        if (_.keys(categoryOptions).length === 0) {
+            return optionCombo;
+        }
+
         const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
         const isDisabled = _.some(
             origin?.categoryOptions?.map(({ id }) =>

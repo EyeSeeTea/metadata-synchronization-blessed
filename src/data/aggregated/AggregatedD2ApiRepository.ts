@@ -60,7 +60,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         try {
             // Chunked request by orgUnits and dimensions (dataSets and dataElementGroups) to avoid 414
             const dataValues = await promiseMap(_.chunk(orgUnits, 100), orgUnit =>
-                promiseMap(_.chunk(dimensions, 200), dimensions => {
+                promiseMap(_.chunk(dimensions, 50), dimensions => {
                     const dataSet = dimensions
                         .filter(({ type }) => type === "dataSet")
                         .map(({ id }) => id);
@@ -77,9 +77,9 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                             startDate: startDate.format("YYYY-MM-DD"),
                             endDate: endDate.format("YYYY-MM-DD"),
                             attributeOptionCombo,
-                            dataSet,
-                            dataElementGroup,
-                            orgUnit,
+                            dataSet: [dataSet.join(",")],
+                            dataElementGroup: [dataElementGroup.join(",")],
+                            orgUnit: [orgUnit.join(",")],
                             lastUpdated: lastUpdated
                                 ? moment(lastUpdated).format("YYYY-MM-DD")
                                 : undefined,
@@ -155,8 +155,8 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         if (dimensionIds.length === 0 || orgUnits.length === 0) {
             return { dataValues: [] };
         } else if (aggregationType) {
-            const result = await promiseMap(_.chunk(periods, 300), period =>
-                promiseMap(_.chunk(dimensionIds, Math.max(10, 300 - period.length)), ids => {
+            const result = await promiseMap(_.chunk(periods, 5), period =>
+                promiseMap(_.chunk(dimensionIds, Math.max(10, 100 - period.length)), ids => {
                     return this.api
                         .get<AggregatedPackage>("/analytics/dataValueSet.json", {
                             dimension: _.compact([
