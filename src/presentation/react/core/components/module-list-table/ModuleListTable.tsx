@@ -5,7 +5,6 @@ import {
     MetaObject,
     ObjectsTable,
     ObjectsTableDetailField,
-    SearchResult,
     ShareUpdate,
     TableAction,
     TableColumn,
@@ -13,7 +12,8 @@ import {
     TableState,
     useLoading,
     useSnackbar,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
+import { generateUid } from "d2/uid";
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -32,7 +32,6 @@ import {
 import { SharingDialog } from "../sharing-dialog/SharingDialog";
 import { NewPackageDialog } from "./NewPackageDialog";
 import { getValidationsByVersionFeedback } from "./utils";
-import { generateUid } from "d2/uid";
 
 export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     remoteInstance,
@@ -210,6 +209,13 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                                 break;
                             case "INSTANCE_NOT_FOUND":
                                 snackbar.warning(i18n.t("Couldn't connect with instance"));
+                                break;
+                            case "NOT_AUTHORIZED":
+                                snackbar.error(
+                                    i18n.t(
+                                        "You do not have the authority to one or multiple target instances of the sync rule"
+                                    )
+                                );
                                 break;
                             default:
                                 snackbar.error(i18n.t("Unknown synchronization error"));
@@ -451,13 +457,9 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             : rows;
     }, [departmentFilter, rows]);
 
-    const onSearchRequest = useCallback(
-        async (key: string) =>
-            api
-                .get<SearchResult>("/sharing/search", { key })
-                .getData(),
-        [api]
-    );
+    const onSearchRequest = useCallback((key: string) => api.sharing.search({ key }).getData(), [
+        api,
+    ]);
 
     const onSharingChanged = useCallback(
         async (updatedAttributes: ShareUpdate) => {

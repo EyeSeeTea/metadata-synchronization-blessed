@@ -1,7 +1,12 @@
+import { EventsPostResponse } from "@eyeseetea/d2-api/api/events";
 import _ from "lodash";
 import moment from "moment";
-import { DataSynchronizationParams } from "../../domain/aggregated/types";
+import {
+    DataImportParams,
+    DataSynchronizationParams,
+} from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
@@ -10,8 +15,7 @@ import {
     SynchronizationStats,
 } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
-import { DataImportParams } from "../../types/d2";
-import { D2Api, Pager } from "../../types/d2-api";
+import { D2Api } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
@@ -24,17 +28,17 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async getEvents(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
         const { allEvents = false, orgUnitPaths = [] } = params;
 
         if (!allEvents) {
-            return this.getSpecificEvents(params, programs, defaults);
+            return this.getSpecificEvents(params, programStageIds, defaults);
         } else if (allEvents && orgUnitPaths.length < 25) {
-            return this.getEventsByOrgUnit(params, programs, defaults);
+            return this.getEventsByOrgUnit(params, programStageIds, defaults);
         } else {
-            return this.getAllEvents(params, programs, defaults);
+            return this.getAllEvents(params, programStageIds, defaults);
         }
     }
 
@@ -52,23 +56,23 @@ export class EventsD2ApiRepository implements EventsRepository {
      */
     private async getAllEvents(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        if (programs.length === 0) return [];
+        if (programStageIds.length === 0) return [];
 
         const { period, orgUnitPaths = [], lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
-        const fetchApi = async (program: string, page: number) => {
-            return this.api
-                .get<EventExportResult>("/events", {
+        const fetchApi = async (orgUnit: string, page: number) => {
+            return this.api.events
+                .get({
                     pageSize: 250,
                     totalPages: true,
                     page,
-                    program,
+                    orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
                     lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
@@ -76,13 +80,13 @@ export class EventsD2ApiRepository implements EventsRepository {
                 .getData();
         };
 
-        const result = await promiseMap(programs, async program => {
-            const { events, pager } = await fetchApi(program, 1);
+        const result = await promiseMap(orgUnits, async orgUnit => {
+            const { events, pager } = await fetchApi(orgUnit, 1);
 
             const paginatedEvents = await promiseMap(
                 _.range(2, pager.pageCount + 1),
                 async page => {
-                    const { events } = await fetchApi(program, page);
+                    const { events } = await fetchApi(orgUnit, page);
                     return events;
                 }
             );
@@ -92,7 +96,7 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         return _(result)
             .flatten()
-            .filter(({ orgUnit }) => orgUnits.includes(orgUnit))
+            .filter(({ programStage }) => programStageIds.includes(programStage))
             .map(object => ({ ...object, id: object.event }))
             .map(object => cleanObjectDefault(object, defaults))
             .value();
@@ -100,23 +104,23 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     private async getEventsByOrgUnit(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        if (programs.length === 0) return [];
+        if (programStageIds.length === 0) return [];
 
         const { period, orgUnitPaths = [], lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
-        const fetchApi = async (program: string, orgUnit: string, page: number) => {
-            return this.api
-                .get<EventExportResult>("/events", {
+        const fetchApi = async (programStage: string, orgUnit: string, page: number) => {
+            return this.api.events
+                .get({
                     pageSize: 250,
                     totalPages: true,
                     page,
-                    program,
+                    programStage,
                     orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
@@ -125,14 +129,14 @@ export class EventsD2ApiRepository implements EventsRepository {
                 .getData();
         };
 
-        const result = await promiseMap(programs, async program => {
+        const result = await promiseMap(programStageIds, async programStage => {
             const filteredEvents = await promiseMap(orgUnits, async orgUnit => {
-                const { events, pager } = await fetchApi(program, orgUnit, 1);
+                const { events, pager } = await fetchApi(programStage, orgUnit, 1);
 
                 const paginatedEvents = await promiseMap(
                     _.range(2, pager.pageCount + 1),
                     async page => {
-                        const { events } = await fetchApi(program, orgUnit, page);
+                        const { events } = await fetchApi(programStage, orgUnit, page);
                         return events;
                     }
                 );
@@ -152,21 +156,20 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     private async getSpecificEvents(
         params: DataSynchronizationParams,
-        programs: string[] = [],
+        programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
         const { orgUnitPaths = [], events: filter = [] } = params;
-        if (programs.length === 0 || filter.length === 0) return [];
+        if (programStageIds.length === 0 || filter.length === 0) return [];
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
         const result = [];
 
-        for (const program of programs) {
+        for (const programStage of programStageIds) {
             for (const ids of _.chunk(filter, 300)) {
-                const { events } = await this.api
-                    .get<EventExportResult>("/events", {
-                        paging: false,
-                        program,
+                const { events } = await this.api.events
+                    .getAll({
+                        programStage,
                         event: ids.join(";"),
                     })
                     .getData();
@@ -182,30 +185,36 @@ export class EventsD2ApiRepository implements EventsRepository {
     }
 
     public async save(
-        data: object,
-        additionalParams: DataImportParams | undefined
+        data: EventsPackage,
+        params: DataImportParams = {}
     ): Promise<SynchronizationResult> {
         try {
-            const response = await this.api
-                .post<EventsPostResponse>(
-                    "/events",
+            const { response } = await this.api.events
+                .postAsync(
                     {
-                        idScheme: "UID",
-                        dataElementIdScheme: "UID",
-                        orgUnitIdScheme: "UID",
-                        eventIdScheme: "UID",
-                        preheatCache: false,
-                        skipExistingCheck: false,
-                        format: "json",
-                        async: false,
-                        dryRun: false,
-                        ...additionalParams,
+                        idScheme: params.idScheme ?? "UID",
+                        dataElementIdScheme: params.dataElementIdScheme ?? "UID",
+                        orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
+                        dryRun: params.dryRun ?? false,
+                        preheatCache: params.preheatCache ?? false,
+                        skipExistingCheck: params.skipExistingCheck ?? false,
                     },
                     data
                 )
                 .getData();
 
-            return this.cleanEventsImportResponse(response);
+            const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+
+            if (!result) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "events",
+                };
+            }
+
+            return this.cleanEventsImportResponse(result);
         } catch (error) {
             if (error?.response?.data) {
                 return this.cleanEventsImportResponse(error.response.data);
@@ -221,18 +230,20 @@ export class EventsD2ApiRepository implements EventsRepository {
     }
 
     private cleanEventsImportResponse(importResult: EventsPostResponse): SynchronizationResult {
-        const { status, message, response } = importResult;
+        const errors = _(importResult.importSummaries)
+            .flatMap(element => {
+                if (element.status !== "ERROR") return undefined;
+                return (
+                    element.conflicts?.map(({ object, value }) => ({
+                        id: element.reference ?? "",
+                        message: _([element.description, object, value]).compact().join(" "),
+                    })) ?? [{ id: element.reference ?? "", message: element.description }]
+                );
+            })
+            .compact()
+            .value();
 
-        const errors =
-            response.importSummaries?.flatMap(
-                ({ reference = "", description = "", conflicts }) =>
-                    conflicts?.map(({ object, value }) => ({
-                        id: reference,
-                        message: _([description, object, value]).compact().join(" "),
-                    })) ?? [{ id: reference, message: description }]
-            ) ?? [];
-
-        const stats: SynchronizationStats = _.pick(response, [
+        const stats: SynchronizationStats = _.pick(importResult, [
             "imported",
             "updated",
             "ignored",
@@ -241,8 +252,7 @@ export class EventsD2ApiRepository implements EventsRepository {
         ]);
 
         return {
-            status,
-            message,
+            status: importResult.status,
             stats,
             instance: this.instance.toPublicObject(),
             errors,
@@ -250,30 +260,4 @@ export class EventsD2ApiRepository implements EventsRepository {
             type: "events",
         };
     }
-}
-
-interface EventsPostResponse {
-    status: "SUCCESS" | "ERROR";
-    message?: string;
-    response: {
-        imported: number;
-        updated: number;
-        deleted: number;
-        ignored: number;
-        total: number;
-        importSummaries?: {
-            description?: string;
-            reference: string;
-            conflicts?: {
-                object: string;
-                value: string;
-            }[];
-        }[];
-    };
-}
-
-type EventExportType = ProgramEvent & { event: string };
-interface EventExportResult {
-    events: EventExportType[];
-    pager: Pager;
 }

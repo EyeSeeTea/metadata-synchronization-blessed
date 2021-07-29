@@ -1,4 +1,4 @@
-import { D2ConstantSchema } from "d2-api/2.33";
+import { D2ConstantSchema } from "@eyeseetea/d2-api/2.33";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
@@ -81,7 +81,7 @@ export class StorageConstantClient extends StorageClient {
                 .post({ constants: objects }, { importStrategy: "DELETE" })
                 .getData();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { Namespace } from "../../../data/storage/Namespaces";
 import i18n from "../../../locales";
 import { D2Api } from "../../../types/d2-api";
 import { executeAnalytics } from "../../../utils/analytics";
@@ -8,10 +7,9 @@ import { promiseMap } from "../../../utils/common";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { Repositories, RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
-import { FileRepositoryConstructor } from "../../file/FileRepository";
-import { Instance, InstanceData } from "../../instance/entities/Instance";
+import { Instance } from "../../instance/entities/Instance";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import { DeletedMetadataSyncUseCase } from "../../metadata/usecases/DeletedMetadataSyncUseCase";
 import { MetadataSyncUseCase } from "../../metadata/usecases/MetadataSyncUseCase";
@@ -43,8 +41,7 @@ export abstract class GenericSyncUseCase {
     constructor(
         protected readonly builder: SynchronizationBuilder,
         protected readonly repositoryFactory: RepositoryFactory,
-        protected readonly localInstance: Instance,
-        protected readonly encryptionKey: string
+        protected readonly localInstance: Instance
     ) {
         this.api = getD2APiFromInstance(localInstance);
     }
@@ -88,11 +85,9 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getFileRepository(remoteInstance?: Instance) {
+    protected async getInstanceFileRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.get<FileRepositoryConstructor>(Repositories.FileRepository, [
-            remoteInstance ?? defaultInstance,
-        ]);
+        return this.repositoryFactory.instanceFileRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
@@ -108,7 +103,13 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getOriginInstance(): Promise<Instance> {
+    protected async getTeisRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.teisRepository(remoteInstance ?? defaultInstance);
+    }
+
+    @cache()
+    public async getOriginInstance(): Promise<Instance> {
         const { originInstance: originInstanceId } = this.builder;
         const instance = await this.getInstanceById(originInstanceId);
         if (!instance) throw new Error("Unable to read origin instance");
@@ -116,7 +117,7 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
+    public async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
         const { originInstance: originInstanceId } = this.builder;
 
         // If sync is LOCAL -> REMOTE, use the destination instance mapping
@@ -167,22 +168,10 @@ export abstract class GenericSyncUseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
-
-        const data = await storageClient.getObjectInCollection<InstanceData>(
-            Namespace.INSTANCES,
-            id
-        );
-
-        if (!data) return undefined;
-
-        const instance = Instance.build({
-            ...data,
-            url: data.type === "local" ? this.localInstance.url : data.url,
-            version: data.type === "local" ? this.localInstance.version : data.version,
-        }).decryptPassword(this.encryptionKey);
+        const instance = await this.repositoryFactory
+            .instanceRepository(this.localInstance)
+            .getById(id);
+        if (!instance) return undefined;
 
         try {
             const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
@@ -227,7 +216,7 @@ export abstract class GenericSyncUseCase {
         yield { syncReport };
         for (const instance of targetInstances) {
             yield {
-                message: i18n.t("Start import in instance {{instance}}", {
+                message: i18n.t("Importing in instance {{instance}}", {
                     instance: instance.name,
                     interpolation: { escapeValue: false },
                 }),
@@ -268,7 +257,9 @@ export abstract class GenericSyncUseCase {
                     id: currentUser.id,
                     name: currentUser.userCredentials.name,
                 });
-                await this.repositoryFactory.rulesRepository(this.localInstance).save(updatedRule);
+                await this.repositoryFactory
+                    .rulesRepository(this.localInstance)
+                    .save([updatedRule]);
             }
         }
 

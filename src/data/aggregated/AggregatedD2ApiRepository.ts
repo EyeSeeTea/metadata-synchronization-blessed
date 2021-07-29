@@ -1,18 +1,20 @@
 import _ from "lodash";
-import moment from "moment";
-import { Moment } from "moment";
+import moment, { Moment } from "moment";
 import { AggregatedPackage } from "../../domain/aggregated/entities/AggregatedPackage";
+import { DataSyncAggregation } from "../../domain/aggregated/entities/DataSyncAggregation";
+import {
+    DataImportParams,
+    DataSynchronizationParams,
+} from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { DataValue } from "../../domain/aggregated/entities/DataValue";
 import { MappedCategoryOption } from "../../domain/aggregated/entities/MappedCategoryOption";
 import { AggregatedRepository } from "../../domain/aggregated/repositories/AggregatedRepository";
-import { DataSyncAggregation, DataSynchronizationParams } from "../../domain/aggregated/types";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { MetadataMappingDictionary } from "../../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
-import { DataImportParams } from "../../types/d2";
 import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
@@ -308,31 +310,37 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
     public async save(
         data: AggregatedPackage,
-        params: DataImportParams | undefined
+        params: DataImportParams = {}
     ): Promise<SynchronizationResult> {
         try {
-            const response = await this.api
-                // TODO: Use this.api.dataValues.postSet
-                .post<DataValueSetsPostResponse>(
-                    "/dataValueSets",
+            const { response } = await this.api.dataValues
+                .postSetAsync(
                     {
-                        idScheme: params?.idScheme ?? "UID",
-                        dataElementIdScheme: params?.dataElementIdScheme ?? "UID",
-                        orgUnitIdScheme: params?.orgUnitIdScheme ?? "UID",
-                        preheatCache: params?.preheatCache ?? false,
-                        skipExistingCheck: params?.skipExistingCheck ?? false,
-                        skipAudit: params?.skipAudit ?? false,
-                        format: params?.format ?? "json",
-                        async: params?.async ?? false,
-                        dryRun: params?.dryRun ?? false,
-                        // TODO: Use importStrategy here
-                        strategy: params?.strategy ?? "NEW_AND_UPDATES",
+                        idScheme: params.idScheme ?? "UID",
+                        dataElementIdScheme: params.dataElementIdScheme ?? "UID",
+                        orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
+                        preheatCache: params.preheatCache ?? false,
+                        skipExistingCheck: params.skipExistingCheck ?? false,
+                        skipAudit: params.skipAudit ?? false,
+                        dryRun: params.dryRun ?? false,
+                        importStrategy: params.strategy ?? "CREATE_AND_UPDATE",
                     },
                     data
                 )
                 .getData();
 
-            return this.cleanAggregatedImportResponse(response);
+            const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+
+            if (!result) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "aggregated",
+                };
+            }
+
+            return this.cleanAggregatedImportResponse(result);
         } catch (error) {
             if (error?.response?.data) {
                 return this.cleanAggregatedImportResponse(error.response.data);

@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 import _ from "lodash";
 import { availablePeriods } from "../../utils/synchronization";
-import { DataSynchronizationParams } from "./types";
+import { DataSynchronizationParams } from "./entities/DataSynchronizationParams";
 
 /* For a map of relationships (child -> parent[]), return the minimum array of parents
    that include all of the children.
@@ -56,6 +56,11 @@ export function buildPeriodFromParams(
         return {
             startDate: moment(startDate ?? "1970-01-01"),
             endDate: moment(endDate ?? moment().add(1, "years").endOf("year").format("YYYY-MM-DD")),
+        };
+    } else if (period === "SINCE_LAST_EXECUTED_DATE") {
+        return {
+            startDate: moment(startDate ?? "1970-01-01"),
+            endDate: moment(),
         };
     }
 

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { ObjectSharing, StorageClient } from "../../domain/storage/repositories/StorageClient";
-import { D2Api, DataStore } from "../../types/d2-api";
+import { D2Api, DataStore, DataStoreKeyMetadata } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
@@ -21,8 +21,13 @@ export class StorageDataStoreClient extends StorageClient {
     }
 
     public async getObject<T extends object>(key: string): Promise<T | undefined> {
-        const value = await this.dataStore.get<T>(key).getData();
-        return value;
+        try {
+            const value = await this.dataStore.get<T>(key).getData();
+            return value;
+        } catch (error) {
+            console.error(error);
+            return undefined;
+        }
     }
 
     public async getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T> {
@@ -74,44 +79,34 @@ export class StorageDataStoreClient extends StorageClient {
     }
 
     public async getObjectSharing(key: string): Promise<ObjectSharing | undefined> {
-        const {
-            user,
-            userAccesses,
-            userGroupAccesses,
-            publicAccess,
-            externalAccess,
-        } = await this.getMetadataByKey(key);
+        const metadata = await this.getMetadataByKey(key);
+        if (!metadata) return undefined;
 
         return {
-            user: { ...user, name: "" },
-            userAccesses,
-            userGroupAccesses,
-            publicAccess,
-            externalAccess,
+            user: { name: "", ...metadata.user },
+            userAccesses: metadata.userAccesses,
+            userGroupAccesses: metadata.userGroupAccesses,
+            publicAccess: metadata.publicAccess,
+            externalAccess: metadata.externalAccess,
         };
     }
 
     public async saveObjectSharing(key: string, object: ObjectSharing): Promise<void> {
-        const { id } = await this.getMetadataByKey(key);
-        await this.api.post(`/sharing`, { type: "dataStore", id }, { object }).getData();
+        const metadata = await this.getMetadataByKey(key);
+        if (!metadata) return;
+
+        await this.api.sharing.post({ type: "dataStore", id: metadata.id }, object).getData();
     }
 
-    private async getMetadataByKey(key: string) {
-        const data = await this.api
-            .get<MetadataDataStoreKey>(`/dataStore/${dataStoreNamespace}/${key}/metaData`)
-            .getData();
+    private async getMetadataByKey(key: string): Promise<DataStoreKeyMetadata | undefined> {
+        try {
+            const data = await this.dataStore.getMetadata(key).getData();
+            if (!data) throw new Error(`Invalid dataStore key ${key}`);
 
-        return data;
+            return data;
+        } catch (error) {
+            console.error(error);
+            return undefined;
+        }
     }
-}
-
-export interface MetadataDataStoreKey extends ObjectSharing {
-    created: Date;
-    lastUpdated: Date;
-    lastUpdatedBy: { id: string };
-    namespace: string;
-    key: string;
-    value: string;
-    favorite: boolean;
-    id: boolean;
 }

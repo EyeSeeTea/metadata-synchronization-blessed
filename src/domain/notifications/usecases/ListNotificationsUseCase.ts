@@ -3,15 +3,11 @@ import { Namespace } from "../../../data/storage/Namespaces";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Instance, InstanceData } from "../../instance/entities/Instance";
+import { Instance } from "../../instance/entities/Instance";
 import { AppNotification } from "../entities/Notification";
 
 export class ListNotificationsUseCase implements UseCase {
-    constructor(
-        private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance,
-        private encryptionKey: string
-    ) {}
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<AppNotification[]> {
         const { id, userGroups } = await this.repositoryFactory
@@ -53,22 +49,7 @@ export class ListNotificationsUseCase implements UseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
-
-        const objects = await storageClient.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
-        );
-
-        const data = objects.find(data => data.id === id);
-        if (!data) return undefined;
-
-        return Instance.build({
-            ...data,
-            url: data.type === "local" ? this.localInstance.url : data.url,
-            version: data.type === "local" ? this.localInstance.version : data.version,
-        }).decryptPassword(this.encryptionKey);
+        return this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
     }
 
     private async updateSentPullRequest(

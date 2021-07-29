@@ -1,4 +1,16 @@
-import { DataImportParams } from "../../types/d2";
+import { DataSyncAggregation } from "./DataSyncAggregation";
+import { DataSyncPeriod } from "./DataSyncPeriod";
+
+export interface DataImportParams {
+    idScheme?: "UID" | "CODE";
+    dataElementIdScheme?: "UID" | "CODE" | "NAME";
+    orgUnitIdScheme?: "UID" | "CODE" | "NAME";
+    dryRun?: boolean;
+    preheatCache?: boolean;
+    skipExistingCheck?: boolean;
+    skipAudit?: boolean;
+    strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
+}
 
 export interface DataSynchronizationParams extends DataImportParams {
     attributeCategoryOptions?: string[];
@@ -9,7 +21,9 @@ export interface DataSynchronizationParams extends DataImportParams {
     endDate?: Date;
     lastUpdated?: Date;
     events?: string[];
+    teis?: string[];
     allEvents?: boolean;
+    excludeTeiRelationships?: boolean;
     generateNewUid?: boolean;
     enableAggregation?: boolean;
     aggregationType?: DataSyncAggregation;
@@ -18,21 +32,3 @@ export interface DataSynchronizationParams extends DataImportParams {
     analyticsYears?: number;
     ignoreDuplicateExistingValues?: boolean;
 }
-
-export type DataSyncPeriod =
-    | "ALL"
-    | "FIXED"
-    | "TODAY"
-    | "YESTERDAY"
-    | "LAST_7_DAYS"
-    | "LAST_14_DAYS"
-    | "THIS_WEEK"
-    | "LAST_WEEK"
-    | "THIS_MONTH"
-    | "LAST_MONTH"
-    | "THIS_QUARTER"
-    | "LAST_QUARTER"
-    | "THIS_YEAR"
-    | "LAST_YEAR";
-
-export type DataSyncAggregation = "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY";

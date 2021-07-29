@@ -6,7 +6,7 @@ import {
     ReferenceObject,
     TableColumn,
     TableState,
-} from "d2-ui-components";
+} from "@eyeseetea/d2-ui-components";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";

@@ -47,6 +47,9 @@ export default class Scheduler {
                         case "INSTANCE_NOT_FOUND":
                             logger.error("Couldn't connect with instance");
                             break;
+                        case "NOT_AUTHORIZED":
+                            logger.error("User is not authorized to one or more instances");
+                            break;
                         default:
                             logger.error("Unknown synchronization error");
                     }

@@ -1,19 +1,27 @@
+import { MultiSelector } from "@eyeseetea/d2-ui-components";
 import { makeStyles, Typography } from "@material-ui/core";
-import { MultiSelector } from "d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
+import { User } from "../../../../../../domain/user/entities/User";
 import i18n from "../../../../../../locales";
 import { useAppContext } from "../../../contexts/AppContext";
 import SyncParamsSelector from "../../sync-params-selector/SyncParamsSelector";
 import { SyncWizardStepProps } from "../Steps";
 
-export const buildInstanceOptions = (instances: Instance[]) => {
-    return instances.map(instance => ({
-        value: instance.id,
-        text: instance.username
-            ? `${instance.name} (${instance.url}) ` + i18n.t("with user {{username}}", instance)
-            : `${instance.name} (${instance.url}) ` + i18n.t("with logged user"),
-    }));
+export const buildInstanceOptions = (instances: Instance[], currentUser: User) => {
+    return instances.map(instance => {
+        const buildName = () => {
+            if (instance.username) {
+                return i18n.t("with user {{username}}", instance);
+            } else if (instance.hasPermissions("read", currentUser)) {
+                return i18n.t("with logged user");
+            } else {
+                return i18n.t("with stored user");
+            }
+        };
+
+        return { value: instance.id, text: `${instance.name} (${instance.url}) ` + buildName() };
+    });
 };
 
 const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
@@ -22,7 +30,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
 
     const [selectedOptions, setSelectedOptions] = useState<string[]>(syncRule.targetInstances);
     const [targetInstances, setTargetInstances] = useState<Instance[]>([]);
-    const instanceOptions = buildInstanceOptions(targetInstances);
+    const [instanceOptions, setInstanceOptions] = useState<{ value: string; text: string }[]>([]);
 
     const includeCurrentUrlAndTypeIsEvents = (selectedinstanceIds: string[]) => {
         return (
@@ -49,7 +57,12 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
     };
 
     useEffect(() => {
-        compositionRoot.instances.list().then(setTargetInstances);
+        compositionRoot.instances.list().then(instances => {
+            setTargetInstances(instances);
+            compositionRoot.user
+                .current()
+                .then(user => setInstanceOptions(buildInstanceOptions(instances, user)));
+        });
     }, [compositionRoot]);
 
     return (

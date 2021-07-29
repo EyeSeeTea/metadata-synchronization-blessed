@@ -1,4 +1,4 @@
-import { D2DashboardItem as D2DashboardItem33 } from "d2-api/2.33";
+import { D2DashboardItem as D2DashboardItem33 } from "@eyeseetea/d2-api/2.33";
 import _ from "lodash";
 import { Transformation } from "../../domain/transformations/entities/Transformation";
 import { isKeyOf, Mapping } from "./__tests__/integration/helpers";
@@ -27,7 +27,7 @@ export const metadataTransformations: Transformation[] = [
                                     _.identity
                                 );
                             } catch (error) {
-                                console.log(
+                                console.error(
                                     "Error during coordinates conversion OU: " + rest["id"]
                                 );
                             }
@@ -59,7 +59,7 @@ export const metadataTransformations: Transformation[] = [
                                     _.identity
                                 );
                             } catch (error) {
-                                console.log(
+                                console.error(
                                     "Error during coordinates conversion OU: " + rest["id"]
                                 );
                             }
@@ -273,9 +273,11 @@ export const metadataTransformations: Transformation[] = [
                 };
             });
 
+            const newVisualizations = _.compact(_.concat(newCharts, newReportTables));
+
             return {
                 ...rest,
-                visualizations: _.compact(_.concat(newCharts, newReportTables)),
+                visualizations: newVisualizations.length > 0 ? newVisualizations : undefined,
             };
         },
         undo: ({ visualizations, ...rest }: any) => {

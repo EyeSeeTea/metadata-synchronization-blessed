@@ -1,4 +1,4 @@
-import { FilterBase, FilterValueBase } from "d2-api/api/common";
+import { FilterBase, FilterValueBase } from "@eyeseetea/d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
@@ -23,7 +23,7 @@ import {
     ListMetadataResponse,
     MetadataRepository,
 } from "../../domain/metadata/repositories/MetadataRepository";
-import { MetadataImportParams } from "../../domain/metadata/types";
+import { MetadataImportParams } from "../../domain/metadata/entities/MetadataSynchronizationParams";
 import { getClassName } from "../../domain/metadata/utils";
 import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
@@ -104,6 +104,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             rootJunction,
             ...params
         } = listParams;
+
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
         const options = { type, fields, filter, order, page, pageSize, rootJunction };
@@ -312,6 +313,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         filterRows,
         search,
         disableFilterRows = false,
+        programType,
+        childrenPropInList,
     }: Partial<ListMetadataParams>) {
         const filter: Dictionary<FilterValueBase> = {};
 
@@ -319,6 +322,12 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (group) filter[`${group.type}.id`] = { eq: group.value };
         if (level) filter["level"] = { eq: level };
         if (program) filter["program.id"] = { eq: program };
+        if (childrenPropInList) filter[childrenPropInList.prop] = { in: childrenPropInList.values };
+
+        if (programType) {
+            filter["programType"] = { eq: programType };
+        }
+
         if (optionSet) filter["optionSet.id"] = { eq: optionSet };
         if (category) filter["categories.id"] = { eq: category };
         if (includeParents && isNotEmpty(parents)) {
@@ -348,6 +357,16 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
         try {
             const response = await this.postMetadata(versionedPayloadPackage, additionalParams);
+
+            if (!response) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "metadata",
+                };
+            }
+
             return this.cleanMetadataImportResponse(response, "metadata");
         } catch (error) {
             if (error?.response?.data) {
@@ -381,6 +400,15 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                 ...additionalParams,
                 importStrategy: "DELETE",
             });
+
+            if (!response) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "deleted",
+                };
+            }
 
             return this.cleanMetadataImportResponse(response, "deleted");
         } catch (error) {
@@ -489,21 +517,26 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     private async postMetadata(
         payload: Partial<Record<string, unknown[]>>,
-        additionalParams?: MetadataImportParams
-    ): Promise<MetadataResponse> {
-        const response = await this.api.metadata
-            .post(payload, {
-                importMode: "COMMIT",
-                identifier: "UID",
-                importReportMode: "FULL",
-                importStrategy: "CREATE_AND_UPDATE",
-                mergeMode: "MERGE",
-                atomicMode: "ALL",
-                ...additionalParams,
+        params: MetadataImportParams = {}
+    ): Promise<MetadataResponse | null> {
+        const { response } = await this.api.metadata
+            .postAsync(payload, {
+                atomicMode: params.atomicMode ?? "ALL",
+                identifier: params.identifier ?? "UID",
+                importMode: params.importMode ?? "COMMIT",
+                importStrategy: params.importStrategy ?? "CREATE_AND_UPDATE",
+                importReportMode: params.importReportMode ?? "FULL",
+                mergeMode: params.mergeMode ?? "MERGE",
+                flushMode: params.flushMode,
+                preheatMode: params.preheatMode,
+                skipSharing: params.skipSharing,
+                skipValidation: params.skipValidation,
+                userOverrideMode: params.userOverrideMode,
             })
             .getData();
 
-        return response;
+        const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+        return result;
     }
 
     private async getMetadata<T>(

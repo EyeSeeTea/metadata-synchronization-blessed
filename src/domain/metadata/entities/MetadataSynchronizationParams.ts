@@ -1,3 +1,5 @@
+import { MetadataIncludeExcludeRules } from "./MetadataExcludeIncludeRules";
+
 export interface MetadataImportParams {
     atomicMode?: "ALL" | "NONE";
     flushMode?: "AUTO" | "OBJECT";
@@ -13,15 +15,12 @@ export interface MetadataImportParams {
     username?: string;
 }
 
-export interface DataImportParams {
-    idScheme?: "UID" | "CODE";
-    dataElementIdScheme?: "UID" | "CODE" | "NAME";
-    orgUnitIdScheme?: "UID" | "CODE" | "NAME";
-    dryRun?: boolean;
-    preheatCache?: boolean;
-    skipExistingCheck?: boolean;
-    skipAudit?: boolean;
-    strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
-    format?: "json" | "xml" | "csv" | "pdf" | "adx";
-    async?: boolean;
+export interface MetadataSynchronizationParams extends MetadataImportParams {
+    enableMapping: boolean;
+    includeSharingSettings: boolean;
+    removeOrgUnitReferences: boolean;
+    removeUserObjects?: boolean;
+    removeOrgUnitObjects?: boolean;
+    useDefaultIncludeExclude: boolean;
+    metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
 }

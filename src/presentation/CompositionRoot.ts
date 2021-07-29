@@ -2,18 +2,22 @@ import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRep
 import { ConfigAppRepository } from "../data/config/ConfigAppRepository";
 import { CustomDataD2ApiRepository } from "../data/custom-data/CustomDataD2ApiRepository";
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
-import { FileD2Repository } from "../data/file/FileD2Repository";
+import { FileDataRepository } from "../data/file/FileDataRepository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
+import { InstanceFileD2Repository } from "../data/instance/InstanceFileD2Repository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
 import { MigrationsAppRepository } from "../data/migrations/MigrationsAppRepository";
 import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepository";
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
+import { FileRulesDefaultRepository } from "../data/rules/FileRulesDefaultRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
 import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
+import { TEID2ApiRepository } from "../data/tracked-entity-instances/TEID2ApiRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
+import { UserD2ApiRepository } from "../data/user/UserD2ApiRepository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { DeleteAggregatedUseCase } from "../domain/aggregated/usecases/DeleteAggregatedUseCase";
 import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggregatedUseCase";
@@ -33,7 +37,6 @@ import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceB
 import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetLocalInstanceUseCase } from "../domain/instance/usecases/GetLocalInstanceUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
-import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
 import { SaveInstanceUseCase } from "../domain/instance/usecases/SaveInstanceUseCase";
 import { ValidateInstanceUseCase } from "../domain/instance/usecases/ValidateInstanceUseCase";
@@ -44,6 +47,7 @@ import { GetMappingByOwnerUseCase } from "../domain/mapping/usecases/GetMappingB
 import { GetValidMappingIdUseCase } from "../domain/mapping/usecases/GetValidMappingIdUseCase";
 import { SaveMappingUseCase } from "../domain/mapping/usecases/SaveMappingUseCase";
 import { DeletedMetadataSyncUseCase } from "../domain/metadata/usecases/DeletedMetadataSyncUseCase";
+import { GetMetadataByIdsUseCase } from "../domain/metadata/usecases/GetMetadataByIdsUseCase";
 import { GetResponsiblesUseCase } from "../domain/metadata/usecases/GetResponsiblesUseCase";
 import { ImportMetadataUseCase } from "../domain/metadata/usecases/ImportMetadataUseCase";
 import { ListAllMetadataUseCase } from "../domain/metadata/usecases/ListAllMetadataUseCase";
@@ -76,6 +80,7 @@ import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageU
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
+import { CleanSyncReportsUseCase } from "../domain/reports/usecases/CleanSyncReporstUseCase";
 import { DeleteSyncReportUseCase } from "../domain/reports/usecases/DeleteSyncReportUseCase";
 import { DownloadPayloadUseCase } from "../domain/reports/usecases/DownloadPayloadUseCase";
 import { GetSyncReportUseCase } from "../domain/reports/usecases/GetSyncReportUseCase";
@@ -83,8 +88,10 @@ import { GetSyncResultsUseCase } from "../domain/reports/usecases/GetSyncResults
 import { ListSyncReportUseCase } from "../domain/reports/usecases/ListSyncReportUseCase";
 import { SaveSyncReportUseCase } from "../domain/reports/usecases/SaveSyncReportUseCase";
 import { DeleteSyncRuleUseCase } from "../domain/rules/usecases/DeleteSyncRuleUseCase";
+import { ExportSyncRuleUseCase } from "../domain/rules/usecases/ExportSyncRuleUseCase";
 import { GetSyncRuleUseCase } from "../domain/rules/usecases/GetSyncRuleUseCase";
 import { ListSyncRuleUseCase } from "../domain/rules/usecases/ListSyncRuleUseCase";
+import { ReadSyncRuleFilesUseCase } from "../domain/rules/usecases/ReadSyncRuleFilesUseCase";
 import { SaveSyncRuleUseCase } from "../domain/rules/usecases/SaveSyncRuleUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
@@ -95,20 +102,20 @@ import { SetStoreAsDefaultUseCase } from "../domain/stores/usecases/SetStoreAsDe
 import { ValidateStoreUseCase } from "../domain/stores/usecases/ValidateStoreUseCase";
 import { SynchronizationBuilder } from "../domain/synchronization/entities/SynchronizationBuilder";
 import { CreatePullRequestUseCase } from "../domain/synchronization/usecases/CreatePullRequestUseCase";
+import { DownloadPayloadFromSyncRuleUseCase } from "../domain/synchronization/usecases/DownloadPayloadFromSyncRuleUseCase";
 import { PrepareSyncUseCase } from "../domain/synchronization/usecases/PrepareSyncUseCase";
 import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemInfoUseCase";
+import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/ListTEIsUseCase";
+import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { cache } from "../utils/cache";
-import { GetMetadataByIdsUseCase } from "../domain/metadata/usecases/GetMetadataByIdsUseCase";
-import { DownloadPayloadFromSyncRuleUseCase } from "../domain/synchronization/usecases/DownloadPayloadFromSyncRuleUseCase";
-import { UserD2ApiRepository } from "../data/user/UserD2ApiRepository";
-import { CleanSyncReportsUseCase } from "../domain/reports/usecases/CleanSyncReporstUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
 
-    constructor(public readonly localInstance: Instance, private encryptionKey: string) {
+    constructor(public readonly localInstance: Instance, encryptionKey: string) {
         this.repositoryFactory = new RepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
         this.repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
         this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
@@ -116,12 +123,14 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
         this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.FileRepository, FileD2Repository);
+        this.repositoryFactory.bind(Repositories.FileRepository, FileDataRepository);
         this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.FileRulesRepository, FileRulesDefaultRepository);
         this.repositoryFactory.bind(Repositories.StoreRepository, StoreD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
+        this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
         this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
         this.repositoryFactory.bind(
             Repositories.MetadataRepository,
@@ -154,44 +163,20 @@ export class CompositionRoot {
         // TODO: Sync builder should be part of an execute method
         return {
             ...getExecute({
-                prepare: new PrepareSyncUseCase(
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                prepare: new PrepareSyncUseCase(this.repositoryFactory, this.localInstance),
                 createPullRequest: new CreatePullRequestUseCase(
                     this.repositoryFactory,
                     this.localInstance
                 ),
             }),
             aggregated: (builder: SynchronizationBuilder) =>
-                new AggregatedSyncUseCase(
-                    builder,
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                new AggregatedSyncUseCase(builder, this.repositoryFactory, this.localInstance),
             events: (builder: SynchronizationBuilder) =>
-                new EventsSyncUseCase(
-                    builder,
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                new EventsSyncUseCase(builder, this.repositoryFactory, this.localInstance),
             metadata: (builder: SynchronizationBuilder) =>
-                new MetadataSyncUseCase(
-                    builder,
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                new MetadataSyncUseCase(builder, this.repositoryFactory, this.localInstance),
             deleted: (builder: SynchronizationBuilder) =>
-                new DeletedMetadataSyncUseCase(
-                    builder,
-                    this.repositoryFactory,
-                    this.localInstance,
-                    this.encryptionKey
-                ),
+                new DeletedMetadataSyncUseCase(builder, this.repositoryFactory, this.localInstance),
         };
     }
 
@@ -279,11 +264,7 @@ export class CompositionRoot {
     @cache()
     public get notifications() {
         return getExecute({
-            list: new ListNotificationsUseCase(
-                this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
-            ),
+            list: new ListNotificationsUseCase(this.repositoryFactory, this.localInstance),
             updatePullRequestStatus: new UpdatePullRequestStatusUseCase(
                 this.repositoryFactory,
                 this.localInstance
@@ -294,13 +275,11 @@ export class CompositionRoot {
             ),
             importPullRequest: new ImportPullRequestUseCase(
                 this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
+                this.localInstance
             ),
             cancelPullRequest: new CancelPullRequestUseCase(
                 this.repositoryFactory,
-                this.localInstance,
-                this.encryptionKey
+                this.localInstance
             ),
         });
     }
@@ -331,10 +310,8 @@ export class CompositionRoot {
 
     @cache()
     public get events() {
-        const events = new EventsD2ApiRepository(this.localInstance);
-
         return getExecute({
-            list: new ListEventsUseCase(events),
+            list: new ListEventsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -373,6 +350,8 @@ export class CompositionRoot {
             save: new SaveSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+            readFiles: new ReadSyncRuleFilesUseCase(this.repositoryFactory, this.localInstance),
+            export: new ExportSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(
                 this,
                 this.repositoryFactory,
@@ -398,6 +377,13 @@ export class CompositionRoot {
                 this.localInstance
             ),
             hasPending: new HasPendingMigrationsUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get teis() {
+        return getExecute({
+            list: new ListTEIsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

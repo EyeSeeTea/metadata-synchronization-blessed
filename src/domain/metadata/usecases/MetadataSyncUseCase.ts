@@ -1,7 +1,7 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { modelFactory } from "../../../models/dhis/factory";
-import { ExportBuilder, NestedRules } from "../../../types/synchronization";
+import { ExportBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
@@ -9,14 +9,14 @@ import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { Document, MetadataEntities, MetadataPackage } from "../entities/MetadataEntities";
+import { Document, MetadataEntities, MetadataPackage, Program } from "../entities/MetadataEntities";
+import { NestedRules } from "../entities/MetadataExcludeIncludeRules";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
-        const visitedIds: Set<string> = new Set();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const {
                 type,
@@ -42,11 +42,18 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const elements = syncMetadata[collectionName] || [];
 
             for (const element of elements) {
+                //ProgramRules is not included in programs items in the response by the dhis2 API
+                //we request it manually and insert it in the element
+                const fixedElement =
+                    type === "programs"
+                        ? await this.requestAndIncludeProgramRules(element as Program)
+                        : element;
+
                 // Store metadata object in result
                 const object = cleanObject(
                     this.api,
                     schema.name,
-                    element,
+                    fixedElement,
                     excludeRules,
                     includeSharingSettings,
                     removeOrgUnitReferences
@@ -58,23 +65,19 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 // Get all the referenced metadata
                 const references = getAllReferences(this.api, object, schema.name);
                 const includedReferences = cleanReferences(references, includeRules);
-                const promises = includedReferences
-                    .map(type => ({
+
+                const partialResults = await promiseMap(includedReferences, type =>
+                    recursiveExport({
                         type: type as keyof MetadataEntities,
-                        ids: references[type].filter(id => !visitedIds.has(id)),
+                        ids: references[type],
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
                         includeSharingSettings,
                         removeOrgUnitReferences,
-                    }))
-                    .map(newBuilder => {
-                        newBuilder.ids.forEach(id => {
-                            visitedIds.add(id);
-                        });
-                        return recursiveExport(newBuilder);
-                    });
-                const promisesResult: MetadataPackage[] = await Promise.all(promises);
-                _.deepMerge(result, ...promisesResult);
+                    })
+                );
+
+                _.deepMerge(result, ...partialResults);
             }
 
             // Clean up result from duplicated elements
@@ -121,8 +124,16 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             _.uniqBy(elements, "id")
         );
 
-        debug("Metadata package", metadataWithoutDuplicates);
-        return metadataWithoutDuplicates;
+        const { organisationUnits, users, ...rest } = metadataWithoutDuplicates;
+
+        const finalMetadataPackage = {
+            organisationUnits: !syncParams?.removeOrgUnitObjects ? organisationUnits : undefined,
+            users: !syncParams?.removeUserObjects ? users : undefined,
+            ...rest,
+        };
+
+        debug("Metadata package", finalMetadataPackage);
+        return finalMetadataPackage;
     });
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
@@ -185,9 +196,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         if (documents) {
             const newDocuments = await promiseMap(documents, async (document: Document) => {
                 if (!document.external) {
-                    const fileRepository = await this.getFileRepository();
+                    const fileRepository = await this.getInstanceFileRepository();
                     const file = await fileRepository.getById(document.id);
-                    const fileRemoteRepository = await this.getFileRepository(instance);
+                    const fileRemoteRepository = await this.getInstanceFileRepository(instance);
                     const fileId = await fileRemoteRepository.save(file);
                     return { ...document, url: fileId };
                 } else {
@@ -199,5 +210,15 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         } else {
             return payload;
         }
+    }
+
+    private async requestAndIncludeProgramRules(program: Program) {
+        const metadataRepository = await this.getMetadataRepository();
+        const programRules = await metadataRepository.listAllMetadata({
+            type: "programRules",
+            fields: { id: true },
+            program: program.id,
+        });
+        return { ...program, programRules };
     }
 }

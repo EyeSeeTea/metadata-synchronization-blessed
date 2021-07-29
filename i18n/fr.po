@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-04-28T13:07:25.313Z\n"
+"POT-Creation-Date: 2021-07-29T11:01:03.713Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -123,13 +123,22 @@ msgstr ""
 msgid "Preparing synchronization"
 msgstr ""
 
-msgid "Start import in instance {{instance}}"
+msgid "Importing in instance {{instance}}"
 msgstr ""
 
-msgid "Program with Data Elements"
+msgid "Event Program with Data Elements"
+msgstr ""
+
+msgid "Tracker Program with Program Stages"
 msgstr ""
 
 msgid "Program with Indicators"
+msgstr ""
+
+msgid "Tracked Entity Attribute (to TEI)"
+msgstr ""
+
+msgid "Tracked Entity Attribute (to DE)"
 msgstr ""
 
 msgid "Unauthorized - You do not have permission to view this page."
@@ -568,6 +577,11 @@ msgstr ""
 msgid "Couldn't connect with instance"
 msgstr ""
 
+msgid ""
+"You do not have the authority to one or multiple target instances of the "
+"sync rule"
+msgstr ""
+
 msgid "Unknown synchronization error"
 msgstr ""
 
@@ -971,6 +985,18 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
+msgid "Include owner and sharing settings"
+msgstr ""
+
+msgid "Remove organisation units and references (UID)"
+msgstr ""
+
+msgid "Remove organisation units and keep organisation units references (UID)"
+msgstr ""
+
+msgid "Remove users and keep user references (UID)"
+msgstr ""
+
 msgid "Disable atomic verification"
 msgstr ""
 
@@ -988,6 +1014,12 @@ msgid ""
 msgstr ""
 
 msgid "Ignore data with same value on destination"
+msgstr ""
+
+msgid "Sync rule {{idx}}: {{name}} ({{id}})"
+msgstr ""
+
+msgid "Errors"
 msgstr ""
 
 msgid "Imported"
@@ -1024,6 +1056,9 @@ msgid "Aggregated"
 msgstr ""
 
 msgid "Events"
+msgstr ""
+
+msgid "Tracked Entity Instances"
 msgstr ""
 
 msgid "Unknown"
@@ -1135,6 +1170,9 @@ msgstr ""
 msgid "Programs"
 msgstr ""
 
+msgid "TEIs"
+msgstr ""
+
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
@@ -1149,6 +1187,9 @@ msgid "with user {{username}}"
 msgstr ""
 
 msgid "with logged user"
+msgstr ""
+
+msgid "with stored user"
 msgstr ""
 
 msgid "Destination"
@@ -1184,11 +1225,6 @@ msgstr ""
 msgid "Json files downloaded successfull"
 msgstr ""
 
-msgid ""
-"You do not have the authority to one or multiple target instances of the "
-"sync rule"
-msgstr ""
-
 msgid "An error has ocurred during the download"
 msgstr ""
 
@@ -1201,6 +1237,15 @@ msgid ""
 msgstr ""
 
 msgid "Yes"
+msgstr ""
+
+msgid "Save as sync Rule"
+msgstr ""
+
+msgid "Download JSON"
+msgstr ""
+
+msgid "Invalid origin instance"
 msgstr ""
 
 msgid "Target instances [{{total}}]"
@@ -1225,6 +1270,9 @@ msgid "Include rules"
 msgstr ""
 
 msgid "Exclude rules"
+msgstr ""
+
+msgid "{{total}} selected TEIs"
 msgstr ""
 
 msgid "All events"
@@ -1258,12 +1306,6 @@ msgid "Run Analytics before sync"
 msgstr ""
 
 msgid "Frequency"
-msgstr ""
-
-msgid "Save as sync Rule"
-msgstr ""
-
-msgid "Download JSON"
 msgstr ""
 
 msgid "Daily"
@@ -1327,6 +1369,12 @@ msgid "Sync all events"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
+msgstr ""
+
+msgid "Enrollment Date"
+msgstr ""
+
+msgid "Exclude relationships"
 msgstr ""
 
 msgid "Use sync rules periods"
@@ -1841,6 +1889,9 @@ msgstr ""
 msgid "Generating JSON file"
 msgstr ""
 
+msgid "Exporting synchronization rules"
+msgstr ""
+
 msgid "Deleting Sync Rules"
 msgstr ""
 
@@ -1855,10 +1906,31 @@ msgstr ""
 msgid "Successfully updated sync rule"
 msgstr ""
 
+msgid "Couldn't read the file because it's not valid"
+msgstr ""
+
+msgid "Importing rule(s)"
+msgstr ""
+
+msgid "{{name}} ({{id}}): Invalid type found: {{type}}"
+msgstr ""
+
+msgid "Importing {{n}} rules"
+msgstr ""
+
+msgid "Imported {{n}} rules"
+msgstr ""
+
 msgid "Execute"
 msgstr ""
 
+msgid "Export rule"
+msgstr ""
+
 msgid "Toggle scheduling"
+msgstr ""
+
+msgid "Import sync rules"
 msgstr ""
 
 msgid "Last executed date"
@@ -2004,6 +2076,9 @@ msgid "All time"
 msgstr ""
 
 msgid "Fixed period"
+msgstr ""
+
+msgid "Since last execution"
 msgstr ""
 
 msgid "Today"

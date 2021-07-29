@@ -33,10 +33,23 @@ export class Either<Error, Data> {
         );
     }
 
+    mapError<Error1>(fn: (error: Error) => Error1): Either<Error1, Data> {
+        return this.flatMapError(
+            error => new Either<Error1, Data>({ type: "error", error: fn(error) })
+        );
+    }
+
     flatMap<Data1>(fn: (data: Data) => Either<Error, Data1>): Either<Error, Data1> {
         return this.match({
             success: data => fn(data),
             error: () => this as Either<Error, any>,
+        });
+    }
+
+    flatMapError<Error1>(fn: (error: Error) => Either<Error1, Data>): Either<Error1, Data> {
+        return this.match({
+            success: () => this as Either<any, Data>,
+            error: error => fn(error),
         });
     }
 

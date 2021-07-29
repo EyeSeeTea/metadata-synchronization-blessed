@@ -9,8 +9,10 @@ import {
     EventsRepository,
     EventsRepositoryConstructor,
 } from "../../events/repositories/EventsRepository";
+import { FileRepositoryConstructor } from "../../file/repositories/FileRepository";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
+import { InstanceFileRepositoryConstructor } from "../../instance/repositories/InstanceFileRepository";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
 import {
     MetadataRepository,
@@ -19,9 +21,14 @@ import {
 import { MigrationsRepositoryConstructor } from "../../migrations/repositories/MigrationsRepository";
 import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubRepository";
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
+import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
+import {
+    TEIRepository,
+    TEIRepositoryConstructor,
+} from "../../tracked-entity-instances/repositories/TEIRepository";
 import {
     TransformationRepository,
     TransformationRepositoryConstructor,
@@ -63,9 +70,7 @@ export class RepositoryFactory {
 
     @cache()
     public downloadRepository() {
-        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, [
-            this.transformationRepository(),
-        ]);
+        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, []);
     }
 
     @cache()
@@ -77,10 +82,18 @@ export class RepositoryFactory {
     @cache()
     public instanceRepository(instance: Instance) {
         const config = this.configRepository(instance);
+
         return this.get<InstanceRepositoryConstructor>(Repositories.InstanceRepository, [
             config,
             instance,
             this.encryptionKey,
+        ]);
+    }
+
+    @cache()
+    public instanceFileRepository(instance: Instance) {
+        return this.get<InstanceFileRepositoryConstructor>(Repositories.InstanceFileRepository, [
+            instance,
         ]);
     }
 
@@ -121,15 +134,38 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public teisRepository(instance: Instance): TEIRepository {
+        return this.get<TEIRepositoryConstructor>(Repositories.TEIsRepository, [instance]);
+    }
+
+    @cache()
     public reportsRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<ReportsRepositoryConstructor>(Repositories.ReportsRepository, [config]);
     }
 
     @cache()
+    public fileRepository() {
+        return this.get<FileRepositoryConstructor>(Repositories.FileRepository, []);
+    }
+
+    @cache()
     public rulesRepository(instance: Instance) {
         const config = this.configRepository(instance);
-        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config]);
+        const user = this.userRepository(instance);
+
+        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config, user]);
+    }
+
+    @cache()
+    public fileRulesRepository(instance: Instance) {
+        const user = this.userRepository(instance);
+        const file = this.fileRepository();
+
+        return this.get<FileRulesRepositoryConstructor>(Repositories.FileRulesRepository, [
+            user,
+            file,
+        ]);
     }
 
     @cache()
@@ -154,6 +190,7 @@ type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
 
 export const Repositories = {
     InstanceRepository: "instanceRepository",
+    InstanceFileRepository: "instanceFileRepository",
     StoreRepository: "storeRepository",
     ConfigRepository: "configRepository",
     CustomDataRepository: "customDataRepository",
@@ -166,7 +203,9 @@ export const Repositories = {
     FileRepository: "fileRepository",
     ReportsRepository: "reportsRepository",
     RulesRepository: "rulesRepository",
+    FileRulesRepository: "fileRulesRepository",
     SystemInfoRepository: "systemInfoRepository",
     MigrationsRepository: "migrationsRepository",
+    TEIsRepository: "teisRepository",
     UserRepository: "userRepository",
 } as const;

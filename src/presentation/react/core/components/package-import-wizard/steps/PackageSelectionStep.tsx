@@ -1,4 +1,4 @@
-import { PaginationOptions } from "d2-ui-components";
+import { PaginationOptions } from "@eyeseetea/d2-ui-components";
 import React from "react";
 import {
     isInstance,

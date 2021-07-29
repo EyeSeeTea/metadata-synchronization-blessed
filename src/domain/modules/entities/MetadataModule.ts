@@ -1,12 +1,15 @@
 import _ from "lodash";
 import { D2Model } from "../../../models/dhis/default";
-import { ExcludeIncludeRules, MetadataIncludeExcludeRules } from "../../../types/synchronization";
-import { SynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
 import {
     extractChildrenFromRules,
     extractParentsFromRule,
 } from "../../../utils/metadataIncludeExclude";
 import { ModelValidation } from "../../common/entities/Validations";
+import {
+    ExcludeIncludeRules,
+    MetadataIncludeExcludeRules,
+} from "../../metadata/entities/MetadataExcludeIncludeRules";
+import { SynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
 import { BaseModule, GenericModule } from "./Module";
 
 interface BaseMetadataModule extends BaseModule {

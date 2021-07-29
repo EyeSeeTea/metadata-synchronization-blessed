@@ -1,5 +1,5 @@
 import { Icon } from "@material-ui/core";
-import { PaginationOptions } from "d2-ui-components";
+import { PaginationOptions } from "@eyeseetea/d2-ui-components";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
