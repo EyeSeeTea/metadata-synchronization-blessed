@@ -42,50 +42,83 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
 
         if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
 
-        const orgUnit = cleanOrgUnitPaths(orgUnitPaths);
+        const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
         const attributeOptionCombo = !allAttributeCategoryOptions
             ? attributeCategoryOptions
             : undefined;
 
-        try {
-            const { dataValues = [] } = await this.api.dataValues
-                .getSet({
-                    dataElementIdScheme: "UID",
-                    orgUnitIdScheme: "UID",
-                    categoryOptionComboIdScheme: "UID",
-                    includeDeleted: false,
-                    startDate: startDate.format("YYYY-MM-DD"),
-                    endDate: endDate.format("YYYY-MM-DD"),
-                    attributeOptionCombo,
-                    dataSet,
-                    dataElementGroup,
-                    orgUnit,
-                    lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
-                })
-                .getData();
+        const [defaultCategoryOptionCombo] = await this.getDefaultIds("categoryOptionCombos");
 
-            const [defaultCategoryOptionCombo] = await this.getDefaultIds("categoryOptionCombos");
+        const dimensions = _.uniqBy(
+            [
+                ...dataSet.map(id => ({ type: "dataSet", id })),
+                ...dataElementGroup.map(id => ({ type: "dataElementGroup", id })),
+            ],
+            ({ id }) => id
+        );
+
+        try {
+            // Chunked request by orgUnits and dimensions (dataSets and dataElementGroups) to avoid 414
+            const dataValues = await promiseMap(_.chunk(orgUnits, 100), orgUnit =>
+                promiseMap(_.chunk(dimensions, 50), dimensions => {
+                    const dataSet = dimensions
+                        .filter(({ type }) => type === "dataSet")
+                        .map(({ id }) => id);
+                    const dataElementGroup = dimensions
+                        .filter(({ type }) => type === "dataElementGroup")
+                        .map(({ id }) => id);
+
+                    return this.api.dataValues
+                        .getSet({
+                            dataElementIdScheme: "UID",
+                            orgUnitIdScheme: "UID",
+                            categoryOptionComboIdScheme: "UID",
+                            includeDeleted: false,
+                            startDate: startDate.format("YYYY-MM-DD"),
+                            endDate: endDate.format("YYYY-MM-DD"),
+                            attributeOptionCombo,
+                            dataSet: [dataSet.join(",")],
+                            dataElementGroup: [dataElementGroup.join(",")],
+                            orgUnit: [orgUnit.join(",")],
+                            lastUpdated: lastUpdated
+                                ? moment(lastUpdated).format("YYYY-MM-DD")
+                                : undefined,
+                        })
+                        .map(({ data }) =>
+                            data.dataValues.map(
+                                ({
+                                    dataElement,
+                                    period,
+                                    orgUnit,
+                                    categoryOptionCombo,
+                                    attributeOptionCombo,
+                                    value,
+                                    comment,
+                                }) => ({
+                                    dataElement,
+                                    period,
+                                    orgUnit,
+                                    value,
+                                    comment,
+                                    categoryOptionCombo:
+                                        categoryOptionCombo ?? defaultCategoryOptionCombo,
+                                    attributeOptionCombo:
+                                        attributeOptionCombo ?? defaultCategoryOptionCombo,
+                                })
+                            )
+                        )
+                        .getData();
+                })
+            );
 
             return {
-                dataValues: dataValues.map(
-                    ({
-                        dataElement,
-                        period,
-                        orgUnit,
-                        categoryOptionCombo,
-                        attributeOptionCombo,
-                        value,
-                        comment,
-                    }) => ({
-                        dataElement,
-                        period,
-                        orgUnit,
-                        value,
-                        comment,
-                        categoryOptionCombo: categoryOptionCombo ?? defaultCategoryOptionCombo,
-                        attributeOptionCombo: attributeOptionCombo ?? defaultCategoryOptionCombo,
-                    })
-                ),
+                dataValues: _(dataValues)
+                    .flatten()
+                    .flatten()
+                    .uniqBy(({ orgUnit, period, dataElement, categoryOptionCombo }) =>
+                        [orgUnit, period, dataElement, categoryOptionCombo].join("-")
+                    )
+                    .value(),
             };
         } catch (error) {
             console.error(error);
@@ -122,8 +155,8 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         if (dimensionIds.length === 0 || orgUnits.length === 0) {
             return { dataValues: [] };
         } else if (aggregationType) {
-            const result = await promiseMap(_.chunk(periods, 300), period =>
-                promiseMap(_.chunk(dimensionIds, Math.max(10, 300 - period.length)), ids => {
+            const result = await promiseMap(_.chunk(periods, 5), period =>
+                promiseMap(_.chunk(dimensionIds, Math.max(10, 100 - period.length)), ids => {
                     return this.api
                         .get<AggregatedPackage>("/analytics/dataValueSet.json", {
                             dimension: _.compact([
@@ -272,6 +305,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
     }
 
     async delete(data: AggregatedPackage): Promise<SynchronizationResult> {
+        // TODO: To be refactored. Requires authority F_SKIP_DATA_IMPORT_AUDIT.
         return await this.save(data, { strategy: "DELETES", skipAudit: true });
     }
 
