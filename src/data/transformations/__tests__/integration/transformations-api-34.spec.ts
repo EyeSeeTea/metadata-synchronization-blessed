@@ -97,10 +97,9 @@ describe("API 34", () => {
                 models: ["visualizations"],
             });
 
-            expect(
-                payload.visualizations["LW0O27b7TdD"],
-                "Chart to be transformed into a visualization"
-            ).toMatchObject(visualizations34.visualizations[0]);
+            expect(payload.visualizations["LW0O27b7TdD"], "Chart to be transformed into a visualization").toMatchObject(
+                visualizations34.visualizations[0]
+            );
 
             expect(
                 payload.visualizations["qfMh2IjOxvw"],
@@ -186,10 +185,9 @@ describe("API 34", () => {
                 models: ["charts", "reportTables"],
             });
 
-            expect(
-                payload.charts["LW0O27b7TdD"],
-                "Chart to be transformed into a visualization"
-            ).toMatchObject(visualizations30.charts[0]);
+            expect(payload.charts["LW0O27b7TdD"], "Chart to be transformed into a visualization").toMatchObject(
+                visualizations30.charts[0]
+            );
 
             expect(
                 payload.reportTables["qfMh2IjOxvw"],

@@ -82,17 +82,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
         } finally {
             loading.reset();
         }
-    }, [
-        compositionRoot,
-        builder,
-        fields,
-        type,
-        instance,
-        notificationUsers,
-        onClose,
-        snackbar,
-        loading,
-    ]);
+    }, [compositionRoot, builder, fields, type, instance, notificationUsers, onClose, snackbar, loading]);
 
     const updateTextField = useCallback(
         (field: keyof PullRequestFields) => (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -103,8 +93,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
     );
 
     const onSearchRequest = useCallback(
-        (key: string) =>
-            compositionRoot.instances.getApi(instance).sharing.search({ key }).getData(),
+        (key: string) => compositionRoot.instances.getApi(instance).sharing.search({ key }).getData(),
         [compositionRoot, instance]
     );
 
@@ -117,14 +106,8 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
 
     useEffect(() => {
         compositionRoot.responsibles.get(builder.metadataIds, instance).then(responsibles => {
-            const users = _.uniqBy(
-                namedRefToSharing(responsibles.flatMap(({ users }) => users)),
-                "id"
-            );
-            const userGroups = _.uniqBy(
-                namedRefToSharing(responsibles.flatMap(({ userGroups }) => userGroups)),
-                "id"
-            );
+            const users = _.uniqBy(namedRefToSharing(responsibles.flatMap(({ users }) => users)), "id");
+            const userGroups = _.uniqBy(namedRefToSharing(responsibles.flatMap(({ userGroups }) => userGroups)), "id");
 
             updateResponsibles(new Set([...users, ...userGroups].map(({ id }) => id)));
             updateNotificationUsers({ users, userGroups });

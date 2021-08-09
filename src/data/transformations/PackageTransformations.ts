@@ -9,64 +9,50 @@ export const metadataTransformations: Transformation[] = [
         apiVersion: 32,
         apply: ({ organisationUnits, ...rest }: any) => {
             return {
-                organisationUnits: organisationUnits?.map(
-                    ({ featureType, coordinates, geometry, ...rest }: any) => {
-                        if (featureType && featureType !== "NONE" && coordinates) {
-                            try {
-                                return _.pickBy(
-                                    {
-                                        geometry: {
-                                            type: _.startCase(featureType.toLowerCase()).replace(
-                                                " ",
-                                                ""
-                                            ),
-                                            coordinates: JSON.parse(coordinates),
-                                        },
-                                        ...rest,
+                organisationUnits: organisationUnits?.map(({ featureType, coordinates, geometry, ...rest }: any) => {
+                    if (featureType && featureType !== "NONE" && coordinates) {
+                        try {
+                            return _.pickBy(
+                                {
+                                    geometry: {
+                                        type: _.startCase(featureType.toLowerCase()).replace(" ", ""),
+                                        coordinates: JSON.parse(coordinates),
                                     },
-                                    _.identity
-                                );
-                            } catch (error) {
-                                console.error(
-                                    "Error during coordinates conversion OU: " + rest["id"]
-                                );
-                            }
+                                    ...rest,
+                                },
+                                _.identity
+                            );
+                        } catch (error) {
+                            console.error("Error during coordinates conversion OU: " + rest["id"]);
                         }
-                        return _.pickBy({ geometry, ...rest }, _.identity);
                     }
-                ),
+                    return _.pickBy({ geometry, ...rest }, _.identity);
+                }),
                 ...rest,
             };
         },
         undo: ({ organisationUnits, ...rest }: any) => {
             return {
-                organisationUnits: organisationUnits?.map(
-                    ({ geometry, featureType, coordinates, ...rest }: any) => {
-                        if (geometry && geometry.type && geometry.coordinates) {
-                            try {
-                                return _.pickBy(
-                                    {
-                                        featureType:
-                                            geometry.type === "MultiPolygon"
-                                                ? "MULTI_POLYGON"
-                                                : geometry.type.toUpperCase(),
-                                        coordinates: JSON.stringify(geometry.coordinates).replace(
-                                            /"/g,
-                                            ""
-                                        ),
-                                        ...rest,
-                                    },
-                                    _.identity
-                                );
-                            } catch (error) {
-                                console.error(
-                                    "Error during coordinates conversion OU: " + rest["id"]
-                                );
-                            }
+                organisationUnits: organisationUnits?.map(({ geometry, featureType, coordinates, ...rest }: any) => {
+                    if (geometry && geometry.type && geometry.coordinates) {
+                        try {
+                            return _.pickBy(
+                                {
+                                    featureType:
+                                        geometry.type === "MultiPolygon"
+                                            ? "MULTI_POLYGON"
+                                            : geometry.type.toUpperCase(),
+                                    coordinates: JSON.stringify(geometry.coordinates).replace(/"/g, ""),
+                                    ...rest,
+                                },
+                                _.identity
+                            );
+                        } catch (error) {
+                            console.error("Error during coordinates conversion OU: " + rest["id"]);
                         }
-                        return _.pickBy({ featureType, coordinates, ...rest }, _.identity);
                     }
-                ),
+                    return _.pickBy({ featureType, coordinates, ...rest }, _.identity);
+                }),
                 ...rest,
             };
         },
@@ -76,25 +62,22 @@ export const metadataTransformations: Transformation[] = [
         apiVersion: 31,
         apply: ({ programStages, ...rest }: any) => {
             return {
-                programStages: programStages?.map(
-                    ({ validCompleteOnly, validationStrategy, ...rest }: any) => {
-                        validationStrategy =
-                            typeof validationStrategy === "undefined"
-                                ? validCompleteOnly
-                                    ? "ON_COMPLETE"
-                                    : "ON_COMPLETE"
-                                : validationStrategy;
-                        return { validationStrategy, ...rest };
-                    }
-                ),
+                programStages: programStages?.map(({ validCompleteOnly, validationStrategy, ...rest }: any) => {
+                    validationStrategy =
+                        typeof validationStrategy === "undefined"
+                            ? validCompleteOnly
+                                ? "ON_COMPLETE"
+                                : "ON_COMPLETE"
+                            : validationStrategy;
+                    return { validationStrategy, ...rest };
+                }),
                 ...rest,
             };
         },
         undo: ({ programStages, ...rest }: any) => {
             return {
                 programStages: programStages?.map(({ validationStrategy, ...rest }: any) => {
-                    const validCompleteOnly =
-                        validationStrategy === "ON_UPDATE_AND_INSERT" ? false : true;
+                    const validCompleteOnly = validationStrategy === "ON_UPDATE_AND_INSERT" ? false : true;
                     return { validCompleteOnly, validationStrategy, ...rest };
                 }),
                 ...rest,
@@ -194,16 +177,12 @@ export const metadataTransformations: Transformation[] = [
                                 if (
                                     type !== "VISUALIZATION" ||
                                     !dashboardItem.visualization ||
-                                    !isKeyOf(
-                                        visualizationTypeMapping,
-                                        dashboardItem.visualization.type
-                                    )
+                                    !isKeyOf(visualizationTypeMapping, dashboardItem.visualization.type)
                                 ) {
                                     return dashboardItem;
                                 }
 
-                                const modelInfo =
-                                    visualizationTypeMapping[dashboardItem.visualization.type];
+                                const modelInfo = visualizationTypeMapping[dashboardItem.visualization.type];
 
                                 return {
                                     ..._.omit(dashboardItem, ["visualization"]),
@@ -294,12 +273,10 @@ export const metadataTransformations: Transformation[] = [
                     return {
                         series: (chart.columnDimensions || [])[0],
                         category: (chart.rowDimensions || [])[0],
-                        seriesItems: (chart.optionalAxes || []).map(
-                            ({ dimensionalItem, axis }: any) => ({
-                                series: dimensionalItem,
-                                axis,
-                            })
-                        ),
+                        seriesItems: (chart.optionalAxes || []).map(({ dimensionalItem, axis }: any) => ({
+                            series: dimensionalItem,
+                            axis,
+                        })),
                         ...chart,
                     };
                 });
@@ -436,24 +413,22 @@ const itemsMapping = {
 const chart = { type: "CHART", property: "chart" } as const;
 const reportTable = { type: "REPORT_TABLE", property: "reportTable" } as const;
 
-const visualizationTypeMapping: Record<
-    string,
-    { type: D2DashboardItem33["type"]; property: keyof D2DashboardItem33 }
-> = {
-    COLUMN: chart,
-    STACKED_COLUMN: chart,
-    BAR: chart,
-    STACKED_BAR: chart,
-    LINE: chart,
-    AREA: chart,
-    PIE: chart,
-    RADAR: chart,
-    GAUGE: chart,
-    YEAR_OVER_YEAR_LINE: chart,
-    YEAR_OVER_YEAR_COLUMN: chart,
-    SINGLE_VALUE: chart,
-    PIVOT_TABLE: reportTable,
-};
+const visualizationTypeMapping: Record<string, { type: D2DashboardItem33["type"]; property: keyof D2DashboardItem33 }> =
+    {
+        COLUMN: chart,
+        STACKED_COLUMN: chart,
+        BAR: chart,
+        STACKED_BAR: chart,
+        LINE: chart,
+        AREA: chart,
+        PIE: chart,
+        RADAR: chart,
+        GAUGE: chart,
+        YEAR_OVER_YEAR_LINE: chart,
+        YEAR_OVER_YEAR_COLUMN: chart,
+        SINGLE_VALUE: chart,
+        PIVOT_TABLE: reportTable,
+    };
 
 function getNewReportParams(reportParams: any) {
     const {

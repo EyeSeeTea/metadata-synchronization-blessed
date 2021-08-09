@@ -5,11 +5,7 @@ import { Instance } from "../entities/Instance";
 import { InstanceMessage } from "../entities/Message";
 
 export interface InstanceRepositoryConstructor {
-    new (
-        configRepository: ConfigRepository,
-        instance: Instance,
-        encryptionKey: string
-    ): InstanceRepository;
+    new (configRepository: ConfigRepository, instance: Instance, encryptionKey: string): InstanceRepository;
 }
 
 export interface InstancesFilter {

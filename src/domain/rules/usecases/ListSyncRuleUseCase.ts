@@ -39,13 +39,7 @@ export class ListSyncRuleUseCase implements UseCase {
     }: ListSyncRuleUseCaseParams): Promise<ListSyncRuleUseCaseResult> {
         const rawData = await this.repositoryFactory.rulesRepository(this.localInstance).list();
 
-        const {
-            targetInstanceFilter = null,
-            enabledFilter = null,
-            lastExecutedFilter = null,
-            types,
-            search,
-        } = filters;
+        const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null, types, search } = filters;
 
         const filteredData = search
             ? _.filter(rawData, item =>
@@ -58,11 +52,7 @@ export class ListSyncRuleUseCase implements UseCase {
             : rawData;
 
         const { field, order } = sorting;
-        const sortedData = _.orderBy(
-            filteredData,
-            [data => _.toLower(data[field] as string)],
-            [order]
-        );
+        const sortedData = _.orderBy(filteredData, [data => _.toLower(data[field] as string)], [order]);
 
         // TODO: FIXME Move this to config repository
         const globalAdmin = await isGlobalAdmin(getD2APiFromInstance(this.localInstance));
@@ -75,15 +65,10 @@ export class ListSyncRuleUseCase implements UseCase {
             .filter(rule => {
                 return globalAdmin || rule.isVisibleToUser(userInfo);
             })
-            .filter(rule =>
-                targetInstanceFilter ? rule.targetInstances.includes(targetInstanceFilter) : true
-            )
+            .filter(rule => (targetInstanceFilter ? rule.targetInstances.includes(targetInstanceFilter) : true))
             .filter(rule => {
                 if (!enabledFilter) return true;
-                return (
-                    (rule.enabled && enabledFilter === "enabled") ||
-                    (!rule.enabled && enabledFilter === "disabled")
-                );
+                return (rule.enabled && enabledFilter === "enabled") || (!rule.enabled && enabledFilter === "disabled");
             })
             .filter(rule =>
                 lastExecutedFilter && rule.lastExecuted

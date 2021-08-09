@@ -12,10 +12,7 @@ import { PackageImportWizardProps } from "../PackageImportWizard";
 
 const showInstances = { remote: true, store: true };
 
-export const InstanceStoreSelectionStep: React.FC<PackageImportWizardProps> = ({
-    packageImportRule,
-    onChange,
-}) => {
+export const InstanceStoreSelectionStep: React.FC<PackageImportWizardProps> = ({ packageImportRule, onChange }) => {
     const [creationDialogOpen, setCreationDialogOpen] = useState<boolean>(false);
     const [refreshKey, setRefreshKey] = useState(Math.random);
 

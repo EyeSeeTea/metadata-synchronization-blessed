@@ -62,9 +62,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                                 ...memoizedSyncRule.dataParams,
                                 allEvents: true,
                             },
-                            programs
-                                .map(program => program.programStages.map(({ id }) => id))
-                                .flat()
+                            programs.map(program => program.programStages.map(({ id }) => id)).flat()
                         )
                         .then(setObjects)
                         .catch(setError);
@@ -184,9 +182,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const additionalColumns = useMemo(() => {
         const program = _.find(programs, { id: programFilter });
         const dataElements = _(program?.programStages ?? [])
-            .map(({ programStageDataElements }) =>
-                programStageDataElements.map(({ dataElement }) => dataElement)
-            )
+            .map(({ programStageDataElements }) => programStageDataElements.map(({ dataElement }) => dataElement))
             .flatten()
             .value();
 
@@ -201,16 +197,11 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         }));
     }, [programFilter, programs]);
 
-    const filteredObjects =
-        objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
+    const filteredObjects = objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
 
     if (error) {
         console.error(error);
-        return (
-            <Typography>
-                {i18n.t("An error ocurred while trying to access the required events")}
-            </Typography>
-        );
+        return <Typography>{i18n.t("An error ocurred while trying to access the required events")}</Typography>;
     }
 
     return (

@@ -48,10 +48,9 @@ export class Package implements BasePackage {
     }
 
     public validate(filter?: string[], module?: Module): ValidationError[] {
-        return [
-            ...validateModel<Package>(this, this.moduleValidations()),
-            ...this.validateVersion(module),
-        ].filter(({ property }) => filter?.includes(property) ?? true);
+        return [...validateModel<Package>(this, this.moduleValidations()), ...this.validateVersion(module)].filter(
+            ({ property }) => filter?.includes(property) ?? true
+        );
     }
 
     static build(data?: Partial<Pick<Package, keyof BasePackage>>): Package {

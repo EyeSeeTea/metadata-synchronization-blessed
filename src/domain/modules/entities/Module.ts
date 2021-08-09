@@ -63,10 +63,7 @@ export abstract class GenericModule implements BaseModule {
     }
 
     public abstract update(data?: Partial<Pick<GenericModule, keyof BaseModule>>): GenericModule;
-    public abstract toSyncBuilder(): Omit<
-        SynchronizationBuilder,
-        "originInstance" | "targetInstances"
-    >;
+    public abstract toSyncBuilder(): Omit<SynchronizationBuilder, "originInstance" | "targetInstances">;
 
     public hasPermissions(permission: "read" | "write", userId: string, userGroups: Ref[]) {
         const { publicAccess = "--------", userAccesses = [], userGroupAccesses = [] } = this;

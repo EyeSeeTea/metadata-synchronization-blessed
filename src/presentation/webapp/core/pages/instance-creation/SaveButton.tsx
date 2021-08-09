@@ -1,6 +1,5 @@
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import React from "react";
 import i18n from "../../../../../locales";
 
 const useStyles = makeStyles(() => ({
@@ -26,13 +25,7 @@ const SaveButton = ({ isSaving, onClick, ...rest }: SaveButtonProps) => {
     const buttonText = isSaving ? i18n.t("Saving...") : i18n.t("Save");
 
     return (
-        <Button
-            onClick={onClick}
-            variant="contained"
-            disabled={isSaving}
-            className={classes.button}
-            {...rest}
-        >
+        <Button onClick={onClick} variant="contained" disabled={isSaving} className={classes.button} {...rest}>
             {buttonText}
         </Button>
     );

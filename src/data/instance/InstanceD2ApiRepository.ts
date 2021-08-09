@@ -4,10 +4,7 @@ import { Either } from "../../domain/common/entities/Either";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
 import { InstanceMessage } from "../../domain/instance/entities/Message";
-import {
-    InstanceRepository,
-    InstancesFilter,
-} from "../../domain/instance/repositories/InstanceRepository";
+import { InstanceRepository, InstancesFilter } from "../../domain/instance/repositories/InstanceRepository";
 import { OrganisationUnit } from "../../domain/metadata/entities/MetadataEntities";
 import { ObjectSharing, StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { D2Api } from "../../types/d2-api";
@@ -21,43 +18,30 @@ type ObjectSharingError = "authority-error" | "unexpected-error";
 export class InstanceD2ApiRepository implements InstanceRepository {
     private api: D2Api;
 
-    constructor(
-        private configRepository: ConfigRepository,
-        private instance: Instance,
-        private encryptionKey: string
-    ) {
+    constructor(private configRepository: ConfigRepository, private instance: Instance, private encryptionKey: string) {
         this.api = getD2APiFromInstance(instance);
     }
 
     async getAll({ search, ids }: InstancesFilter): Promise<Instance[]> {
         const storageClient = await this.getStorageClient();
 
-        const objects = await storageClient.listObjectsInCollection<InstanceData>(
-            Namespace.INSTANCES
-        );
+        const objects = await storageClient.listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 
         const filteredDataBySearch = search
             ? _.filter(objects, o =>
                   _(o)
                       .values()
                       .some(value =>
-                          typeof value === "string"
-                              ? value.toLowerCase().includes(search.toLowerCase())
-                              : false
+                          typeof value === "string" ? value.toLowerCase().includes(search.toLowerCase()) : false
                       )
               )
             : objects;
 
-        const filteredDataByIds = filteredDataBySearch.filter(
-            instanceData => !ids || ids.includes(instanceData.id)
-        );
+        const filteredDataByIds = filteredDataBySearch.filter(instanceData => !ids || ids.includes(instanceData.id));
 
         const instances = await promiseMap(filteredDataByIds, async data => {
             const sharingResult = await this.getObjectSharing(storageClient, data);
-            const object = await storageClient.getObjectInCollection<InstanceData>(
-                Namespace.INSTANCES,
-                data.id
-            );
+            const object = await storageClient.getObjectInCollection<InstanceData>(Namespace.INSTANCES, data.id);
 
             return sharingResult.match({
                 success: sharing => this.mapToInstance(object ?? data, sharing),
@@ -83,9 +67,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         if (!instanceData) return undefined;
 
         const storageClient = await this.getStorageClient();
-        const sharing = await storageClient.getObjectSharing(
-            `${Namespace.INSTANCES}-${instanceData.id}`
-        );
+        const sharing = await storageClient.getObjectSharing(`${Namespace.INSTANCES}-${instanceData.id}`);
 
         return this.mapToInstance(instanceData, sharing);
     }
@@ -93,17 +75,13 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     async getByName(name: string): Promise<Instance | undefined> {
         const storageClient = await this.getStorageClient();
 
-        const existingInstances = await storageClient.getObject<InstanceData[]>(
-            Namespace.INSTANCES
-        );
+        const existingInstances = await storageClient.getObject<InstanceData[]>(Namespace.INSTANCES);
 
         const instanceData = existingInstances?.find(instance => instance.name === name);
 
         if (!instanceData) return undefined;
 
-        const sharing = await storageClient.getObjectSharing(
-            `${Namespace.INSTANCES}-${instanceData.id}`
-        );
+        const sharing = await storageClient.getObjectSharing(`${Namespace.INSTANCES}-${instanceData.id}`);
 
         return this.mapToInstance(instanceData, sharing);
     }
@@ -137,10 +115,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
             userGroupAccesses: instance.userGroupAccesses,
         };
 
-        await storageClient.saveObjectSharing(
-            `${Namespace.INSTANCES}-${instanceData.id}`,
-            objectSharing
-        );
+        await storageClient.saveObjectSharing(`${Namespace.INSTANCES}-${instanceData.id}`, objectSharing);
     }
 
     private decryptPassword(password?: string): string {
@@ -154,10 +129,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     private async getInstanceDataInColletion(id: string): Promise<InstanceData | undefined> {
         const storageClient = await this.getStorageClient();
 
-        const instanceData = await storageClient.getObjectInCollection<InstanceData>(
-            Namespace.INSTANCES,
-            id
-        );
+        const instanceData = await storageClient.getObjectInCollection<InstanceData>(Namespace.INSTANCES, id);
 
         return instanceData;
     }
@@ -167,9 +139,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         data: InstanceData
     ): Promise<Either<ObjectSharingError, ObjectSharing>> {
         try {
-            const objectSharing = await storageClient.getObjectSharing(
-                `${Namespace.INSTANCES}-${data.id}`
-            );
+            const objectSharing = await storageClient.getObjectSharing(`${Namespace.INSTANCES}-${data.id}`);
 
             return objectSharing ? Either.success(objectSharing) : Either.error("unexpected-error");
         } catch (error) {
@@ -200,9 +170,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     //TODO: this should nbe in a MetadataRepository
     @cache()
-    public async getOrgUnitRoots(): Promise<
-        Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]
-    > {
+    public async getOrgUnitRoots(): Promise<Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]> {
         const { objects } = await this.api.models.organisationUnits
             .get({
                 paging: false,

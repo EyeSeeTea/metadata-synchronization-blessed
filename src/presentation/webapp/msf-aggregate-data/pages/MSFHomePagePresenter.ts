@@ -37,9 +37,7 @@ export async function executeAggregateData(
         onAddProgressMessage(event);
     };
 
-    addEventToProgress(
-        _.toUpper(i18n.t(`Syncing process will stop if you leave the current page`))
-    );
+    addEventToProgress(_.toUpper(i18n.t(`Syncing process will stop if you leave the current page`)));
 
     addEventToProgress(i18n.t(`Retrieving information from the system...`));
 
@@ -104,10 +102,7 @@ export async function executeAggregateData(
     if (advancedSettings.period === undefined) {
         const currentExecutions = _(syncRules)
             .map(rule =>
-                rule.dataSyncOrgUnitPaths.map(orgUnit => [
-                    `${rule.id}-${cleanOrgUnitPath(orgUnit)}`,
-                    new Date(),
-                ])
+                rule.dataSyncOrgUnitPaths.map(orgUnit => [`${rule.id}-${cleanOrgUnitPath(orgUnit)}`, new Date()])
             )
             .flatten()
             .fromPairs()
@@ -170,18 +165,14 @@ async function validatePreviousDataValues(
                 .uniqBy("id")
                 .map(
                     ({ id, orgUnitName, orgUnit, eventDate, lastUpdated }) =>
-                        `\n- Event ${id} for org unit ${orgUnitName ?? orgUnit} on date ${moment(
-                            eventDate
-                        ).format("DD-MM-YYYY")} and updated ${moment(lastUpdated).format(
+                        `\n- Event ${id} for org unit ${orgUnitName ?? orgUnit} on date ${moment(eventDate).format(
                             "DD-MM-YYYY"
-                        )}`
+                        )} and updated ${moment(lastUpdated).format("DD-MM-YYYY")}`
                 )
                 .value();
 
             if (errorEvents.length > 0) {
-                return `Sync rule '${rule.name}': we have found ${
-                    errorEvents.length
-                } related events in '${
+                return `Sync rule '${rule.name}': we have found ${errorEvents.length} related events in '${
                     instance.name
                 }' updated after the last aggregation run that belong to periods before the start period of the sync rule:${errorEvents.join()}`;
             }
@@ -204,12 +195,7 @@ async function executeSyncRule(
     addEventToProgress(i18n.t(`Starting Sync Rule {{name}} ...`, { name }), "admin");
 
     if (msfSettings.deleteDataValuesBeforeSync) {
-        await deletePreviousDataValues(
-            compositionRoot,
-            targetInstances,
-            builder,
-            addEventToProgress
-        );
+        await deletePreviousDataValues(compositionRoot, targetInstances, builder, addEventToProgress);
     }
 
     const sync = compositionRoot.sync[type]({ ...builder, syncRule });
@@ -221,14 +207,9 @@ async function executeSyncRule(
         if (done && syncReport) {
             addEventToProgress(`${i18n.t("Summary of Sync Rule")}:`, "admin");
             syncReport.getResults().forEach(result => {
-                addEventToProgress(
-                    `${i18n.t("Type")}: ${getTypeName(result.type, syncReport.type)}`,
-                    "admin"
-                );
+                addEventToProgress(`${i18n.t("Type")}: ${getTypeName(result.type, syncReport.type)}`, "admin");
 
-                const origin = result.origin
-                    ? `${i18n.t("Origin")}: ${getOriginName(result.origin)} `
-                    : "";
+                const origin = result.origin ? `${i18n.t("Origin")}: ${getOriginName(result.origin)} ` : "";
                 const originPackage = result.originPackage
                     ? `${i18n.t("Origin package")}: ${result.originPackage.name}`
                     : "";
@@ -236,17 +217,14 @@ async function executeSyncRule(
                 addEventToProgress(`${origin} ${originPackage} -> ${destination}`, "admin");
 
                 addEventToProgress(
-                    _.compact([
-                        `${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`,
-                        result.message,
-                    ]).join(" - "),
+                    _.compact([`${i18n.t("Status")}: ${_.startCase(_.toLower(result.status))}`, result.message]).join(
+                        " - "
+                    ),
                     "admin"
                 );
 
                 result.errors?.forEach(({ message }) => {
-                    addEventToProgress(
-                        i18n.t("Error found: {{message}}", { nsSeparator: false, message })
-                    );
+                    addEventToProgress(i18n.t("Error found: {{message}}", { nsSeparator: false, message }));
                 });
             });
 
@@ -341,20 +319,14 @@ async function getSyncRules(
                     if (date === "undefined" || minDate.isSameOrBefore(startDate)) {
                         return rule
                             .updateName(
-                                `${rule.name} (${startDate.format(
-                                    "DD-MM-YYYY"
-                                )} to ${endDate.format("DD-MM-YYYY")})`
+                                `${rule.name} (${startDate.format("DD-MM-YYYY")} to ${endDate.format("DD-MM-YYYY")})`
                             )
                             .updateDataSyncOrgUnitPaths(paths);
                     }
 
                     // Update start date if minimum date is after current one
                     return rule
-                        .updateName(
-                            `${rule.name} (${minDate.format("DD-MM-YYYY")} to ${endDate.format(
-                                "DD-MM-YYYY"
-                            )})`
-                        )
+                        .updateName(`${rule.name} (${minDate.format("DD-MM-YYYY")} to ${endDate.format("DD-MM-YYYY")})`)
                         .updateDataSyncOrgUnitPaths(paths)
                         .updateBuilderDataParams({
                             period: "FIXED",
@@ -368,11 +340,7 @@ async function getSyncRules(
         .value();
 }
 
-async function runAnalytics(
-    compositionRoot: CompositionRoot,
-    addEventToProgress: LoggerFunction,
-    lastYears: number
-) {
+async function runAnalytics(compositionRoot: CompositionRoot, addEventToProgress: LoggerFunction, lastYears: number) {
     const localInstance = await compositionRoot.instances.getLocal();
 
     for await (const message of executeAnalytics(localInstance, { lastYears })) {
@@ -404,9 +372,7 @@ const getPeriodText = (period: { type: DataSyncPeriod; startDate?: Date; endDate
     const formatDate = (date?: Date) => moment(date).format("YYYY-MM-DD");
 
     return `${availablePeriods[period.type].name} ${
-        period.type === "FIXED"
-            ? `- start: ${formatDate(period.startDate)} - end: ${formatDate(period.endDate)}`
-            : ""
+        period.type === "FIXED" ? `- start: ${formatDate(period.startDate)} - end: ${formatDate(period.endDate)}` : ""
     }`;
 };
 
@@ -436,18 +402,16 @@ async function deletePreviousDataValues(
                 });
 
                 addEventToProgress(
-                    i18n.t(
-                        `Deleting previous data values in target instance {{name}} for period {{period}}...`,
-                        { name: instance.name, period }
-                    ),
+                    i18n.t(`Deleting previous data values in target instance {{name}} for period {{period}}...`, {
+                        name: instance.name,
+                        period,
+                    }),
                     "admin"
                 );
 
                 const dataElements = await getRuleDataElements(compositionRoot, builder, instance);
 
-                const { startDate, endDate } = buildPeriodFromParams(
-                    builder.dataParams ?? { period: "ALL" }
-                );
+                const { startDate, endDate } = buildPeriodFromParams(builder.dataParams ?? { period: "ALL" });
 
                 const sync = compositionRoot.sync.aggregated({
                     originInstance: builder.originInstance,
@@ -461,11 +425,7 @@ async function deletePreviousDataValues(
                             startDate.toDate(),
                             builder.dataParams?.aggregationType
                         ),
-                        endDate: getLimitDatesOfPeriod(
-                            "end",
-                            endDate.toDate(),
-                            builder.dataParams?.aggregationType
-                        ),
+                        endDate: getLimitDatesOfPeriod("end", endDate.toDate(), builder.dataParams?.aggregationType),
                         orgUnitPaths: builder.dataParams?.orgUnitPaths,
                         allAttributeCategoryOptions: true,
                     },
@@ -546,11 +506,7 @@ const aggregationTimeUnits = {
     YEARLY: "year",
 } as const;
 
-function getLimitDatesOfPeriod(
-    position: "start" | "end",
-    date?: Date,
-    period?: DataSyncAggregation
-): Date | undefined {
+function getLimitDatesOfPeriod(position: "start" | "end", date?: Date, period?: DataSyncAggregation): Date | undefined {
     if (!date || !period) return date;
     const unit = aggregationTimeUnits[period] ?? "day";
 

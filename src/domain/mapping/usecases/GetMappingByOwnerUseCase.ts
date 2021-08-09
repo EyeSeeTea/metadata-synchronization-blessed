@@ -13,9 +13,7 @@ export class GetMappingByOwnerUseCase implements UseCase {
         const storageClient = await this.getStorageClient();
 
         if (isMappingOwnerStore(owner)) {
-            const mappings = await storageClient.listObjectsInCollection<DataSourceMapping>(
-                Namespace.MAPPINGS
-            );
+            const mappings = await storageClient.listObjectsInCollection<DataSourceMapping>(Namespace.MAPPINGS);
 
             const rawMapping = mappings.find(
                 mapping =>
@@ -25,9 +23,10 @@ export class GetMappingByOwnerUseCase implements UseCase {
             );
 
             if (rawMapping) {
-                const mappingRawWithMetadataMapping = await storageClient.getObjectInCollection<
-                    DataSourceMapping
-                >(Namespace.MAPPINGS, rawMapping?.id);
+                const mappingRawWithMetadataMapping = await storageClient.getObjectInCollection<DataSourceMapping>(
+                    Namespace.MAPPINGS,
+                    rawMapping?.id
+                );
 
                 return mappingRawWithMetadataMapping
                     ? DataSourceMapping.build({ ...mappingRawWithMetadataMapping })
@@ -36,10 +35,7 @@ export class GetMappingByOwnerUseCase implements UseCase {
                 return undefined;
             }
         } else {
-            const instance = await storageClient.getObjectInCollection<Instance>(
-                Namespace.INSTANCES,
-                owner.id
-            );
+            const instance = await storageClient.getObjectInCollection<Instance>(Namespace.INSTANCES, owner.id);
 
             return instance
                 ? DataSourceMapping.build({

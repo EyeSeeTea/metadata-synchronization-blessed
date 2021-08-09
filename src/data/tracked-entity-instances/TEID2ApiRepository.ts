@@ -28,10 +28,7 @@ export class TEID2ApiRepository implements TEIRepository {
     constructor(private instance: Instance) {
         this.api = getD2APiFromInstance(instance);
     }
-    async getTEIs(
-        params: DataSynchronizationParams,
-        program: string
-    ): Promise<TrackedEntityInstance[]> {
+    async getTEIs(params: DataSynchronizationParams, program: string): Promise<TrackedEntityInstance[]> {
         const { period, orgUnitPaths = [] } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
@@ -52,10 +49,7 @@ export class TEID2ApiRepository implements TEIRepository {
         return result.trackedEntityInstances;
     }
 
-    async getTEIsById(
-        params: DataSynchronizationParams,
-        ids: string[]
-    ): Promise<TrackedEntityInstance[]> {
+    async getTEIsById(params: DataSynchronizationParams, ids: string[]): Promise<TrackedEntityInstance[]> {
         const { orgUnitPaths = [] } = params;
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
@@ -73,10 +67,7 @@ export class TEID2ApiRepository implements TEIRepository {
         return result.trackedEntityInstances;
     }
 
-    async save(
-        data: TEIsPackage,
-        additionalParams: DataImportParams | undefined
-    ): Promise<SynchronizationResult> {
+    async save(data: TEIsPackage, additionalParams: DataImportParams | undefined): Promise<SynchronizationResult> {
         try {
             const response = await this.api
                 .post<TEIsPostResponse>(
@@ -94,8 +85,6 @@ export class TEID2ApiRepository implements TEIRepository {
                     data
                 )
                 .getData();
-
-            console.log({ response });
 
             return this.cleanTEIsImportResponse(response);
         } catch (error) {
@@ -124,13 +113,7 @@ export class TEID2ApiRepository implements TEIRepository {
                     })) ?? [{ id: reference, message: description }]
             ) ?? [];
 
-        const stats: SynchronizationStats = _.pick(response, [
-            "imported",
-            "updated",
-            "ignored",
-            "deleted",
-            "total",
-        ]);
+        const stats: SynchronizationStats = _.pick(response, ["imported", "updated", "ignored", "deleted", "total"]);
 
         return {
             status,

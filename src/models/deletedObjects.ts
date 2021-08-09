@@ -75,14 +75,9 @@ export default class DeletedObject {
         );
     }
 
-    public static async list(
-        api: D2Api,
-        filters: TableFilters,
-        pagination: TablePagination
-    ): Promise<TableList> {
+    public static async list(api: D2Api, filters: TableFilters, pagination: TablePagination): Promise<TableList> {
         const { search = null, lastUpdatedDate = null } = filters || {};
-        const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } =
-            pagination || {};
+        const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } = pagination || {};
 
         const { deletedObjects: rawData } = (
             await axios.get(api.apiPath + "/deletedObjects", {
@@ -104,9 +99,7 @@ export default class DeletedObject {
                     : true
             )
             .filter(object =>
-                lastUpdatedDate && object.deletedAt
-                    ? moment(lastUpdatedDate).isSameOrBefore(object.deletedAt)
-                    : true
+                lastUpdatedDate && object.deletedAt ? moment(lastUpdatedDate).isSameOrBefore(object.deletedAt) : true
             )
             .value();
 

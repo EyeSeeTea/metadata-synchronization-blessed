@@ -32,20 +32,13 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         dataSet: string[],
         dataElementGroup: string[]
     ): Promise<AggregatedPackage> {
-        const {
-            orgUnitPaths = [],
-            allAttributeCategoryOptions,
-            attributeCategoryOptions,
-            lastUpdated,
-        } = params;
+        const { orgUnitPaths = [], allAttributeCategoryOptions, attributeCategoryOptions, lastUpdated } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         if (dataSet.length === 0 && dataElementGroup.length === 0) return { dataValues: [] };
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
-        const attributeOptionCombo = !allAttributeCategoryOptions
-            ? attributeCategoryOptions
-            : undefined;
+        const attributeOptionCombo = !allAttributeCategoryOptions ? attributeCategoryOptions : undefined;
 
         const [defaultCategoryOptionCombo] = await this.getDefaultIds("categoryOptionCombos");
 
@@ -61,9 +54,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             // Chunked request by orgUnits and dimensions (dataSets and dataElementGroups) to avoid 414
             const dataValues = await promiseMap(_.chunk(orgUnits, 100), orgUnit =>
                 promiseMap(_.chunk(dimensions, 50), dimensions => {
-                    const dataSet = dimensions
-                        .filter(({ type }) => type === "dataSet")
-                        .map(({ id }) => id);
+                    const dataSet = dimensions.filter(({ type }) => type === "dataSet").map(({ id }) => id);
                     const dataElementGroup = dimensions
                         .filter(({ type }) => type === "dataElementGroup")
                         .map(({ id }) => id);
@@ -80,9 +71,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                             dataSet: [dataSet.join(",")],
                             dataElementGroup: [dataElementGroup.join(",")],
                             orgUnit: [orgUnit.join(",")],
-                            lastUpdated: lastUpdated
-                                ? moment(lastUpdated).format("YYYY-MM-DD")
-                                : undefined,
+                            lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
                         })
                         .map(({ data }) =>
                             data.dataValues.map(
@@ -100,10 +89,8 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                                     orgUnit,
                                     value,
                                     comment,
-                                    categoryOptionCombo:
-                                        categoryOptionCombo ?? defaultCategoryOptionCombo,
-                                    attributeOptionCombo:
-                                        attributeOptionCombo ?? defaultCategoryOptionCombo,
+                                    categoryOptionCombo: categoryOptionCombo ?? defaultCategoryOptionCombo,
+                                    attributeOptionCombo: attributeOptionCombo ?? defaultCategoryOptionCombo,
                                 })
                             )
                         )
@@ -148,9 +135,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         const { startDate, endDate } = buildPeriodFromParams(dataParams);
         const periods = this.buildPeriodsForAggregation(aggregationType, startDate, endDate);
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
-        const attributeOptionCombo = !allAttributeCategoryOptions
-            ? attributeCategoryOptions
-            : undefined;
+        const attributeOptionCombo = !allAttributeCategoryOptions ? attributeCategoryOptions : undefined;
 
         if (dimensionIds.length === 0 || orgUnits.length === 0) {
             return { dataValues: [] };
@@ -164,9 +149,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                                 `pe:${period.join(";")}`,
                                 `ou:${orgUnits.join(";")}`,
                                 includeCategories ? `co` : undefined,
-                                attributeOptionCombo
-                                    ? `ao:${attributeOptionCombo.join(";")}`
-                                    : undefined,
+                                attributeOptionCombo ? `ao:${attributeOptionCombo.join(";")}` : undefined,
                             ]),
                             filter,
                         })
@@ -254,8 +237,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         const findOptionCombo = (mappedOption: string, mappedCombo?: string) =>
             categoryOptionCombos.find(
                 ({ categoryCombo, categoryOptions }) =>
-                    categoryCombo?.id === mappedCombo &&
-                    categoryOptions?.map(({ id }) => id).includes(mappedOption)
+                    categoryCombo?.id === mappedCombo && categoryOptions?.map(({ id }) => id).includes(mappedOption)
             )?.id ?? mappedOption;
 
         const validOptions = _.transform(
@@ -274,10 +256,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                     .mapValues((values = [], mappedCategoryOption) => ({
                         dataElement,
                         categoryOptions: values.map(({ categoryOption }) => categoryOption),
-                        mappedOptionCombo: findOptionCombo(
-                            mappedCategoryOption,
-                            _.values(categoryCombos)[0]?.mappedId
-                        ),
+                        mappedOptionCombo: findOptionCombo(mappedCategoryOption, _.values(categoryCombos)[0]?.mappedId),
                     }))
                     .values()
                     .value();
@@ -286,9 +265,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             [] as Omit<MappedCategoryOption, "category">[]
         );
 
-        const result = _.flatten(
-            dimensions.map(category => validOptions.map(item => ({ ...item, category })))
-        );
+        const result = _.flatten(dimensions.map(category => validOptions.map(item => ({ ...item, category }))));
 
         return result;
     }
@@ -309,10 +286,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         return await this.save(data, { strategy: "DELETES", skipAudit: true });
     }
 
-    public async save(
-        data: AggregatedPackage,
-        params: DataImportParams = {}
-    ): Promise<SynchronizationResult> {
+    public async save(data: AggregatedPackage, params: DataImportParams = {}): Promise<SynchronizationResult> {
         try {
             const { response } = await this.api.dataValues
                 .postSetAsync(
@@ -356,9 +330,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
         }
     }
 
-    private cleanAggregatedImportResponse(
-        importResult: DataValueSetsPostResponse
-    ): SynchronizationResult {
+    private cleanAggregatedImportResponse(importResult: DataValueSetsPostResponse): SynchronizationResult {
         const { status, description, importCount, conflicts } = importResult;
 
         const errors =

@@ -101,9 +101,7 @@ context("Manual event sync", function () {
             .selectRow(inputs.program)
             .openSyncDialog()
             .next()
-            .assertError(error =>
-                error.contains("You need to select at least one organisation unit")
-            );
+            .assertError(error => error.contains("You need to select at least one organisation unit"));
     });
 
     it("should have synchronize button disabled to open sync dialog", () => {

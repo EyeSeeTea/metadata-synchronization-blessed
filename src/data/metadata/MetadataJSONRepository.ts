@@ -3,11 +3,7 @@ import { IdentifiableRef } from "../../domain/common/entities/Ref";
 import { DataSource } from "../../domain/instance/entities/DataSource";
 import { JSONDataSource } from "../../domain/instance/entities/JSONDataSource";
 import { FilterRule } from "../../domain/metadata/entities/FilterRule";
-import {
-    CategoryOptionCombo,
-    MetadataEntity,
-    MetadataPackage,
-} from "../../domain/metadata/entities/MetadataEntities";
+import { CategoryOptionCombo, MetadataEntity, MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
 import {
     ListMetadataParams,
     ListMetadataResponse,
@@ -66,10 +62,7 @@ export class MetadataJSONRepository implements MetadataRepository {
 
                 return selectedIds?.includes(item.id) || filterRows?.includes(item.id);
             })
-            .orderBy(
-                [data => data[order?.field ?? "name"]?.toLowerCase() ?? ""],
-                [order?.order ?? "asc"]
-            )
+            .orderBy([data => data[order?.field ?? "name"]?.toLowerCase() ?? ""], [order?.order ?? "asc"])
             .map(item => filterFields(item, fields, this.instance.metadata))
             .value();
 
@@ -154,7 +147,7 @@ export class MetadataJSONRepository implements MetadataRepository {
         _metadata: MetadataPackage,
         _additionalParams?: MetadataImportParams
     ): Promise<SynchronizationResult> {
-        console.log(this.transformationRepository);
+        console.debug(this.transformationRepository);
         throw new Error("Method not implemented.");
     }
 
@@ -179,11 +172,7 @@ const tokenSearch = (source: string, lookup: string): boolean => {
 
 // TODO: This method is not properly typed
 // TODO: We do not support $owner and $all
-const filterFields = (
-    item: any,
-    fields?: any,
-    metadata?: MetadataPackage<Dictionary<any>>
-): any => {
+const filterFields = (item: any, fields?: any, metadata?: MetadataPackage<Dictionary<any>>): any => {
     if (!fields || typeof fields === "string") {
         console.error("Filtering fields is not supported for strings");
         return item;
@@ -204,11 +193,9 @@ const filterFields = (
 
     return _.transform(
         fields,
-        (result, value, field) => {
+        (result, value, field: string) => {
             if (!!value && Array.isArray(element[field])) {
-                result[field] = element[field].map((subitem: unknown) =>
-                    filterFields(subitem, value, metadata)
-                );
+                result[field] = element[field].map((subitem: unknown) => filterFields(subitem, value, metadata));
             } else if (!!value && !_.isNil(element[field])) {
                 result[field] = filterFields(element[field], value, metadata);
             }

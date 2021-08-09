@@ -100,10 +100,7 @@ export class CategoryOptionGroupModel extends D2Model {
     protected static metadataType = "categoryOptionGroup";
     protected static collectionName = "categoryOptionGroups" as const;
 
-    protected static excludeRules = [
-        "categoryOptionGroupSets",
-        "categoryOptionGroupSets.attributes",
-    ];
+    protected static excludeRules = ["categoryOptionGroupSets", "categoryOptionGroupSets.attributes"];
     protected static includeRules = ["attributes", "categoryOptions", "categoryOptions.attributes"];
 }
 
@@ -402,11 +399,7 @@ export class MapModel extends D2Model {
     protected static collectionName = "maps" as const;
 
     protected static excludeRules = [];
-    protected static includeRules = [
-        "mapViews.legendSets",
-        "mapViews.programIndicators",
-        "mapViews.indicators",
-    ];
+    protected static includeRules = ["mapViews.legendSets", "mapViews.programIndicators", "mapViews.indicators"];
 }
 
 export class MapViewModel extends D2Model {
@@ -677,11 +670,7 @@ export class ProgramIndicatorGroupModel extends D2Model {
     protected static collectionName = "programIndicatorGroups" as const;
 
     protected static excludeRules = ["legendSets", "programIndicators.programIndicatorGroups"];
-    protected static includeRules = [
-        "attributes",
-        "programIndicators",
-        "programIndicators.attributes",
-    ];
+    protected static includeRules = ["attributes", "programIndicators", "programIndicators.attributes"];
 }
 
 export class ProgramRuleModel extends D2Model {
@@ -743,12 +732,7 @@ export class UserModel extends D2Model {
     protected static collectionName = "users" as const;
 
     protected static excludeRules = ["userRoles.users", "userGroups.users"];
-    protected static includeRules = [
-        "attributes",
-        "userRoles",
-        "userGroups",
-        "userGroups.attributes",
-    ];
+    protected static includeRules = ["attributes", "userRoles", "userGroups", "userGroups.attributes"];
 }
 
 export class UserGroupModel extends D2Model {
@@ -773,11 +757,7 @@ export class ValidationRuleModel extends D2Model {
     protected static groupFilterName = "validationRuleGroups" as const;
 
     protected static excludeRules = ["legendSets"];
-    protected static includeRules = [
-        "attributes",
-        "validationRuleGroups",
-        "validationRuleGroups.attributes",
-    ];
+    protected static includeRules = ["attributes", "validationRuleGroups", "validationRuleGroups.attributes"];
 }
 
 export class ValidationRuleGroupModel extends D2Model {

@@ -34,13 +34,7 @@ const useStyles = makeStyles({
     },
 });
 
-const MappingDialog: React.FC<MappingDialogProps> = ({
-    config,
-    instance,
-    mapping,
-    onUpdateMapping,
-    onClose,
-}) => {
+const MappingDialog: React.FC<MappingDialogProps> = ({ config, instance, mapping, onUpdateMapping, onClose }) => {
     const { api: defaultApi, compositionRoot } = useAppContext();
     const classes = useStyles();
     const [connectionSuccess, setConnectionSuccess] = useState(true);
@@ -155,35 +149,24 @@ const MappingDialog: React.FC<MappingDialogProps> = ({
             hideSelectAll={true}
             filterRows={filterRows}
             initialShowOnlySelected={!!selected}
-            viewFilters={_.compact([
-                "group",
-                "onlySelected",
-                filterRows ? "disableFilterRows" : undefined,
-            ])}
+            viewFilters={_.compact(["group", "onlySelected", filterRows ? "disableFilterRows" : undefined])}
         />
     );
 
-    const MapperComponent =
-        model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
+    const MapperComponent = model.getCollectionName() === "organisationUnits" ? OrgUnitMapper : MetadataMapper;
     const title =
         elements.length > 1 || !firstElement
-            ? i18n.t(
-                  "Select {{type}} from destination instance {{instance}} to map {{total}} elements",
-                  {
-                      type: modelName,
-                      instance: instance.name,
-                      total: elements.length,
-                  }
-              )
-            : i18n.t(
-                  "Select {{type}} from destination instance {{instance}} to map {{name}} ({{id}})",
-                  {
-                      type: modelName,
-                      instance: instance.name,
-                      name: firstElement.name,
-                      id: firstElement.id,
-                  }
-              );
+            ? i18n.t("Select {{type}} from destination instance {{instance}} to map {{total}} elements", {
+                  type: modelName,
+                  instance: instance.name,
+                  total: elements.length,
+              })
+            : i18n.t("Select {{type}} from destination instance {{instance}} to map {{name}} ({{id}})", {
+                  type: modelName,
+                  instance: instance.name,
+                  name: firstElement.name,
+                  id: firstElement.id,
+              });
 
     return (
         <ConfirmationDialog

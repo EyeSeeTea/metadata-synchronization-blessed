@@ -11,9 +11,7 @@ export const DataImportParamsModel: Codec<DataImportParams> = Schema.object({
     dataElementIdScheme: Schema.optional(
         Schema.oneOf([Schema.exact("UID"), Schema.exact("CODE"), Schema.exact("NAME")])
     ),
-    orgUnitIdScheme: Schema.optional(
-        Schema.oneOf([Schema.exact("UID"), Schema.exact("CODE"), Schema.exact("NAME")])
-    ),
+    orgUnitIdScheme: Schema.optional(Schema.oneOf([Schema.exact("UID"), Schema.exact("CODE"), Schema.exact("NAME")])),
     dryRun: Schema.optional(Schema.boolean),
     preheatCache: Schema.optional(Schema.boolean),
     skipExistingCheck: Schema.optional(Schema.boolean),

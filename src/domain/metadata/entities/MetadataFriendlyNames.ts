@@ -15,13 +15,10 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     dataElementGroups: "Data element groups",
     "dataElementGroups.attributes": "Attributes of data element groups",
     "dataElementGroups.dataElements": "Data elements of data element groups",
-    "dataElementGroups.dataElements.attributes":
-        "Attributes of data elements in data element groups",
-    "dataElementGroups.dataElements.dataElementGroups":
-        "Data element groups of data elements in data element groups",
+    "dataElementGroups.dataElements.attributes": "Attributes of data elements in data element groups",
+    "dataElementGroups.dataElements.dataElementGroups": "Data element groups of data elements in data element groups",
     "dataElementGroups.dataElementGroupSets": "Data element group sets of data element groups",
-    "dataElementGroups.dataElementGroupSets.attributes":
-        "Attributes of data element group sets in data element groups",
+    "dataElementGroups.dataElementGroupSets.attributes": "Attributes of data element group sets in data element groups",
     "dataElementGroups.dataElementGroupSets.dataElementGroups":
         "Data element groups of dataelement group sets in data element groups",
     dataElementGroupSets: "Data element group sets",
@@ -33,8 +30,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "indicatorGroups.attributes": "Attributes of indicator groups",
     "indicatorGroups.indicators": "Indicators of indicator groups",
     "indicatorGroups.indicators.attributes": "Attributes of indicators in indicator groups",
-    "indicatorGroups.indicators.indicatorGroups":
-        "Indicator groups of indicators in indicator groups",
+    "indicatorGroups.indicators.indicatorGroups": "Indicator groups of indicators in indicator groups",
     "indicatorGroups.indicatorGroupSet": "Indicator group sets of indicator groups",
     "indicatorGroups.indicatorGroupSets": "Indicator group sets of indicator groups",
     indicatorGroupSets: "Indicator group sets",
@@ -54,8 +50,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
         "Attributes of organisation units in organisation unit groups",
     "organisationUnitGroups.organisationUnits.organisationUnitGroups":
         "Organisation unit groups of organisation units in organisation unit groups",
-    "organisationUnitGroups.organisationUnitGroupSets":
-        "Organisation unit group sets of organisation unit groups",
+    "organisationUnitGroups.organisationUnitGroupSets": "Organisation unit group sets of organisation unit groups",
     "organisationUnitGroups.organisationUnitGroupSets.attributes":
         "Attributes of organisation unit group sets in organisation unit groups",
     organisationUnitGroupSets: "Organisation unit group sets",
@@ -96,29 +91,24 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "indicators.dataSets": "Data sets of indicators",
     "indicators.programs": "Programs of indicators",
     "dataElements.dataSets": "Data sets of data elements",
-    "dataElements.dataElementGroups.dataElements":
-        "Data elements of data element groups in data elements",
+    "dataElements.dataElementGroups.dataElements": "Data elements of data element groups in data elements",
     "dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups":
         "Data element groups in data element group sets of data element groups of data elements",
     "indicators.legendSets": "Legends of indicators",
     "indicators.indicatorTypes": "Indicator types of indicators",
     "indicators.indicatorGroups.attributes": "Attributes of indicator groups in indicators",
-    "indicators.indicatorGroups.indicatorGroupSet":
-        "Indicator group set of indicator groups in indicators",
+    "indicators.indicatorGroups.indicatorGroupSet": "Indicator group set of indicator groups in indicators",
     "dataElements.legendSets": "Legends of data elements",
     "dataElements.optionSets": "Option sets of data elements",
     "dataElements.optionSets.options": "Options of option sets in data elements",
     "dataElements.categoryCombos": "Category combinations of data elements",
-    "dataElements.categoryCombos.attributes":
-        "Attributes of category combinations in data elements",
+    "dataElements.categoryCombos.attributes": "Attributes of category combinations in data elements",
     "dataElements.categoryCombos.categoryOptionCombos":
         "Category option combinations of Category combinations in data elements",
     "dataElements.categoryCombos.categoryOptionCombos.categoryOptions":
         "Category options of Category option combinations in Category combinations in data elements",
-    "dataElements.categoryCombos.categories":
-        "Categories of category combinations in data elements",
-    "dataElements.dataElementGroups.attributes":
-        "Attributes of data element groups in data elements",
+    "dataElements.categoryCombos.categories": "Categories of category combinations in data elements",
+    "dataElements.dataElementGroups.attributes": "Attributes of data element groups in data elements",
     "dataElements.dataElementGroups.dataElementGroupSets":
         "Data element group sets of data element groups in data elements",
     "dataElements.dataElementGroups.dataElementGroupSets.attributes":
@@ -135,8 +125,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     programStages: "Program stages",
     "programStages.dataEntryForms": "Data entry form in program stages",
     "programStages.programStageSections": "Program stage sections in program stages",
-    "programStages.programStageSections.dataElements":
-        "Data elements of program stage sections in program stages",
+    "programStages.programStageSections.dataElements": "Data elements of program stage sections in program stages",
     "programStages.programStageSections.dataElements.attributes":
         "Attributes of data elements of program stage sections in program stages",
     "programStages.programStageSections.dataElements.legendSets":
@@ -174,10 +163,8 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "programStages.dataElements.attributes": "Attributes of data elements in program stages",
     "programStages.dataElements.legendSets": "Legends of data elements in program stages",
     "programStages.dataElements.optionSets": "Option sets of data elements in program stages",
-    "programStages.dataElements.optionSets.options":
-        "Options in option sets of data elements in program stages",
-    "programStages.dataElements.categoryCombos":
-        "Category combinations of data elements in program stages",
+    "programStages.dataElements.optionSets.options": "Options in option sets of data elements in program stages",
+    "programStages.dataElements.categoryCombos": "Category combinations of data elements in program stages",
     "programStages.dataElements.categoryCombos.attributes":
         "Attributes of category combinations of data elements in program stages",
     "programStages.dataElements.categoryCombos.categoryOptionCombos":
@@ -186,8 +173,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
         "Category options of Category option combinations of Category combinations of data elements in program stages",
     "programStages.dataElements.categoryCombos.categories":
         "Categories of category combinations of data elements in program stages",
-    "programStages.dataElements.dataElementGroups":
-        "Data element groups of data elements in program stages",
+    "programStages.dataElements.dataElementGroups": "Data element groups of data elements in program stages",
     "programStages.dataElements.dataElementGroups.attributes":
         "Attributes of data element groups of data elements in program stages",
     "programStages.dataElements.dataElementGroups.dataElementGroupSets":
@@ -196,22 +182,18 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
         "Atrributes of data element group sets of data element groups of data elements in program stages",
     "programStages.programNotificationTemplates": "Notification templates of program",
     "programStageSections.dataElements": "Data elements in program stage sections",
-    "programStageSections.dataElements.attributes":
-        "Attributes of data elements in program stage sections",
-    "programStageSections.dataElements.legendSets":
-        "Legends of data elements in program stage sections",
+    "programStageSections.dataElements.attributes": "Attributes of data elements in program stage sections",
+    "programStageSections.dataElements.legendSets": "Legends of data elements in program stage sections",
     "programStageSections.dataElements.legendSets.attributes":
         "Attributes of legends of data elements in program stage sections",
-    "programStageSections.dataElements.optionSets":
-        "Option sets of data elements in program stage sections",
+    "programStageSections.dataElements.optionSets": "Option sets of data elements in program stage sections",
     "programStageSections.dataElements.optionSets.attributes":
         "Attributes of option sets of data elements in program stage sections",
     "programStageSections.dataElements.optionSets.options":
         "Options of option sets of data elements in program stage sections",
     "programStageSections.dataElements.optionSets.options.attributes":
         "Attributes of options of option sets of data elements in program stage sections",
-    "programStageSections.dataElements.categoryCombos":
-        "Category combos of data elements in program stage sections",
+    "programStageSections.dataElements.categoryCombos": "Category combos of data elements in program stage sections",
     "programStageSections.dataElements.categoryCombos.attributes":
         "Attributes of category combos of data elements in program stage sections",
     "programStageSections.dataElements.categoryCombos.categoryOptionCombos":
@@ -230,8 +212,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
         "Attributes of data element group sets of data element groups of data elements in program stage sections",
     programRuleVariables: "Program rule variables",
     trackedEntityTypes: "Tracked entity types",
-    "trackedEntityTypes.trackedEntityAttributes":
-        "Tracked entity attributes of tracked entity types",
+    "trackedEntityTypes.trackedEntityAttributes": "Tracked entity attributes of tracked entity types",
     "trackedEntityTypes.trackedEntityAttributes.legendSets":
         "Legends of tracked entity attributes of tracked entity types",
     "trackedEntityTypes.trackedEntityAttributes.optionSets":
@@ -246,8 +227,7 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "options.attributes": "Attributes of options",
     "optionSets.attributes": "Attributes of option sets",
     "trackedEntityAttributes.optionSets": "Option sets of tracked entity attributes",
-    "trackedEntityAttributes.optionSets.options":
-        "Options of Option sets in tracked entity attributes",
+    "trackedEntityAttributes.optionSets.options": "Options of Option sets in tracked entity attributes",
     userRoles: "User roles",
     "userRoles.users": "Users in user roles",
     userGroups: "User groups",
@@ -261,42 +241,33 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "categories.categoryOptions.attributes": "Attributes of Category options in categories",
     categoryOptionGroups: "Category option groups",
     "categoryOptionGroups.attributes": "Attributes of category option groups",
-    "categoryOptionGroups.categoryOptionGroupSets":
-        "Category option group sets of category option groups",
+    "categoryOptionGroups.categoryOptionGroupSets": "Category option group sets of category option groups",
     "categoryOptionGroups.categoryOptionGroupSets.attributes":
         "Attributes of category option group sets of category option groups",
     categoryOptionGroupSets: "Category option group sets",
     "categoryOptionGroupSets.attributes": "Attributes of category option group sets",
     "categoryCombos.categories.attributes": "Attributes of categories of category combinations",
-    "categoryCombos.categories.categoryOptions":
-        "Category options in categories of category combinations",
+    "categoryCombos.categories.categoryOptions": "Category options in categories of category combinations",
     "categoryCombos.categories.categoryOptions.attributes":
         "Attributes of category options in categories of category combinations",
     "categoryOptionGroups.categoryOptions": "Category options in category option groups",
-    "categoryOptionGroups.categoryOptions.attributes":
-        "Attributes of category options in category option groups",
+    "categoryOptionGroups.categoryOptions.attributes": "Attributes of category options in category option groups",
     programStageSections: "Program stage sections",
     "dataElements.categoryCombos.categoryOptionCombos.categoryOptions.attributes":
         "Attributes of category options in category option combos of category combos of data elements",
-    "dataElements.categoryCombos.categories.attributes":
-        "Attributes of categories of category combos of data elements",
+    "dataElements.categoryCombos.categories.attributes": "Attributes of categories of category combos of data elements",
     programNotificationTemplates: "Program notification templates",
     programSections: "Program sections",
     "dataElements.legendSets.attributes": "Attributes of legend sets of data elements",
     "dataElements.optionSets.attributes": "Attributes of option sets of data elements",
-    "dataElements.optionSets.options.attributes":
-        "Attributes of options in option sets of data elements",
+    "dataElements.optionSets.options.attributes": "Attributes of options in option sets of data elements",
     "categoryCombos.categoryOptionCombos.categoryOptions.attributes":
         "Attributes of category options in category option combos of category combos",
-    "programStages.dataElements.legendSets.attributes":
-        "Attributes of legend sets of data elements in program stages",
-    "programStages.dataElements.optionSets.attributes":
-        "Attributes of option sets of data elements in program stages",
+    "programStages.dataElements.legendSets.attributes": "Attributes of legend sets of data elements in program stages",
+    "programStages.dataElements.optionSets.attributes": "Attributes of option sets of data elements in program stages",
     "programStages.dataElements.optionSets.options.attributes":
         "Attributes of options in option sets of data elements  in program stages",
-    "categoryOptions.categories.categoryOptions":
-        "Category options of categories in category options",
-    "categoryCombos.categories.categoryCombos":
-        "Category combinations of categories in category combinations",
+    "categoryOptions.categories.categoryOptions": "Category options of categories in category options",
+    "categoryCombos.categories.categoryCombos": "Category combinations of categories in category combinations",
     "categoryOptions.categoryOptionCombos": "Category option combinations of categories options",
 };

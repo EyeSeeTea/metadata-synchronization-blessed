@@ -4,11 +4,7 @@ import { SynchronizationReportData } from "../../../domain/reports/entities/Sync
 import { promiseMap } from "../../../utils/common";
 import { AppStorage, Migration } from "../client/types";
 
-export async function migrate(
-    storage: AppStorage,
-    _debug: Debug,
-    _params: MigrationParams
-): Promise<void> {
+export async function migrate(storage: AppStorage, _debug: Debug, _params: MigrationParams): Promise<void> {
     const dataStoreKeys = await storage.listKeys();
     const notificationKeys = dataStoreKeys.filter(key => key.startsWith("notifications"));
 

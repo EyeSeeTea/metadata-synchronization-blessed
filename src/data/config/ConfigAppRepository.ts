@@ -18,10 +18,7 @@ export class ConfigAppRepository implements ConfigRepository {
         const dataStoreConfig = await dataStoreClient.getObject(Namespace.CONFIG);
         const constantConfig = await constantClient.getObject(Namespace.CONFIG);
 
-        return _.compact([
-            dataStoreConfig ? "dataStore" : undefined,
-            constantConfig ? "constant" : undefined,
-        ]);
+        return _.compact([dataStoreConfig ? "dataStore" : undefined, constantConfig ? "constant" : undefined]);
     }
 
     @cache()

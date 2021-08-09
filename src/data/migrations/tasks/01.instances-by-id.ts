@@ -27,11 +27,7 @@ interface InstanceDetailsNew {
     metadataMapping: MetadataMappingDictionary;
 }
 
-export async function migrate(
-    storage: AppStorage,
-    _debug: Debug,
-    _params: MigrationParams
-): Promise<void> {
+export async function migrate(storage: AppStorage, _debug: Debug, _params: MigrationParams): Promise<void> {
     const oldInstances = (await storage.get<InstanceOld[]>("instances")) ?? [];
     const newInstances: InstanceNew[] = oldInstances.map(ins => _.omit(ins, ["metadataMapping"]));
     const duplicatedIds = getDuplicatedIds(oldInstances);

@@ -13,9 +13,7 @@ export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclu
         [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
     }[Keys];
 
-export type ArrayElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<
-    infer ElementType
->
+export type ArrayElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType>
     ? ElementType
     : never;
 

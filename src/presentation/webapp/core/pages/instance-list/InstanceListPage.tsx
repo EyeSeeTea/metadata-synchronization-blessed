@@ -147,9 +147,7 @@ const InstanceListPage = () => {
         if (_.some(results, [false])) {
             snackbar.error(i18n.t("Failed to delete some instances"));
         } else {
-            snackbar.success(
-                i18n.t("Successfully deleted {{count}} instances", { count: toDelete.length })
-            );
+            snackbar.success(i18n.t("Successfully deleted {{count}} instances", { count: toDelete.length }));
         }
     };
 

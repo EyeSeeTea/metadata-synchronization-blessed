@@ -28,9 +28,7 @@ context("New Instance Settings", function () {
     it("should show test connection error when server is empty", function () {
         page.newInstance()
             .testConnection()
-            .assertError(error =>
-                error.contains("Please fix the issues before testing the connection")
-            );
+            .assertError(error => error.contains("Please fix the issues before testing the connection"));
     });
 
     it("should show url error when url is not valid", function () {
@@ -39,9 +37,7 @@ context("New Instance Settings", function () {
             .unfocus()
             .assertInvalidUrlError()
             .testConnection()
-            .assertError(error =>
-                error.contains("Please fix the issues before testing the connection")
-            );
+            .assertError(error => error.contains("Please fix the issues before testing the connection"));
     });
 
     it("should show URL and username combination already exists error when url/user is duplicated", function () {

@@ -1,5 +1,5 @@
 import qs from "qs";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HashRouter } from "react-router-dom";
 import { Dictionary } from "../../../types/utils";
 
@@ -9,9 +9,7 @@ function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget:
         throw new Error("Attempting to use useWidget on application");
     }
 
-    const { dashboardItemId = "DEVELOPMENT", userOrgUnit } = qs.parse(
-        window.location.search
-    ) as Dictionary<string>;
+    const { dashboardItemId = "DEVELOPMENT", userOrgUnit } = qs.parse(window.location.search) as Dictionary<string>;
 
     return {
         dashboardItemId,
@@ -27,9 +25,7 @@ const loadWidget = async (widget: string): Promise<Function> => {
             return ModuleListWidget;
         }
         case "package-exporter": {
-            const { PackageExporterWidget } = await import(
-                "./package-exporter-widget/PackageExporterWidget"
-            );
+            const { PackageExporterWidget } = await import("./package-exporter-widget/PackageExporterWidget");
             return PackageExporterWidget;
         }
         default: {

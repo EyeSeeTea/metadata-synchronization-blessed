@@ -48,9 +48,7 @@ export class SynchronizationReport implements SynchronizationReportData {
         });
     }
 
-    public static build(
-        data?: PartialBy<SynchronizationReportData, "id" | "date">
-    ): SynchronizationReport {
+    public static build(data?: PartialBy<SynchronizationReportData, "id" | "date">): SynchronizationReport {
         return data ? new SynchronizationReport(data) : this.create();
     }
 

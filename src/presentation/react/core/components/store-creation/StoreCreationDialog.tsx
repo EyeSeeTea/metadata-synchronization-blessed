@@ -1,12 +1,4 @@
-import {
-    Button,
-    ButtonProps,
-    DialogContent,
-    Icon,
-    IconButton,
-    TextField,
-    Tooltip,
-} from "@material-ui/core";
+import { Button, ButtonProps, DialogContent, Icon, IconButton, TextField, Tooltip } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import {
     ConfirmationDialog,
@@ -100,10 +92,7 @@ const StoreCreationDialog: React.FC<StoreCreationDialogProps> = ({ isOpen, onClo
                             updateDialog(null);
                         },
                         onSave: async () => {
-                            const saveResult = await compositionRoot.store.update(
-                                state as Store,
-                                false
-                            );
+                            const saveResult = await compositionRoot.store.update(state as Store, false);
 
                             saveResult.match({
                                 error: error => snackbar.error(validateError(error)),
@@ -215,10 +204,9 @@ const DialogTitle: React.FC = () => {
                     })}
                 </p>
                 <p>
-                    {i18n.t(
-                        "- Create a personal access token at https://github.com/settings/tokens/new",
-                        { nsSeparator: false }
-                    )}
+                    {i18n.t("- Create a personal access token at https://github.com/settings/tokens/new", {
+                        nsSeparator: false,
+                    })}
                 </p>
                 <p>
                     {i18n.t(

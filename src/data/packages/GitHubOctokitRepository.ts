@@ -17,10 +17,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
         return result.data as T;
     }
 
-    public async listFiles(
-        store: Store,
-        branch: string
-    ): Promise<Either<GitHubListError, GithubFile[]>> {
+    public async listFiles(store: Store, branch: string): Promise<Either<GitHubListError, GithubFile[]>> {
         try {
             const { token, account, repository } = store;
             const octokit = await this.getOctoKit(token);
@@ -34,7 +31,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
 
             if (data.truncated) return Either.error("LIST_TRUNCATED");
 
-            const items: GithubFile[] = data.tree.map(({ path, type, sha, url }) => ({
+            const items: GithubFile[] = data.tree.map(({ path = "", type, sha = "", url = "" }) => ({
                 path,
                 type: type as "blob" | "tree",
                 sha,
@@ -47,11 +44,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    public async readFile<T>(
-        store: Store,
-        branch: string,
-        path: string
-    ): Promise<Either<GitHubError, T>> {
+    public async readFile<T>(store: Store, branch: string, path: string): Promise<Either<GitHubError, T>> {
         try {
             const { encoding, content } = await this.getFile(store, branch, path);
             return this.readFileContents(encoding, content);
@@ -111,11 +104,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    public async deleteFile(
-        store: Store,
-        branch: string,
-        path: string
-    ): Promise<Either<GitHubError, void>> {
+    public async deleteFile(store: Store, branch: string, path: string): Promise<Either<GitHubError, void>> {
         try {
             const { token, account, repository } = store;
             const octokit = await this.getOctoKit(token);
@@ -155,9 +144,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
                 repo: repository,
             });
 
-            const items: GithubBranch[] = data.map(branch =>
-                _.pick(branch, ["name", "commit", "protected"])
-            );
+            const items: GithubBranch[] = data.map(branch => _.pick(branch, ["name", "commit", "protected"]));
 
             return Either.success(items);
         } catch (error) {
@@ -258,11 +245,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
         }
     }
 
-    private async getFileSha(
-        store: Store,
-        branch: string,
-        path: string
-    ): Promise<string | undefined> {
+    private async getFileSha(store: Store, branch: string, path: string): Promise<string | undefined> {
         try {
             const { sha } = await this.getFile(store, branch, path);
             return sha;
@@ -287,7 +270,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
                 path,
             });
 
-            return data;
+            return data as { encoding: string; content: string; sha: string };
         } catch (error) {
             if (!error.errors?.find((error: { code?: string }) => error.code === "too_large")) {
                 throw error;

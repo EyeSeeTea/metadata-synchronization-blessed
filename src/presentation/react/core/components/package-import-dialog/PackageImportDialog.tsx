@@ -6,11 +6,7 @@ import { Either } from "../../../../../domain/common/entities/Either";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { JSONDataSource } from "../../../../../domain/instance/entities/JSONDataSource";
 import { PackageImportRule } from "../../../../../domain/package-import/entities/PackageImportRule";
-import {
-    PackageSource,
-    isInstance,
-    isStore,
-} from "../../../../../domain/package-import/entities/PackageSource";
+import { PackageSource, isInstance, isStore } from "../../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { Package } from "../../../../../domain/packages/entities/Package";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
@@ -116,10 +112,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
 
                 await getPackageResult.match({
                     success: async originPackage => {
-                        loading.show(
-                            true,
-                            i18n.t("Importing package {{name}}", { name: originPackage.name })
-                        );
+                        loading.show(true, i18n.t("Importing package {{name}}", { name: originPackage.name }));
 
                         if (isStore(packageImportRule.source)) {
                             storePackageUrls[originPackage.id] = packageId;
@@ -151,14 +144,10 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
                             originDataSource
                         );
 
-                        report.setTypes(
-                            _.uniq([...report.types, ..._.keys(originPackage.contents)])
-                        );
+                        report.setTypes(_.uniq([...report.types, ..._.keys(originPackage.contents)]));
 
                         report.setStatus(
-                            result.status === "ERROR" || result.status === "NETWORK ERROR"
-                                ? "FAILURE"
-                                : "DONE"
+                            result.status === "ERROR" || result.status === "NETWORK ERROR" ? "FAILURE" : "DONE"
                         );
 
                         const origin = isInstance(packageImportRule.source)
@@ -190,12 +179,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
 
             await compositionRoot.reports.save(report);
 
-            await saveImportedPackages(
-                importedPackages,
-                author,
-                packageImportRule.source,
-                storePackageUrls
-            );
+            await saveImportedPackages(importedPackages, author, packageImportRule.source, storePackageUrls);
 
             loading.reset();
 

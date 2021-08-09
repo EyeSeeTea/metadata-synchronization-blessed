@@ -8,13 +8,8 @@ import { BasePackage, Package } from "../entities/Package";
 export class GetPackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        id: string,
-        instance = this.localInstance
-    ): Promise<Either<"NOT_FOUND", Package>> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+    public async execute(id: string, instance = this.localInstance): Promise<Either<"NOT_FOUND", Package>> {
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
         const data = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
 

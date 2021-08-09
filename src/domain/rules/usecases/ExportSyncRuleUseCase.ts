@@ -21,13 +21,9 @@ export class ExportSyncRuleUseCase implements UseCase {
         });
 
         if (exportRules.length === 1) {
-            this.repositoryFactory
-                .downloadRepository()
-                .downloadFile(exportRules[0].name, exportRules[0].content);
+            this.repositoryFactory.downloadRepository().downloadFile(exportRules[0].name, exportRules[0].content);
         } else {
-            await this.repositoryFactory
-                .downloadRepository()
-                .downloadZippedFiles(`sync-rules-${date}`, exportRules);
+            await this.repositoryFactory.downloadRepository().downloadZippedFiles(`sync-rules-${date}`, exportRules);
         }
     }
 }

@@ -14,11 +14,7 @@ describe("Events transformations - D2Api", () => {
             const transformations: Transformation<EventsPackage, D2EventsPackage>[] = [];
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -26,18 +22,13 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 34,
-                    apply: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "value", "34Value"),
+                    apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "34Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -45,17 +36,12 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 31,
-                    apply: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "value", "31Value"),
+                    apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "31Value"),
                 },
             ];
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
 
             expect(
                 _.every(
@@ -68,18 +54,13 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 33,
-                    apply: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "value", "33Value"),
+                    apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "33Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
 
             expect(
                 _.every(
@@ -92,23 +73,17 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 32,
-                    apply: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "value", "32Value"),
+                    apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "32Value"),
                 },
                 {
                     apiVersion: 33,
-                    apply: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "32Value", "33Value"),
+                    apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "32Value", "33Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
 
             expect(
                 _.every(
@@ -121,23 +96,17 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 33,
-                    apply: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "32Value", "33Value"),
+                    apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "32Value", "33Value"),
                 },
                 {
                     apiVersion: 32,
-                    apply: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "value", "32Value"),
+                    apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "32Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
 
             expect(
                 _.every(
@@ -152,11 +121,7 @@ describe("Events transformations - D2Api", () => {
             const transformations: Transformation<EventsPackage, D2EventsPackage>[] = [];
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageFrom(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -164,18 +129,13 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 34,
-                    undo: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "34Value", "33Value"),
+                    undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "34Value", "33Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageFrom(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -183,17 +143,12 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 31,
-                    undo: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "31Value", "value"),
+                    undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
             const payload = givenAnEventsPackage("31Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(
-                33,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
 
             expect(
                 _.every(
@@ -206,18 +161,13 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 31,
-                    undo: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "31Value", "value"),
+                    undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
 
             const payload = givenAnEventsPackage("31Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(
-                31,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageFrom(31, payload, transformations);
 
             expect(
                 _.every(
@@ -230,23 +180,17 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 32,
-                    undo: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "32Value", "31Value"),
+                    undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "32Value", "31Value"),
                 },
                 {
                     apiVersion: 31,
-                    undo: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "31Value", "value"),
+                    undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
 
             const payload = givenAnEventsPackage("32Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(
-                32,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageFrom(32, payload, transformations);
 
             expect(
                 _.every(
@@ -259,23 +203,17 @@ describe("Events transformations - D2Api", () => {
             const transformations = [
                 {
                     apiVersion: 31,
-                    undo: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "31Value", "value"),
+                    undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "31Value", "value"),
                 },
                 {
                     apiVersion: 32,
-                    undo: (payload: D2EventsPackage) =>
-                        renamePropInEventsPackage(payload, "32Value", "31Value"),
+                    undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "32Value", "31Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage("32Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(
-                32,
-                payload,
-                transformations
-            );
+            const transformedPayload = transformationRepository.mapPackageFrom(32, payload, transformations);
 
             expect(
                 _.every(
@@ -326,11 +264,7 @@ function givenAnEventsPackage(valueField?: string): EventsPackage {
     return result;
 }
 
-function renamePropInEventsPackage(
-    payload: EventsPackage,
-    oldPropName: string,
-    newPropName: string
-): D2EventsPackage {
+function renamePropInEventsPackage(payload: EventsPackage, oldPropName: string, newPropName: string): D2EventsPackage {
     const events = payload.events.map(({ dataValues, ...rest }) => {
         return {
             ...rest,

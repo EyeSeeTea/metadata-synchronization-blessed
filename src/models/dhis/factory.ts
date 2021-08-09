@@ -80,9 +80,7 @@ export function modelFactory(d2ModelName?: string): typeof D2Model {
 
     const result = directClass ?? modelClass;
     if (!result) {
-        debug(
-            `Could not find a model for ${d2ModelName}... This is probably a mistake in your app.`
-        );
+        debug(`Could not find a model for ${d2ModelName}... This is probably a mistake in your app.`);
     }
 
     return result ?? defaultModel(modelName);

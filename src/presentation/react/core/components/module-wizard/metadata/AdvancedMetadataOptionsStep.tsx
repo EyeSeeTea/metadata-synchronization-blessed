@@ -4,10 +4,7 @@ import i18n from "../../../../../../locales";
 import { Toggle } from "../../toggle/Toggle";
 import { ModuleWizardStepProps } from "../Steps";
 
-export const AdvancedMetadataOptionsStep: React.FC<ModuleWizardStepProps<MetadataModule>> = ({
-    module,
-    onChange,
-}) => {
+export const AdvancedMetadataOptionsStep: React.FC<ModuleWizardStepProps<MetadataModule>> = ({ module, onChange }) => {
     const changeSharingSettings = (includeUserInformation: boolean) => {
         onChange(module.update({ includeUserInformation }));
     };

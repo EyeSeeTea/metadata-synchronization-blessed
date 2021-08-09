@@ -43,16 +43,12 @@ const MetadataDropZone: React.FC<MetadataDropZoneProps> = ({ onChange }) => {
                     >
                         <input {...getInputProps()} />
                         <div className={classes.dropzoneTextStyle} hidden={file !== undefined}>
-                            <p className={classes.dropzoneParagraph}>
-                                {i18n.t("Drag and drop file to import")}
-                            </p>
+                            <p className={classes.dropzoneParagraph}>{i18n.t("Drag and drop file to import")}</p>
                             <br />
                             <CloudUploadIcon className={classes.uploadIconSize} />
                         </div>
                         <div className={classes.dropzoneTextStyle} hidden={file === undefined}>
-                            {file !== undefined && (
-                                <p className={classes.dropzoneParagraph}>{file.name}</p>
-                            )}
+                            {file !== undefined && <p className={classes.dropzoneParagraph}>{file.name}</p>}
                             <br />
                             <CloudDoneIcon className={classes.uploadIconSize} />
                         </div>

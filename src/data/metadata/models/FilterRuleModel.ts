@@ -1,9 +1,4 @@
-import {
-    DateFilter,
-    FilterRule,
-    FilterWhere,
-    StringMatch,
-} from "../../../domain/metadata/entities/FilterRule";
+import { DateFilter, FilterRule, FilterWhere, StringMatch } from "../../../domain/metadata/entities/FilterRule";
 import { Codec, Schema } from "../../../utils/codec";
 import { DataSyncPeriodModel } from "../../aggregated/models/DataSyncPeriodModel";
 

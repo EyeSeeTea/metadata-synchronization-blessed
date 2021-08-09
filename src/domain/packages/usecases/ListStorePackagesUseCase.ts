@@ -18,9 +18,7 @@ export class ListStorePackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
-        const store = await this.repositoryFactory
-            .storeRepository(this.localInstance)
-            .getById(storeId);
+        const store = await this.repositoryFactory.storeRepository(this.localInstance).getById(storeId);
         if (!store) return Either.error("STORE_NOT_FOUND");
 
         const validation = await this.repositoryFactory.gitRepository().listBranches(store);
@@ -34,10 +32,7 @@ export class ListStorePackagesUseCase implements UseCase {
         return Either.success(packages);
     }
 
-    private async getPackages(
-        store: Store,
-        userGroup: string
-    ): Promise<Either<GitHubListError, Package[]>> {
+    private async getPackages(store: Store, userGroup: string): Promise<Either<GitHubListError, Package[]>> {
         const validation = await this.repositoryFactory.gitRepository().listFiles(store, userGroup);
 
         if (validation.isError()) return Either.error(validation.value.error);
@@ -54,8 +49,7 @@ export class ListStorePackagesUseCase implements UseCase {
             const { moduleName, name, version, dhisVersion, created } = details;
 
             const moduleFileUrl =
-                moduleFiles.find(file => file.path === `${moduleName}/${moduleFile}`)?.url ??
-                undefined;
+                moduleFiles.find(file => file.path === `${moduleName}/${moduleFile}`)?.url ?? undefined;
             const module = await this.getModule(store, moduleFileUrl);
 
             return Package.build({ id: url, name, version, dhisVersion, created, module });
@@ -77,9 +71,7 @@ export class ListStorePackagesUseCase implements UseCase {
             content: string;
         }>(store, moduleFileUrl);
 
-        const readFileResult = this.repositoryFactory
-            .gitRepository()
-            .readFileContents<BaseModule>(encoding, content);
+        const readFileResult = this.repositoryFactory.gitRepository().readFileContents<BaseModule>(encoding, content);
 
         return readFileResult.match({
             success: module => module,

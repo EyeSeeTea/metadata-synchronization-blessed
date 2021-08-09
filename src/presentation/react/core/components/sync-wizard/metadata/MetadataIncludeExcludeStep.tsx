@@ -3,10 +3,7 @@ import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
 import { MultiSelector, useSnackbar, withSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import {
-    MetadataEntity,
-    MetadataPackage,
-} from "../../../../../../domain/metadata/entities/MetadataEntities";
+import { MetadataEntity, MetadataPackage } from "../../../../../../domain/metadata/entities/MetadataEntities";
 import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import i18n from "../../../../../../locales";
 import { D2Model } from "../../../../../../models/dhis/default";
@@ -46,9 +43,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     compositionRoot.metadata
                         .getByIds(syncRule.metadataIds, instance, "id,name,type") //type is required to transform visualizations to charts and report tables
                         .then((metadata: MetadataPackage<MetadataEntity>) => {
-                            const models = _.keys(metadata).map((type: string) =>
-                                modelFactory(type)
-                            );
+                            const models = _.keys(metadata).map((type: string) => modelFactory(type));
 
                             const options = models
                                 .map((model: typeof D2Model) => {
@@ -68,8 +63,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
         });
     }, [compositionRoot, api, syncRule, snackbar]);
 
-    const { includeRules = [], excludeRules = [] } =
-        syncRule.metadataIncludeExcludeRules[selectedType] || {};
+    const { includeRules = [], excludeRules = [] } = syncRule.metadataIncludeExcludeRules[selectedType] || {};
     const allRules = [...includeRules, ...excludeRules];
     const ruleOptions = allRules.map(rule => ({
         value: rule,
@@ -78,9 +72,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
 
     const changeUseDefaultIncludeExclude = (useDefault: boolean) => {
         onChange(
-            useDefault
-                ? syncRule.markToUseDefaultIncludeExclude()
-                : syncRule.markToNotUseDefaultIncludeExclude(models)
+            useDefault ? syncRule.markToUseDefaultIncludeExclude() : syncRule.markToNotUseDefaultIncludeExclude(models)
         );
     };
 

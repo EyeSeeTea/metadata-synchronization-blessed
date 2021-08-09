@@ -1,8 +1,7 @@
 module.exports = {
-    setupFilesAfterEnv: ["<rootDir>/config/testSetup.js", "jest-expect-message"],
     collectCoverageFrom: ["src/**/*.js"],
     testPathIgnorePatterns: ["/node_modules/", "/cypress"],
-    transformIgnorePatterns: ["/node_modules/(?!@dhis2)"],
+    transformIgnorePatterns: ["/node_modules/(?!@eyeseetea/d2-ui-components)"],
     modulePaths: ["src"],
     moduleDirectories: ["node_modules"],
     moduleNameMapper: {
@@ -21,5 +20,4 @@ module.exports = {
         navigator: true,
         Element: true,
     },
-    snapshotSerializers: ["enzyme-to-json/serializer"],
 };

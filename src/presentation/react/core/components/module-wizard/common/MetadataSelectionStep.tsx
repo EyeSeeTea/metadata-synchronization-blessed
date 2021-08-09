@@ -1,15 +1,10 @@
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { MetadataModule } from "../../../../../../domain/modules/entities/MetadataModule";
 import i18n from "../../../../../../locales";
 
-import {
-    DashboardModel,
-    DataSetModel,
-    ProgramModel,
-    ProgramRuleModel,
-} from "../../../../../../models/dhis/metadata";
+import { DashboardModel, DataSetModel, ProgramModel, ProgramRuleModel } from "../../../../../../models/dhis/metadata";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { ModuleWizardStepProps } from "../Steps";
 
@@ -22,10 +17,7 @@ const config = {
     },
 };
 
-export const MetadataSelectionStep = ({
-    module,
-    onChange,
-}: ModuleWizardStepProps<MetadataModule>) => {
+export const MetadataSelectionStep = ({ module, onChange }: ModuleWizardStepProps<MetadataModule>) => {
     const snackbar = useSnackbar();
     const { models, childrenKeys } = config["module"][module.type];
 
@@ -33,12 +25,9 @@ export const MetadataSelectionStep = ({
         (newMetadataIds: string[], newExcludedIds: string[]) => {
             const additions = _.difference(newMetadataIds, module.metadataIds);
             if (additions.length > 0) {
-                snackbar.info(
-                    i18n.t("Selected {{difference}} elements", { difference: additions.length }),
-                    {
-                        autoHideDuration: 1000,
-                    }
-                );
+                snackbar.info(i18n.t("Selected {{difference}} elements", { difference: additions.length }), {
+                    autoHideDuration: 1000,
+                });
             }
 
             const removals = _.difference(module.metadataIds, newMetadataIds);

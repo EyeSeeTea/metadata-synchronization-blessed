@@ -18,11 +18,7 @@ const useStyles = makeStyles({
     },
 });
 
-const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
-    syncRule,
-    onChange,
-    generateNewUidDisabled,
-}) => {
+const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onChange, generateNewUidDisabled }) => {
     const classes = useStyles();
     const { syncParams, dataParams } = syncRule;
 
@@ -171,9 +167,7 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                 <div>
                     <Toggle
                         disabled={syncParams.removeOrgUnitReferences}
-                        label={i18n.t(
-                            "Remove organisation units and keep organisation units references (UID)"
-                        )}
+                        label={i18n.t("Remove organisation units and keep organisation units references (UID)")}
                         onValueChange={changeRemoveOrgUnitObjects}
                         value={syncParams.removeOrgUnitObjects || false}
                     />
@@ -250,9 +244,7 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({
                     <Toggle
                         label={
                             syncRule.type === "events"
-                                ? i18n.t(
-                                      "Ignore data with same value on destination (only for program indicators)"
-                                  )
+                                ? i18n.t("Ignore data with same value on destination (only for program indicators)")
                                 : i18n.t("Ignore data with same value on destination")
                         }
                         onValueChange={changeIgnoreDuplicateExistingValues}

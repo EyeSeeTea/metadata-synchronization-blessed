@@ -18,14 +18,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
-            const {
-                type,
-                ids,
-                excludeRules,
-                includeRules,
-                includeSharingSettings,
-                removeOrgUnitReferences,
-            } = builder;
+            const { type, ids, excludeRules, includeRules, includeSharingSettings, removeOrgUnitReferences } = builder;
 
             //TODO: when metadata entities schema exists on domain, move this factory to domain
             const collectionName = modelFactory(type).getCollectionName();
@@ -45,9 +38,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 //ProgramRules is not included in programs items in the response by the dhis2 API
                 //we request it manually and insert it in the element
                 const fixedElement =
-                    type === "programs"
-                        ? await this.requestAndIncludeProgramRules(element as Program)
-                        : element;
+                    type === "programs" ? await this.requestAndIncludeProgramRules(element as Program) : element;
 
                 // Store metadata object in result
                 const object = cleanObject(
@@ -141,10 +132,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         const originalPayload = await this.buildPayload();
 
-        const payloadWithDocumentFiles = await this.createDocumentFilesInRemote(
-            instance,
-            originalPayload
-        );
+        const payloadWithDocumentFiles = await this.createDocumentFilesInRemote(instance, originalPayload);
 
         const payload = await this.mapPayload(instance, payloadWithDocumentFiles);
 
@@ -161,10 +149,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         return undefined;
     }
 
-    public async mapPayload(
-        instance: Instance,
-        payload: MetadataPackage
-    ): Promise<MetadataPackage> {
+    public async mapPayload(instance: Instance, payload: MetadataPackage): Promise<MetadataPackage> {
         const { syncParams } = this.builder;
 
         if (syncParams?.enableMapping) {
@@ -175,11 +160,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
             const mapping = await this.getMapping(instance);
 
-            const mapper = new MappingMapper(
-                mapping,
-                originCategoryOptionCombos,
-                destinationCategoryOptionCombos
-            );
+            const mapper = new MappingMapper(mapping, originCategoryOptionCombos, destinationCategoryOptionCombos);
 
             return mapper.applyMapping(payload);
         } else {
@@ -187,25 +168,19 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         }
     }
 
-    public async createDocumentFilesInRemote(
-        instance: Instance,
-        payload: MetadataPackage
-    ): Promise<MetadataPackage> {
+    public async createDocumentFilesInRemote(instance: Instance, payload: MetadataPackage): Promise<MetadataPackage> {
         if (!payload.documents) return payload;
 
         const fileRepository = await this.getInstanceFileRepository();
         const fileRemoteRepository = await this.getInstanceFileRepository(instance);
 
-        const documents = await promiseMap(
-            payload.documents as Document[],
-            async (document: Document) => {
-                if (document.external) return document;
+        const documents = await promiseMap(payload.documents as Document[], async (document: Document) => {
+            if (document.external) return document;
 
-                const file = await fileRepository.getById(document.id);
-                const fileId = await fileRemoteRepository.save(file);
-                return { ...document, url: fileId };
-            }
-        );
+            const file = await fileRepository.getById(document.id);
+            const fileId = await fileRemoteRepository.save(file);
+            return { ...document, url: fileId };
+        });
 
         return { ...payload, documents };
     }

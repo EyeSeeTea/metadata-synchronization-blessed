@@ -9,13 +9,9 @@ export class MarkReadNotificationsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(ids: string[], read: boolean): Promise<void> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
-        const notifications = await storageClient.listObjectsInCollection<AppNotification>(
-            Namespace.NOTIFICATIONS
-        );
+        const notifications = await storageClient.listObjectsInCollection<AppNotification>(Namespace.NOTIFICATIONS);
         if (!notifications) return;
 
         const targetNotifications = notifications.filter(({ id }) => ids.includes(id));
@@ -32,9 +28,7 @@ export class MarkReadNotificationsUseCase implements UseCase {
     }
 
     private async hasPermissions(notification: AppNotification) {
-        const { id, userGroups } = await this.repositoryFactory
-            .userRepository(this.localInstance)
-            .getCurrent();
+        const { id, userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
 
         if (
             notification.owner.id !== id &&

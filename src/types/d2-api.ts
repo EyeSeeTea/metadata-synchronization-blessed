@@ -6,7 +6,4 @@ export * from "@eyeseetea/d2-api/2.30";
 
 export const API_VERSION = 30;
 
-export type FieldsOf<ModelSchema extends D2ModelSchemaBase> = GetOptionValue<
-    D2ApiDefinition,
-    ModelSchema
->["fields"];
+export type FieldsOf<ModelSchema extends D2ModelSchemaBase> = GetOptionValue<D2ApiDefinition, ModelSchema>["fields"];

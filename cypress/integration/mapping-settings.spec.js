@@ -19,9 +19,7 @@ context("Instance mapping Settings", function () {
 
     it("should open aggregated section", function () {
         page.openSection("aggregated");
-        page.assertTitle(title =>
-            title.contains("Aggregated mapping - Destination instance this instance (8080)")
-        );
+        page.assertTitle(title => title.contains("Aggregated mapping - Destination instance this instance (8080)"));
     });
 
     it("should have programs section", function () {
@@ -52,8 +50,6 @@ context("Instance mapping Settings", function () {
 
     it("should open global section", function () {
         page.openSection("global");
-        page.assertTitle(title =>
-            title.contains("Global mapping - Destination instance this instance (8080)")
-        );
+        page.assertTitle(title => title.contains("Global mapping - Destination instance this instance (8080)"));
     });
 });

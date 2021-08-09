@@ -1,5 +1,5 @@
 import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../locales";
@@ -17,9 +17,7 @@ const InstanceCreationPage = () => {
 
     const [error, setError] = useState<boolean>(false);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-    const [instance, setInstance] = useState<Instance>(
-        Instance.build({ name: "", description: "", url: "" })
-    );
+    const [instance, setInstance] = useState<Instance>(Instance.build({ name: "", description: "", url: "" }));
 
     useEffect(() => {
         if (location.state?.instance) {
@@ -73,11 +71,7 @@ const InstanceCreationPage = () => {
             <PageHeader title={title} onBackClick={cancelSave} />
 
             {instance.type === "dhis" && (
-                <GeneralInfoForm
-                    instance={instance}
-                    onChange={onChange}
-                    cancelAction={cancelSave}
-                />
+                <GeneralInfoForm instance={instance} onChange={onChange} cancelAction={cancelSave} />
             )}
         </TestWrapper>
     );

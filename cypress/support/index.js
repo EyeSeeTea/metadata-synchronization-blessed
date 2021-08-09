@@ -25,9 +25,9 @@ Cypress.on("test:after:run", (test, runnable) => {
             { test },
             {
                 title: "Screenshot",
-                value: `assets/screenshots/${Cypress.spec.name}/${runnable.parent.title} -- ${
-                    test.title
-                } ${test.hookName ? `-- ${test.hookName} hook ` : ""}(failed).png`,
+                value: `assets/screenshots/${Cypress.spec.name}/${runnable.parent.title} -- ${test.title} ${
+                    test.hookName ? `-- ${test.hookName} hook ` : ""
+                }(failed).png`,
             }
         );
     }

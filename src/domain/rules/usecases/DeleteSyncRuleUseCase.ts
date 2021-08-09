@@ -15,9 +15,7 @@ export class DeleteSyncRuleUseCase implements UseCase {
 
         const deletedRuleLabel = `${rule.name} (${i18n.t("deleted")})`;
 
-        const syncReports = await this.repositoryFactory
-            .reportsRepository(this.localInstance)
-            .list();
+        const syncReports = await this.repositoryFactory.reportsRepository(this.localInstance).list();
 
         const syncRuleReports = syncReports.filter(({ syncRule }) => syncRule === id);
 

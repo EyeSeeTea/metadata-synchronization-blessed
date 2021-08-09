@@ -27,12 +27,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
                 </IconButton>
             )}
 
-            <Typography
-                variant={variant}
-                gutterBottom
-                style={styles.text}
-                data-test={"page-header-title"}
-            >
+            <Typography variant={variant} gutterBottom style={styles.text} data-test={"page-header-title"}>
                 {title}
             </Typography>
             {help && (

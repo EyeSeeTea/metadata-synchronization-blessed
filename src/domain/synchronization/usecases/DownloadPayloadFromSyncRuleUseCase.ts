@@ -72,13 +72,9 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         );
 
         if (files.length === 1) {
-            this.repositoryFactory
-                .downloadRepository()
-                .downloadFile(files[0].name, files[0].content);
+            this.repositoryFactory.downloadRepository().downloadFile(files[0].name, files[0].content);
         } else if (files.length > 1) {
-            await this.repositoryFactory
-                .downloadRepository()
-                .downloadZippedFiles(`synchronization-${date}`, files);
+            await this.repositoryFactory.downloadRepository().downloadZippedFiles(`synchronization-${date}`, files);
         }
 
         if (errors.length === 0) {
@@ -97,9 +93,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         const date = moment().format("YYYYMMDDHHmm");
 
         return await promiseMap(rule.targetInstances, async id => {
-            const instanceRepository = this.repositoryFactory.instanceRepository(
-                this.localInstance
-            );
+            const instanceRepository = this.repositoryFactory.instanceRepository(this.localInstance);
             const instance = await instanceRepository.getById(id);
 
             if (instance) {
@@ -107,9 +101,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                     const mappedPayload = await (await createMapper(instance)).map(payload);
 
                     return {
-                        name: _(["synchronization", rule.name, resultType, instance.name, date])
-                            .compact()
-                            .kebabCase(),
+                        name: _(["synchronization", rule.name, resultType, instance.name, date]).compact().kebabCase(),
                         content: mappedPayload,
                         apiVersion: instance.apiVersion,
                     };
@@ -164,19 +156,14 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         const { dataValues } = payload as AggregatedPackage;
 
         //TODO: we should create AggregatedMapper to don't use this use case here
-        const aggregatedSync = new AggregatedSyncUseCase(
-            rule.builder,
-            this.repositoryFactory,
-            this.localInstance
-        );
+        const aggregatedSync = new AggregatedSyncUseCase(rule.builder, this.repositoryFactory, this.localInstance);
 
         const downloadItemsByAggregated =
             dataValues && dataValues.length > 0
                 ? await this.mapToDownloadItems(
                       rule,
                       "aggregated",
-                      instance =>
-                          Promise.resolve(new GenericPackageMapper(instance, aggregatedSync)),
+                      instance => Promise.resolve(new GenericPackageMapper(instance, aggregatedSync)),
                       { dataValues }
                   )
                 : [];
@@ -184,14 +171,10 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         return [...downloadItemsByEvents, ...downloadItemsByTEIS, ...downloadItemsByAggregated];
     }
 
-    private async getSyncRule(
-        params: DownloadPayloadParams
-    ): Promise<SynchronizationRule | undefined> {
+    private async getSyncRule(params: DownloadPayloadParams): Promise<SynchronizationRule | undefined> {
         switch (params.kind) {
             case "syncRuleId": {
-                return this.repositoryFactory
-                    .rulesRepository(this.localInstance)
-                    .getById(params.id);
+                return this.repositoryFactory.rulesRepository(this.localInstance).getById(params.id);
             }
             case "syncRule": {
                 return params.syncRule;

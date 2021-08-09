@@ -8,20 +8,11 @@ import { BasePackage, Package } from "../entities/Package";
 export class ListPackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        bypassSharingSettings = false,
-        instance = this.localInstance
-    ): Promise<Package[]> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+    public async execute(bypassSharingSettings = false, instance = this.localInstance): Promise<Package[]> {
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
-        const { userGroups } = await this.repositoryFactory
-            .userRepository(this.localInstance)
-            .getCurrent();
-        const { id: userId } = await this.repositoryFactory
-            .userRepository(this.localInstance)
-            .getCurrent();
+        const { userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
+        const { id: userId } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
 
         const items = await storageClient.listObjectsInCollection<BasePackage>(Namespace.PACKAGES);
 
