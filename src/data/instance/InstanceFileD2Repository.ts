@@ -34,15 +34,14 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
         }
     }
 
-    public async save(documentId: string, file: File): Promise<FileId> {
-        const { fileResourceId } = await this.api.files
-            .upload({
-                id: documentId,
+    public async save(file: File): Promise<FileId> {
+        const fileResourceId = await this.api.files
+            .saveFileResource({
                 name: file.name,
                 data: file,
             })
             .getData();
-        debug("File ID", fileResourceId);
+
         return fileResourceId;
     }
 
