@@ -86,7 +86,7 @@ describe("Sync metadata", () => {
                     categoryOptionCombos: [{ id: "default4" }],
                 };
 
-            console.log("Unknown metadata request", request.queryParams);
+            console.error("Unknown metadata request", request.queryParams);
         });
 
         local.get("/dataValueSets", async () => ({ dataValues: [] }));
@@ -272,7 +272,7 @@ describe("Sync metadata", () => {
             },
         };
 
-        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await sync.buildPayload();
         expect(payload.events?.find(({ id }) => id === "test-event-1")).toBeDefined();
@@ -304,7 +304,7 @@ describe("Sync metadata", () => {
             },
         };
 
-        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await sync.buildPayload();
         expect(payload.events?.find(({ id }) => id === "test-event-2")).toBeDefined();

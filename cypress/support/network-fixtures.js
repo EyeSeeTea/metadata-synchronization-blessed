@@ -1,5 +1,4 @@
 // <reference types="Cypress" />
-/* global Promise, Cypress, cy */
 
 // TODO: Move fixture generation processing to a node.js Cypress plugin using cy.task()
 // TODO: Use EXTERNAL_API exclusively, E2E is redundant

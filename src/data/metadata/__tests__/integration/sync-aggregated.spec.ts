@@ -81,7 +81,7 @@ describe("Sync metadata", () => {
                     categoryOptionCombos: [{ id: "default4" }],
                 };
 
-            console.log("Unknown metadata request", request.queryParams);
+            console.error("Unknown metadata request", request.queryParams);
         });
 
         local.get("/dataValueSets", async () => ({
@@ -238,7 +238,7 @@ describe("Sync metadata", () => {
             dataParams: { orgUnitPaths: ["/Global"] },
         };
 
-        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await sync.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();
@@ -268,7 +268,7 @@ describe("Sync metadata", () => {
             dataParams: { orgUnitPaths: ["/Global"] },
         };
 
-        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await sync.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();

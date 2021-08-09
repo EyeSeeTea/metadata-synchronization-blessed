@@ -8,6 +8,7 @@ module.exports = {
         "\\.(css|scss)$": "<rootDir>/config/styleMock.js",
         "\\.(jpg|jpeg|png|svg)$": "<rootDir>/config/fileMock.js",
     },
+    setupFilesAfterEnv: ["<rootDir>/config/testSetup.js", "jest-expect-message"],
     transform: {
         "^.+\\.[t|j]sx?$": "babel-jest",
     },

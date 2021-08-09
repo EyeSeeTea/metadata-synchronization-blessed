@@ -36,7 +36,7 @@ const pagesPath = `${process.env.TRAVIS_REPO_SLUG}/${subfolder}/${process.env.TR
 const reportDir = `feedback-ci/${pagesPath}`;
 
 fs.writeFile("pages_path", pagesPath, function (err) {
-    if (err) console.log(err);
+    if (err) console.error(err);
 });
 
 // Delete all existing report files

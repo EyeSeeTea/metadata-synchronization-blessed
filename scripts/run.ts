@@ -109,9 +109,7 @@ type VariantKeys = ArrayElementType<typeof variants>["name"];
 type BuildArgs = { variant: "all" | VariantKeys; verbose: boolean };
 
 function build(args: BuildArgs): void {
-    const buildVariants = variants.filter(
-        variant => args.variant === "all" || variant.name === args.variant
-    );
+    const buildVariants = variants.filter(variant => args.variant === "all" || variant.name === args.variant);
 
     if (buildVariants.length === 0) {
         throw new Error(`Unknown variant: ${args.variant}`);
@@ -133,9 +131,7 @@ function build(args: BuildArgs): void {
 
         run(`yarn clean && yarn localize && yarn test`);
         run(`react-scripts build && cp -r i18n icon.png build`);
-        run(
-            `d2-manifest package.json build/manifest.webapp -t ${manifestType} -n '${variant.title}'`
-        );
+        run(`d2-manifest package.json build/manifest.webapp -t ${manifestType} -n '${variant.title}'`);
         run(`rm -f ${fileName}`);
         run(`cd build && zip -r ../${fileName} *`);
         console.info(`Written: ${fileName}`);
