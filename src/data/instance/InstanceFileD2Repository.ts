@@ -18,13 +18,15 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
         const response = await this.api.files.get(fileId).getData();
         if (!response) throw Error("An error has ocurred retrieving the file resource of document");
 
-        const documentName = await this.api.models.documents
+        const { objects } = await this.api.models.documents
             .get({ filter: { id: { eq: fileId } }, fields: { name: true } })
             .getData();
+        
+        const documentName = objects[0]?.name ?? "File";
 
         return this.blobToFile(
             response,
-            `${documentName.objects[0].name}.${mime.extension(response.type)}`
+            `${documentName}.${mime.extension(response.type)}`
         );
     }
 
