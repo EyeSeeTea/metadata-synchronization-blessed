@@ -81,14 +81,15 @@ export const mapCategoryOptionCombo = (
     destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
 ): string | undefined => {
     if (!optionCombo) return undefined;
-    for (const mapping of mappings) {
+
+    const lookup = (mapping: MetadataMappingDictionary) => {
         const { categoryOptions = {}, categoryCombos = {}, categoryOptionCombos = {} } = mapping;
 
         const exactMatch = categoryOptionCombos[optionCombo]?.mappedId;
         if (exactMatch) return exactMatch;
 
         if (_.keys(categoryOptions).length === 0) {
-            return optionCombo;
+            return undefined;
         }
 
         const origin = _.find(originCategoryOptionCombos, ["id", optionCombo]);
@@ -133,6 +134,11 @@ export const mapCategoryOptionCombo = (
         const candidate = candidates.length === 1 ? _.first(candidates) : exactObject;
         const defaultValue = isDisabled ? "DISABLED" : undefined;
         const result = candidate?.id ?? defaultValue;
+        if (result) return result;
+    };
+
+    for (const mapping of mappings) {
+        const result = lookup(mapping);
         if (result) return result;
     }
 
