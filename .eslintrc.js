@@ -21,7 +21,6 @@ module.exports = {
         "no-useless-concat": "off",
         "no-useless-constructor": "off",
         "no-unexpected-multiline": "off",
-        "no-template-curly-in-string": "off",
         "default-case": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-explicit-any": "off",
