@@ -80,6 +80,7 @@ import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageU
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
+import { CleanSyncReportsUseCase } from "../domain/reports/usecases/CleanSyncReporstUseCase";
 import { DeleteSyncReportUseCase } from "../domain/reports/usecases/DeleteSyncReportUseCase";
 import { DownloadPayloadUseCase } from "../domain/reports/usecases/DownloadPayloadUseCase";
 import { GetSyncReportUseCase } from "../domain/reports/usecases/GetSyncReportUseCase";
@@ -331,6 +332,7 @@ export class CompositionRoot {
         return getExecute({
             list: new ListSyncReportUseCase(this.repositoryFactory, this.localInstance),
             save: new SaveSyncReportUseCase(this.repositoryFactory, this.localInstance),
+            clean: new CleanSyncReportsUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),

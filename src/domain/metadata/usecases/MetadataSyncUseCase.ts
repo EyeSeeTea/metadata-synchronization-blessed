@@ -191,25 +191,23 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         instance: Instance,
         payload: MetadataPackage
     ): Promise<MetadataPackage> {
-        const documents = payload.documents as Document[] | undefined;
+        if (!payload.documents) return payload;
 
-        if (documents) {
-            const newDocuments = await promiseMap(documents, async (document: Document) => {
-                if (!document.external) {
-                    const fileRepository = await this.getInstanceFileRepository();
-                    const file = await fileRepository.getById(document.id);
-                    const fileRemoteRepository = await this.getInstanceFileRepository(instance);
-                    const fileId = await fileRemoteRepository.save(file);
-                    return { ...document, url: fileId };
-                } else {
-                    return document;
-                }
-            });
+        const fileRepository = await this.getInstanceFileRepository();
+        const fileRemoteRepository = await this.getInstanceFileRepository(instance);
 
-            return { ...payload, documents: newDocuments };
-        } else {
-            return payload;
-        }
+        const documents = await promiseMap(
+            payload.documents as Document[],
+            async (document: Document) => {
+                if (document.external) return document;
+
+                const file = await fileRepository.getById(document.id);
+                const fileId = await fileRemoteRepository.save(file);
+                return { ...document, url: fileId };
+            }
+        );
+
+        return { ...payload, documents };
     }
 
     private async requestAndIncludeProgramRules(program: Program) {

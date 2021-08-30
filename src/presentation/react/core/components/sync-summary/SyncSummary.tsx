@@ -17,7 +17,6 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
-import { PublicInstance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import {
     ErrorMessage,
@@ -31,6 +30,7 @@ import {
 } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
+import { NamedRef } from "../../../../../domain/common/entities/Ref";
 
 const useStyles = makeStyles(theme => ({
     accordionHeading1: {
@@ -181,12 +181,12 @@ interface SyncSummaryProps {
     onClose: () => void;
 }
 
-const getOriginName = (source: PublicInstance | Store) => {
+const getOriginName = (source: NamedRef | Store) => {
     if ((source as Store).token) {
         const store = source as Store;
         return store.account + " - " + store.repository;
     } else {
-        const instance = source as PublicInstance;
+        const instance = source as NamedRef;
         return instance.name;
     }
 };

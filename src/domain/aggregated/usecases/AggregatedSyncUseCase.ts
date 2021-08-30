@@ -23,6 +23,7 @@ import {
 } from "../../synchronization/utils";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataValue } from "../entities/DataValue";
+import { getMinimumParents } from "../utils";
 
 export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly type = "aggregated";
@@ -69,10 +70,18 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         );
 
         // Retrieve candidate data values from dataElements
+        const dataSetIdsFromDataElements = getMinimumParents(
+            new Map(dataElements.map(de => [de.id, de.dataSetElements.map(dse => dse.dataSet.id)]))
+        );
+
+        const dataElementGroupIdsFromDataElements = getMinimumParents(
+            new Map(dataElements.map(de => [de.id, de.dataElementGroups.map(deg => deg.id)]))
+        );
+
         const { dataValues: candidateDataValues = [] } = await aggregatedRepository.getAggregated(
             dataParams,
-            dataElements.flatMap(de => de.dataSetElements.map(({ dataSet }) => dataSet?.id)),
-            dataElements.flatMap(de => de.dataElementGroups.map(({ id }) => id))
+            dataSetIdsFromDataElements,
+            dataElementGroupIdsFromDataElements
         );
 
         // Retrieve indirect data values from dataElements

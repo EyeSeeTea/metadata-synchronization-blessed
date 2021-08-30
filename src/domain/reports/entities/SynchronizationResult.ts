@@ -1,5 +1,4 @@
 import { NamedRef } from "../../common/entities/Ref";
-import { PublicInstance } from "../../instance/entities/Instance";
 import { Store } from "../../stores/entities/Store";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { SynchronizationResultType } from "../../synchronization/entities/SynchronizationType";
@@ -24,8 +23,8 @@ export interface ErrorMessage {
 
 export interface SynchronizationResult {
     status: SynchronizationStatus;
-    origin?: PublicInstance | Store;
-    instance: PublicInstance;
+    origin?: NamedRef | Store; // TODO: Create union
+    instance: NamedRef;
     originPackage?: NamedRef;
     date: Date;
     type: SynchronizationResultType;

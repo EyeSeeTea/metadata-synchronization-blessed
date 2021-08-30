@@ -3,7 +3,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { ObjectSharing, StorageClient } from "../../domain/storage/repositories/StorageClient";
-import { D2Api, SelectedPick } from "../../types/d2-api";
+import { D2Api, SelectedPick, FieldsOf } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
@@ -32,28 +32,40 @@ export class StorageConstantClient extends StorageClient {
         return value ?? defaultValue;
     }
 
+    private async getConstants<Fields extends FieldsOf<D2ConstantSchema>>(fields: Fields) {
+        const { objects: constants } = await this.api.models.constants
+            .get({
+                paging: false,
+                fields,
+                filter: { code: { $like: CONSTANT_PREFIX } },
+            })
+            .getData();
+
+        return constants;
+    }
+
+    public async clean(): Promise<void> {
+        const objects = await this.getConstants({ id: true, code: true, name: true });
+
+        const toDelete = _(objects)
+            .filter(({ code }) => cleanCode(code).startsWith("history"))
+            .orderBy(["lastUpdated"], ["desc"])
+            .slice(70)
+            .value();
+
+        if (toDelete.length > 0) {
+            await this.api.metadata
+                .post(
+                    { constants: toDelete.map(({ id, code, name }) => ({ id, code, name })) },
+                    { importStrategy: "DELETE" }
+                )
+                .getData();
+        }
+    }
+
     public async saveObject<T extends object>(key: string, keyValue: T): Promise<void> {
         const { id } = await this.getConstant<T>(key);
         await this.updateConstant(id, key, keyValue);
-
-        // Special scenario, clean history entries
-        if (key.startsWith("history")) {
-            const constants = await this.lookupConstants();
-            const toDelete = _(constants)
-                .filter(({ code }) => cleanCode(code).startsWith("history"))
-                .orderBy(["lastUpdated"], ["desc"])
-                .slice(70)
-                .value();
-
-            if (toDelete.length > 0) {
-                await this.api.metadata
-                    .post(
-                        { constants: toDelete.map(({ id, code, name }) => ({ id, code, name })) },
-                        { importStrategy: "DELETE" }
-                    )
-                    .getData();
-            }
-        }
     }
 
     public async removeObject(key: string): Promise<void> {
@@ -63,13 +75,7 @@ export class StorageConstantClient extends StorageClient {
 
     public async clearStorage(): Promise<void> {
         try {
-            const { objects } = await this.api.models.constants
-                .get({
-                    paging: false,
-                    fields: { id: true, code: true, name: true, description: true },
-                    filter: { code: { $like: CONSTANT_PREFIX } },
-                })
-                .getData();
+            const objects = await this.getConstants({ id: true, code: true, name: true });
 
             await this.api.metadata
                 .post({ constants: objects }, { importStrategy: "DELETE" })
@@ -80,10 +86,11 @@ export class StorageConstantClient extends StorageClient {
     }
 
     public async clone(): Promise<Dictionary<unknown>> {
-        const constants = await this.lookupConstants();
+        const objects = await this.getConstants(apiFields);
 
         // Remove constant prefix key
-        return _(constants)
+        return _(objects)
+            .map(constant => this.formatConstant(constant))
             .map(({ code, description }) => [cleanCode(code), JSON.parse(description)])
             .fromPairs()
             .value();
@@ -98,9 +105,9 @@ export class StorageConstantClient extends StorageClient {
     }
 
     public async listKeys(): Promise<string[]> {
-        const constants = await this.lookupConstants();
+        const objects = await this.getConstants({ code: true });
 
-        return _(constants)
+        return _(objects)
             .map(({ code }) => code.replace(new RegExp(`^${CONSTANT_PREFIX}`, ""), ""))
             .value();
     }
@@ -162,18 +169,6 @@ export class StorageConstantClient extends StorageClient {
             console.error(error);
             return this.formatConstant({ id, description, ...rest });
         }
-    }
-
-    private async lookupConstants(): Promise<Constant[]> {
-        const { objects } = await this.api.models.constants
-            .get({
-                paging: false,
-                fields: apiFields,
-                filter: { code: { $like: CONSTANT_PREFIX } },
-            })
-            .getData();
-
-        return objects.map(constant => this.formatConstant(constant));
     }
 
     private formatConstant(item: SelectedPick<D2ConstantSchema, typeof apiFields>): Constant {
