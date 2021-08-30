@@ -34,6 +34,7 @@ export abstract class StorageClient {
     public abstract listKeys(): Promise<string[]>;
     public abstract getObjectSharing(key: string): Promise<ObjectSharing | undefined>;
     public abstract saveObjectSharing(key: string, object: ObjectSharing): Promise<void>;
+    public async clean(): Promise<void> {}
 
     public async listObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
         const collection = await this.getObject<T[]>(key);

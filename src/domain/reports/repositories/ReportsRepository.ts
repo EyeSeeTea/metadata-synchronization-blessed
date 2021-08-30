@@ -11,5 +11,6 @@ export interface ReportsRepository {
     getSyncResults(id: string): Promise<SynchronizationResult[]>;
     list(): Promise<SynchronizationReport[]>;
     save(report: SynchronizationReport): Promise<void>;
+    clean(): Promise<void>;
     delete(id: string): Promise<void>;
 }
