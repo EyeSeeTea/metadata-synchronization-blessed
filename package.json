@@ -36,7 +36,7 @@
         "husky": "4.2.5",
         "jest": "26.1.0",
         "json-stringify-deterministic": "1.0.1",
-        "jszip": "3.5.0",
+        "jszip": "3.7.0",
         "lodash": "4.17.19",
         "material-ui": "0.20.2",
         "mime-types": "2.1.27",
