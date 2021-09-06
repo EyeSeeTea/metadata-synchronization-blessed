@@ -3,6 +3,7 @@ export interface MetadataMapping {
     mappedName?: string;
     mappedCode?: string;
     mappedLevel?: number;
+    mappedValue?: string;
     code?: string;
     mapping?: MetadataMappingDictionary;
     conflicts?: boolean;

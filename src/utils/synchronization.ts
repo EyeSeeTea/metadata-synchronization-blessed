@@ -5,6 +5,7 @@ import { MetadataMapping, MetadataMappingDictionary } from "../domain/mapping/en
 import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import i18n from "../locales";
+import { MAPPED_BY_VALUE_KEY } from "../presentation/react/core/components/mapping-table/utils";
 import { D2Api } from "../types/d2-api";
 import { buildObject } from "../types/utils";
 import "../utils/lodash-mixins";
@@ -139,7 +140,11 @@ export const mapOptionValue = (value: string | undefined, mappings: MetadataMapp
         const { options } = mapping;
         const candidate = _(options).values().find(["code", value]);
 
-        if (candidate?.mappedCode) return candidate?.mappedCode;
+        if (candidate?.mappedCode === MAPPED_BY_VALUE_KEY && candidate?.mappedValue) {
+            return candidate?.mappedValue;
+        } else if (candidate?.mappedCode) {
+            return candidate?.mappedCode;
+        }
     }
 
     return value ?? "";

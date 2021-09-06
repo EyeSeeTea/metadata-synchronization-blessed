@@ -5,5 +5,6 @@ export interface MappingConfig {
     global?: boolean;
     selection: string[];
     mappedId: string | undefined;
+    mappedValue?: string;
     overrides?: MetadataMapping;
 }

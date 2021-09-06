@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-08-09T09:09:50.920Z\n"
-"PO-Revision-Date: 2021-08-09T09:09:50.920Z\n"
+"POT-Creation-Date: 2021-09-06T19:07:43.857Z\n"
+"PO-Revision-Date: 2021-09-06T19:07:43.857Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -380,6 +380,12 @@ msgstr ""
 msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
 msgstr ""
 
+msgid "Map by value"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
 msgid "Validating mapping for {{total}} elements"
 msgstr ""
 
@@ -416,6 +422,9 @@ msgstr ""
 msgid "Mapping Status"
 msgstr ""
 
+msgid "Mapped by value"
+msgstr ""
+
 msgid "Not mapped"
 msgstr ""
 
@@ -426,6 +435,9 @@ msgid "Mapped (Global)"
 msgstr ""
 
 msgid "Mapped"
+msgstr ""
+
+msgid "Set mapping by value"
 msgstr ""
 
 msgid "Select children"
