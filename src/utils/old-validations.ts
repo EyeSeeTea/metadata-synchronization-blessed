@@ -13,10 +13,8 @@ export interface OldValidation {
 // TODO: This should be migrated to use the new ValidationError[]
 const translations: { [key: string]: (namespace: object) => string } = {
     cannot_be_blank: (namespace: object) => i18n.t("Field {{field}} cannot be blank", namespace),
-    url_username_combo_already_exists: () =>
-        i18n.t("This URL and username combination already exists"),
-    cannot_be_empty: (namespace: object) =>
-        i18n.t("You need to select at least one {{element}}", namespace),
+    url_username_combo_already_exists: () => i18n.t("This URL and username combination already exists"),
+    cannot_be_empty: (namespace: object) => i18n.t("You need to select at least one {{element}}", namespace),
     cron_expression_must_be_valid: (namespace: object) =>
         i18n.t("Cron expression {{expression}} must be valid", namespace),
     cannot_enable_without_valid: (namespace: object) =>
@@ -25,10 +23,7 @@ const translations: { [key: string]: (namespace: object) => string } = {
 };
 
 // TODO: This should be migrated to use the new ValidationError[]
-export function getValidationMessages(
-    model: SynchronizationRule,
-    validationKeys: string[] | null = null
-) {
+export function getValidationMessages(model: SynchronizationRule, validationKeys: string[] | null = null) {
     const validationObj = model.validate();
 
     return _(validationObj)

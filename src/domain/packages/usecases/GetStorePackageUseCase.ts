@@ -9,13 +9,8 @@ import { BasePackage, Package } from "../entities/Package";
 export class GetStorePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        storeId: string,
-        packageId: string
-    ): Promise<Either<"NOT_FOUND", Package>> {
-        const store = await this.repositoryFactory
-            .storeRepository(this.localInstance)
-            .getById(storeId);
+    public async execute(storeId: string, packageId: string): Promise<Either<"NOT_FOUND", Package>> {
+        const store = await this.repositoryFactory.storeRepository(this.localInstance).getById(storeId);
         if (!store) return Either.error("NOT_FOUND");
 
         const { encoding, content } = await this.repositoryFactory.gitRepository().request<{

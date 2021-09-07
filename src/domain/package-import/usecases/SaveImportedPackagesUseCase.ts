@@ -10,18 +10,11 @@ type SavePackageError = "UNEXPECTED_ERROR";
 export class SaveImportedPackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        importedPackages: ImportedPackage[]
-    ): Promise<Either<SavePackageError, void>> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+    public async execute(importedPackages: ImportedPackage[]): Promise<Either<SavePackageError, void>> {
+        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
         try {
-            await storageClient.saveObjectsInCollection(
-                Namespace.IMPORTEDPACKAGES,
-                importedPackages
-            );
+            await storageClient.saveObjectsInCollection(Namespace.IMPORTEDPACKAGES, importedPackages);
 
             return Either.success(undefined);
         } catch (error) {

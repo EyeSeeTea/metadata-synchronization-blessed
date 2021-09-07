@@ -21,11 +21,7 @@ export interface DeletedObjectsTableProps {
     onChange: (syncRule: SynchronizationRule) => void;
 }
 
-const DeletedObjectsTable: React.FC<DeletedObjectsTableProps> = ({
-    openSynchronizationDialog,
-    syncRule,
-    onChange,
-}) => {
+const DeletedObjectsTable: React.FC<DeletedObjectsTableProps> = ({ openSynchronizationDialog, syncRule, onChange }) => {
     const { api } = useAppContext();
 
     const [deletedObjectsRows, setDeletedObjectsRows] = useState<MetadataType[]>([]);
@@ -62,8 +58,7 @@ const DeletedObjectsTable: React.FC<DeletedObjectsTableProps> = ({
             api,
             {
                 search,
-                lastUpdatedDate:
-                    dateFilter !== null ? moment(dateFilter).startOf("day") : undefined,
+                lastUpdatedDate: dateFilter !== null ? moment(dateFilter).startOf("day") : undefined,
             },
             {}
         ).then(({ objects }) => setDeletedObjectsRows(objects));

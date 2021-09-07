@@ -31,12 +31,7 @@ export interface FilterRule {
 export type FilterRuleField = keyof FilterRule;
 export type ValidStringMatch = NonNullableValues<StringMatch>;
 
-export const filterRuleFields: FilterRuleField[] = [
-    "metadataType",
-    "created",
-    "lastUpdated",
-    "stringMatch",
-];
+export const filterRuleFields: FilterRuleField[] = ["metadataType", "created", "lastUpdated", "stringMatch"];
 
 export const filterTypeNames: Record<keyof FilterRule, string> = {
     id: i18n.t("Id"),
@@ -125,10 +120,7 @@ export function getDateFilterString(dateFilter: DateFilter): string {
 
 const initialStringMatch: StringMatch = { value: "", where: "contains" };
 
-export function updateStringMatch(
-    filterRule: FilterRule,
-    partial: Partial<StringMatch>
-): FilterRule {
+export function updateStringMatch(filterRule: FilterRule, partial: Partial<StringMatch>): FilterRule {
     return updateFilterRule(filterRule, "stringMatch", {
         ...initialStringMatch,
         ...filterRule.stringMatch,

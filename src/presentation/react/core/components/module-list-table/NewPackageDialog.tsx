@@ -20,9 +20,7 @@ export const NewPackageDialog: React.FC<NewPackageDialogProps> = ({ module, save
         Package.build({
             name: i18n.t("Package of {{name}}", module),
             module,
-            version:
-                semver.parse(module.lastPackageVersion.split("-")[0])?.inc("patch").format() ??
-                "1.0.0",
+            version: semver.parse(module.lastPackageVersion.split("-")[0])?.inc("patch").format() ?? "1.0.0",
         })
     );
 
@@ -126,9 +124,7 @@ export const NewPackageDialog: React.FC<NewPackageDialogProps> = ({ module, save
                 value={versions}
                 onChange={(_event, value) => updateVersions(value)}
                 renderTags={(values: string[]) => values.sort().join(", ")}
-                renderInput={params => (
-                    <TextField {...params} variant="standard" label={i18n.t("DHIS2 Version (*)")} />
-                )}
+                renderInput={params => <TextField {...params} variant="standard" label={i18n.t("DHIS2 Version (*)")} />}
             />
 
             <TextField

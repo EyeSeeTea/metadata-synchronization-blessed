@@ -14,10 +14,7 @@ describe("extractParentsFromRule", () => {
     });
     it("should return parents if rule has parents", () => {
         const rule = "organisationUnitGroups.organisationUnitGroupSets.attributes";
-        const expectedParents = [
-            "organisationUnitGroups.organisationUnitGroupSets",
-            "organisationUnitGroups",
-        ];
+        const expectedParents = ["organisationUnitGroups.organisationUnitGroupSets", "organisationUnitGroups"];
 
         expect(extractParentsFromRule(rule)).toEqual(expectedParents);
     });

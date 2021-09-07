@@ -10,13 +10,7 @@ import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
 import { AdvancedSettingsDialog } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
 import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
-import {
-    AdvancedSettings,
-    defaultMSFSettings,
-    MSFSettings,
-    MSFStorageKey,
-    PersistedMSFSettings,
-} from "./MSFEntities";
+import { AdvancedSettings, defaultMSFSettings, MSFSettings, MSFStorageKey, PersistedMSFSettings } from "./MSFEntities";
 import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
 
 export const MSFHomePage: React.FC = () => {
@@ -104,9 +98,7 @@ export const MSFHomePage: React.FC = () => {
             const reports = await executeAggregateData(
                 compositionRoot,
                 advancedSettings,
-                skipCheckInPreviousPeriods
-                    ? { ...msfSettings, checkInPreviousPeriods: false }
-                    : msfSettings,
+                skipCheckInPreviousPeriods ? { ...msfSettings, checkInPreviousPeriods: false } : msfSettings,
                 addEventToProgress,
                 errors => setMsfValidationErrors(errors),
                 handleSaveMSFSettings,

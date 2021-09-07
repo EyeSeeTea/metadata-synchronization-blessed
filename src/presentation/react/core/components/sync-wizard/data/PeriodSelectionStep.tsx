@@ -59,11 +59,7 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
     }, [syncRule]);
 
     return (
-        <PeriodSelection
-            objectWithPeriod={objectWithPeriod}
-            onFieldChange={onFieldChange}
-            skipPeriods={skipPeriods}
-        />
+        <PeriodSelection objectWithPeriod={objectWithPeriod} onFieldChange={onFieldChange} skipPeriods={skipPeriods} />
     );
 };
 

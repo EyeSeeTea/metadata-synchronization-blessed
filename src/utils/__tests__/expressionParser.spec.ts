@@ -2,10 +2,7 @@ import { ExpressionParser } from "../expressionParser";
 
 describe("Expression parser", () => {
     it("data element - should find all properties", () => {
-        const validation = ExpressionParser.parse(
-            "indicator",
-            "#{P3jJH5Tu5VC.S34ULMcHMca.Z3jxH5Tu5VC}"
-        );
+        const validation = ExpressionParser.parse("indicator", "#{P3jJH5Tu5VC.S34ULMcHMca.Z3jxH5Tu5VC}");
         expect(validation.value.data).toEqual([
             {
                 type: "dataElement",
@@ -283,10 +280,7 @@ describe("Expression parser", () => {
     });
 
     it("parse - example 5", () => {
-        const validation = ExpressionParser.parse(
-            "indicator",
-            "I{EMOt6Fwhs1n} * 1000 / #{WUg3MYWQ7pt}"
-        );
+        const validation = ExpressionParser.parse("indicator", "I{EMOt6Fwhs1n} * 1000 / #{WUg3MYWQ7pt}");
         expect(validation.value.data).toEqual([
             { type: "programIndicator", programIndicator: "EMOt6Fwhs1n" },
             { type: "operator", operator: "*" },
@@ -343,10 +337,7 @@ describe("Expression parser", () => {
     });
 
     it("parse - example 8", () => {
-        const validation = ExpressionParser.parse(
-            "indicator",
-            "N{Rigf2d2Zbjp} * #{P3jJH5Tu5VC.S34ULMcHMca}"
-        );
+        const validation = ExpressionParser.parse("indicator", "N{Rigf2d2Zbjp} * #{P3jJH5Tu5VC.S34ULMcHMca}");
         expect(validation.value.data).toEqual([
             { type: "indicator", indicator: "Rigf2d2Zbjp" },
             { type: "operator", operator: "*" },
@@ -468,9 +459,7 @@ describe("Expression parser", () => {
             },
         ]);
 
-        expect(validation.value.data).toEqual(
-            "#{P3jJH5Tu5VC.S34ULMcHMca} + C{Gfd3ppDfq8E} + OUG{CXw2yu5fodb}"
-        );
+        expect(validation.value.data).toEqual("#{P3jJH5Tu5VC.S34ULMcHMca} + C{Gfd3ppDfq8E} + OUG{CXw2yu5fodb}");
     });
 
     it("build - example 2", () => {
@@ -578,9 +567,7 @@ describe("Expression parser", () => {
             },
         ]);
 
-        expect(validation.value.data).toEqual(
-            "R{BfMAe6Itzgt.REPORTING_RATE} * #{P3jJH5Tu5VC.S34ULMcHMca}"
-        );
+        expect(validation.value.data).toEqual("R{BfMAe6Itzgt.REPORTING_RATE} * #{P3jJH5Tu5VC.S34ULMcHMca}");
     });
 
     it("build - example 7", () => {
@@ -598,9 +585,7 @@ describe("Expression parser", () => {
             },
         ]);
 
-        expect(validation.value.data).toEqual(
-            "R{BfMAe6Itzgt.ACTUAL_REPORTS} / R{BfMAe6Itzgt.EXPECTED_REPORTS}"
-        );
+        expect(validation.value.data).toEqual("R{BfMAe6Itzgt.ACTUAL_REPORTS} / R{BfMAe6Itzgt.EXPECTED_REPORTS}");
     });
 
     it("build - example 8", () => {

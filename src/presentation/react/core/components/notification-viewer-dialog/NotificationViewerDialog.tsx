@@ -13,10 +13,7 @@ export interface NotificationViewerDialogProps {
     onClose: () => void;
 }
 
-export const NotificationViewerDialog: React.FC<NotificationViewerDialogProps> = ({
-    notification,
-    onClose,
-}) => {
+export const NotificationViewerDialog: React.FC<NotificationViewerDialogProps> = ({ notification, onClose }) => {
     const classes = useStyles();
     const { compositionRoot } = useAppContext();
 
@@ -50,17 +47,15 @@ export const NotificationViewerDialog: React.FC<NotificationViewerDialogProps> =
 
             {error && i18n.t("Could not connect with remote instance")}
 
-            {!error &&
-                (notification.type === "received-pull-request" ||
-                    notification.type === "sent-pull-request") && (
-                    <MetadataTable
-                        remoteInstance={remoteInstance}
-                        models={[DataSetModel, ProgramModel, DashboardModel]}
-                        filterRows={notification.selectedIds}
-                        forceSelectionColumn={false}
-                        viewFilters={["group", "level", "orgUnit", "lastUpdated"]}
-                    />
-                )}
+            {!error && (notification.type === "received-pull-request" || notification.type === "sent-pull-request") && (
+                <MetadataTable
+                    remoteInstance={remoteInstance}
+                    models={[DataSetModel, ProgramModel, DashboardModel]}
+                    filterRows={notification.selectedIds}
+                    forceSelectionColumn={false}
+                    viewFilters={["group", "level", "orgUnit", "lastUpdated"]}
+                />
+            )}
         </ConfirmationDialog>
     );
 };

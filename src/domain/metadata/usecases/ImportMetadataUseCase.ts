@@ -7,10 +7,7 @@ import { MetadataPackage } from "../entities/MetadataEntities";
 export class ImportMetadataUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        payload: MetadataPackage,
-        instance = this.localInstance
-    ): Promise<SynchronizationResult> {
+    public async execute(payload: MetadataPackage, instance = this.localInstance): Promise<SynchronizationResult> {
         return this.repositoryFactory.metadataRepository(instance).save(payload);
     }
 }

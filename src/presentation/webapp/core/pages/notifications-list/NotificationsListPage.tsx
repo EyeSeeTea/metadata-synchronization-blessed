@@ -1,12 +1,4 @@
-import {
-    Checkbox,
-    FormControlLabel,
-    Icon,
-    IconButton,
-    makeStyles,
-    Tooltip,
-    Typography,
-} from "@material-ui/core";
+import { Checkbox, FormControlLabel, Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import {
     ObjectsTable,
     RowConfig,
@@ -103,17 +95,10 @@ export const NotificationsListPage: React.FC = () => {
             name: "status",
             text: i18n.t("Status"),
             getValue: notification => {
-                if (
-                    notification.type === "sent-pull-request" ||
-                    notification.type === "received-pull-request"
-                ) {
-                    const status = notificationStatuses.find(
-                        ({ id }) => id === notification.status
-                    );
+                if (notification.type === "sent-pull-request" || notification.type === "received-pull-request") {
+                    const status = notificationStatuses.find(({ id }) => id === notification.status);
 
-                    const showWarning =
-                        notification.type === "sent-pull-request" &&
-                        notification.status === "APPROVED";
+                    const showWarning = notification.type === "sent-pull-request" && notification.status === "APPROVED";
 
                     return (
                         <span>
@@ -121,10 +106,7 @@ export const NotificationsListPage: React.FC = () => {
                                 {status?.name ?? "Unknown"}
                             </Typography>
                             {showWarning && (
-                                <Tooltip
-                                    title={i18n.t("Pull request approved but not imported")}
-                                    placement="top"
-                                >
+                                <Tooltip title={i18n.t("Pull request approved but not imported")} placement="top">
                                     <IconButton className={classes.iconButton}>
                                         <Icon color="error">warning</Icon>
                                     </IconButton>
@@ -153,9 +135,7 @@ export const NotificationsListPage: React.FC = () => {
                 success: async result => {
                     const report = SynchronizationReport.create("metadata");
                     report.setStatus(
-                        result.status === "ERROR" || result.status === "NETWORK ERROR"
-                            ? "FAILURE"
-                            : "DONE"
+                        result.status === "ERROR" || result.status === "NETWORK ERROR" ? "FAILURE" : "DONE"
                     );
                     report.addSyncResult(result);
                     await compositionRoot.reports.save(report);
@@ -202,19 +182,13 @@ export const NotificationsListPage: React.FC = () => {
                 error: code => {
                     switch (code) {
                         case "NOT_FOUND":
-                            snackbar.error(
-                                i18n.t("Could not apply action, notification not found")
-                            );
+                            snackbar.error(i18n.t("Could not apply action, notification not found"));
                             return;
                         case "PERMISSIONS":
-                            snackbar.error(
-                                i18n.t("You don't have permissions to edit this notification")
-                            );
+                            snackbar.error(i18n.t("You don't have permissions to edit this notification"));
                             return;
                         case "INVALID":
-                            snackbar.error(
-                                i18n.t("Could not apply action, notification is not valid")
-                            );
+                            snackbar.error(i18n.t("Could not apply action, notification is not valid"));
                             return;
                         default:
                             snackbar.error(i18n.t("Unknown error"));
@@ -235,20 +209,14 @@ export const NotificationsListPage: React.FC = () => {
                             snackbar.error(i18n.t("Instance not found"));
                             return;
                         case "NOT_FOUND":
-                            snackbar.error(
-                                i18n.t("Could not apply action, notification not found")
-                            );
+                            snackbar.error(i18n.t("Could not apply action, notification not found"));
                             return;
                         case "REMOTE_NOT_FOUND":
-                            snackbar.warning(
-                                i18n.t("Could not update remote instance, notification not found")
-                            );
+                            snackbar.warning(i18n.t("Could not update remote instance, notification not found"));
                             return;
                         case "INVALID":
                         case "REMOTE_INVALID":
-                            snackbar.error(
-                                i18n.t("Could not apply action, notification is not valid")
-                            );
+                            snackbar.error(i18n.t("Could not apply action, notification is not valid"));
                             return;
                         default:
                             snackbar.error(i18n.t("Unknown error"));
@@ -304,10 +272,7 @@ export const NotificationsListPage: React.FC = () => {
                 isActive: (rows: AppNotification[]) =>
                     rows[0].type === "received-pull-request" && rows[0].status === "PENDING",
                 onClick: async rows => {
-                    const result = await compositionRoot.notifications.updatePullRequestStatus(
-                        rows[0],
-                        "APPROVED"
-                    );
+                    const result = await compositionRoot.notifications.updatePullRequestStatus(rows[0], "APPROVED");
 
                     validateUpdateStatusAction(result);
                     setResetKey(Math.random());
@@ -320,10 +285,7 @@ export const NotificationsListPage: React.FC = () => {
                 isActive: (rows: AppNotification[]) =>
                     rows[0].type === "received-pull-request" && rows[0].status === "PENDING",
                 onClick: async rows => {
-                    const result = await compositionRoot.notifications.updatePullRequestStatus(
-                        rows[0],
-                        "REJECTED"
-                    );
+                    const result = await compositionRoot.notifications.updatePullRequestStatus(rows[0], "REJECTED");
 
                     validateUpdateStatusAction(result);
                     setResetKey(Math.random());
@@ -423,8 +385,7 @@ export const NotificationsListPage: React.FC = () => {
         .filter(
             notification =>
                 !statusFilter ||
-                ((notification.type === "sent-pull-request" ||
-                    notification.type === "received-pull-request") &&
+                ((notification.type === "sent-pull-request" || notification.type === "received-pull-request") &&
                     notification.status === statusFilter)
         );
 
@@ -477,9 +438,7 @@ export const NotificationsListPage: React.FC = () => {
                 />
             )}
 
-            {!!syncReport && (
-                <SyncSummary report={syncReport} onClose={() => setSyncReport(undefined)} />
-            )}
+            {!!syncReport && <SyncSummary report={syncReport} onClose={() => setSyncReport(undefined)} />}
         </React.Fragment>
     );
 };

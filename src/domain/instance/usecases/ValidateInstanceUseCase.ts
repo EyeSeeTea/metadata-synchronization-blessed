@@ -17,9 +17,7 @@ export class ValidateInstanceUseCase implements UseCase {
             if (version) {
                 return Either.success(undefined);
             } else if (!instance.username || !instance.password) {
-                return Either.error(
-                    i18n.t("You need to provide a username and password combination")
-                );
+                return Either.error(i18n.t("You need to provide a username and password combination"));
             } else {
                 return Either.error(i18n.t("Not a valid DHIS2 instance"));
             }
@@ -31,14 +29,10 @@ export class ValidateInstanceUseCase implements UseCase {
                     case 404:
                         return Either.error(i18n.t("Wrong URL endpoint"));
                     default:
-                        return Either.error(
-                            i18n.t("Error {{status}}", { status: error.response.status })
-                        );
+                        return Either.error(i18n.t("Error {{status}}", { status: error.response.status }));
                 }
             } else if (error.request) {
-                return Either.error(
-                    i18n.t("Network error, check if server is up and CORS is enabled")
-                );
+                return Either.error(i18n.t("Network error, check if server is up and CORS is enabled"));
             } else {
                 debug({ error });
                 return Either.error(i18n.t("Unknown error"));

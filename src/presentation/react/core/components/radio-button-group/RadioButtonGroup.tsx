@@ -38,12 +38,7 @@ export default function RadioButtonGroup({
         <FormControl component="fieldset">
             {title && <FormLabel component="legend">{title}</FormLabel>}
 
-            <RadioGroup
-                defaultValue={defaultValue}
-                value={value}
-                onChange={handleChange}
-                row={horizontal}
-            >
+            <RadioGroup defaultValue={defaultValue} value={value} onChange={handleChange} row={horizontal}>
                 {items.map(({ id, name, disabled = false }, index) => (
                     <FormControlLabel
                         key={`radio-option-${index}`}

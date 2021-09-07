@@ -97,10 +97,7 @@ describe("TEIsPayloadMapper", () => {
             expect(mappedPayload).toEqual(twoRelatedTEIsMapWithRelationship);
         });
         it("should return the payload with mapped orgUnit if mapping contain orgUnits", async () => {
-            const teiMapper = new TEIsPayloadMapper(
-                mappingWithOrgUnits,
-                destinationTrackerProgram as ProgramRef[]
-            );
+            const teiMapper = new TEIsPayloadMapper(mappingWithOrgUnits, destinationTrackerProgram as ProgramRef[]);
 
             const payload = singleTEI as TEIsPackage;
 

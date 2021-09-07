@@ -1,10 +1,7 @@
 import { PartialBy } from "../../../types/utils";
 import { NamedRef } from "../../common/entities/Ref";
 import { PublicInstance } from "../../instance/entities/Instance";
-import {
-    ReceivedPullRequestNotification,
-    SentPullRequestNotification,
-} from "./PullRequestNotification";
+import { ReceivedPullRequestNotification, SentPullRequestNotification } from "./PullRequestNotification";
 
 export type NotificationType = "message" | "received-pull-request" | "sent-pull-request";
 
@@ -25,7 +22,4 @@ export interface MessageNotification extends BaseNotification {
     type: "message";
 }
 
-export type AppNotification =
-    | MessageNotification
-    | ReceivedPullRequestNotification
-    | SentPullRequestNotification;
+export type AppNotification = MessageNotification | ReceivedPullRequestNotification | SentPullRequestNotification;

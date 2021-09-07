@@ -8,10 +8,7 @@ export interface ViewSelectorConfig {
     packages?: boolean;
 }
 
-export function useViewSelector(
-    { modules = true, packages = true }: ViewSelectorConfig,
-    initialValue?: ViewOption
-) {
+export function useViewSelector({ modules = true, packages = true }: ViewSelectorConfig, initialValue?: ViewOption) {
     const items = useMemo(
         () =>
             _.compact([
@@ -21,9 +18,7 @@ export function useViewSelector(
         [modules, packages]
     );
 
-    const [value, setValue] = useState<string | undefined>(
-        () => initialValue ?? _.first(items.map(item => item.id))
-    );
+    const [value, setValue] = useState<string | undefined>(() => initialValue ?? _.first(items.map(item => item.id)));
 
     return useMemo(() => ({ items, value, setValue }), [items, value, setValue]);
 }

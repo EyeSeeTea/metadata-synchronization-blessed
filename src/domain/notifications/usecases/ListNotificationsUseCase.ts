@@ -10,14 +10,10 @@ export class ListNotificationsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<AppNotification[]> {
-        const { id, userGroups } = await this.repositoryFactory
-            .userRepository(this.localInstance)
-            .getCurrent();
+        const { id, userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
         const notifications = await this.getInstanceNotifications();
 
-        const sentPullRequestNotifications = notifications.filter(
-            ({ type }) => type === "sent-pull-request"
-        );
+        const sentPullRequestNotifications = notifications.filter(({ type }) => type === "sent-pull-request");
 
         const updatedNotifications = await promiseMap(sentPullRequestNotifications, notification =>
             this.updateSentPullRequest(notification).catch(err => {
@@ -34,16 +30,12 @@ export class ListNotificationsUseCase implements UseCase {
                 notification =>
                     notification.owner.id === id ||
                     notification.users?.find(user => user.id === id) ||
-                    notification.userGroups?.find(({ id }) =>
-                        userGroups.map(({ id }) => id).includes(id)
-                    )
+                    notification.userGroups?.find(({ id }) => userGroups.map(({ id }) => id).includes(id))
             );
     }
 
     private async getInstanceNotifications(): Promise<AppNotification[]> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
         return storageClient.listObjectsInCollection<AppNotification>(Namespace.NOTIFICATIONS);
     }
@@ -52,22 +44,15 @@ export class ListNotificationsUseCase implements UseCase {
         return this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
     }
 
-    private async updateSentPullRequest(
-        notification: AppNotification
-    ): Promise<AppNotification | undefined> {
-        const localStorageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+    private async updateSentPullRequest(notification: AppNotification): Promise<AppNotification | undefined> {
+        const localStorageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
-        if (notification.type !== "sent-pull-request" || notification.status !== "PENDING")
-            return undefined;
+        if (notification.type !== "sent-pull-request" || notification.status !== "PENDING") return undefined;
 
         const remoteInstance = await this.getInstanceById(notification.instance.id);
         if (!remoteInstance) return undefined;
 
-        const remoteStorageClient = await this.repositoryFactory
-            .configRepository(remoteInstance)
-            .getStorageClient();
+        const remoteStorageClient = await this.repositoryFactory.configRepository(remoteInstance).getStorageClient();
 
         const remoteNotification = await remoteStorageClient.getObjectInCollection<AppNotification>(
             Namespace.NOTIFICATIONS,

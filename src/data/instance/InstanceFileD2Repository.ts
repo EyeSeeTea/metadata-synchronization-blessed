@@ -1,9 +1,6 @@
 import mime from "mime-types";
 import { Instance } from "../../domain/instance/entities/Instance";
-import {
-    FileId,
-    InstanceFileRepository,
-} from "../../domain/instance/repositories/InstanceFileRepository";
+import { FileId, InstanceFileRepository } from "../../domain/instance/repositories/InstanceFileRepository";
 import { D2Api } from "../../types/d2-api";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
@@ -21,13 +18,9 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
         const { objects } = await this.api.models.documents
             .get({ filter: { id: { eq: fileId } }, fields: { name: true } })
             .getData();
-        
-        const documentName = objects[0]?.name ?? "File";
 
-        return this.blobToFile(
-            response,
-            `${documentName}.${mime.extension(response.type)}`
-        );
+        const documentName = objects[0]?.name ?? "File";
+        return this.blobToFile(response, `${documentName}.${mime.extension(response.type)}`);
     }
 
     public async save(file: File): Promise<FileId> {

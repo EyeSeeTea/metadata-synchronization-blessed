@@ -24,8 +24,7 @@ const AppRoles: {
     },
     SYNC_RULE_EXECUTION_ACCESS: {
         name: "METADATA_SYNC_EXECUTOR",
-        description:
-            "APP - This role allows to execute synchronization rules in the Metadata Sync app",
+        description: "APP - This role allows to execute synchronization rules in the Metadata Sync app",
         initialize: true,
     },
     SHOW_DELETED_OBJECTS: {
@@ -105,9 +104,7 @@ export const shouldShowDeletedObjects = async (api: D2Api) => {
  */
 export const isGlobalAdmin = async (api: D2Api) => {
     const userRoles = await getUserRoles(api);
-    return !!userRoles.find((role: any) =>
-        role.authorities.find((authority: string) => authority === "ALL")
-    );
+    return !!userRoles.find((role: any) => role.authorities.find((authority: string) => authority === "ALL"));
 };
 
 /**
@@ -132,10 +129,7 @@ export const isAppExecutor = async (api: D2Api) => {
     return globalAdmin || !!userRoles.find((role: any) => role.name === name);
 };
 
-export const verifyUserHasAccessToSyncRule = async (
-    api: D2Api,
-    syncRule: SynchronizationRule | undefined
-) => {
+export const verifyUserHasAccessToSyncRule = async (api: D2Api, syncRule: SynchronizationRule | undefined) => {
     const globalAdmin = await isGlobalAdmin(api);
     if (globalAdmin) return true;
 

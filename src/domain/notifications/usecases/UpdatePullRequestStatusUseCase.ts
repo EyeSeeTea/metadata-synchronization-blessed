@@ -5,27 +5,20 @@ import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
-import {
-    PullRequestStatus,
-    ReceivedPullRequestNotification,
-} from "../entities/PullRequestNotification";
+import { PullRequestStatus, ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
 
 export type UpdatePullRequestStatusError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
 
 export class UpdatePullRequestStatusUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        id: string,
-        status: PullRequestStatus
-    ): Promise<Either<UpdatePullRequestStatusError, void>> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+    public async execute(id: string, status: PullRequestStatus): Promise<Either<UpdatePullRequestStatusError, void>> {
+        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
-        const notification = await storageClient.getObjectInCollection<
-            ReceivedPullRequestNotification
-        >(Namespace.NOTIFICATIONS, id);
+        const notification = await storageClient.getObjectInCollection<ReceivedPullRequestNotification>(
+            Namespace.NOTIFICATIONS,
+            id
+        );
 
         if (!notification) {
             return Either.error("NOT_FOUND");
@@ -49,9 +42,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
 
     private async hasPermissions(ids: string[]) {
         const responsibles = await this.getResponsibles(this.localInstance, ids);
-        const { id, userGroups } = await this.repositoryFactory
-            .userRepository(this.localInstance)
-            .getCurrent();
+        const { id, userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
 
         if (
             !responsibles.users?.find(user => user.id === id) &&
@@ -64,13 +55,9 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
     }
 
     private async getResponsibles(instance: Instance, ids: string[]) {
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
-        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES
-        );
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

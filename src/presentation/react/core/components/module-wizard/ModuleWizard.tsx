@@ -13,13 +13,7 @@ export interface ModuleWizardProps {
     onChange: (module: Module) => void;
 }
 
-export const ModuleWizard: React.FC<ModuleWizardProps> = ({
-    isEdit,
-    onCancel,
-    onClose,
-    module,
-    onChange,
-}) => {
+export const ModuleWizard: React.FC<ModuleWizardProps> = ({ isEdit, onCancel, onClose, module, onChange }) => {
     const location = useLocation();
 
     const props: ModuleWizardStepProps = { module, onChange, onCancel, onClose, isEdit };

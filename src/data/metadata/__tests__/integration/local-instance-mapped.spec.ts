@@ -2,10 +2,7 @@ import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import {
-    Repositories,
-    RepositoryFactory,
-} from "../../../../domain/common/factories/RepositoryFactory";
+import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
@@ -68,7 +65,7 @@ describe("Sync metadata", () => {
                     categoryOptionCombos: [{ id: "default4" }],
                 };
 
-            console.log("Unknown metadata request", request.queryParams);
+            console.error("Unknown metadata request", request.queryParams);
         });
 
         local.get("/dataValueSets", async () => ({
@@ -170,7 +167,7 @@ describe("Sync metadata", () => {
             dataParams: { orgUnitPaths: ["/Global"] },
         };
 
-        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await sync.buildPayload();
         expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();

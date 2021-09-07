@@ -39,9 +39,7 @@ context("Aggregated mapping", function () {
 
         page.checkCheckboxByText(inputs.dataelement);
 
-        page.openSelectedRowMenu().assertOption(option =>
-            option.contains("Related metadata mapping")
-        );
+        page.openSelectedRowMenu().assertOption(option => option.contains("Related metadata mapping"));
     });
 
     it("should auto-map element", function () {
@@ -62,9 +60,7 @@ context("Aggregated mapping", function () {
     it("should exclude element", function () {
         page.checkCheckboxByText(inputs.dataelement);
         page.openRowMenu().clickOption("Exclude mapping");
-        page.assertDialog(dialog =>
-            dialog.contains("Are you sure you want to exclude mapping for 1 elements?")
-        );
+        page.assertDialog(dialog => dialog.contains("Are you sure you want to exclude mapping for 1 elements?"));
 
         page.clickOkOnDialog();
         page.assertRowStatus(row => row.contains("Excluded"), inputs.dataelement);
@@ -76,18 +72,14 @@ context("Aggregated mapping", function () {
         page.closeDialog();
 
         page.openRowMenu().clickOption("Validate mapping");
-        page.assertDialog(dialog =>
-            dialog.contains("Are you sure you want to validate mapping for 1 elements?")
-        );
+        page.assertDialog(dialog => dialog.contains("Are you sure you want to validate mapping for 1 elements?"));
 
         page.clickOkOnDialog();
         page.assertRowStatus(row => row.contains("Mapped"), inputs.dataelement);
     });
 
     it("should have the correct title", function () {
-        page.assertTitle(title =>
-            title.contains("Aggregated mapping - Destination instance this instance (8080)")
-        );
+        page.assertTitle(title => title.contains("Aggregated mapping - Destination instance this instance (8080)"));
     });
 
     it("should have row menu with details action", function () {
@@ -107,9 +99,7 @@ context("Aggregated mapping", function () {
     });
 
     it("should have ow menu with Reset mapping to default values action", function () {
-        page.openRowMenu().assertOption(option =>
-            option.contains("Reset mapping to default values")
-        );
+        page.openRowMenu().assertOption(option => option.contains("Reset mapping to default values"));
     });
 
     it("should have general menu with Column settings action", function () {

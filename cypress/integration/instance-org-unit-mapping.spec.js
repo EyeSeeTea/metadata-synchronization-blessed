@@ -38,9 +38,7 @@ context("OrgUnit mapping", function () {
     });
 
     it("should have ow menu with Reset mapping to default values action", function () {
-        page.openRowMenu().assertOption(option =>
-            option.contains("Reset mapping to default values")
-        );
+        page.openRowMenu().assertOption(option => option.contains("Reset mapping to default values"));
     });
 
     it("should have general menu with Column settings action", function () {

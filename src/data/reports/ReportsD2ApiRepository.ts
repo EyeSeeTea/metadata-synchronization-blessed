@@ -1,8 +1,5 @@
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
-import {
-    SynchronizationReport,
-    SynchronizationReportData,
-} from "../../domain/reports/entities/SynchronizationReport";
+import { SynchronizationReport, SynchronizationReportData } from "../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { ReportsRepository } from "../../domain/reports/repositories/ReportsRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
@@ -13,28 +10,21 @@ export class ReportsD2ApiRepository implements ReportsRepository {
 
     public async getById(id: string): Promise<SynchronizationReport | undefined> {
         const storageClient = await this.getStorageClient();
-        const data = await storageClient.getObjectInCollection<SynchronizationReportData>(
-            Namespace.HISTORY,
-            id
-        );
+        const data = await storageClient.getObjectInCollection<SynchronizationReportData>(Namespace.HISTORY, id);
 
         return data ? SynchronizationReport.build(data) : undefined;
     }
 
     public async getSyncResults(id: string): Promise<SynchronizationResult[]> {
         const storageClient = await this.getStorageClient();
-        const data = await storageClient.getObject<SynchronizationResult[]>(
-            `${Namespace.HISTORY}-${id}`
-        );
+        const data = await storageClient.getObject<SynchronizationResult[]>(`${Namespace.HISTORY}-${id}`);
 
         return data ?? [];
     }
 
     public async list(): Promise<SynchronizationReport[]> {
         const storageClient = await this.getStorageClient();
-        const stores = await storageClient.listObjectsInCollection<SynchronizationReportData>(
-            Namespace.HISTORY
-        );
+        const stores = await storageClient.listObjectsInCollection<SynchronizationReportData>(Namespace.HISTORY);
 
         return stores.map(data => SynchronizationReport.build(data));
     }
@@ -42,10 +32,7 @@ export class ReportsD2ApiRepository implements ReportsRepository {
     public async save(report: SynchronizationReport): Promise<void> {
         const storageClient = await this.getStorageClient();
 
-        await storageClient.saveObjectInCollection<SynchronizationReportData>(
-            Namespace.HISTORY,
-            report.toObject()
-        );
+        await storageClient.saveObjectInCollection<SynchronizationReportData>(Namespace.HISTORY, report.toObject());
 
         // We do not store payload on the data store
         await storageClient.saveObject<SynchronizationResult[]>(

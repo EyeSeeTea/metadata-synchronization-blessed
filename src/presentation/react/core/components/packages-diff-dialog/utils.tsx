@@ -2,10 +2,7 @@ import { useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import { useCallback, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
-import {
-    FieldUpdate,
-    MetadataPackageDiff,
-} from "../../../../../domain/packages/entities/MetadataPackageDiff";
+import { FieldUpdate, MetadataPackageDiff } from "../../../../../domain/packages/entities/MetadataPackageDiff";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
@@ -73,9 +70,7 @@ export function usePackageImporter(
 
             const result = await compositionRoot.metadata.import(metadataDiff.mergeableMetadata);
             const report = SynchronizationReport.create("metadata");
-            report.setStatus(
-                result.status === "ERROR" || result.status === "NETWORK ERROR" ? "FAILURE" : "DONE"
-            );
+            report.setStatus(result.status === "ERROR" || result.status === "NETWORK ERROR" ? "FAILURE" : "DONE");
             report.addSyncResult({ ...result, origin: instance?.toPublicObject() });
             await compositionRoot.reports.save(report);
 

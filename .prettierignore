@@ -1,2 +1,5 @@
-src/react-app.d.ts
-src/locales
+build
+node_modules
+*.min.js
+*.min.css
+dist

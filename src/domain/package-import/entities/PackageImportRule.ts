@@ -35,14 +35,8 @@ export class PackageImportRule {
         return new PackageImportRule({ ...this.data, packageIds });
     }
 
-    public addOrUpdateTemporalPackageMapping(
-        temporalPackageMapping: DataSourceMapping
-    ): PackageImportRule {
-        if (
-            this.temporalPackageMappings.find(
-                mappingTemp => mappingTemp.id === temporalPackageMapping.id
-            )
-        ) {
+    public addOrUpdateTemporalPackageMapping(temporalPackageMapping: DataSourceMapping): PackageImportRule {
+        if (this.temporalPackageMappings.find(mappingTemp => mappingTemp.id === temporalPackageMapping.id)) {
             return new PackageImportRule({
                 ...this.data,
                 temporalPackageMappings: this.data.temporalPackageMappings.map(existed =>
@@ -52,10 +46,7 @@ export class PackageImportRule {
         } else {
             return new PackageImportRule({
                 ...this.data,
-                temporalPackageMappings: [
-                    ...this.data.temporalPackageMappings,
-                    temporalPackageMapping,
-                ],
+                temporalPackageMappings: [...this.data.temporalPackageMappings, temporalPackageMapping],
             });
         }
     }

@@ -1,11 +1,6 @@
 import { Button, Paper, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import {
-    ConfirmationDialog,
-    ConfirmationDialogProps,
-    useLoading,
-    useSnackbar,
-} from "@eyeseetea/d2-ui-components";
+import { ConfirmationDialog, ConfirmationDialogProps, useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Linkify from "react-linkify";
 import { useHistory, useParams } from "react-router-dom";
@@ -142,10 +137,9 @@ const StoreCreationPage: React.FC = () => {
                     })}
                 </p>
                 <p>
-                    {i18n.t(
-                        "- Create a personal access token at https://github.com/settings/tokens/new",
-                        { nsSeparator: false }
-                    )}
+                    {i18n.t("- Create a personal access token at https://github.com/settings/tokens/new", {
+                        nsSeparator: false,
+                    })}
                 </p>
                 <p>
                     {i18n.t(
@@ -200,20 +194,12 @@ const StoreCreationPage: React.FC = () => {
                         <Button variant="contained" className={classes.saveButton} onClick={save}>
                             {i18n.t("Save")}
                         </Button>
-                        <Button
-                            variant="contained"
-                            className={classes.cancelButton}
-                            onClick={close}
-                        >
+                        <Button variant="contained" className={classes.cancelButton} onClick={close}>
                             {i18n.t("Cancel")}
                         </Button>
                     </div>
                     <div className={classes.actionButtonsContainer}>
-                        <Button
-                            variant="contained"
-                            onClick={testConnection}
-                            className={classes.actionButton}
-                        >
+                        <Button variant="contained" onClick={testConnection} className={classes.actionButton}>
                             {i18n.t("Test Connection")}
                         </Button>
                     </div>

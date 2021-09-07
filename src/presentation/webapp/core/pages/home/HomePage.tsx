@@ -15,24 +15,10 @@ import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import { AppVariant } from "../../../Root";
 
 const appVariantConfiguration: Record<AppVariant, string[]> = {
-    "core-app": [
-        "aggregated",
-        "events",
-        "metadata",
-        "other",
-        "metadata-distribution",
-        "configuration",
-    ],
+    "core-app": ["aggregated", "events", "metadata", "other", "metadata-distribution", "configuration"],
     "data-metadata-app": ["aggregated", "events", "metadata", "other", "configuration"],
     "module-package-app": ["metadata-distribution", "configuration"],
-    "msf-aggregate-data-app": [
-        "aggregated",
-        "events",
-        "metadata",
-        "other",
-        "metadata-distribution",
-        "configuration",
-    ],
+    "msf-aggregate-data-app": ["aggregated", "events", "metadata", "other", "metadata-distribution", "configuration"],
 };
 
 interface LandingPageProps {
@@ -91,9 +77,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
                         description: i18n.t(
                             "Create, modify, delete, execute and schedule rules to synchronize aggregated data periodically."
                         ),
-                        addAction: appConfigurator
-                            ? () => history.push("/sync-rules/aggregated/new")
-                            : undefined,
+                        addAction: appConfigurator ? () => history.push("/sync-rules/aggregated/new") : undefined,
                         listAction: () => history.push("/sync-rules/aggregated"),
                     },
                     {
@@ -122,9 +106,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
                         description: i18n.t(
                             "Create, modify, delete, execute and schedule rules to synchronize event data periodically."
                         ),
-                        addAction: appConfigurator
-                            ? () => history.push("/sync-rules/events/new")
-                            : undefined,
+                        addAction: appConfigurator ? () => history.push("/sync-rules/events/new") : undefined,
                         listAction: () => history.push("/sync-rules/events"),
                     },
                     {
@@ -153,9 +135,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
                         description: i18n.t(
                             "Create, modify, delete, execute and schedule rules to synchronize metadata periodically."
                         ),
-                        addAction: appConfigurator
-                            ? () => history.push("/sync-rules/metadata/new")
-                            : undefined,
+                        addAction: appConfigurator ? () => history.push("/sync-rules/metadata/new") : undefined,
                         listAction: () => history.push("/sync-rules/metadata"),
                     },
                     {
@@ -167,9 +147,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
                     },
                     {
                         name: i18n.t("Notifications"),
-                        description: i18n.t(
-                            "Read notifications regarding new versions of DHIS2 metadata packages."
-                        ),
+                        description: i18n.t("Read notifications regarding new versions of DHIS2 metadata packages."),
                         icon:
                             pendingNotifications > 0 ? (
                                 <Badge badgeContent={pendingNotifications} color="secondary">
@@ -198,9 +176,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
                 children: _.compact([
                     {
                         name: i18n.t("Modules"),
-                        description: i18n.t(
-                            "Create, edit and delete modules from this instance metadata."
-                        ),
+                        description: i18n.t("Create, edit and delete modules from this instance metadata."),
                         isVisible: appConfigurator,
                         addAction: () => history.push("/modules/new"),
                         listAction: () => history.push("/modules"),
@@ -232,9 +208,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
                         description: i18n.t(
                             "Configure, test and edit connections to other DHIS2 and map metadata objects between instances."
                         ),
-                        addAction: appConfigurator
-                            ? () => history.push("/instances/new")
-                            : undefined,
+                        addAction: appConfigurator ? () => history.push("/instances/new") : undefined,
                         listAction: () => history.push("/instances"),
                     },
                     {
@@ -254,11 +228,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
     return (
         <TestWrapper>
             {globalAdmin ? (
-                <Tooltip
-                    className={classes.settingsButton}
-                    title={i18n.t("Settings")}
-                    placement="left"
-                >
+                <Tooltip className={classes.settingsButton} title={i18n.t("Settings")} placement="left">
                     <IconButton onClick={goToSettings}>
                         <Icon>settings</Icon>
                     </IconButton>
@@ -268,9 +238,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ type }) => {
             <Landing
                 title={type === "dashboard" ? i18n.t("Admin Dashboard") : undefined}
                 onBackClick={type === "dashboard" ? backHome : undefined}
-                cards={allCards.filter(card =>
-                    appVariantConfiguration[appVariant].includes(card.key)
-                )}
+                cards={allCards.filter(card => appVariantConfiguration[appVariant].includes(card.key))}
             />
         </TestWrapper>
     );

@@ -1,10 +1,7 @@
 import FileSaver from "file-saver";
 import JSZip from "jszip";
 import _ from "lodash";
-import {
-    DownloadItem,
-    DownloadRepository,
-} from "../../domain/storage/repositories/DownloadRepository";
+import { DownloadItem, DownloadRepository } from "../../domain/storage/repositories/DownloadRepository";
 
 export class DownloadWebRepository implements DownloadRepository {
     public downloadFile(name: string, payload: unknown): void {
@@ -19,9 +16,7 @@ export class DownloadWebRepository implements DownloadRepository {
         _(items)
             .groupBy(item => item.name)
             .mapValues(items =>
-                items.length > 1
-                    ? items.map((item, i) => ({ ...item, name: `${item.name}-${i + 1}` }))
-                    : items
+                items.length > 1 ? items.map((item, i) => ({ ...item, name: `${item.name}-${i + 1}` })) : items
             )
             .values()
             .flatten()

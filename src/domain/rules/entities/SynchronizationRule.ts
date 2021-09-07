@@ -3,10 +3,7 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import moment from "moment";
 import { D2Model } from "../../../models/dhis/default";
-import {
-    extractChildrenFromRules,
-    extractParentsFromRule,
-} from "../../../utils/metadataIncludeExclude";
+import { extractChildrenFromRules, extractParentsFromRule } from "../../../utils/metadataIncludeExclude";
 import { OldValidation } from "../../../utils/old-validations";
 import { UserInfo } from "../../../utils/permissions";
 import isValidCronExpression from "../../../utils/validCronExpression";
@@ -16,10 +13,7 @@ import { DataSyncPeriod } from "../../aggregated/entities/DataSyncPeriod";
 import { NamedRef, SharedRef } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { FilterRule } from "../../metadata/entities/FilterRule";
-import {
-    ExcludeIncludeRules,
-    MetadataIncludeExcludeRules,
-} from "../../metadata/entities/MetadataExcludeIncludeRules";
+import { ExcludeIncludeRules, MetadataIncludeExcludeRules } from "../../metadata/entities/MetadataExcludeIncludeRules";
 import { MetadataSynchronizationParams } from "../../metadata/entities/MetadataSynchronizationParams";
 import {
     defaultSynchronizationBuilder,
@@ -200,9 +194,7 @@ export class SynchronizationRule {
 
     public get readableFrequency(): string | undefined {
         const { frequency } = this.syncRule;
-        return frequency && isValidCronExpression(frequency)
-            ? cronstrue.toString(frequency)
-            : undefined;
+        return frequency && isValidCronExpression(frequency) ? cronstrue.toString(frequency) : undefined;
     }
 
     public get longFrequency(): string | undefined {
@@ -368,19 +360,11 @@ export class SynchronizationRule {
         return SynchronizationRule.build(data);
     }
 
-    public moveRuleFromExcludeToInclude(
-        type: string,
-        rulesToInclude: string[]
-    ): SynchronizationRule {
-        const {
-            includeRules: oldIncludeRules,
-            excludeRules: oldExcludeRules,
-        } = this.metadataIncludeExcludeRules[type];
+    public moveRuleFromExcludeToInclude(type: string, rulesToInclude: string[]): SynchronizationRule {
+        const { includeRules: oldIncludeRules, excludeRules: oldExcludeRules } = this.metadataIncludeExcludeRules[type];
 
         if (_.difference(rulesToInclude, oldExcludeRules).length > 0) {
-            throw Error(
-                "Rules error: It's not possible move rules that do not exist in exclude to include"
-            );
+            throw Error("Rules error: It's not possible move rules that do not exist in exclude to include");
         }
 
         const rulesToIncludeWithParents = _(rulesToInclude)
@@ -398,19 +382,11 @@ export class SynchronizationRule {
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);
     }
 
-    public moveRuleFromIncludeToExclude(
-        type: string,
-        rulesToExclude: string[]
-    ): SynchronizationRule {
-        const {
-            includeRules: oldIncludeRules,
-            excludeRules: oldExcludeRules,
-        } = this.metadataIncludeExcludeRules[type];
+    public moveRuleFromIncludeToExclude(type: string, rulesToExclude: string[]): SynchronizationRule {
+        const { includeRules: oldIncludeRules, excludeRules: oldExcludeRules } = this.metadataIncludeExcludeRules[type];
 
         if (_.difference(rulesToExclude, oldIncludeRules).length > 0) {
-            throw Error(
-                "Rules error: It's not possible move rules that do not exist in include to exclude"
-            );
+            throw Error("Rules error: It's not possible move rules that do not exist in include to exclude");
         }
 
         const rulesToExcludeWithChildren = _(rulesToExclude)
@@ -421,19 +397,14 @@ export class SynchronizationRule {
             .value();
 
         const excludeIncludeRules = {
-            includeRules: oldIncludeRules.filter(
-                rule => !rulesToExcludeWithChildren.includes(rule)
-            ),
+            includeRules: oldIncludeRules.filter(rule => !rulesToExcludeWithChildren.includes(rule)),
             excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
         };
 
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);
     }
 
-    private updateIncludeExcludeRules(
-        type: string,
-        excludeIncludeRules: ExcludeIncludeRules
-    ): SynchronizationRule {
+    private updateIncludeExcludeRules(type: string, excludeIncludeRules: ExcludeIncludeRules): SynchronizationRule {
         const rules = {
             ...this.metadataIncludeExcludeRules,
             [type]: excludeIncludeRules,
@@ -460,9 +431,7 @@ export class SynchronizationRule {
         });
     }
 
-    public updateBuilderDataParams(
-        partialDataParams: Partial<DataSynchronizationParams>
-    ): SynchronizationRule {
+    public updateBuilderDataParams(partialDataParams: Partial<DataSynchronizationParams>): SynchronizationRule {
         const dataParams = this.syncRule.builder?.dataParams ?? {};
         return this.updateBuilder({
             dataParams: {
@@ -486,15 +455,11 @@ export class SynchronizationRule {
         return this.updateBuilder({ excludedIds });
     }
 
-    public updateDataSyncAttributeCategoryOptions(
-        attributeCategoryOptions?: string[]
-    ): SynchronizationRule {
+    public updateDataSyncAttributeCategoryOptions(attributeCategoryOptions?: string[]): SynchronizationRule {
         return this.updateBuilderDataParams({ attributeCategoryOptions });
     }
 
-    public updateDataSyncAllAttributeCategoryOptions(
-        allAttributeCategoryOptions?: boolean
-    ): SynchronizationRule {
+    public updateDataSyncAllAttributeCategoryOptions(allAttributeCategoryOptions?: boolean): SynchronizationRule {
         return this.updateBuilderDataParams({ allAttributeCategoryOptions });
     }
 
@@ -543,9 +508,7 @@ export class SynchronizationRule {
         });
     }
 
-    public updateDataSyncAggregationType(
-        aggregationType?: DataSyncAggregation
-    ): SynchronizationRule {
+    public updateDataSyncAggregationType(aggregationType?: DataSyncAggregation): SynchronizationRule {
         return SynchronizationRule.build({
             ...this.syncRule,
             builder: {
@@ -566,9 +529,7 @@ export class SynchronizationRule {
         return this.updateBuilder({
             syncParams: {
                 ...syncParams,
-                removeOrgUnitObjects: syncParams.removeOrgUnitReferences
-                    ? true
-                    : syncParams.removeOrgUnitObjects,
+                removeOrgUnitObjects: syncParams.removeOrgUnitReferences ? true : syncParams.removeOrgUnitObjects,
             },
         });
     }
@@ -596,11 +557,7 @@ export class SynchronizationRule {
     public isVisibleToUser(userInfo: UserInfo, permission: "READ" | "WRITE" = "READ") {
         const { id: userId, userGroups } = userInfo;
         const token = permission === "READ" ? "r" : "w";
-        const {
-            publicAccess = "--------",
-            userAccesses = [],
-            userGroupAccesses = [],
-        } = this.syncRule;
+        const { publicAccess = "--------", userAccesses = [], userGroupAccesses = [] } = this.syncRule;
 
         const isUserOwner = this.syncRule.user ? this.syncRule.user.id === userId : false;
         const isPublic = publicAccess.substring(0, 2).includes(token);
@@ -639,9 +596,7 @@ export class SynchronizationRule {
                     : null,
             ]),
             metadata: _.compact([
-                this.usesFilterRules &&
-                this.metadataIds.length === 0 &&
-                this.filterRules.length === 0
+                this.usesFilterRules && this.metadataIds.length === 0 && this.filterRules.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element or create a filter rule" },
@@ -649,9 +604,7 @@ export class SynchronizationRule {
                     : null,
             ]),
             dataSyncOrganisationUnits: _.compact([
-                this.type !== "metadata" &&
-                this.type !== "deleted" &&
-                this.dataSyncOrgUnitPaths.length === 0
+                this.type !== "metadata" && this.type !== "deleted" && this.dataSyncOrgUnitPaths.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "organisation unit" },

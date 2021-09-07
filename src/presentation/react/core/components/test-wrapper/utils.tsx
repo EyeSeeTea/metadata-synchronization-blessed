@@ -24,11 +24,7 @@ export function recursiveMap(children: React.ReactNode, fn: Function, parentId?:
     return result;
 }
 
-export function concatStrings(
-    strings: (string | undefined)[],
-    separator = "-",
-    duplicates = false
-) {
+export function concatStrings(strings: (string | undefined)[], separator = "-", duplicates = false) {
     return _(strings)
         .map(string => (duplicates ? string : string?.split(separator)))
         .flatten()
@@ -39,15 +35,7 @@ export function concatStrings(
 
 export function generateTestId({ props = {}, key }: { props?: any; key?: string }) {
     const id = _.kebabCase(
-        _.toLower(
-            props.id ||
-                props.title ||
-                props.name ||
-                props.label ||
-                props["aria-label"] ||
-                key ||
-                props.value
-        )
+        _.toLower(props.id || props.title || props.name || props.label || props["aria-label"] || key || props.value)
     );
     return id ? id : undefined;
 }

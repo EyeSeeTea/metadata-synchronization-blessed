@@ -34,9 +34,7 @@ const CategoryOptionsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule,
 
     const updateSyncAll = (value: boolean) => {
         onChange(
-            syncRule
-                .updateDataSyncAllAttributeCategoryOptions(value)
-                .updateDataSyncAttributeCategoryOptions(undefined)
+            syncRule.updateDataSyncAllAttributeCategoryOptions(value).updateDataSyncAttributeCategoryOptions(undefined)
         );
     };
 

@@ -19,9 +19,7 @@ import ResponsiblesListPage from "./core/pages/responsibles-list/ResponsiblesLis
 import { SettingsPage } from "./core/pages/settings/SettingsPage";
 import StoreCreationPage from "./core/pages/store-creation/StoreCreationPage";
 import StoreListPage from "./core/pages/store-list/StoreListPage";
-import SyncRulesCreationPage, {
-    SyncRulesCreationParams,
-} from "./core/pages/sync-rules-creation/SyncRulesCreationPage";
+import SyncRulesCreationPage, { SyncRulesCreationParams } from "./core/pages/sync-rules-creation/SyncRulesCreationPage";
 import { SyncRulesListPage } from "./core/pages/sync-rules-list/SyncRulesListPage";
 import { MSFHistoryPage } from "./msf-aggregate-data/pages/MSFHistoryPage";
 import { MSFHomePage } from "./msf-aggregate-data/pages/MSFHomePage";
@@ -38,15 +36,9 @@ const Root: React.FC = () => {
                     render={() => <InstanceMappingPage />}
                 />
 
-                <RouteWithSession
-                    path={"/instances/mapping/:id"}
-                    render={() => <InstanceMappingLandingPage />}
-                />
+                <RouteWithSession path={"/instances/mapping/:id"} render={() => <InstanceMappingLandingPage />} />
 
-                <RouteWithSession
-                    path={"/instances/:action(new|edit)/:id?"}
-                    render={() => <InstanceCreationPage />}
-                />
+                <RouteWithSession path={"/instances/:action(new|edit)/:id?"} render={() => <InstanceCreationPage />} />
 
                 <RouteWithSession path="/instances" render={() => <InstanceListPage />} />
 
@@ -80,29 +72,17 @@ const Root: React.FC = () => {
                     render={() => <HistoryPage />}
                 />
 
-                <RouteWithSession
-                    path={"/modules/:action(new|edit)/:id?"}
-                    render={() => <ModuleCreationPage />}
-                />
+                <RouteWithSession path={"/modules/:action(new|edit)/:id?"} render={() => <ModuleCreationPage />} />
 
-                <RouteWithSession
-                    path={"/stores/:action(new|edit)/:id?"}
-                    render={() => <StoreCreationPage />}
-                />
+                <RouteWithSession path={"/stores/:action(new|edit)/:id?"} render={() => <StoreCreationPage />} />
 
                 <RouteWithSession path="/stores" render={() => <StoreListPage />} />
 
-                <RouteWithSession
-                    path="/:list(modules|packages)"
-                    render={() => <ModulePackageListPage />}
-                />
+                <RouteWithSession path="/:list(modules|packages)" render={() => <ModulePackageListPage />} />
 
                 <RouteWithSession path="/custodians" render={() => <ResponsiblesListPage />} />
 
-                <RouteWithSession
-                    path="/notifications/:id?"
-                    render={() => <NotificationsListPage />}
-                />
+                <RouteWithSession path="/notifications/:id?" render={() => <NotificationsListPage />} />
 
                 <RouteWithSession path="/settings" render={() => <SettingsPage />} />
 
@@ -121,10 +101,7 @@ const VariantRoutes: React.FC<{ variant: AppVariant }> = ({ variant }) => {
 
                     <RouteWithSession path="/msf/history" render={() => <MSFHistoryPage />} />
 
-                    <RouteWithSession
-                        path={"/dashboard"}
-                        render={() => <HomePage type={"dashboard"} />}
-                    />
+                    <RouteWithSession path={"/dashboard"} render={() => <HomePage type={"dashboard"} />} />
 
                     <Redirect to="/msf" />
                 </Switch>
@@ -132,10 +109,7 @@ const VariantRoutes: React.FC<{ variant: AppVariant }> = ({ variant }) => {
         default:
             return (
                 <Switch>
-                    <RouteWithSession
-                        path={"/dashboard"}
-                        render={() => <HomePage type={"home"} />}
-                    />
+                    <RouteWithSession path={"/dashboard"} render={() => <HomePage type={"home"} />} />
 
                     <Redirect to="/dashboard" />
                 </Switch>
@@ -151,17 +125,10 @@ const getAppVariant = (): AppVariant => {
 
 const isAppVariant = (variant?: string): variant is AppVariant => {
     return (
-        !!variant &&
-        ["core-app", "data-metadata-app", "module-package-app", "msf-aggregate-data-app"].includes(
-            variant
-        )
+        !!variant && ["core-app", "data-metadata-app", "module-package-app", "msf-aggregate-data-app"].includes(variant)
     );
 };
 
-export type AppVariant =
-    | "core-app"
-    | "data-metadata-app"
-    | "module-package-app"
-    | "msf-aggregate-data-app";
+export type AppVariant = "core-app" | "data-metadata-app" | "module-package-app" | "msf-aggregate-data-app";
 
 export default Root;

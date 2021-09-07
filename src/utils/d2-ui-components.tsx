@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import _ from "lodash";
 
 export const getValueForCollection = (values: any): ReactNode => {

@@ -137,16 +137,8 @@ const GeneralInfoForm = ({ instance, onChange, cancelAction }: GeneralInfoFormPr
 
                 <div className={classes.buttonContainer}>
                     <div>
-                        <SaveButton
-                            onClick={saveAction}
-                            isSaving={isSaving}
-                            data-test={"save-button"}
-                        />
-                        <Button
-                            variant="contained"
-                            onClick={cancelAction}
-                            data-test={"cancel-button"}
-                        >
+                        <SaveButton onClick={saveAction} isSaving={isSaving} data-test={"save-button"} />
+                        <Button variant="contained" onClick={cancelAction} data-test={"cancel-button"}>
                             {i18n.t("Cancel")}
                         </Button>
                     </div>
@@ -161,11 +153,7 @@ const GeneralInfoForm = ({ instance, onChange, cancelAction }: GeneralInfoFormPr
                                 {i18n.t("Metadata mapping")}
                             </Button>
                         )}
-                        <Button
-                            variant="contained"
-                            onClick={testConnection}
-                            data-test={"test-connection-button"}
-                        >
+                        <Button variant="contained" onClick={testConnection} data-test={"test-connection-button"}>
                             {i18n.t("Test Connection")}
                         </Button>
                     </div>

@@ -40,17 +40,11 @@ export function getValidationsByVersionFeedback(
         ..._(validationsByVersion)
             .toPairs()
             .sortBy(([version, _validations]) => version)
-            .flatMap(([version, validations]) =>
-                validations.map(v => `[${version}] ${v.description}`)
-            )
+            .flatMap(([version, validations]) => validations.map(v => `[${version}] ${v.description}`))
             .value(),
     ]).join("\n");
 
-    const level = _.isEmpty(errorVersions)
-        ? "success"
-        : _.isEmpty(successVersions)
-        ? "error"
-        : "warning";
+    const level = _.isEmpty(errorVersions) ? "success" : _.isEmpty(successVersions) ? "error" : "warning";
 
     return [level, msg];
 }

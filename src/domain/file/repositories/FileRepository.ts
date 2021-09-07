@@ -3,9 +3,6 @@ export interface FileRepositoryConstructor {
 }
 
 export interface FileRepository {
-    readObjectsInFile<ReturnType>(
-        file: Blob,
-        fileName?: string
-    ): Promise<{ name: string; value: ReturnType }[]>;
+    readObjectsInFile<ReturnType>(file: Blob, fileName?: string): Promise<{ name: string; value: ReturnType }[]>;
     readJSONFile<ReturnType>(file: Blob): Promise<ReturnType | undefined>;
 }

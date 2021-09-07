@@ -31,12 +31,9 @@ export const ResponsibleDialog: React.FC<ResponsibleDialogProps> = ({
         const { users: oldUsers = [], userGroups: oldUserGroups = [] } =
             responsibles.find(({ id }) => id === sharingSettingsElement.id) ?? {};
 
-        const users =
-            update.userAccesses?.map(({ id, displayName }) => ({ id, name: displayName })) ??
-            oldUsers;
+        const users = update.userAccesses?.map(({ id, displayName }) => ({ id, name: displayName })) ?? oldUsers;
         const userGroups =
-            update.userGroupAccesses?.map(({ id, displayName }) => ({ id, name: displayName })) ??
-            oldUserGroups;
+            update.userGroupAccesses?.map(({ id, displayName }) => ({ id, name: displayName })) ?? oldUserGroups;
 
         const newResponsible: MetadataResponsible = {
             ...sharingSettingsElement,

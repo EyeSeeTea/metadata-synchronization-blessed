@@ -2,10 +2,7 @@ import _ from "lodash";
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import {
-    Repositories,
-    RepositoryFactory,
-} from "../../../../domain/common/factories/RepositoryFactory";
+import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
@@ -44,10 +41,7 @@ export async function sync({
     models: string[];
 }): Promise<SyncResult> {
     const local = startDhis({ urlPrefix: "http://origin.test" }, { version: from });
-    const remote = startDhis(
-        { urlPrefix: "http://destination.test", pretender: local.pretender },
-        { version: to }
-    );
+    const remote = startDhis({ urlPrefix: "http://destination.test", pretender: local.pretender }, { version: to });
 
     local.get("/metadata", async () => metadata);
     local.get("/programRules", async () => []);

@@ -4,11 +4,7 @@ import { Debug } from "../../../domain/migrations/entities/Debug";
 import { AppStorage, Migration } from "../client/types";
 import { MigrationParams } from "./index";
 
-export async function migrate(
-    storageClient: AppStorage,
-    _debug: Debug,
-    _params: MigrationParams
-): Promise<void> {
+export async function migrate(storageClient: AppStorage, _debug: Debug, _params: MigrationParams): Promise<void> {
     const oldContents = await storageClient.get<InstanceData[]>("instances");
     if (!oldContents) return;
 
@@ -16,10 +12,7 @@ export async function migrate(
         _.omit(
             Instance.build({
                 ...rest,
-                name:
-                    name === "This instance"
-                        ? `Local Instance with user ${rest.username ?? "unknown"}`
-                        : name,
+                name: name === "This instance" ? `Local Instance with user ${rest.username ?? "unknown"}` : name,
             }).toObject(),
             "publicAccess",
             "userAccesses",

@@ -19,8 +19,7 @@ const AppRoles: {
     },
     SYNC_RULE_EXECUTION_ACCESS: {
         name: "METADATA_SYNC_EXECUTOR",
-        description:
-            "APP - This role allows to execute synchronization rules in the Metadata Sync app",
+        description: "APP - This role allows to execute synchronization rules in the Metadata Sync app",
         initialize: true,
     },
     SHOW_DELETED_OBJECTS: {

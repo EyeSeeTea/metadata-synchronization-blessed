@@ -19,24 +19,14 @@ export type PublishStorePackageError =
 export class PublishStorePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        packageId: string,
-        force = false
-    ): Promise<Either<PublishStorePackageError, void>> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+    public async execute(packageId: string, force = false): Promise<Either<PublishStorePackageError, void>> {
+        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
-        const defaultStore = await this.repositoryFactory
-            .storeRepository(this.localInstance)
-            .getDefault();
+        const defaultStore = await this.repositoryFactory.storeRepository(this.localInstance).getDefault();
 
         if (!defaultStore) return Either.error("DEFAULT_STORE_NOT_FOUND");
 
-        const storedPackage = await storageClient.getObjectInCollection<BasePackage>(
-            Namespace.PACKAGES,
-            packageId
-        );
+        const storedPackage = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageId);
         if (!storedPackage) return Either.error("PACKAGE_NOT_FOUND");
 
         const { contents, ...item } = storedPackage;
@@ -46,9 +36,7 @@ export class PublishStorePackageUseCase implements UseCase {
         const path = `${item.module.name}/${fileName}.json`;
         const branch = item.module.department.name.replace(/\s/g, "-");
 
-        const existingFileCheck = await this.repositoryFactory
-            .gitRepository()
-            .readFile(defaultStore, branch, path);
+        const existingFileCheck = await this.repositoryFactory.gitRepository().readFile(defaultStore, branch, path);
         if (existingFileCheck.isSuccess()) return Either.error("ALREADY_PUBLISHED");
 
         const validation = await this.repositoryFactory
@@ -68,12 +56,7 @@ export class PublishStorePackageUseCase implements UseCase {
             }
         }
 
-        await this.createModuleFileIfRequired(
-            defaultStore,
-            branch,
-            `${item.module.name}/${moduleFile}`,
-            item.module
-        );
+        await this.createModuleFileIfRequired(defaultStore, branch, `${item.module.name}/${moduleFile}`, item.module);
 
         return Either.success(undefined);
     }

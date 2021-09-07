@@ -52,9 +52,7 @@ export class Instance extends ShareableEntity<InstanceData> {
     }
 
     public get auth(): { username: string; password: string } | undefined {
-        return this.username && this.password
-            ? { username: this.username, password: this.password }
-            : undefined;
+        return this.username && this.password ? { username: this.username, password: this.password } : undefined;
     }
 
     public get description(): string {
@@ -118,12 +116,9 @@ export class Instance extends ShareableEntity<InstanceData> {
     }
 
     public validate(filter?: string[]): ValidationError[] {
-        const validations =
-            this.type === "local" ? this.localInstanceValidations() : this.moduleValidations();
+        const validations = this.type === "local" ? this.localInstanceValidations() : this.moduleValidations();
 
-        return validateModel<Instance>(this, validations).filter(
-            ({ property }) => filter?.includes(property) ?? true
-        );
+        return validateModel<Instance>(this, validations).filter(({ property }) => filter?.includes(property) ?? true);
     }
 
     public update(data?: Partial<Pick<Instance, keyof InstanceData>>): Instance {

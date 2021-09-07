@@ -5,19 +5,13 @@ import {
 } from "../../aggregated/repositories/AggregatedRepository";
 import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
 import { CustomDataRepositoryConstructor } from "../../custom-data/repository/CustomDataRepository";
-import {
-    EventsRepository,
-    EventsRepositoryConstructor,
-} from "../../events/repositories/EventsRepository";
+import { EventsRepository, EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { FileRepositoryConstructor } from "../../file/repositories/FileRepository";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceFileRepositoryConstructor } from "../../instance/repositories/InstanceFileRepository";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
-import {
-    MetadataRepository,
-    MetadataRepositoryConstructor,
-} from "../../metadata/repositories/MetadataRepository";
+import { MetadataRepository, MetadataRepositoryConstructor } from "../../metadata/repositories/MetadataRepository";
 import { MigrationsRepositoryConstructor } from "../../migrations/repositories/MigrationsRepository";
 import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubRepository";
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
@@ -25,10 +19,7 @@ import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRul
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
-import {
-    TEIRepository,
-    TEIRepositoryConstructor,
-} from "../../tracked-entity-instances/repositories/TEIRepository";
+import { TEIRepository, TEIRepositoryConstructor } from "../../tracked-entity-instances/repositories/TEIRepository";
 import {
     TransformationRepository,
     TransformationRepositoryConstructor,
@@ -92,9 +83,7 @@ export class RepositoryFactory {
 
     @cache()
     public instanceFileRepository(instance: Instance) {
-        return this.get<InstanceFileRepositoryConstructor>(Repositories.InstanceFileRepository, [
-            instance,
-        ]);
+        return this.get<InstanceFileRepositoryConstructor>(Repositories.InstanceFileRepository, [instance]);
     }
 
     @cache()
@@ -104,10 +93,7 @@ export class RepositoryFactory {
 
     @cache()
     public transformationRepository(): TransformationRepository {
-        return this.get<TransformationRepositoryConstructor>(
-            Repositories.TransformationRepository,
-            []
-        );
+        return this.get<TransformationRepositoryConstructor>(Repositories.TransformationRepository, []);
     }
 
     @cache()
@@ -123,9 +109,7 @@ export class RepositoryFactory {
 
     @cache()
     public aggregatedRepository(instance: Instance): AggregatedRepository {
-        return this.get<AggregatedRepositoryConstructor>(Repositories.AggregatedRepository, [
-            instance,
-        ]);
+        return this.get<AggregatedRepositoryConstructor>(Repositories.AggregatedRepository, [instance]);
     }
 
     @cache()
@@ -162,27 +146,19 @@ export class RepositoryFactory {
         const user = this.userRepository(instance);
         const file = this.fileRepository();
 
-        return this.get<FileRulesRepositoryConstructor>(Repositories.FileRulesRepository, [
-            user,
-            file,
-        ]);
+        return this.get<FileRulesRepositoryConstructor>(Repositories.FileRulesRepository, [user, file]);
     }
 
     @cache()
     public customDataRepository(instance: Instance) {
         const config = this.configRepository(instance);
-        return this.get<CustomDataRepositoryConstructor>(Repositories.CustomDataRepository, [
-            config,
-        ]);
+        return this.get<CustomDataRepositoryConstructor>(Repositories.CustomDataRepository, [config]);
     }
 
     @cache()
     public migrationsRepository(instance: Instance) {
         const config = this.configRepository(instance);
-        return this.get<MigrationsRepositoryConstructor>(Repositories.MigrationsRepository, [
-            config,
-            instance,
-        ]);
+        return this.get<MigrationsRepositoryConstructor>(Repositories.MigrationsRepository, [config, instance]);
     }
 }
 

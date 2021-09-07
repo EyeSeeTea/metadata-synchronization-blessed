@@ -1,4 +1,3 @@
-import React from "react";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
 import {

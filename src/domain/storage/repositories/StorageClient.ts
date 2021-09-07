@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Namespace, NamespaceProperties } from "../../../data/storage/Namespaces";
+import { NamespaceProperties } from "../../../data/storage/Namespaces";
 import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
@@ -41,10 +41,7 @@ export abstract class StorageClient {
         return collection ?? [];
     }
 
-    public async getObjectInCollection<T extends Ref>(
-        key: string,
-        id: string
-    ): Promise<T | undefined> {
+    public async getObjectInCollection<T extends Ref>(key: string, id: string): Promise<T | undefined> {
         const rawData = (await this.getObject<T[]>(key)) ?? [];
         const baseElement = _.find(rawData, element => element.id === id);
         if (!baseElement) return undefined;
@@ -58,10 +55,7 @@ export abstract class StorageClient {
         return baseElement;
     }
 
-    public async saveObjectsInCollection<T extends Ref>(
-        key: Namespace,
-        elements: T[]
-    ): Promise<void> {
+    public async saveObjectsInCollection<T extends Ref>(key: string, elements: T[]): Promise<void> {
         const oldData: Ref[] = (await this.getObject(key)) ?? [];
         const cleanData = oldData.filter(item => !elements.some(element => item.id === element.id));
 
@@ -80,7 +74,7 @@ export abstract class StorageClient {
         }
     }
 
-    public async saveObjectInCollection<T extends Ref>(key: Namespace, element: T): Promise<void> {
+    public async saveObjectInCollection<T extends Ref>(key: string, element: T): Promise<void> {
         const oldData: Ref[] = (await this.getObject(key)) ?? [];
         const cleanData = oldData.filter(item => item.id !== element.id);
         const advancedProperties = NamespaceProperties[key];

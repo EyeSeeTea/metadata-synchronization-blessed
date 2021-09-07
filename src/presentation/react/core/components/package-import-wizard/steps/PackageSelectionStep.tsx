@@ -1,16 +1,10 @@
 import { PaginationOptions } from "@eyeseetea/d2-ui-components";
 import React from "react";
-import {
-    isInstance,
-    isStore,
-} from "../../../../../../domain/package-import/entities/PackageSource";
+import { isInstance, isStore } from "../../../../../../domain/package-import/entities/PackageSource";
 import { PackagesListTable } from "../../package-list-table/PackageListTable";
 import { PackageImportWizardProps } from "../PackageImportWizard";
 
-export const PackageSelectionStep: React.FC<PackageImportWizardProps> = ({
-    packageImportRule,
-    onChange,
-}) => {
+export const PackageSelectionStep: React.FC<PackageImportWizardProps> = ({ packageImportRule, onChange }) => {
     const handleSelectionChange = (ids: string[]) => {
         onChange(packageImportRule.updatePackageIds(ids));
     };
@@ -19,9 +13,7 @@ export const PackageSelectionStep: React.FC<PackageImportWizardProps> = ({
         <PackagesListTable
             presentation={"app"}
             remoteStore={isStore(packageImportRule.source) ? packageImportRule.source : undefined}
-            remoteInstance={
-                isInstance(packageImportRule.source) ? packageImportRule.source : undefined
-            }
+            remoteInstance={isInstance(packageImportRule.source) ? packageImportRule.source : undefined}
             paginationOptions={paginationOptions}
             onActionButtonClick={undefined}
             isImportDialog={true}

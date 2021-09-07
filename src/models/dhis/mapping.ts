@@ -59,9 +59,7 @@ export class IndicatorMappedModel extends IndicatorModel {
     protected static fields = indicatorFields;
     protected static mappingType = "aggregatedDataElements";
 
-    protected static modelTransform = (
-        objects: SelectedPick<D2IndicatorSchema, typeof indicatorFields>[]
-    ) => {
+    protected static modelTransform = (objects: SelectedPick<D2IndicatorSchema, typeof indicatorFields>[]) => {
         return _.map(objects, ({ aggregateExportCategoryOptionCombo = "default", ...rest }) => {
             return { ...rest, aggregateExportCategoryOptionCombo };
         });
@@ -84,9 +82,7 @@ export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
     protected static mappingType = "aggregatedDataElements";
     protected static modelFilters: any = { programType: undefined };
 
-    protected static modelTransform = (
-        objects: SelectedPick<D2ProgramIndicatorSchema, typeof indicatorFields>[]
-    ) => {
+    protected static modelTransform = (objects: SelectedPick<D2ProgramIndicatorSchema, typeof indicatorFields>[]) => {
         return _.map(objects, ({ aggregateExportCategoryOptionCombo = "default", ...rest }) => {
             return { ...rest, aggregateExportCategoryOptionCombo };
         });
@@ -105,9 +101,7 @@ export class AggregatedDataElementModel extends DataElementModel {
 export class DataSetWithDataElementsModel extends DataSetModel {
     protected static childrenKeys = ["dataElements"];
 
-    protected static modelTransform = (
-        dataSets: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]
-    ) => {
+    protected static modelTransform = (dataSets: SelectedPick<D2DataSetSchema, typeof dataSetFields>[]) => {
         return dataSets.map(({ dataSetElements = [], ...rest }) => ({
             ...rest,
             dataElements: dataSetElements.map(({ dataElement }) => ({
@@ -163,20 +157,19 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
         return objects.map(program => ({
             ...program,
             dataElements: _.flatten(
-                program.programStages?.map(
-                    ({ displayName, programStageDataElements, id: programStageId }) =>
-                        programStageDataElements
-                            .filter(({ dataElement }) => !!dataElement)
-                            .map(({ dataElement }) => ({
-                                ...dataElement,
-                                id: `${program.id}-${programStageId}-${dataElement.id}`,
-                                parentId: `${program.id}`,
-                                model: ProgramDataElementModel,
-                                displayName:
-                                    program.programStages.length > 1
-                                        ? `[${displayName}] ${dataElement.displayName}`
-                                        : dataElement.displayName,
-                            }))
+                program.programStages?.map(({ displayName, programStageDataElements, id: programStageId }) =>
+                    programStageDataElements
+                        .filter(({ dataElement }) => !!dataElement)
+                        .map(({ dataElement }) => ({
+                            ...dataElement,
+                            id: `${program.id}-${programStageId}-${dataElement.id}`,
+                            parentId: `${program.id}`,
+                            model: ProgramDataElementModel,
+                            displayName:
+                                program.programStages.length > 1
+                                    ? `[${displayName}] ${dataElement.displayName}`
+                                    : dataElement.displayName,
+                        }))
                 ) ?? []
             ),
         }));

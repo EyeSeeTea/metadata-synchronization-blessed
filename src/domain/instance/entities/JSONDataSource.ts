@@ -9,10 +9,7 @@ export interface JSONDataSource {
 }
 
 export class JSONDataSource {
-    public static build(
-        version: string,
-        metadata: MetadataPackage<Dictionary<any>>
-    ): JSONDataSource {
+    public static build(version: string, metadata: MetadataPackage<Dictionary<any>>): JSONDataSource {
         return {
             type: "json",
             name: "JSON",

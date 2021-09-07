@@ -1,24 +1,18 @@
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment, { unitOfTime } from "moment";
-import {
-    MetadataMapping,
-    MetadataMappingDictionary,
-} from "../domain/mapping/entities/MetadataMapping";
+import { MetadataMapping, MetadataMappingDictionary } from "../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import i18n from "../locales";
+import { MAPPED_BY_VALUE_KEY } from "../presentation/react/core/components/mapping-table/utils";
 import { D2Api } from "../types/d2-api";
 import { buildObject } from "../types/utils";
 import "../utils/lodash-mixins";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
 // this function should be removed
-export async function getMetadata(
-    api: D2Api,
-    elements: string[],
-    fields = ":all"
-): Promise<Record<string, any[]>> {
+export async function getMetadata(api: D2Api, elements: string[], fields = ":all"): Promise<Record<string, any[]>> {
     const promises = [];
     for (let i = 0; i < elements.length; i += 100) {
         const requestElements = elements.slice(i, i + 100).toString();
@@ -106,9 +100,7 @@ export const mapCategoryOptionCombo = (
                 _.sortBy(o.categoryOptions, ["id"]),
                 _.sortBy(
                     origin?.categoryOptions?.map(({ id }) => {
-                        const nestedId = _.keys(categoryOptions).find(
-                            candidate => _.last(candidate.split("-")) === id
-                        );
+                        const nestedId = _.keys(categoryOptions).find(candidate => _.last(candidate.split("-")) === id);
 
                         return nestedId
                             ? {
@@ -124,9 +116,7 @@ export const mapCategoryOptionCombo = (
         // Exact object built from equal category options and combo
         const exactObject = _.find(candidates, o =>
             _.isEqual(o.categoryCombo, {
-                id:
-                    categoryCombos[origin?.categoryCombo?.id ?? ""]?.mappedId ??
-                    origin?.categoryCombo?.id,
+                id: categoryCombos[origin?.categoryCombo?.id ?? ""]?.mappedId ?? origin?.categoryCombo?.id,
             })
         );
 
@@ -145,15 +135,16 @@ export const mapCategoryOptionCombo = (
     return optionCombo;
 };
 
-export const mapOptionValue = (
-    value: string | undefined,
-    mappings: MetadataMappingDictionary[]
-): string => {
+export const mapOptionValue = (value: string | undefined, mappings: MetadataMappingDictionary[]): string => {
     for (const mapping of mappings) {
         const { options } = mapping;
         const candidate = _(options).values().find(["code", value]);
 
-        if (candidate?.mappedCode) return candidate?.mappedCode;
+        if (candidate?.mappedCode === MAPPED_BY_VALUE_KEY && candidate?.mappedValue) {
+            return candidate?.mappedValue;
+        } else if (candidate?.mappedCode) {
+            return candidate?.mappedCode;
+        }
     }
 
     return value ?? "";

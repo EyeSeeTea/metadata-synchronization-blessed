@@ -23,9 +23,7 @@ const SyncRulesCreation: React.FC = () => {
     const { compositionRoot } = useAppContext();
 
     const [dialogOpen, updateDialogOpen] = useState(false);
-    const [syncRule, updateSyncRule] = useState(
-        location.state?.syncRule ?? SynchronizationRule.create(type)
-    );
+    const [syncRule, updateSyncRule] = useState(location.state?.syncRule ?? SynchronizationRule.create(type));
     const isEdit = action === "edit" && !!id;
 
     const title = !isEdit

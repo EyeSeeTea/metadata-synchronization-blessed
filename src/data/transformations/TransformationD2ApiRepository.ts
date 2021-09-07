@@ -24,7 +24,7 @@ export class TransformationD2ApiRepository implements TransformationRepository {
         if (transformationstoApply.length > 0) {
             return this.applyTransformations<Input, Output>(payload, transformationstoApply);
         } else {
-            return (payload as unknown) as Output;
+            return payload as unknown as Output;
         }
     }
 
@@ -51,33 +51,23 @@ export class TransformationD2ApiRepository implements TransformationRepository {
                 this.undoTransformations<Input, Output>(payload, transformationstoApply)
             );
         } else {
-            return (payload as unknown) as Output;
+            return payload as unknown as Output;
         }
     }
 
-    private applyTransformations<Input, Output>(
-        payload: Input,
-        transformations: Transformation[]
-    ): Output {
+    private applyTransformations<Input, Output>(payload: Input, transformations: Transformation[]): Output {
         return transformations.reduce(
             (transformedPayload: Output, transformation: Transformation) =>
-                transformation.apply
-                    ? transformation.apply<unknown, Output>(transformedPayload)
-                    : transformedPayload,
-            (payload as unknown) as Output
+                transformation.apply ? transformation.apply<unknown, Output>(transformedPayload) : transformedPayload,
+            payload as unknown as Output
         );
     }
 
-    private undoTransformations<Input, Output>(
-        payload: Input,
-        transformations: Transformation[]
-    ): Output {
+    private undoTransformations<Input, Output>(payload: Input, transformations: Transformation[]): Output {
         return transformations.reduce(
             (transformedPayload: Output, transformation: Transformation) =>
-                transformation.undo
-                    ? transformation.undo<unknown, Output>(transformedPayload)
-                    : transformedPayload,
-            (payload as unknown) as Output
+                transformation.undo ? transformation.undo<unknown, Output>(transformedPayload) : transformedPayload,
+            payload as unknown as Output
         );
     }
 

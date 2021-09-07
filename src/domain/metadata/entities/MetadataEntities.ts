@@ -2185,16 +2185,7 @@ export type EventChart = {
     title: string;
     topLimit: number;
     translations: Translation[];
-    type:
-        | "COLUMN"
-        | "STACKED_COLUMN"
-        | "BAR"
-        | "STACKED_BAR"
-        | "LINE"
-        | "AREA"
-        | "PIE"
-        | "RADAR"
-        | "GAUGE";
+    type: "COLUMN" | "STACKED_COLUMN" | "BAR" | "STACKED_BAR" | "LINE" | "AREA" | "PIE" | "RADAR" | "GAUGE";
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
@@ -2580,13 +2571,7 @@ export type MapView = {
     organisationUnitGroupSet: Ref;
     organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
     organisationUnitLevels: number[];
-    organisationUnitSelectionMode:
-        | "SELECTED"
-        | "CHILDREN"
-        | "DESCENDANTS"
-        | "ACCESSIBLE"
-        | "CAPTURE"
-        | "ALL";
+    organisationUnitSelectionMode: "SELECTED" | "CHILDREN" | "DESCENDANTS" | "ACCESSIBLE" | "CAPTURE" | "ALL";
     organisationUnits: Ref[];
     parentGraph: string;
     parentGraphMap: Map;
@@ -2706,16 +2691,7 @@ export type Chart = {
     title: string;
     topLimit: number;
     translations: Translation[];
-    type:
-        | "COLUMN"
-        | "STACKED_COLUMN"
-        | "BAR"
-        | "STACKED_BAR"
-        | "LINE"
-        | "AREA"
-        | "PIE"
-        | "RADAR"
-        | "GAUGE";
+    type: "COLUMN" | "STACKED_COLUMN" | "BAR" | "STACKED_BAR" | "LINE" | "AREA" | "PIE" | "RADAR" | "GAUGE";
     user: Ref;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];

@@ -8,10 +8,7 @@ import { AggregatedRepository } from "../repositories/AggregatedRepository";
 export class DeleteAggregatedUseCase {
     constructor(private repositoryFactory: RepositoryFactory) {}
 
-    async execute(
-        instance: Instance,
-        dataValues: AggregatedPackage
-    ): Promise<SynchronizationResult> {
+    async execute(instance: Instance, dataValues: AggregatedPackage): Promise<SynchronizationResult> {
         return this.getAggregatedRepository(instance).delete(dataValues);
     }
 

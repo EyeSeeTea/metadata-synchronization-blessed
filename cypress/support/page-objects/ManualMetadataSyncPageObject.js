@@ -19,10 +19,7 @@ class ManualMetadataSyncPageObject extends ManualSyncPageObject {
     }
 
     selectMetadataType(text) {
-        includeExcludeStep.selectMetadataType(
-            dataTest("DialogContent-metadata-synchronization"),
-            text
-        );
+        includeExcludeStep.selectMetadataType(dataTest("DialogContent-metadata-synchronization"), text);
         return this;
     }
 

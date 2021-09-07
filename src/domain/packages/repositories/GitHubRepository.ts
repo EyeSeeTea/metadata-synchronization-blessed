@@ -16,12 +16,7 @@ export interface GitHubRepository {
     listFiles(store: Store, branch: string): Promise<Either<GitHubListError, GithubFile[]>>;
     readFile<T>(store: Store, branch: string, path: string): Promise<Either<GitHubError, T>>;
     readFileContents<T>(encoding: string, content: string): Either<GitHubError, T>;
-    writeFile(
-        store: Store,
-        branch: string,
-        path: string,
-        content: string
-    ): Promise<Either<GitHubError, void>>;
+    writeFile(store: Store, branch: string, path: string, content: string): Promise<Either<GitHubError, void>>;
     deleteFile(store: Store, branch: string, path: string): Promise<Either<GitHubError, void>>;
     listBranches(store: Store): Promise<Either<GitHubError, GithubBranch[]>>;
     createBranch(store: Store, branch: string): Promise<Either<GitHubError, void>>;
