@@ -12,7 +12,11 @@ import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import { DataSource } from "../../../../../domain/instance/entities/DataSource";
 import { MappingConfig } from "../../../../../domain/mapping/entities/MappingConfig";
-import { MetadataMapping, MetadataMappingDictionary } from "../../../../../domain/mapping/entities/MetadataMapping";
+import {
+    MetadataMapping,
+    MetadataMappingDictionary,
+    MetadataOverlap,
+} from "../../../../../domain/mapping/entities/MetadataMapping";
 import { cleanOrgUnitPath } from "../../../../../domain/synchronization/utils";
 import i18n from "../../../../../locales";
 import { D2Model } from "../../../../../models/dhis/default";
@@ -23,6 +27,10 @@ import { InputDialog, InputDialogProps } from "../input-dialog/InputDialog";
 import MappingDialog, { MappingDialogConfig } from "../mapping-dialog/MappingDialog";
 import MappingWizard, { MappingWizardConfig, prepareSteps } from "../mapping-wizard/MappingWizard";
 import MetadataTable, { MetadataTableProps } from "../metadata-table/MetadataTable";
+import {
+    OverlappedMappingDialog,
+    OverlappedMappingDialogProps,
+} from "../overlapped-mapping-dialog/OverlappedMappingDialog";
 import { cleanNestedMappedId, EXCLUDED_KEY, getAllChildrenRows, getChildrenRows, MAPPED_BY_VALUE_KEY } from "./utils";
 
 const useStyles = makeStyles({
@@ -88,6 +96,7 @@ export default function MappingTable({
     const [mappingConfig, setMappingConfig] = useState<MappingDialogConfig | null>(null);
     const [wizardConfig, setWizardConfig] = useState<MappingWizardConfig | null>(null);
     const [mapByValueConfig, setMapByValueConfig] = useState<InputDialogProps | null>(null);
+    const [overlappedConfig, setOverlappedConfig] = useState<OverlappedMappingDialogProps | null>(null);
 
     const getMappedItem = useCallback(
         (row?: MetadataType): MetadataMapping => {
@@ -466,6 +475,43 @@ export default function MappingTable({
         [mapping, rows, snackbar]
     );
 
+    const openOverlappedMapping = useCallback(
+        (selection: string[]) => {
+            const program = selection[0];
+            if (!program) return;
+
+            const innerMapping = mapping.eventPrograms?.[program];
+            if (!innerMapping) {
+                snackbar.warning(i18n.t("Please map the item before adding data element aggregations"));
+                return;
+            }
+
+            setOverlappedConfig({
+                title: i18n.t("Data element aggregation"),
+                originInstance: originInstance ?? compositionRoot.localInstance,
+                destinationInstance,
+                mapping,
+                program,
+                onSave: async (overlaps: MetadataOverlap) => {
+                    setOverlappedConfig(null);
+                    loading.show(true, i18n.t("Applying mapping..."));
+
+                    const newMapping = {
+                        ...mapping,
+                        eventPrograms: { ...mapping.eventPrograms, [program]: { ...innerMapping, overlaps } },
+                    };
+
+                    await onChangeMapping(newMapping);
+                    loading.reset();
+                },
+                onCancel: () => {
+                    setOverlappedConfig(null);
+                },
+            });
+        },
+        [compositionRoot, destinationInstance, originInstance, mapping, onChangeMapping, snackbar, loading]
+    );
+
     const updateSelection = (selection: string[]) => {
         setSelectedIds(prevSelection => {
             const removedRows = _(prevSelection)
@@ -529,7 +575,10 @@ export default function MappingTable({
                     getValue: (row: MetadataType) => {
                         const { mappedId } = getMappedItem(row);
                         const mappingType = row.model.getMappingType();
-                        const text = !!mappedId && mappedId !== EXCLUDED_KEY ? cleanOrgUnitPath(mappedId) : "-";
+                        const text =
+                            !!mappedId && mappedId !== EXCLUDED_KEY && mappedId !== MAPPED_BY_VALUE_KEY
+                                ? cleanOrgUnitPath(mappedId)
+                                : "-";
 
                         return (
                             <span>
@@ -776,12 +825,23 @@ export default function MappingTable({
                     return !!mappedId && !isChildrenMapping && steps.length > 0;
                 },
             },
+            {
+                name: "overlapped-mapping",
+                text: i18n.t("Data element aggregation"),
+                multiple: false,
+                onClick: openOverlappedMapping,
+                icon: <Icon>call_merge</Icon>,
+                isActive: (selected: MetadataType[]) => {
+                    return _.every(selected, row => row.model.getMappingType() === "eventPrograms");
+                },
+            },
         ],
         [
             addToSelection,
             disableMapping,
             openMappingDialog,
             openValueMappingDialog,
+            openOverlappedMapping,
             resetMapping,
             applyAutoMapping,
             makeMappingGlobal,
@@ -855,6 +915,10 @@ export default function MappingTable({
             )}
 
             {mapByValueConfig && <InputDialog isOpen={true} fullWidth={true} maxWidth={"md"} {...mapByValueConfig} />}
+
+            {overlappedConfig && (
+                <OverlappedMappingDialog isOpen={true} fullWidth={true} maxWidth={"xl"} {...overlappedConfig} />
+            )}
 
             {!!mappingConfig && (
                 <MappingDialog

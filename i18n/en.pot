@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-09-06T19:07:43.857Z\n"
-"PO-Revision-Date: 2021-09-06T19:07:43.857Z\n"
+"POT-Creation-Date: 2021-09-07T19:05:23.568Z\n"
+"PO-Revision-Date: 2021-09-07T19:05:23.568Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -399,6 +399,12 @@ msgid "Please select at least one item to validate mapping"
 msgstr ""
 
 msgid "You need to map this element before accessing its related metadata mapping"
+msgstr ""
+
+msgid "Please map the item before adding data element aggregations"
+msgstr ""
+
+msgid "Data element aggregation"
 msgstr ""
 
 msgid "ID"

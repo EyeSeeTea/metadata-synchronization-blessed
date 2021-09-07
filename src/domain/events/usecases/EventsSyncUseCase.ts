@@ -5,6 +5,7 @@ import { D2Program } from "../../../types/d2-api";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { mapCategoryOptionCombo, mapOptionValue, mapProgramDataElement } from "../../../utils/synchronization";
+import { interpolate } from "../../../utils/uid-replacement";
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
@@ -218,12 +219,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     ): Promise<ProgramEvent> {
         const { organisationUnits = {} } = globalMapping;
 
-        const { mappedProgram, programStages, innerMapping } = await this.getRelatedProgramMappings(
-            instance,
-            globalMapping,
-            program,
-            programStage
-        );
+        const {
+            mappedProgram,
+            programStages,
+            innerMapping,
+            overlaps = {},
+        } = await this.getRelatedProgramMappings(instance, globalMapping, program, programStage);
 
         const mappedProgramStage =
             this.getProgramStageMapping(program, programStage, programStages).mappedId ?? programStage;
@@ -237,26 +238,44 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             destinationCategoryOptionCombos
         );
 
+        const mappedDataValues = dataValues
+            .map(({ dataElement, value, ...rest }) => {
+                const { mappedId: mappedDataElement = dataElement, mapping: dataElementMapping = {} } =
+                    mapProgramDataElement(program, programStage, dataElement, globalMapping);
+
+                const mappedValue = mapOptionValue(value, [dataElementMapping, globalMapping]);
+
+                return {
+                    originalDataElement: dataElement,
+                    dataElement: mappedDataElement,
+                    value: mappedValue,
+                    ...rest,
+                };
+            })
+            .filter(this.isDisabledEvent);
+
+        const overlappedDataValues = _(mappedDataValues)
+            .groupBy(item => item.dataElement)
+            .mapValues(items => {
+                const defaultItem = items[0];
+                const { replacer } = overlaps[defaultItem.dataElement] ?? {};
+                if (!replacer) return defaultItem;
+
+                const dictionary = _.fromPairs(items.map(item => [item.originalDataElement, item.value]));
+                const value = interpolate(replacer, dictionary);
+
+                return _.omit({ ...defaultItem, value }, ["originalDataElement"]);
+            })
+            .values()
+            .value();
+
         return _.omit(
             {
                 orgUnit: cleanOrgUnitPath(mappedOrgUnit),
                 program: mappedProgram,
                 programStage: mappedProgramStage,
                 attributeOptionCombo: mappedCategory,
-                dataValues: dataValues
-                    .map(({ dataElement, value, ...rest }) => {
-                        const { mappedId: mappedDataElement = dataElement, mapping: dataElementMapping = {} } =
-                            mapProgramDataElement(program, programStage, dataElement, globalMapping);
-
-                        const mappedValue = mapOptionValue(value, [dataElementMapping, globalMapping]);
-
-                        return {
-                            dataElement: mappedDataElement,
-                            value: mappedValue,
-                            ...rest,
-                        };
-                    })
-                    .filter(this.isDisabledEvent),
+                dataValues: overlappedDataValues,
                 ...rest,
             },
             ["orgUnitName", "attributeCategoryOptions"]
@@ -274,12 +293,15 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const complexId = `${originProgram}-${originProgramStage}`;
 
         if (eventPrograms[originProgram]) {
-            const { mappedId: mappedProgram = originProgram, mapping: innerMapping = {} } =
-                eventPrograms[originProgram] ?? {};
+            const {
+                mappedId: mappedProgram = originProgram,
+                mapping: innerMapping = {},
+                overlaps,
+            } = eventPrograms[originProgram] ?? {};
 
             const { programStages = {} } = innerMapping;
 
-            return { mappedProgram, innerMapping, programStages };
+            return { mappedProgram, innerMapping, programStages, overlaps };
         } else if (trackerPrograms[originProgram]) {
             const { mappedId: mappedProgram = originProgram, mapping: innerMapping = {} } =
                 trackerPrograms[originProgram] ?? {};
