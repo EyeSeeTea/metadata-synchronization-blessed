@@ -14,14 +14,7 @@ interface SyncDialogProps {
     onClose: (importResponse?: any) => void;
 }
 
-const SyncDialog: React.FC<SyncDialogProps> = ({
-    title,
-    isOpen,
-    syncRule,
-    onChange,
-    onClose,
-    task,
-}) => {
+const SyncDialog: React.FC<SyncDialogProps> = ({ title, isOpen, syncRule, onChange, onClose, task }) => {
     const [enableSync, updateEnableSync] = useState(false);
 
     useEffect(() => {
@@ -40,12 +33,7 @@ const SyncDialog: React.FC<SyncDialogProps> = ({
             disableSave={!enableSync}
         >
             <DialogContent>
-                <SyncWizard
-                    isDialog={true}
-                    syncRule={syncRule}
-                    onChange={onChange}
-                    onCancel={onClose}
-                />
+                <SyncWizard isDialog={true} syncRule={syncRule} onChange={onChange} onCancel={onClose} />
             </DialogContent>
         </ConfirmationDialog>
     );

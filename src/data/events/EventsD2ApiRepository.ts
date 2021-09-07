@@ -10,10 +10,7 @@ import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
-import {
-    SynchronizationResult,
-    SynchronizationStats,
-} from "../../domain/reports/entities/SynchronizationResult";
+import { SynchronizationResult, SynchronizationStats } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { D2Api } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
@@ -83,13 +80,10 @@ export class EventsD2ApiRepository implements EventsRepository {
         const result = await promiseMap(orgUnits, async orgUnit => {
             const { events, pager } = await fetchApi(orgUnit, 1);
 
-            const paginatedEvents = await promiseMap(
-                _.range(2, pager.pageCount + 1),
-                async page => {
-                    const { events } = await fetchApi(orgUnit, page);
-                    return events;
-                }
-            );
+            const paginatedEvents = await promiseMap(_.range(2, pager.pageCount + 1), async page => {
+                const { events } = await fetchApi(orgUnit, page);
+                return events;
+            });
 
             return [...events, ..._.flatten(paginatedEvents)];
         });
@@ -133,13 +127,10 @@ export class EventsD2ApiRepository implements EventsRepository {
             const filteredEvents = await promiseMap(orgUnits, async orgUnit => {
                 const { events, pager } = await fetchApi(programStage, orgUnit, 1);
 
-                const paginatedEvents = await promiseMap(
-                    _.range(2, pager.pageCount + 1),
-                    async page => {
-                        const { events } = await fetchApi(programStage, orgUnit, page);
-                        return events;
-                    }
-                );
+                const paginatedEvents = await promiseMap(_.range(2, pager.pageCount + 1), async page => {
+                    const { events } = await fetchApi(programStage, orgUnit, page);
+                    return events;
+                });
 
                 return [...events, ..._.flatten(paginatedEvents)];
             });
@@ -184,10 +175,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             .value();
     }
 
-    public async save(
-        data: EventsPackage,
-        params: DataImportParams = {}
-    ): Promise<SynchronizationResult> {
+    public async save(data: EventsPackage, params: DataImportParams = {}): Promise<SynchronizationResult> {
         try {
             const { response } = await this.api.events
                 .postAsync(

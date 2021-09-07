@@ -95,22 +95,12 @@ context("Landing page", () => {
 
     // Instance Settings
     it("enters the instance settings page", function () {
-        cy.get(
-            dataTest(
-                "Card-landing-configuration-destination-instance-settings",
-                "button[title='List']"
-            )
-        ).click();
+        cy.get(dataTest("Card-landing-configuration-destination-instance-settings", "button[title='List']")).click();
         cy.get(dataTest("page-header-title")).contains("Instance Settings");
     });
 
     it("enters the Destination instance creation page", function () {
-        cy.get(
-            dataTest(
-                "Card-landing-configuration-destination-instance-settings",
-                "button[title='Add']"
-            )
-        ).click();
+        cy.get(dataTest("Card-landing-configuration-destination-instance-settings", "button[title='Add']")).click();
         cy.get(dataTest("page-header-title")).contains("New Instance");
     });
 });

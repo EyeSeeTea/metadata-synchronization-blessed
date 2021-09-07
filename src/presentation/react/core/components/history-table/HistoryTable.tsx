@@ -24,9 +24,7 @@ import { promiseMap } from "../../../../../utils/common";
 import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../../utils/permissions";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
-import SyncSummary, {
-    formatStatusTag,
-} from "../../../../react/core/components/sync-summary/SyncSummary";
+import SyncSummary, { formatStatusTag } from "../../../../react/core/components/sync-summary/SyncSummary";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 const dropdownItems = [
@@ -98,9 +96,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
     );
 
     useEffect(() => {
-        compositionRoot.rules
-            .list({ filters: { types }, paging: false })
-            .then(({ rows }) => setSyncRules(rows));
+        compositionRoot.rules.list({ filters: { types }, paging: false }).then(({ rows }) => setSyncRules(rows));
 
         if (id) compositionRoot.reports.get(id).then(setSyncReport);
 
@@ -119,9 +115,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
             getValue: ({ syncRule: id, deletedSyncRuleLabel, packageImport }) => {
                 return packageImport
                     ? i18n.t("(package import)")
-                    : deletedSyncRuleLabel ??
-                          _.find(syncRules, { id })?.name ??
-                          i18n.t("(manual synchronization)");
+                    : deletedSyncRuleLabel ?? _.find(syncRules, { id })?.name ?? i18n.t("(manual synchronization)");
             },
         },
         {
@@ -152,8 +146,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
         {
             name: "types",
             text: i18n.t("Metadata Types"),
-            getValue: notification =>
-                getValueForCollection(notification.types.map(type => ({ name: type }))),
+            getValue: notification => getValueForCollection(notification.types.map(type => ({ name: type }))),
         },
         {
             name: "syncRule",
@@ -166,10 +159,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
                     if (!appConfigurator || !syncRule) return null;
 
                     return (
-                        <Link
-                            to={`/sync-rules/${syncRule.type}/edit/${syncRule.id}`}
-                            target="_blank"
-                        >
+                        <Link to={`/sync-rules/${syncRule.type}/edit/${syncRule.id}`} target="_blank">
                             {i18n.t("Edit {{name}}", syncRule)}
                         </Link>
                     );
@@ -264,9 +254,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
                 onChange={updateTable}
             />
 
-            {!!syncReport && (
-                <SyncSummary report={syncReport} onClose={() => setSyncReport(undefined)} />
-            )}
+            {!!syncReport && <SyncSummary report={syncReport} onClose={() => setSyncReport(undefined)} />}
 
             {toDelete.length > 0 && (
                 <ConfirmationDialog
@@ -274,10 +262,9 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
                     onSave={confirmDelete}
                     onCancel={() => setToDelete([])}
                     title={i18n.t("Delete History Notifications?")}
-                    description={i18n.t(
-                        "Are you sure you want to delete {{count}} history notifications?",
-                        { count: toDelete.length }
-                    )}
+                    description={i18n.t("Are you sure you want to delete {{count}} history notifications?", {
+                        count: toDelete.length,
+                    })}
                     saveText={i18n.t("Ok")}
                 />
             )}

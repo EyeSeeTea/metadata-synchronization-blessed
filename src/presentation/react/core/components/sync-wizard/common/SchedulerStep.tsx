@@ -3,7 +3,6 @@ import { DropDown, TextField } from "@dhis2/d2-ui-core";
 //@ts-ignore
 import { FormBuilder } from "@dhis2/d2-ui-forms";
 import PropTypes from "prop-types";
-import React from "react";
 import i18n from "../../../../../../locales";
 import isValidCronExpression from "../../../../../../utils/validCronExpression";
 import { Toggle } from "../../toggle/Toggle";

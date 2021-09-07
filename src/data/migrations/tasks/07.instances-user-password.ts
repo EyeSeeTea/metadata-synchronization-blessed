@@ -36,24 +36,16 @@ interface InstanceDetailsNew {
     password?: string;
 }
 
-export async function migrate(
-    storage: AppStorage,
-    debug: Debug,
-    params: MigrationParams
-): Promise<void> {
+export async function migrate(storage: AppStorage, debug: Debug, params: MigrationParams): Promise<void> {
     const oldInstances = (await storage.get<InstanceOld[]>("instances")) ?? [];
-    const newInstances: InstanceNew[] = oldInstances.map(ins =>
-        _.omit(ins, ["username", "password"])
-    );
+    const newInstances: InstanceNew[] = oldInstances.map(ins => _.omit(ins, ["username", "password"]));
     const { d2Api } = params;
 
     //Delete wrong key from old migrations
     await storage.remove("instances-");
 
     await promiseMap(oldInstances, async oldInstance => {
-        const oldInstanceDetails = await storage.get<InstanceDetailsOld>(
-            "instances-" + oldInstance.id
-        );
+        const oldInstanceDetails = await storage.get<InstanceDetailsOld>("instances-" + oldInstance.id);
 
         const newInstanceDatails: Maybe<InstanceDetailsNew> = {
             metadataMapping: oldInstanceDetails ? oldInstanceDetails.metadataMapping : {},

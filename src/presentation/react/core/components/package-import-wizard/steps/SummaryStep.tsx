@@ -47,11 +47,7 @@ export const SummaryStep: React.FC<PackageImportWizardProps> = ({ packageImportR
         <React.Fragment>
             <ul>
                 <LiEntry
-                    label={
-                        isInstance(packageImportRule.source)
-                            ? i18n.t("Instance")
-                            : i18n.t("Play Store")
-                    }
+                    label={isInstance(packageImportRule.source) ? i18n.t("Instance") : i18n.t("Play Store")}
                     value={
                         isInstance(packageImportRule.source)
                             ? packageImportRule.source.name

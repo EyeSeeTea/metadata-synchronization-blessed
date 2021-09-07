@@ -130,9 +130,7 @@ export const ModulePackageListPage: React.FC = () => {
                 }
             />
 
-            {!!syncReport && (
-                <SyncSummary report={syncReport} onClose={() => setSyncReport(undefined)} />
-            )}
+            {!!syncReport && <SyncSummary report={syncReport} onClose={() => setSyncReport(undefined)} />}
 
             {instanceInImportDialog && (
                 <PackageImportDialog

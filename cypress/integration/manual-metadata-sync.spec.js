@@ -98,9 +98,7 @@ context("Manual metadata sync", () => {
                 .synchronize()
 
                 .assertSyncResultsStatus(status => status.contains("Success"))
-                .assertSyncResultsSummary(summary =>
-                    summary.contains("Attribute").should("not.exist")
-                )
+                .assertSyncResultsSummary(summary => summary.contains("Attribute").should("not.exist"))
                 .closeSyncResultsDialog();
         });
     });

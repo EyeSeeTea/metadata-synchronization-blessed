@@ -4,18 +4,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { DataSource } from "../../../../../../domain/instance/entities/DataSource";
 import { JSONDataSource } from "../../../../../../domain/instance/entities/JSONDataSource";
 import { DataSourceMapping } from "../../../../../../domain/mapping/entities/DataSourceMapping";
-import {
-    MetadataMapping,
-    MetadataMappingDictionary,
-} from "../../../../../../domain/mapping/entities/MetadataMapping";
-import {
-    MetadataEntities,
-    MetadataPackage,
-} from "../../../../../../domain/metadata/entities/MetadataEntities";
-import {
-    isInstance,
-    PackageSource,
-} from "../../../../../../domain/package-import/entities/PackageSource";
+import { MetadataMapping, MetadataMappingDictionary } from "../../../../../../domain/mapping/entities/MetadataMapping";
+import { MetadataEntities, MetadataPackage } from "../../../../../../domain/metadata/entities/MetadataEntities";
+import { isInstance, PackageSource } from "../../../../../../domain/package-import/entities/PackageSource";
 import { ListPackage } from "../../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../../locales";
 import {
@@ -49,10 +40,7 @@ const models = [
     OrganisationUnitMappedModel,
 ];
 
-export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
-    packageImportRule,
-    onChange,
-}) => {
+export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({ packageImportRule, onChange }) => {
     const classes = useStyles();
     const { compositionRoot, api } = useAppContext();
     const snackbar = useSnackbar();
@@ -194,18 +182,12 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
         if (packageContents && dataSourceMapping) {
             const mapeableModels = models.map(model => model.getCollectionName());
 
-            const contentsIds: string[] = Object.entries(packageContents).reduce(
-                (acc: string[], [key, items]) => {
-                    const modelKey = key as keyof MetadataEntities;
+            const contentsIds: string[] = Object.entries(packageContents).reduce((acc: string[], [key, items]) => {
+                const modelKey = key as keyof MetadataEntities;
 
-                    const ids: string[] =
-                        mapeableModels.includes(modelKey) && items
-                            ? items.map(item => item.id)
-                            : [];
-                    return [...acc, ...ids];
-                },
-                []
-            );
+                const ids: string[] = mapeableModels.includes(modelKey) && items ? items.map(item => item.id) : [];
+                return [...acc, ...ids];
+            }, []);
 
             const mappingIds: string[] = Object.entries(dataSourceMapping.mappingDictionary).reduce(
                 (acc: string[], [_, mapping]) => [...acc, ...Object.keys(mapping)],
@@ -238,9 +220,7 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
             compositionRoot.packages
                 .list(globalAdmin, packageImportRule.source)
                 .then(packages => {
-                    const importPackages = packages.filter(pkg =>
-                        packageImportRule.packageIds.includes(pkg.id)
-                    );
+                    const importPackages = packages.filter(pkg => packageImportRule.packageIds.includes(pkg.id));
 
                     setPackages(importPackages);
                 })
@@ -252,9 +232,7 @@ export const PackageMappingStep: React.FC<PackageImportWizardProps> = ({
             compositionRoot.packages.listStore(packageImportRule.source.id).then(result => {
                 result.match({
                     success: packages => {
-                        const importPackages = packages.filter(pkg =>
-                            packageImportRule.packageIds.includes(pkg.id)
-                        );
+                        const importPackages = packages.filter(pkg => packageImportRule.packageIds.includes(pkg.id));
 
                         setPackages(importPackages);
                     },

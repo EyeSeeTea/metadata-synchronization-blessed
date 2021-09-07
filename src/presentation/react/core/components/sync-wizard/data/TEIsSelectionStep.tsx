@@ -63,11 +63,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
                                 programFilter,
                                 instance
                             )
-                            .then(teis =>
-                                setRows(
-                                    teis.map(tei => ({ ...tei, id: tei.trackedEntityInstance }))
-                                )
-                            )
+                            .then(teis => setRows(teis.map(tei => ({ ...tei, id: tei.trackedEntityInstance }))))
                             .catch(setError);
                     },
                 });
@@ -135,8 +131,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
                     text: columnAtt.displayName,
                     sortable: true,
                     getValue: (tei: TrackedEntityInstance) =>
-                        tei.attributes.find(att => att.attribute === columnAtt.attribute)?.value ||
-                        "",
+                        tei.attributes.find(att => att.attribute === columnAtt.attribute)?.value || "",
                 };
             }),
         ],
@@ -151,8 +146,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
                     name: columnAtt.attribute,
                     text: columnAtt.displayName,
                     getValue: (tei: TrackedEntityInstance) =>
-                        tei.attributes.find(att => att.attribute === columnAtt.attribute)?.value ||
-                        "",
+                        tei.attributes.find(att => att.attribute === columnAtt.attribute)?.value || "",
                 };
             }),
         ],
@@ -188,11 +182,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
 
     if (error) {
         console.error(error);
-        return (
-            <Typography>
-                {i18n.t("An error ocurred while trying to access the required events")}
-            </Typography>
-        );
+        return <Typography>{i18n.t("An error ocurred while trying to access the required events")}</Typography>;
     }
 
     return (

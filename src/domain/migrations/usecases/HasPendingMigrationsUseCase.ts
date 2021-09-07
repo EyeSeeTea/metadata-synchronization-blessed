@@ -6,8 +6,6 @@ export class HasPendingMigrationsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<boolean> {
-        return this.repositoryFactory
-            .migrationsRepository(this.localInstance)
-            .hasPendingMigrations();
+        return this.repositoryFactory.migrationsRepository(this.localInstance).hasPendingMigrations();
     }
 }

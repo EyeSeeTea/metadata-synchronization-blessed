@@ -46,27 +46,16 @@ export function cleanObject(
     const organisationUnitFilter = removeOrgUnitReferences ? ["organisationUnits"] : [];
     const propsToRemove = [...sharingSettingsFilter, ...organisationUnitFilter];
 
-    return _.pick(
-        element,
-        _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove)
-    );
+    return _.pick(element, _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove));
 }
 
-export function cleanReferences(
-    references: Record<string, string[]>,
-    includeRules: string[][] = []
-): string[] {
+export function cleanReferences(references: Record<string, string[]>, includeRules: string[][] = []): string[] {
     const rules = _(includeRules).map(_.first).compact().value();
 
     return _.intersection(_.keys(references), rules);
 }
 
-export function getAllReferences(
-    api: D2Api,
-    obj: any,
-    type: string,
-    parents: string[] = []
-): Record<string, string[]> {
+export function getAllReferences(api: D2Api, obj: any, type: string, parents: string[] = []): Record<string, string[]> {
     let result: Record<string, string[]> = {};
     _.forEach(obj, (value, key) => {
         if (_.isObject(value) || _.isArray(value)) {
@@ -87,9 +76,7 @@ export function getAllReferences(
 }
 
 export function getSchemaByName(api: D2Api, modelName: string): D2SchemaProperties | undefined {
-    const model = _.values(api.models).find(
-        ({ schema }) => schema.name === modelName || schema.plural === modelName
-    );
+    const model = _.values(api.models).find(({ schema }) => schema.name === modelName || schema.plural === modelName);
     return model?.schema;
 }
 
@@ -103,11 +90,7 @@ export function isValidModel(api: D2Api, modelName: string): boolean {
     return metadata;
 }
 
-export function getSchemaByModelField(
-    api: D2Api,
-    field: string,
-    caller: string
-): D2SchemaProperties | undefined {
+export function getSchemaByModelField(api: D2Api, field: string, caller: string): D2SchemaProperties | undefined {
     const callerSchema = getSchemaByName(api, caller);
     const fieldProperty = callerSchema?.properties.find(({ fieldName }) => fieldName === field);
     if (!fieldProperty) return undefined;

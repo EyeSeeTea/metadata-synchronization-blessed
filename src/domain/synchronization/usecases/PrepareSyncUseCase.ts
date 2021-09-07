@@ -9,11 +9,7 @@ import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible
 import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
-export type PrepareSyncError =
-    | "PULL_REQUEST"
-    | "PULL_REQUEST_RESPONSIBLE"
-    | "INSTANCE_NOT_FOUND"
-    | "NOT_AUTHORIZED";
+export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND" | "NOT_AUTHORIZED";
 
 export class PrepareSyncUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
@@ -74,9 +70,7 @@ export class PrepareSyncUseCase implements UseCase {
     private async userHasPermissionsToExecute(targetInstances: string[]): Promise<boolean> {
         const result = await promiseMap(targetInstances, id => this.getInstanceById(id));
         const instances = _.compact(result.map(either => either.value.data));
-        const currentUser = await this.repositoryFactory
-            .userRepository(this.localInstance)
-            .getCurrent();
+        const currentUser = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
 
         return _.every(instances, instance => instance.hasPermissions("read", currentUser));
     }
@@ -87,21 +81,15 @@ export class PrepareSyncUseCase implements UseCase {
         const instance = await this.getInstanceById(instanceId);
         if (instance.isError() || !instance.value.data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance.value.data)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance.value.data).getStorageClient();
 
-        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES
-        );
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         return Either.success(responsibles);
     }
 
     private async getInstanceById(id: string): Promise<Either<"INSTANCE_NOT_FOUND", Instance>> {
-        const instance = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getById(id);
+        const instance = await this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
 
         return instance ? Either.success(instance) : Either.error("INSTANCE_NOT_FOUND");
     }

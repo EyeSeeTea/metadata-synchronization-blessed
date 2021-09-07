@@ -16,11 +16,7 @@ import {
 } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import {
-    buildMetadataDictionary,
-    cleanObjectDefault,
-    cleanOrgUnitPath,
-} from "../../synchronization/utils";
+import { buildMetadataDictionary, cleanObjectDefault, cleanOrgUnitPath } from "../../synchronization/utils";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataValue } from "../entities/DataValue";
 import { getMinimumParents } from "../utils";
@@ -45,12 +41,8 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         const aggregatedRepository = await this.getAggregatedRepository(remoteInstance);
 
         const { dataSets = [] } = await this.extractMetadata<DataSet>(remoteInstance);
-        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(
-            remoteInstance
-        );
-        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>(
-            remoteInstance
-        );
+        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(remoteInstance);
+        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>(remoteInstance);
         const { dataElements = [] } = await this.extractMetadata<DataElement>(remoteInstance);
 
         const dataSetIds = dataSets.map(({ id }) => id);
@@ -102,33 +94,23 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
         // TODO: All these extract metadata methods can be combined if properly typed
         const { dataSets = [] } = await this.extractMetadata<DataSet>(remoteInstance);
-        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(
-            remoteInstance
-        );
-        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>(
-            remoteInstance
-        );
+        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(remoteInstance);
+        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>(remoteInstance);
         const { dataElements = [] } = await this.extractMetadata<DataElement>(remoteInstance);
         const { indicators = [] } = await this.extractMetadata<Indicator>(remoteInstance);
-        const { programIndicators = [] } = await this.extractMetadata<ProgramIndicator>(
-            remoteInstance
-        );
+        const { programIndicators = [] } = await this.extractMetadata<ProgramIndicator>(remoteInstance);
 
         const dataElementIds = dataElements.map(({ id }) => id);
         const indicatorIds = [...indicators, ...programIndicators].map(({ id }) => id);
         const dataSetIds = _.flatten(
-            dataSets.map(({ dataSetElements }) =>
-                dataSetElements.map(({ dataElement }) => dataElement.id)
-            )
+            dataSets.map(({ dataSetElements }) => dataSetElements.map(({ dataElement }) => dataElement.id))
         );
         const dataElementGroupIds = _.flatten(
             dataElementGroups.map(({ dataElements }) => dataElements.map(({ id }) => id))
         );
         const dataElementGroupSetIds = _.flatten(
             dataElementGroupSets.map(({ dataElementGroups }) =>
-                _.flatten(
-                    dataElementGroups.map(({ dataElements }) => dataElements.map(({ id }) => id))
-                )
+                _.flatten(dataElementGroups.map(({ dataElements }) => dataElements.map(({ id }) => id)))
             )
         );
 
@@ -136,12 +118,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
         const { dataValues: dataElementValues = [] } = await aggregatedRepository.getAnalytics({
             dataParams,
-            dimensionIds: [
-                ...dataElementIds,
-                ...dataSetIds,
-                ...dataElementGroupIds,
-                ...dataElementGroupSetIds,
-            ],
+            dimensionIds: [...dataElementIds, ...dataSetIds, ...dataElementGroupIds, ...dataElementGroupSetIds],
             includeCategories: true,
         });
 
@@ -210,10 +187,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
         const mapping = await this.getMapping(instance);
 
-        const instanceAggregatedValues = await this.buildInstanceAggregation(
-            mapping,
-            destinationCategoryOptionCombos
-        );
+        const instanceAggregatedValues = await this.buildInstanceAggregation(mapping, destinationCategoryOptionCombos);
 
         const dataValues = _([...instanceAggregatedValues, ...oldDataValues])
             .map(dataValue =>
@@ -235,15 +209,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
     }
 
     private buildMappedDataValue(
-        {
-            orgUnit,
-            dataElement,
-            categoryOptionCombo,
-            attributeOptionCombo,
-            value,
-            comment,
-            ...rest
-        }: DataValue,
+        { orgUnit, dataElement, categoryOptionCombo, attributeOptionCombo, value, comment, ...rest }: DataValue,
         globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
@@ -282,13 +248,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
 
     private isDisabledDataValue(dataValue: DataValue): boolean {
         return !_(dataValue)
-            .pick([
-                "orgUnit",
-                "dataElement",
-                "categoryOptionCombo",
-                "attributeOptionCombo",
-                "value",
-            ])
+            .pick(["orgUnit", "dataElement", "categoryOptionCombo", "attributeOptionCombo", "value"])
             .values()
             .includes("DISABLED");
     }

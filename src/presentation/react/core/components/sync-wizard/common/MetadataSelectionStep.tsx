@@ -73,12 +73,9 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
         (newMetadataIds: string[], newExclusionIds: string[]) => {
             const additions = _.difference(newMetadataIds, metadataIds);
             if (additions.length > 0) {
-                snackbar.info(
-                    i18n.t("Selected {{difference}} elements", { difference: additions.length }),
-                    {
-                        autoHideDuration: 1000,
-                    }
-                );
+                snackbar.info(i18n.t("Selected {{difference}} elements", { difference: additions.length }), {
+                    autoHideDuration: 1000,
+                });
             }
 
             const removals = _.difference(metadataIds, newMetadataIds);
@@ -153,12 +150,8 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
                           text: i18n.t("Select children"),
                           multiple: true,
                           onClick: (selection: string[]) => {
-                              const selectedRows = _.compact(
-                                  selection.map(id => _.find(rows, ["id", id]))
-                              );
-                              const children = getChildrenRows(selectedRows, model).map(
-                                  ({ id }) => id
-                              );
+                              const selectedRows = _.compact(selection.map(id => _.find(rows, ["id", id])));
+                              const children = getChildrenRows(selectedRows, model).map(({ id }) => id);
 
                               const newSelected = _.uniq([...syncRule.metadataIds, ...children]);
                               changeSelection(newSelected, []);

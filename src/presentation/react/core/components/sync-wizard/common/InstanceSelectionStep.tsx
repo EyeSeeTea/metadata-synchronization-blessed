@@ -59,9 +59,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
     useEffect(() => {
         compositionRoot.instances.list().then(instances => {
             setTargetInstances(instances);
-            compositionRoot.user
-                .current()
-                .then(user => setInstanceOptions(buildInstanceOptions(instances, user)));
+            compositionRoot.user.current().then(user => setInstanceOptions(buildInstanceOptions(instances, user)));
         });
     }, [compositionRoot]);
 
@@ -76,11 +74,7 @@ const InstanceSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChan
                     selected={selectedOptions}
                 />
             ) : (
-                <Typography
-                    className={classes.advancedOptionsTitle}
-                    variant="subtitle1"
-                    gutterBottom
-                >
+                <Typography className={classes.advancedOptionsTitle} variant="subtitle1" gutterBottom>
                     {i18n.t("Destination")}: {i18n.t("This instance")}
                 </Typography>
             )}

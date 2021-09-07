@@ -8,7 +8,4 @@ type UnionWithKeys<U, K extends keyof any> = U extends any
     ? { [Key in K]: Key extends keyof U ? U[Key] : never }
     : never;
 
-export type FlattenUnion<U> = PartialBy<
-    UnionWithKeys<U, AllKeysOfUnion<U>>,
-    NonCommonKeysOfUnion<U>
->;
+export type FlattenUnion<U> = PartialBy<UnionWithKeys<U, AllKeysOfUnion<U>>, NonCommonKeysOfUnion<U>>;

@@ -28,15 +28,11 @@ export class Either<Error, Data> {
     }
 
     map<Data1>(fn: (data: Data) => Data1): Either<Error, Data1> {
-        return this.flatMap(
-            data => new Either<Error, Data1>({ type: "success", data: fn(data) })
-        );
+        return this.flatMap(data => new Either<Error, Data1>({ type: "success", data: fn(data) }));
     }
 
     mapError<Error1>(fn: (error: Error) => Error1): Either<Error1, Data> {
-        return this.flatMapError(
-            error => new Either<Error1, Data>({ type: "error", error: fn(error) })
-        );
+        return this.flatMapError(error => new Either<Error1, Data>({ type: "error", error: fn(error) }));
     }
 
     flatMap<Data1>(fn: (data: Data) => Either<Error, Data1>): Either<Error, Data1> {

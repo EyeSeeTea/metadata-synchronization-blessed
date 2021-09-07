@@ -1,17 +1,17 @@
 import { useConfig } from "@dhis2/app-runtime";
+import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
-import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
 import i18n from "../../locales";
 import { D2Api } from "../../types/d2-api";
 import { CompositionRoot } from "../CompositionRoot";
 import { useMigrations } from "../react/core/components/migrations/hooks";
-import { AppContext } from "../react/core/contexts/AppContext";
+import { AppContext, AppContextState } from "../react/core/contexts/AppContext";
 import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
 import Root from "./pages/Root";
@@ -23,7 +23,7 @@ const generateClassName = createGenerateClassName({
 
 const App = () => {
     const { baseUrl } = useConfig();
-    const [appContext, setAppContext] = useState<AppContext | null>(null);
+    const [appContext, setAppContext] = useState<AppContextState | null>(null);
     const migrations = useMigrations(appContext);
 
     useEffect(() => {
@@ -55,9 +55,7 @@ const App = () => {
     }, [baseUrl]);
 
     if (migrations.state.type === "pending") {
-        return (
-            <p>{i18n.t("Widget cannot be used until an administrator opens the application")}</p>
-        );
+        return <p>{i18n.t("Widget cannot be used until an administrator opens the application")}</p>;
     }
 
     return (

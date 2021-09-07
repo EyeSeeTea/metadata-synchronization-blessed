@@ -53,9 +53,7 @@ const commonSteps: {
             "This step is optional and requires an external server with the metadata synchronization script properly configured"
         ),
         help: [
-            i18n.t(
-                "This step allows to schedule background metadata synchronization jobs in a remote server."
-            ),
+            i18n.t("This step allows to schedule background metadata synchronization jobs in a remote server."),
             i18n.t(
                 "You can either select a pre-defined frequency from the drop-down menu or you enter a custom cron expression."
             ),

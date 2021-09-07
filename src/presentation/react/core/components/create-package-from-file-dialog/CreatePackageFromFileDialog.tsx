@@ -1,15 +1,7 @@
 import i18n from "../../../../../locales";
 import MetadataDropZone from "../metadata-drop-zone/MetadataDropZone";
 import { MetadataPackage } from "../../../../../domain/metadata/entities/MetadataEntities";
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    makeStyles,
-    TextField,
-} from "@material-ui/core";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
@@ -201,13 +193,10 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
     };
 
     const onFileChange = (fileName: string, metadataPackage: MetadataPackage) => {
-        const metadataIds: string[] = Object.entries(metadataPackage).reduce(
-            (acc: string[], [_key, items]) => {
-                const ids: string[] = items ? items.map(item => item.id) : [];
-                return [...acc, ...ids];
-            },
-            []
-        );
+        const metadataIds: string[] = Object.entries(metadataPackage).reduce((acc: string[], [_key, items]) => {
+            const ids: string[] = items ? items.map(item => item.id) : [];
+            return [...acc, ...ids];
+        }, []);
 
         const updatedModule = module.update({ name: fileName, metadataIds });
         setModule(updatedModule);
@@ -266,11 +255,7 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
                     onChange={(_event, value) => updateVersions(value)}
                     renderTags={(values: string[]) => values.sort().join(", ")}
                     renderInput={params => (
-                        <TextField
-                            {...params}
-                            variant="standard"
-                            label={i18n.t("DHIS2 Version (*)")}
-                        />
+                        <TextField {...params} variant="standard" label={i18n.t("DHIS2 Version (*)")} />
                     )}
                 />
 

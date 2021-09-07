@@ -4,11 +4,8 @@ import memoize from "nano-memoize";
 import { D2Program } from "../../../types/d2-api";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
-import {
-    mapCategoryOptionCombo,
-    mapOptionValue,
-    mapProgramDataElement,
-} from "../../../utils/synchronization";
+import { mapCategoryOptionCombo, mapOptionValue, mapProgramDataElement } from "../../../utils/synchronization";
+import { interpolate } from "../../../utils/uid-replacement";
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
@@ -40,23 +37,15 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const aggregatedRepository = await this.getAggregatedRepository();
         const teisRepository = await this.getTeisRepository();
 
-        const {
-            programs = [],
-            programIndicators = [],
-            programStages = [],
-        } = await this.extractMetadata();
+        const { programs = [], programIndicators = [], programStages = [] } = await this.extractMetadata();
 
         const stageIdsFromPrograms = programs
-            ? (programs as Program[])
-                  .map(program => program.programStages.map(({ id }) => id))
-                  .flat()
+            ? (programs as Program[]).map(program => program.programStages.map(({ id }) => id)).flat()
             : [];
 
         const progamStageIds = [...programStages.map(({ id }) => id), ...stageIdsFromPrograms];
 
-        const events = (
-            await eventsRepository.getEvents(dataParams, [...new Set(progamStageIds)])
-        ).map(event => {
+        const events = (await eventsRepository.getEvents(dataParams, [...new Set(progamStageIds)])).map(event => {
             return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
         });
 
@@ -66,10 +55,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const directIndicators = programIndicators.map(({ id }) => id);
         const indicatorsByProgram = _.flatten(
-            programs?.map(
-                ({ programIndicators }: Partial<D2Program>) =>
-                    programIndicators?.map(({ id }) => id) ?? []
-            )
+            programs?.map(({ programIndicators }: Partial<D2Program>) => programIndicators?.map(({ id }) => id) ?? [])
         );
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
@@ -80,9 +66,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
               })
             : {};
 
-        const dataValues = _.reject(candidateDataValues, ({ dataElement }) =>
-            excludedIds.includes(dataElement)
-        );
+        const dataValues = _.reject(candidateDataValues, ({ dataElement }) => excludedIds.includes(dataElement));
 
         return { events, dataValues, trackedEntityInstances };
     });
@@ -95,11 +79,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
                 ? await this.postTEIsPayload(instance, trackedEntityInstances)
                 : undefined;
 
-        const eventsResponse = await this.postEventsPayload(
-            instance,
-            events,
-            trackedEntityInstances
-        );
+        const eventsResponse = await this.postEventsPayload(instance, events, trackedEntityInstances);
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse, teisResponse]);
@@ -113,10 +93,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const { dataParams = {} } = this.builder;
 
         const mapping = await this.getMapping(instance);
-        const mapper = await createTEIsToEventPayloadMapper(
-            await this.getMetadataRepository(instance),
-            mapping
-        );
+        const mapper = await createTEIsToEventPayloadMapper(await this.getMetadataRepository(instance), mapping);
 
         const payloadByTEIs = (await mapper.map({ trackedEntityInstances: teis })) as EventsPackage;
 
@@ -146,11 +123,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const mapping = await this.getMapping(instance);
 
-        const mapper = await createTEIsPayloadMapper(
-            await this.getMetadataRepository(instance),
-            teis,
-            mapping
-        );
+        const mapper = await createTEIsPayloadMapper(await this.getMetadataRepository(instance), teis, mapping);
 
         const payload = (await mapper.map({ trackedEntityInstances: teis })) as TEIsPackage;
 
@@ -172,11 +145,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         if (!enableAggregation) return undefined;
 
         // TODO: This is an external action and should be called by user
-        const aggregatedSync = new AggregatedSyncUseCase(
-            this.builder,
-            this.repositoryFactory,
-            this.localInstance
-        );
+        const aggregatedSync = new AggregatedSyncUseCase(this.builder, this.repositoryFactory, this.localInstance);
 
         const mappedPayload = await aggregatedSync.mapPayload(instance, { dataValues });
 
@@ -215,18 +184,13 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             .value();
     }
 
-    public async mapPayload(
-        instance: Instance,
-        { events: oldEvents }: EventsPackage
-    ): Promise<SynchronizationPayload> {
+    public async mapPayload(instance: Instance, { events: oldEvents }: EventsPackage): Promise<SynchronizationPayload> {
         const metadataRepository = await this.getMetadataRepository();
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
 
         const originCategoryOptionCombos = await metadataRepository.getCategoryOptionCombos();
         const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
-        const defaultCategoryOptionCombos = await metadataRepository.getDefaultIds(
-            "categoryOptionCombos"
-        );
+        const defaultCategoryOptionCombos = await metadataRepository.getDefaultIds("categoryOptionCombos");
 
         const mapping = await this.getMapping(instance);
         const events = (
@@ -255,16 +219,15 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     ): Promise<ProgramEvent> {
         const { organisationUnits = {} } = globalMapping;
 
-        const { mappedProgram, programStages, innerMapping } = await this.getRelatedProgramMappings(
-            instance,
-            globalMapping,
-            program,
-            programStage
-        );
+        const {
+            mappedProgram,
+            programStages,
+            innerMapping,
+            overlaps = {},
+        } = await this.getRelatedProgramMappings(instance, globalMapping, program, programStage);
 
         const mappedProgramStage =
-            this.getProgramStageMapping(program, programStage, programStages).mappedId ??
-            programStage;
+            this.getProgramStageMapping(program, programStage, programStages).mappedId ?? programStage;
 
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
 
@@ -275,36 +238,44 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             destinationCategoryOptionCombos
         );
 
+        const mappedDataValues = dataValues
+            .map(({ dataElement, value, ...rest }) => {
+                const { mappedId: mappedDataElement = dataElement, mapping: dataElementMapping = {} } =
+                    mapProgramDataElement(program, programStage, dataElement, globalMapping);
+
+                const mappedValue = mapOptionValue(value, [dataElementMapping, globalMapping]);
+
+                return {
+                    originalDataElement: dataElement,
+                    dataElement: mappedDataElement,
+                    value: mappedValue,
+                    ...rest,
+                };
+            })
+            .filter(this.isDisabledEvent);
+
+        const overlappedDataValues = _(mappedDataValues)
+            .groupBy(item => item.dataElement)
+            .mapValues(items => {
+                const defaultItem = items[0];
+                const { replacer } = overlaps[defaultItem.dataElement] ?? {};
+                if (!replacer) return defaultItem;
+
+                const dictionary = _.fromPairs(items.map(item => [item.originalDataElement, item.value]));
+                const value = interpolate(replacer, dictionary);
+
+                return _.omit({ ...defaultItem, value }, ["originalDataElement"]);
+            })
+            .values()
+            .value();
+
         return _.omit(
             {
                 orgUnit: cleanOrgUnitPath(mappedOrgUnit),
                 program: mappedProgram,
                 programStage: mappedProgramStage,
                 attributeOptionCombo: mappedCategory,
-                dataValues: dataValues
-                    .map(({ dataElement, value, ...rest }) => {
-                        const {
-                            mappedId: mappedDataElement = dataElement,
-                            mapping: dataElementMapping = {},
-                        } = mapProgramDataElement(
-                            program,
-                            programStage,
-                            dataElement,
-                            globalMapping
-                        );
-
-                        const mappedValue = mapOptionValue(value, [
-                            dataElementMapping,
-                            globalMapping,
-                        ]);
-
-                        return {
-                            dataElement: mappedDataElement,
-                            value: mappedValue,
-                            ...rest,
-                        };
-                    })
-                    .filter(this.isDisabledEvent),
+                dataValues: overlappedDataValues,
                 ...rest,
             },
             ["orgUnitName", "attributeCategoryOptions"]
@@ -317,21 +288,20 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         originProgram: string,
         originProgramStage: string
     ) {
-        const {
-            eventPrograms = {},
-            trackerPrograms = {},
-            trackerProgramStages = {},
-        } = globalMapping;
+        const { eventPrograms = {}, trackerPrograms = {}, trackerProgramStages = {} } = globalMapping;
 
         const complexId = `${originProgram}-${originProgramStage}`;
 
         if (eventPrograms[originProgram]) {
-            const { mappedId: mappedProgram = originProgram, mapping: innerMapping = {} } =
-                eventPrograms[originProgram] ?? {};
+            const {
+                mappedId: mappedProgram = originProgram,
+                mapping: innerMapping = {},
+                overlaps,
+            } = eventPrograms[originProgram] ?? {};
 
             const { programStages = {} } = innerMapping;
 
-            return { mappedProgram, innerMapping, programStages };
+            return { mappedProgram, innerMapping, programStages, overlaps };
         } else if (trackerPrograms[originProgram]) {
             const { mappedId: mappedProgram = originProgram, mapping: innerMapping = {} } =
                 trackerPrograms[originProgram] ?? {};
@@ -341,8 +311,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             const destinationProgramStage = trackerProgramStages[complexId].mappedId;
 
             const mappedProgram =
-                (await this.getMappedProgramByProgramStage(instance, destinationProgramStage)) ??
-                originProgram;
+                (await this.getMappedProgramByProgramStage(instance, destinationProgramStage)) ?? originProgram;
 
             return {
                 mappedProgram,

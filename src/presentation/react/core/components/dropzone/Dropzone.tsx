@@ -47,38 +47,36 @@ export interface DropzoneRef {
     openDialog: () => void;
 }
 
-export const Dropzone = React.forwardRef(
-    (props: DropzoneProps, ref: React.ForwardedRef<DropzoneRef>) => {
-        const childrenRef = useRef<HTMLDivElement>(null);
+export const Dropzone = React.forwardRef((props: DropzoneProps, ref: React.ForwardedRef<DropzoneRef>) => {
+    const childrenRef = useRef<HTMLDivElement>(null);
 
-        const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
-            noClick: !props.visible,
-            ...props,
-        });
+    const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+        noClick: !props.visible,
+        ...props,
+    });
 
-        useImperativeHandle(ref, () => ({
-            openDialog() {
-                open();
-            },
-        }));
+    useImperativeHandle(ref, () => ({
+        openDialog() {
+            open();
+        },
+    }));
 
-        return (
-            <div {...getRootProps()} style={{ outline: "none" }}>
-                <div
-                    style={{
-                        position: "absolute",
-                        height: childrenRef.current?.clientHeight,
-                        width: childrenRef.current?.clientWidth,
-                        visibility: props.visible || isDragActive ? "visible" : "hidden",
-                    }}
-                >
-                    <Shade>
-                        <input {...getInputProps()} />
-                        <Text>Drag and drop some files here, or click to select files</Text>
-                    </Shade>
-                </div>
-                <div ref={childrenRef}>{props.children}</div>
+    return (
+        <div {...getRootProps()} style={{ outline: "none" }}>
+            <div
+                style={{
+                    position: "absolute",
+                    height: childrenRef.current?.clientHeight,
+                    width: childrenRef.current?.clientWidth,
+                    visibility: props.visible || isDragActive ? "visible" : "hidden",
+                }}
+            >
+                <Shade>
+                    <input {...getInputProps()} />
+                    <Text>Drag and drop some files here, or click to select files</Text>
+                </Shade>
             </div>
-        );
-    }
-);
+            <div ref={childrenRef}>{props.children}</div>
+        </div>
+    );
+});

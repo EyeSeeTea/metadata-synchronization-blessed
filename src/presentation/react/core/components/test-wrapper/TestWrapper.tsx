@@ -1,13 +1,6 @@
 import _ from "lodash";
 import React from "react";
-import {
-    concatStrings,
-    generateTestId,
-    isClassComponent,
-    recursiveMap,
-    removeParentheses,
-    wrapType,
-} from "./utils";
+import { concatStrings, generateTestId, isClassComponent, recursiveMap, removeParentheses, wrapType } from "./utils";
 
 interface TestWrapperProps {
     namespace?: string;
@@ -27,12 +20,7 @@ const dataTestDictionary = new Map();
  *   - https://github.com/dennismorello/react-test-attributes/blob/master/src/components/TestAttribute.tsx
  *   - https://github.com/ctrlplusb/react-tree-walker/blob/master/src/index.js
  */
-export const TestWrapper: React.FC<TestWrapperProps> = ({
-    children,
-    namespace,
-    attributeName,
-    componentParent,
-}) => {
+export const TestWrapper: React.FC<TestWrapperProps> = ({ children, namespace, attributeName, componentParent }) => {
     const testAttributeName = attributeName || `data-test`;
 
     function withTestAttribute(nodes: React.ReactNode, parentId?: string) {

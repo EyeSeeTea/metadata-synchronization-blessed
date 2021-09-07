@@ -38,9 +38,7 @@ export default class ManualSyncPageObject extends PageObject {
     }
 
     openSyncDialog() {
-        this.cy
-            .get('[data-test="objects-table-action-button"] > :nth-child(1) > [focusable="false"]')
-            .click();
+        this.cy.get('[data-test="objects-table-action-button"] > :nth-child(1) > [focusable="false"]').click();
 
         return this;
     }
@@ -51,10 +49,7 @@ export default class ManualSyncPageObject extends PageObject {
     }
 
     selectReceiverInstance(instance) {
-        instanceSelectionStep.selectReceiverInstance(
-            dataTest(`DialogContent-${this.key}-synchronization`),
-            instance
-        );
+        instanceSelectionStep.selectReceiverInstance(dataTest(`DialogContent-${this.key}-synchronization`), instance);
 
         return this;
     }

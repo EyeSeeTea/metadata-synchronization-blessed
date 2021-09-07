@@ -41,9 +41,8 @@ export const d2BaseModelColumns: TableColumn<MetadataType>[] = [
     { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
 ];
 
-export const d2BaseModelDetails: ObjectsTableDetailField<MetadataType>[] = _.map(
-    d2BaseModelColumns,
-    column => _.pick(column, ["name", "text", "getValue"])
+export const d2BaseModelDetails: ObjectsTableDetailField<MetadataType>[] = _.map(d2BaseModelColumns, column =>
+    _.pick(column, ["name", "text", "getValue"])
 );
 
 export const organisationUnitsColumns: typeof d2BaseModelColumns = [
@@ -103,9 +102,8 @@ export const categoryOptionColumns: typeof d2BaseModelColumns = [
     { name: "href", text: i18n.t("API link"), sortable: false, hidden: true },
 ];
 
-export const organisationUnitsDetails: typeof d2BaseModelDetails = _.map(
-    organisationUnitsColumns,
-    column => _.pick(column, ["name", "text", "getValue"])
+export const organisationUnitsDetails: typeof d2BaseModelDetails = _.map(organisationUnitsColumns, column =>
+    _.pick(column, ["name", "text", "getValue"])
 );
 
 export const documentColumns: typeof d2BaseModelColumns = [

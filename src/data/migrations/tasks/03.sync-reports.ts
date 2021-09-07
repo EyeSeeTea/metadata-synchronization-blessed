@@ -82,11 +82,7 @@ interface SynchronizationResultNew {
     }[];
 }
 
-export async function migrate(
-    storage: AppStorage,
-    _debug: Debug,
-    _params: MigrationParams
-): Promise<void> {
+export async function migrate(storage: AppStorage, _debug: Debug, _params: MigrationParams): Promise<void> {
     const dataStoreKeys = await storage.listKeys();
 
     const notificationKeys = dataStoreKeys
@@ -99,8 +95,7 @@ export async function migrate(
         const { type = "metadata" } = notifications.find(({ id }) => id === notification) ?? {};
         debug(`Updating ${type} notification ${notification}`);
 
-        const oldNotification =
-            (await storage.get<SynchronizationResultOld[]>(`notifications-${notification}`)) ?? [];
+        const oldNotification = (await storage.get<SynchronizationResultOld[]>(`notifications-${notification}`)) ?? [];
 
         const newNotification: SynchronizationResultNew[] = oldNotification.map(
             ({

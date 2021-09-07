@@ -13,8 +13,6 @@ export class ListEventsUseCase implements UseCase {
         programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        return this.repositoryFactory
-            .eventsRepository(instance)
-            .getEvents(params, programStageIds, defaults);
+        return this.repositoryFactory.eventsRepository(instance).getEvents(params, programStageIds, defaults);
     }
 }

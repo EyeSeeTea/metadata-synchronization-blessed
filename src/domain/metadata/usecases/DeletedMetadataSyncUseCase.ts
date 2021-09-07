@@ -30,10 +30,7 @@ export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
         return undefined;
     }
 
-    public async mapPayload(
-        _instance: Instance,
-        payload: SynchronizationPayload
-    ): Promise<SynchronizationPayload> {
+    public async mapPayload(_instance: Instance, payload: SynchronizationPayload): Promise<SynchronizationPayload> {
         return payload;
     }
 }

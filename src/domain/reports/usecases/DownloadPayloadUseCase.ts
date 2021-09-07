@@ -32,13 +32,7 @@ export class DownloadPayloadUseCase implements UseCase {
                     : result.payload;
 
                 const downloadItem = {
-                    name: _([
-                        "synchronization",
-                        syncRule?.name,
-                        result?.type,
-                        result?.instance.name,
-                        date,
-                    ])
+                    name: _(["synchronization", syncRule?.name, result?.type, result?.instance.name, date])
                         .compact()
                         .kebabCase(),
                     content: payload,
@@ -54,9 +48,7 @@ export class DownloadPayloadUseCase implements UseCase {
             .value();
 
         if (files.length === 1) {
-            this.repositoryFactory
-                .downloadRepository()
-                .downloadFile(files[0].name, files[0].content);
+            this.repositoryFactory.downloadRepository().downloadFile(files[0].name, files[0].content);
         } else {
             await this.repositoryFactory
                 .downloadRepository()

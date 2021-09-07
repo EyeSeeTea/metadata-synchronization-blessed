@@ -48,18 +48,12 @@ export class ListSyncReportUseCase implements UseCase {
             : rawData;
 
         const { field, order } = sorting;
-        const sortedData = _.orderBy(
-            filteredData,
-            [data => _.toLower(data[field] as string)],
-            [order]
-        );
+        const sortedData = _.orderBy(filteredData, [data => _.toLower(data[field] as string)], [order]);
 
         const filteredObjects = _(sortedData)
             .filter(e => (statusFilter ? e.status === statusFilter : true))
             .filter(e => (syncRuleFilter ? e.syncRule === syncRuleFilter : true))
-            .filter(({ type: elementType = "metadata" }) =>
-                types ? types.includes(elementType) : true
-            )
+            .filter(({ type: elementType = "metadata" }) => (types ? types.includes(elementType) : true))
             .value();
 
         const total = filteredObjects.length;

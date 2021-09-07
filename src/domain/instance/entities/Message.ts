@@ -9,7 +9,4 @@ export interface BaseMessage {
     organisationUnits?: Ref[];
 }
 
-export type InstanceMessage = RequireAtLeastOne<
-    BaseMessage,
-    "users" | "userGroups" | "organisationUnits"
->;
+export type InstanceMessage = RequireAtLeastOne<BaseMessage, "users" | "userGroups" | "organisationUnits">;

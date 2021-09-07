@@ -67,9 +67,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
                     result.match({
                         success: instance => setSelectedInstance(instance),
                         error: () => {
-                            setSelectedInstance(
-                                type === "remote" ? (source as Instance) : undefined
-                            );
+                            setSelectedInstance(type === "remote" ? (source as Instance) : undefined);
                             snackbar.error(i18n.t("Instance not found"));
                         },
                     })
@@ -89,15 +87,9 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
         () => (
             <React.Fragment key="common-filters">
                 <InstanceSelectionDropdown
-                    title={
-                        showInstances.store
-                            ? i18n.t("Instances & Play Stores")
-                            : i18n.t("Instances")
-                    }
+                    title={showInstances.store ? i18n.t("Instances & Play Stores") : i18n.t("Instances")}
                     showInstances={showInstances}
-                    selectedInstance={
-                        selectedStore ? selectedStore.id : selectedInstance?.id ?? "LOCAL"
-                    }
+                    selectedInstance={selectedStore ? selectedStore.id : selectedInstance?.id ?? "LOCAL"}
                     onChangeSelected={updateSelectedInstance}
                 />
 
@@ -112,14 +104,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
                 )}
             </React.Fragment>
         ),
-        [
-            showInstances,
-            selectedInstance,
-            setValue,
-            viewSelector,
-            updateSelectedInstance,
-            selectedStore,
-        ]
+        [showInstances, selectedInstance, setValue, viewSelector, updateSelectedInstance, selectedStore]
     );
 
     const Table = viewSelector.value === "packages" ? PackagesListTable : ModulesListTable;
@@ -134,8 +119,7 @@ export const ModulePackageListTable: React.FC<ModulePackageListTableProps> = ({
             openSyncSummary={openSyncSummary}
             actionButtonLabel={actionButtonLabel}
             onActionButtonClick={
-                (viewSelector.value === "modules" && !selectedInstance) ||
-                viewSelector.value === "packages"
+                (viewSelector.value === "modules" && !selectedInstance) || viewSelector.value === "packages"
                     ? onCreate
                     : undefined
             }

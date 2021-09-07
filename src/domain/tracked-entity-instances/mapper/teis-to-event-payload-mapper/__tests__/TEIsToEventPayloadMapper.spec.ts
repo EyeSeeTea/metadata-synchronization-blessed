@@ -41,10 +41,7 @@ describe("TEIsToEventPayloadMapper", () => {
         expect(mappedPayload).toEqual(emptyEvents);
     });
     it("should return empty events if tracker programs are mapped to event programs but not exist TE Att to DE mapping", async () => {
-        const teiMapper = createTEIsToEventPayloadMapper(
-            mappingPrograms,
-            destinationTwoEventPrograms as ProgramRef[]
-        );
+        const teiMapper = createTEIsToEventPayloadMapper(mappingPrograms, destinationTwoEventPrograms as ProgramRef[]);
 
         const payload = teiWithTwoPrograms as TEIsPackage;
 

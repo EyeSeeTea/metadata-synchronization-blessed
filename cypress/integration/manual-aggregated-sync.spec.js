@@ -49,9 +49,7 @@ context("Manual aggregated sync", () => {
             .selectRow(inputs.dataSet)
             .openSyncDialog()
             .next()
-            .assertError(error =>
-                error.contains("You need to select at least one organisation unit")
-            );
+            .assertError(error => error.contains("You need to select at least one organisation unit"));
     });
 
     it("should show the instance selection step error if user try click on next without selecting an instance", () => {

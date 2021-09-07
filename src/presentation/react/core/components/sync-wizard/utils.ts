@@ -1,10 +1,6 @@
 import _ from "lodash";
 import { EventsSyncUseCase } from "../../../../../domain/events/usecases/EventsSyncUseCase";
-import {
-    MetadataEntity,
-    Program,
-    ProgramStage,
-} from "../../../../../domain/metadata/entities/MetadataEntities";
+import { MetadataEntity, Program, ProgramStage } from "../../../../../domain/metadata/entities/MetadataEntities";
 import { CompositionRoot } from "../../../../CompositionRoot";
 import { CustomProgram } from "./data/EventsSelectionStep";
 
@@ -19,9 +15,7 @@ export async function extractAllPrograms<T = Program | CustomProgram>(
         .then(({ programs = [], programStages = [] }) => {
             const programStageIds = programStages.map(({ id }) => id);
 
-            const programsIdsByStage = _(
-                (programStages as ProgramStage[]).map(({ program }) => program.id)
-            )
+            const programsIdsByStage = _((programStages as ProgramStage[]).map(({ program }) => program.id))
                 .uniq()
                 .value();
 
@@ -39,17 +33,14 @@ export async function extractAllPrograms<T = Program | CustomProgram>(
                             };
                         });
 
-                        const finalPrograms = _([
-                            ...((programs as unknown) as T[]),
-                            ...((newPrograms as unknown) as T[]),
-                        ])
+                        const finalPrograms = _([...(programs as unknown as T[]), ...(newPrograms as unknown as T[])])
                             .uniqBy("id")
                             .value() as T[];
 
                         return finalPrograms as T[];
                     });
             } else {
-                return (programs as unknown) as T[];
+                return programs as unknown as T[];
             }
         });
 }
