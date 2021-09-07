@@ -46,9 +46,7 @@ context("Event mapping", function () {
 
         page.checkCheckboxByText(inputs.program);
 
-        page.openSelectedRowMenu().assertOption(option =>
-            option.contains("Related metadata mapping")
-        );
+        page.openSelectedRowMenu().assertOption(option => option.contains("Related metadata mapping"));
     });
 
     it("should auto-map element", function () {
@@ -69,9 +67,7 @@ context("Event mapping", function () {
     it("should exclude element", function () {
         page.checkCheckboxByText(inputs.excludedProgram);
         page.openSelectedRowMenu().clickOption("Exclude mapping");
-        page.assertDialog(dialog =>
-            dialog.contains("Are you sure you want to exclude mapping for 1 elements?")
-        );
+        page.assertDialog(dialog => dialog.contains("Are you sure you want to exclude mapping for 1 elements?"));
 
         page.clickOkOnDialog();
         page.assertRowStatus(row => row.contains("Excluded"), inputs.excludedProgram);
@@ -84,9 +80,7 @@ context("Event mapping", function () {
 
         page.checkCheckboxByText(inputs.alternativeProgram);
         page.openSelectedRowMenu().clickOption("Validate mapping");
-        page.assertDialog(dialog =>
-            dialog.contains("Are you sure you want to validate mapping for 1 elements?")
-        );
+        page.assertDialog(dialog => dialog.contains("Are you sure you want to validate mapping for 1 elements?"));
 
         page.clickOkOnDialog();
         page.assertRowStatus(row => row.contains("Mapped"), inputs.alternativeProgram);
@@ -113,9 +107,7 @@ context("Event mapping", function () {
     });
 
     it("should have row menu with Reset mapping to default values action", function () {
-        page.openRowMenu().assertOption(option =>
-            option.contains("Reset mapping to default values")
-        );
+        page.openRowMenu().assertOption(option => option.contains("Reset mapping to default values"));
     });
 
     it("should have general menu with Column settings action", function () {

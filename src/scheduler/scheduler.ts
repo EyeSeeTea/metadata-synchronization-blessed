@@ -81,16 +81,10 @@ export default class Scheduler {
             const { id, name, frequency } = syncRule;
 
             if (id && frequency) {
-                const job = schedule.scheduleJob(
-                    id,
-                    frequency,
-                    (): Promise<void> => this.synchronizationTask(id)
-                );
+                const job = schedule.scheduleJob(id, frequency, (): Promise<void> => this.synchronizationTask(id));
                 // Format date to keep timezone offset
                 const nextDate = moment(job.nextInvocation().toISOString()).toISOString(true);
-                getLogger("scheduler").info(
-                    `Scheduling new sync rule ${name} (${id}) at ${nextDate}`
-                );
+                getLogger("scheduler").info(`Scheduling new sync rule ${name} (${id}) at ${nextDate}`);
             }
         });
     };

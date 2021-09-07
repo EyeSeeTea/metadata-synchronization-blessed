@@ -35,13 +35,9 @@ export class CreatePullRequestUseCase implements UseCase {
         description = "",
         notificationUsers: { users, userGroups },
     }: CreatePullRequestParams): Promise<void> {
-        const localStorageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+        const localStorageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
-        const remoteStorageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+        const remoteStorageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
         const owner = await this.getOwner();
 
@@ -69,10 +65,7 @@ export class CreatePullRequestUseCase implements UseCase {
             remoteNotification: receivedPullRequest.id,
         });
 
-        await remoteStorageClient.saveObjectInCollection(
-            Namespace.NOTIFICATIONS,
-            receivedPullRequest
-        );
+        await remoteStorageClient.saveObjectInCollection(Namespace.NOTIFICATIONS, receivedPullRequest);
 
         await localStorageClient.saveObjectInCollection(Namespace.NOTIFICATIONS, sentPullRequest);
 
@@ -80,24 +73,13 @@ export class CreatePullRequestUseCase implements UseCase {
     }
 
     private async getOwner(): Promise<NamedRef> {
-        const { id, name } = await this.repositoryFactory
-            .userRepository(this.localInstance)
-            .getCurrent();
+        const { id, name } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
         return { id, name };
     }
 
     private async sendMessage(
         instance: Instance,
-        {
-            id,
-            subject,
-            text,
-            owner,
-            instance: origin,
-            users,
-            userGroups,
-            selectedIds,
-        }: ReceivedPullRequestNotification
+        { id, subject, text, owner, instance: origin, users, userGroups, selectedIds }: ReceivedPullRequestNotification
     ): Promise<void> {
         const recipients = [...users, ...userGroups].map(({ name }) => name);
         const responsibles = await this.getResponsibleNames(instance, selectedIds);
@@ -120,13 +102,9 @@ export class CreatePullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
-        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES
-        );
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

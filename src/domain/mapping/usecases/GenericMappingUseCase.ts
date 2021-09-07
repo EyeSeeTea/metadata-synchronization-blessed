@@ -1,9 +1,6 @@
 import _ from "lodash";
 import { OptionModel } from "../../../models/dhis/metadata";
-import {
-    cleanNestedMappedId,
-    EXCLUDED_KEY,
-} from "../../../presentation/react/core/components/mapping-table/utils";
+import { cleanNestedMappedId, EXCLUDED_KEY } from "../../../presentation/react/core/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { IdentifiableRef, NamedRef } from "../../common/entities/Ref";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -111,11 +108,7 @@ export abstract class GenericMappingUseCase {
 
         const programStages =
             originMetadata.programType === "WITHOUT_REGISTRATION"
-                ? await this.autoMapProgramStages(
-                      destinationInstance,
-                      originMetadata,
-                      destinationItem
-                  )
+                ? await this.autoMapProgramStages(destinationInstance, originMetadata, destinationItem)
                 : undefined;
 
         const mapping = _.omitBy(
@@ -148,17 +141,9 @@ export abstract class GenericMappingUseCase {
         const programStages = this.getProgramStages(metadata[0]);
         const programStageDataElements = this.getProgramStageDataElements(metadata[0]);
 
-        const defaultValues = await this.repositoryFactory
-            .metadataRepository(instance)
-            .getDefaultIds();
+        const defaultValues = await this.repositoryFactory.metadataRepository(instance).getDefaultIds();
 
-        return _.union(
-            categoryOptions,
-            categoryOptionCombos,
-            options,
-            programStages,
-            programStageDataElements
-        )
+        return _.union(categoryOptions, categoryOptionCombos, options, programStages, programStageDataElements)
             .map(({ id }) => id)
             .concat(...defaultValues)
             .map(cleanNestedMappedId);
@@ -187,10 +172,11 @@ export abstract class GenericMappingUseCase {
         const aggregateExportMetadata = selectedItem.aggregateExportCategoryOptionCombo
             ? await this.repositoryFactory
                   .metadataRepository(destinationInstance)
-                  .getMetadataByIds<IdentifiableRef>(
-                      [selectedItem.aggregateExportCategoryOptionCombo],
-                      { id: true, name: true, code: true }
-                  )
+                  .getMetadataByIds<IdentifiableRef>([selectedItem.aggregateExportCategoryOptionCombo], {
+                      id: true,
+                      name: true,
+                      code: true,
+                  })
             : {};
 
         const objects = _(destinationMetadata)
@@ -203,10 +189,7 @@ export abstract class GenericMappingUseCase {
         const candidateWithSameId = _.find(objects, ["id", selectedItem.id]);
         const candidateWithSameCode = _.find(objects, ["code", selectedItem.code]);
         const candidateWithSameName = _.find(objects, ["name", selectedItem.name]);
-        const candidateWithExportCoC = _.find(objects, [
-            "id",
-            selectedItem.aggregateExportCategoryOptionCombo,
-        ]);
+        const candidateWithExportCoC = _.find(objects, ["id", selectedItem.aggregateExportCategoryOptionCombo]);
 
         const filteredCandidates = _.compact([
             candidateWithSameId,
@@ -217,9 +200,7 @@ export abstract class GenericMappingUseCase {
         const matches = _.compact([candidateWithExportCoC, ...filteredCandidates]);
 
         const candidates = _(matches)
-            .concat(
-                matches.length === 0 ? objects.filter(({ id }) => filter?.includes(id) ?? true) : []
-            )
+            .concat(matches.length === 0 ? objects.filter(({ id }) => filter?.includes(id) ?? true) : [])
             .uniqBy("id")
             .value();
 
@@ -285,11 +266,7 @@ export abstract class GenericMappingUseCase {
                 },
             };
         } else {
-            return this.autoMapCollection(
-                destinationInstance,
-                originProgramStages,
-                destinationProgramStages
-            );
+            return this.autoMapCollection(destinationInstance, originProgramStages, destinationProgramStages);
         }
     }
 
@@ -315,14 +292,10 @@ export abstract class GenericMappingUseCase {
         }));
     }
 
-    protected autoMapCategoryCombo(
-        originMetadata: CombinedMetadata,
-        destinationMetadata: CombinedMetadata
-    ) {
+    protected autoMapCategoryCombo(originMetadata: CombinedMetadata, destinationMetadata: CombinedMetadata) {
         if (originMetadata.categoryCombo) {
             const { id } = originMetadata.categoryCombo;
-            const { id: mappedId = EXCLUDED_KEY, name: mappedName } =
-                destinationMetadata.categoryCombo ?? {};
+            const { id: mappedId = EXCLUDED_KEY, name: mappedName } = destinationMetadata.categoryCombo ?? {};
 
             return {
                 [id]: {
@@ -341,10 +314,7 @@ export abstract class GenericMappingUseCase {
         return object.programStages?.map(item => ({ ...item, model: "programStages" })) ?? [];
     }
 
-    protected getCategoryOptionCombos(
-        object: CombinedMetadata,
-        defaultCoc = "default"
-    ): CombinedMetadata[] {
+    protected getCategoryOptionCombos(object: CombinedMetadata, defaultCoc = "default"): CombinedMetadata[] {
         switch (object.model) {
             case "indicators":
             case "programIndicators": {
@@ -354,9 +324,7 @@ export abstract class GenericMappingUseCase {
                         id: defaultCoc,
                         model: "categoryOptionCombos",
                         name: "",
-                        aggregateExportCategoryOptionCombo: _.last(
-                            aggregateExportCategoryOptionCombo.split(".")
-                        ),
+                        aggregateExportCategoryOptionCombo: _.last(aggregateExportCategoryOptionCombo.split(".")),
                     },
                 ];
             }
@@ -385,9 +353,7 @@ export abstract class GenericMappingUseCase {
         );
 
         // This is used when we request valid items for a tracker program stage
-        const dataElementsOption2 = _.compact(
-            object.programStageDataElements?.map(({ dataElement }) => dataElement)
-        );
+        const dataElementsOption2 = _.compact(object.programStageDataElements?.map(({ dataElement }) => dataElement));
 
         return [...dataElementsOption1, ...dataElementsOption2];
     }

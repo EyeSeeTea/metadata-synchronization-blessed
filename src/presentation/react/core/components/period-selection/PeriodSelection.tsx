@@ -25,10 +25,7 @@ export interface PeriodSelectionProps {
     periodTitle?: string;
     objectWithPeriod: ObjectWithPeriodInput;
     onChange?: (obj: ObjectWithPeriod) => void;
-    onFieldChange?<Field extends keyof ObjectWithPeriod>(
-        field: Field,
-        value: ObjectWithPeriod[Field]
-    ): void;
+    onFieldChange?<Field extends keyof ObjectWithPeriod>(field: Field, value: ObjectWithPeriod[Field]): void;
     skipPeriods?: Set<PeriodType>;
     className?: string;
 }
@@ -61,11 +58,15 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
         className,
     } = props;
 
-    const objectWithPeriod: ObjectWithPeriod = {
-        period: obj.period,
-        startDate: obj.startDate ? moment(obj.startDate).toDate() : undefined,
-        endDate: obj.endDate ? moment(obj.endDate).toDate() : undefined,
-    };
+    const objectWithPeriod: ObjectWithPeriod = useMemo(
+        () => ({
+            period: obj.period,
+            startDate: obj.startDate ? moment(obj.startDate).toDate() : undefined,
+            endDate: obj.endDate ? moment(obj.endDate).toDate() : undefined,
+        }),
+        [obj]
+    );
+
     const { period, startDate, endDate } = objectWithPeriod;
 
     const classes = useStyles();
@@ -128,11 +129,7 @@ const PeriodSelection: React.FC<PeriodSelectionProps> = props => {
                         />
                     </div>
                     <div className={classes.datePicker}>
-                        <DatePicker
-                            label={`${i18n.t("End date")}`}
-                            value={endDate || null}
-                            onChange={updateEndDate}
-                        />
+                        <DatePicker label={`${i18n.t("End date")}`} value={endDate || null} onChange={updateEndDate} />
                     </div>
                 </div>
             )}

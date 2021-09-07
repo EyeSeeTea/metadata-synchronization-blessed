@@ -3,12 +3,7 @@ import { ObjectsTableDetailField, TableColumn } from "@eyeseetea/d2-ui-component
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
 import { D2Api, D2ApiDefinition, Model } from "../../types/d2-api";
-import {
-    d2BaseModelColumns,
-    d2BaseModelDetails,
-    d2BaseModelFields,
-    MetadataType,
-} from "../../utils/d2";
+import { d2BaseModelColumns, d2BaseModelDetails, d2BaseModelFields, MetadataType } from "../../utils/d2";
 
 export interface SearchFilter {
     field: string;

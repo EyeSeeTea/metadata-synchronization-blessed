@@ -1,7 +1,6 @@
 import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import _ from "lodash";
-import React from "react";
 import i18n from "../../../../../locales";
 import { muiTheme } from "../../themes/dhis2.theme";
 
@@ -107,9 +106,7 @@ export function Dropdown<T extends string = string>({
                     style={styles}
                     disabled={disabled}
                 >
-                    {!hideEmpty && (
-                        <MenuItem value={""}>{emptyLabel ?? i18n.t("<No value>")}</MenuItem>
-                    )}
+                    {!hideEmpty && <MenuItem value={""}>{emptyLabel ?? i18n.t("<No value>")}</MenuItem>}
                     {items.map(element => (
                         <MenuItem key={`element-${element.id}`} value={element.id}>
                             {element.name}

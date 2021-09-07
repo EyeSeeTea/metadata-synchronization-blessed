@@ -22,11 +22,7 @@ interface SynchronizationRuleDetailsNew {
     builder: SynchronizationBuilder;
 }
 
-export async function migrate(
-    storage: AppStorage,
-    _debug: Debug,
-    _params: MigrationParams
-): Promise<void> {
+export async function migrate(storage: AppStorage, _debug: Debug, _params: MigrationParams): Promise<void> {
     const oldRules = (await storage.get<SynchronizationRuleOld[]>("rules")) ?? [];
     const newRules: SynchronizationRuleNew[] = oldRules.map(oldRule => ({
         ..._.omit(oldRule, ["builder"]),

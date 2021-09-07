@@ -286,8 +286,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             if (globalAdmin) return true;
 
             for (const module of modules) {
-                if (!!userInfo && !module.hasPermissions("write", userInfo.id, userInfo.userGroups))
-                    return false;
+                if (!!userInfo && !module.hasPermissions("write", userInfo.id, userInfo.userGroups)) return false;
             }
 
             return true;
@@ -357,9 +356,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 text: i18n.t("Edit"),
                 multiple: false,
                 isActive: modules =>
-                    presentation === "app" &&
-                    !remoteInstance &&
-                    verifyUserHasWritePermissions(modules),
+                    presentation === "app" && !remoteInstance && verifyUserHasWritePermissions(modules),
                 onClick: editModule,
                 primary: presentation === "app" && !remoteInstance,
                 icon: <Icon>edit</Icon>,
@@ -369,9 +366,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 text: i18n.t("Delete"),
                 multiple: true,
                 isActive: modules =>
-                    presentation === "app" &&
-                    !remoteInstance &&
-                    verifyUserHasWritePermissions(modules),
+                    presentation === "app" && !remoteInstance && verifyUserHasWritePermissions(modules),
                 onClick: deleteModule,
                 icon: <Icon>delete</Icon>,
             },
@@ -452,14 +447,10 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
     }, [externalComponents, departmentFilter, departmentFilterItems]);
 
     const rowsFiltered = useMemo(() => {
-        return departmentFilter
-            ? rows.filter(({ department }) => department.id === departmentFilter)
-            : rows;
+        return departmentFilter ? rows.filter(({ department }) => department.id === departmentFilter) : rows;
     }, [departmentFilter, rows]);
 
-    const onSearchRequest = useCallback((key: string) => api.sharing.search({ key }).getData(), [
-        api,
-    ]);
+    const onSearchRequest = useCallback((key: string) => api.sharing.search({ key }).getData(), [api]);
 
     const onSharingChanged = useCallback(
         async (updatedAttributes: ShareUpdate) => {
@@ -530,10 +521,7 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
             )}
 
             {!!pullRequestProps && (
-                <PullRequestCreationDialog
-                    {...pullRequestProps}
-                    onClose={() => setPullRequestProps(undefined)}
-                />
+                <PullRequestCreationDialog {...pullRequestProps} onClose={() => setPullRequestProps(undefined)} />
             )}
 
             {!!sharingSettingsObject && (

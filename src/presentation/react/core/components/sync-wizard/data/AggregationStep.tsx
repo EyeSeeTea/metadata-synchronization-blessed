@@ -40,25 +40,15 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
 
     const updateEnableAggregation = (value: boolean) => {
         if (syncRule.metadataTypes.includes("indicators") && !value) {
-            snackbar.warning(
-                i18n.t(
-                    "Without aggregation, any data value related to an indicator will be ignored"
-                )
-            );
+            snackbar.warning(i18n.t("Without aggregation, any data value related to an indicator will be ignored"));
         } else if (syncRule.metadataTypes.includes("programIndicators") && !value) {
-            snackbar.warning(
-                i18n.t(
-                    "Without aggregation, program indicators will not be aggregated and synchronized"
-                )
-            );
+            snackbar.warning(i18n.t("Without aggregation, program indicators will not be aggregated and synchronized"));
         }
         onChange(syncRule.updateDataSyncEnableAggregation(value).updateDataSyncAggregationType());
     };
 
     const updateAggregationType = (value: DataSyncAggregation) => {
-        onChange(
-            syncRule.updateDataSyncEnableAggregation(true).updateDataSyncAggregationType(value)
-        );
+        onChange(syncRule.updateDataSyncEnableAggregation(true).updateDataSyncAggregationType(value));
     };
 
     const changeRunAnalytics = (runAnalytics: boolean) => {
@@ -100,11 +90,7 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
                         />
                     </div>
 
-                    <Typography
-                        className={classes.advancedOptionsTitle}
-                        variant={"subtitle1"}
-                        gutterBottom
-                    >
+                    <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
                         {i18n.t("Advanced options")}
                     </Typography>
 
@@ -120,9 +106,7 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
                         <Toggle
                             label={
                                 syncRule.type === "events"
-                                    ? i18n.t(
-                                          "Save empty values as zero (only for program indicators)"
-                                      )
+                                    ? i18n.t("Save empty values as zero (only for program indicators)")
                                     : i18n.t("Save empty values as zero (only for indicators)")
                             }
                             onValueChange={changeAnalyticsZeroValues}

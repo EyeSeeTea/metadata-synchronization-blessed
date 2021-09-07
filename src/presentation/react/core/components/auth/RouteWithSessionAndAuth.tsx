@@ -8,11 +8,7 @@ export interface RouteWithSessionAndAuthProps extends RouteWithSessionProps {
     authorize: (props: RouteComponentProps) => Promise<boolean>;
 }
 
-const RouteWithSessionAndAuth: React.FC<RouteWithSessionAndAuthProps> = ({
-    path,
-    render,
-    authorize,
-}) => {
+const RouteWithSessionAndAuth: React.FC<RouteWithSessionAndAuthProps> = ({ path, render, authorize }) => {
     const key = path?.toString() ?? "";
 
     return (
@@ -20,9 +16,7 @@ const RouteWithSessionAndAuth: React.FC<RouteWithSessionAndAuthProps> = ({
             path={path}
             render={props => (
                 <WithSession key={key}>
-                    <WithAuthorization authorize={() => authorize(props)}>
-                        {render(props)}
-                    </WithAuthorization>
+                    <WithAuthorization authorize={() => authorize(props)}>{render(props)}</WithAuthorization>
                 </WithSession>
             )}
         />

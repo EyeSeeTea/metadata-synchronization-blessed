@@ -30,14 +30,20 @@ yarn-error.log*
 *.log
 
 src/locales/
+src/react-app.d.ts
+src/react-app-env.d.ts
+bak
+.eslintcache
+config.json
 
 # cypress
 cypress/screenshots/
 cypress/videos/
+cypress/fixtures/
 
-# IDE Configuration
-/.idea/
-.vscode/
+# IntelliJ
+.idea/*
+.vscode/*
 
 # Configuration
 /**/app-config.json

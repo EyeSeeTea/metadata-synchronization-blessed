@@ -15,10 +15,7 @@ import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { ModuleWizardStepProps } from "../Steps";
 
-export const MetadataIncludeExcludeStep: React.FC<ModuleWizardStepProps<MetadataModule>> = ({
-    module,
-    onChange,
-}) => {
+export const MetadataIncludeExcludeStep: React.FC<ModuleWizardStepProps<MetadataModule>> = ({ module, onChange }) => {
     const classes = useStyles();
     const { d2, api } = useAppContext();
 
@@ -44,8 +41,7 @@ export const MetadataIncludeExcludeStep: React.FC<ModuleWizardStepProps<Metadata
         });
     }, [d2, api, module]);
 
-    const { includeRules = [], excludeRules = [] } =
-        module.metadataIncludeExcludeRules[selectedType] ?? {};
+    const { includeRules = [], excludeRules = [] } = module.metadataIncludeExcludeRules[selectedType] ?? {};
     const allRules = [...includeRules, ...excludeRules];
     const ruleOptions = allRules.map(rule => ({
         value: rule,
@@ -54,9 +50,7 @@ export const MetadataIncludeExcludeStep: React.FC<ModuleWizardStepProps<Metadata
 
     const changeUseDefaultIncludeExclude = (useDefault: boolean) => {
         onChange(
-            useDefault
-                ? module.markToUseDefaultIncludeExclude()
-                : module.markToNotUseDefaultIncludeExclude(models)
+            useDefault ? module.markToUseDefaultIncludeExclude() : module.markToNotUseDefaultIncludeExclude(models)
         );
     };
 

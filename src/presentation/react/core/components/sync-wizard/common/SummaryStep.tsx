@@ -59,9 +59,7 @@ export const SummaryStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
 
     const closeCancelDialog = () => setCancelDialogOpen(false);
 
-    const name = syncRule.isOnDemand()
-        ? `Rule generated on ${moment().format("YYYY-MM-DD HH:mm:ss")}`
-        : syncRule.name;
+    const name = syncRule.isOnDemand() ? `Rule generated on ${moment().format("YYYY-MM-DD HH:mm:ss")}` : syncRule.name;
 
     const save = async () => {
         setIsSaving(true);
@@ -101,9 +99,7 @@ export const SummaryStep = ({ syncRule, onCancel }: SyncWizardStepProps) => {
             loading.reset();
             if (error.response?.status === 403) {
                 snackbar.error(
-                    i18n.t(
-                        "You do not have the authority to one or multiple target instances of the sync rule"
-                    )
+                    i18n.t("You do not have the authority to one or multiple target instances of the sync rule")
                 );
             } else {
                 snackbar.error(i18n.t("An error has ocurred during the download"));
@@ -166,10 +162,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
     const aggregationItems = useMemo(buildAggregationItems, []);
 
     const destinationInstances = useMemo(
-        () =>
-            _.compact(
-                syncRule.targetInstances.map(id => instanceOptions.find(e => e.value === id))
-            ),
+        () => _.compact(syncRule.targetInstances.map(id => instanceOptions.find(e => e.value === id))),
         [instanceOptions, syncRule.targetInstances]
     );
 
@@ -191,17 +184,13 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                 error: () => snackbar.error(i18n.t("Invalid origin instance")),
                 success: instance => {
                     //type is required to transform visualizations to charts and report tables
-                    compositionRoot.metadata
-                        .getByIds(ids, instance, "id,name,type")
-                        .then(updateMetadata);
+                    compositionRoot.metadata.getByIds(ids, instance, "id,name,type").then(updateMetadata);
                 },
             });
         });
 
         compositionRoot.instances.list().then(instances => {
-            compositionRoot.user
-                .current()
-                .then(user => setInstanceOptions(buildInstanceOptions(instances, user)));
+            compositionRoot.user.current().then(user => setInstanceOptions(buildInstanceOptions(instances, user)));
         });
     }, [compositionRoot, syncRule, snackbar]);
 
@@ -213,9 +202,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
 
             <LiEntry label={i18n.t("Description")} value={syncRule.description} />
 
-            {originInstance && (
-                <LiEntry label={i18n.t("Source instance")} value={originInstance.text} />
-            )}
+            {originInstance && <LiEntry label={i18n.t("Source instance")} value={originInstance.text} />}
 
             <LiEntry
                 label={i18n.t("Target instances [{{total}}]", {
@@ -259,12 +246,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                 >
                     <ul>
                         {_.sortBy(syncRule.filterRules, fr => fr.metadataType).map(filterRule => {
-                            return (
-                                <LiEntry
-                                    key={filterRule.id}
-                                    label={filterRuleToString(filterRule)}
-                                />
-                            );
+                            return <LiEntry key={filterRule.id} label={filterRuleToString(filterRule)} />;
                         })}
                     </ul>
                 </LiEntry>
@@ -274,18 +256,11 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                 <LiEntry label={`${i18n.t("Excluded elements")} [${syncRule.excludedIds.length}]`}>
                     <ul>
                         {syncRule.excludedIds.map(id => {
-                            const values = Object.keys(metadata).map(
-                                key => metadata[key as keyof MetadataEntities]
-                            );
+                            const values = Object.keys(metadata).map(key => metadata[key as keyof MetadataEntities]);
 
                             const element = values.flat().find(element => element?.id === id);
 
-                            return (
-                                <LiEntry
-                                    key={id}
-                                    label={element ? `${element.name} (${id})` : id}
-                                />
-                            );
+                            return <LiEntry key={id} label={element ? `${element.name} (${id})` : id} />;
                         })}
                     </ul>
                 </LiEntry>
@@ -293,9 +268,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
             {syncRule.type === "metadata" && (
                 <LiEntry
                     label={i18n.t("Use default include exclude configuration")}
-                    value={
-                        syncRule.useDefaultIncludeExclude ? i18n.t("Enabled") : i18n.t("Disabled")
-                    }
+                    value={syncRule.useDefaultIncludeExclude ? i18n.t("Enabled") : i18n.t("Disabled")}
                 />
             )}
 
@@ -303,10 +276,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                 <LiEntry label={i18n.t("Include exclude configuration")}>
                     <ul>
                         {_.keys(syncRule.metadataIncludeExcludeRules).map(key => {
-                            const {
-                                includeRules,
-                                excludeRules,
-                            } = syncRule.metadataIncludeExcludeRules[key];
+                            const { includeRules, excludeRules } = syncRule.metadataIncludeExcludeRules[key];
 
                             return (
                                 <LiEntry key={key} label={key}>
@@ -317,9 +287,8 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                                                     <ul key={`${key}-include-${idx}`}>
                                                         <LiEntry
                                                             label={
-                                                                includeExcludeRulesFriendlyNames[
-                                                                    includeRule
-                                                                ] || includeRule
+                                                                includeExcludeRulesFriendlyNames[includeRule] ||
+                                                                includeRule
                                                             }
                                                         />
                                                     </ul>
@@ -333,9 +302,8 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                                                     <ul key={`${key}-exclude-${idx}`}>
                                                         <LiEntry
                                                             label={
-                                                                includeExcludeRulesFriendlyNames[
-                                                                    excludeRule
-                                                                ] || excludeRule
+                                                                includeExcludeRulesFriendlyNames[excludeRule] ||
+                                                                excludeRule
                                                             }
                                                         />
                                                     </ul>
@@ -373,17 +341,11 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
             )}
 
             {syncRule.dataSyncAllAttributeCategoryOptions && (
-                <LiEntry
-                    label={i18n.t("Category Option Combo")}
-                    value={i18n.t("All attribute category options")}
-                />
+                <LiEntry label={i18n.t("Category Option Combo")} value={i18n.t("All attribute category options")} />
             )}
 
             {syncRule.type !== "metadata" && (
-                <LiEntry
-                    label={i18n.t("Period")}
-                    value={availablePeriods[syncRule.dataSyncPeriod]?.name}
-                >
+                <LiEntry label={i18n.t("Period")} value={availablePeriods[syncRule.dataSyncPeriod]?.name}>
                     {syncRule.dataSyncPeriod === "FIXED" && (
                         <ul>
                             <LiEntry
@@ -409,8 +371,8 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                     value={
                         syncRule.dataSyncEnableAggregation
                             ? i18n.t(
-                                  _.find(aggregationItems, ["id", syncRule.dataSyncAggregationType])
-                                      ?.name ?? i18n.t("Enabled")
+                                  _.find(aggregationItems, ["id", syncRule.dataSyncAggregationType])?.name ??
+                                      i18n.t("Enabled")
                               )
                             : i18n.t("Disabled")
                     }
@@ -436,41 +398,25 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                     <ul>
                         <LiEntry
                             label={i18n.t("Include user information and sharing settings")}
-                            value={
-                                syncRule.syncParams.includeSharingSettings
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
+                            value={syncRule.syncParams.includeSharingSettings ? i18n.t("Yes") : i18n.t("No")}
                         />
                     </ul>
                     <ul>
                         <LiEntry
                             label={i18n.t("Disable atomic verification")}
-                            value={
-                                syncRule.syncParams.atomicMode === "NONE"
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
+                            value={syncRule.syncParams.atomicMode === "NONE" ? i18n.t("Yes") : i18n.t("No")}
                         />
                     </ul>
                     <ul>
                         <LiEntry
                             label={i18n.t("Replace objects in destination instance")}
-                            value={
-                                syncRule.syncParams.mergeMode === "REPLACE"
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
+                            value={syncRule.syncParams.mergeMode === "REPLACE" ? i18n.t("Yes") : i18n.t("No")}
                         />
                     </ul>
                     <ul>
                         <LiEntry
                             label={i18n.t("Dry run")}
-                            value={
-                                syncRule.syncParams.importMode === "VALIDATE"
-                                    ? i18n.t("Yes")
-                                    : i18n.t("No")
-                            }
+                            value={syncRule.syncParams.importMode === "VALIDATE" ? i18n.t("Yes") : i18n.t("No")}
                         />
                     </ul>
                 </LiEntry>
@@ -497,11 +443,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                         <ul>
                             <LiEntry
                                 label={i18n.t("Generate new UID")}
-                                value={
-                                    syncRule.dataParams.generateNewUid
-                                        ? i18n.t("Yes")
-                                        : i18n.t("No")
-                                }
+                                value={syncRule.dataParams.generateNewUid ? i18n.t("Yes") : i18n.t("No")}
                             />
                         </ul>
                     )}
@@ -520,14 +462,9 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                 </LiEntry>
             )}
 
-            <LiEntry
-                label={i18n.t("Scheduling")}
-                value={syncRule.enabled ? i18n.t("Enabled") : i18n.t("Disabled")}
-            />
+            <LiEntry label={i18n.t("Scheduling")} value={syncRule.enabled ? i18n.t("Enabled") : i18n.t("Disabled")} />
 
-            {syncRule.longFrequency && (
-                <LiEntry label={i18n.t("Frequency")} value={syncRule.longFrequency} />
-            )}
+            {syncRule.longFrequency && <LiEntry label={i18n.t("Frequency")} value={syncRule.longFrequency} />}
         </ul>
     );
 };

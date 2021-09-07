@@ -27,89 +27,72 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
             program => program.programType === "WITHOUT_REGISTRATION"
         );
 
-        const events = teiPackage.trackedEntityInstances.reduce(
-            (acc: ProgramEvent[], tei: TrackedEntityInstance) => {
-                const eventsByEnrollments = tei.enrollments.reduce(
-                    (acc: ProgramEvent[], enrollment: Enrollment) => {
-                        const {
-                            organisationUnits = {},
-                            trackerPrograms = {},
-                            trackedEntityAttributesToDE = {},
-                        } = this.mapping;
+        const events = teiPackage.trackedEntityInstances.reduce((acc: ProgramEvent[], tei: TrackedEntityInstance) => {
+            const eventsByEnrollments = tei.enrollments.reduce((acc: ProgramEvent[], enrollment: Enrollment) => {
+                const { organisationUnits = {}, trackerPrograms = {}, trackedEntityAttributesToDE = {} } = this.mapping;
 
-                        const mappedOrgUnit =
-                            organisationUnits[tei.orgUnit]?.mappedId ?? tei.orgUnit;
-                        const mappedProgram = trackerPrograms[enrollment.program]?.mappedId;
+                const mappedOrgUnit = organisationUnits[tei.orgUnit]?.mappedId ?? tei.orgUnit;
+                const mappedProgram = trackerPrograms[enrollment.program]?.mappedId;
 
-                        const mappedProgramStage = destinationEventPrograms.find(
-                            program => program.id === mappedProgram
-                        )?.programStages[0];
+                const mappedProgramStage = destinationEventPrograms.find(program => program.id === mappedProgram)
+                    ?.programStages[0];
 
-                        if (mappedProgram === undefined || mappedProgramStage === undefined) {
-                            return acc;
-                        } else {
-                            const id = this.generateUid();
+                if (mappedProgram === undefined || mappedProgramStage === undefined) {
+                    return acc;
+                } else {
+                    const id = this.generateUid();
 
-                            const event = {
-                                event: id,
-                                eventDate: enrollment.enrollmentDate,
-                                orgUnit: cleanOrgUnitPath(mappedOrgUnit),
-                                program: mappedProgram,
-                                programStage: mappedProgramStage.id,
-                                deleted: false,
-                                created: date,
-                                dueDate: date,
-                                lastUpdated: date,
-                                dataValues: tei.attributes
-                                    .filter(att => {
-                                        const dateElementId =
-                                            trackedEntityAttributesToDE[att.attribute]?.mappedId;
+                    const event = {
+                        event: id,
+                        eventDate: enrollment.enrollmentDate,
+                        orgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                        program: mappedProgram,
+                        programStage: mappedProgramStage.id,
+                        deleted: false,
+                        created: date,
+                        dueDate: date,
+                        lastUpdated: date,
+                        dataValues: tei.attributes
+                            .filter(att => {
+                                const dateElementId = trackedEntityAttributesToDE[att.attribute]?.mappedId;
 
-                                        return (
-                                            dateElementId !== undefined &&
-                                            mappedProgramStage.programStageDataElements.find(
-                                                prDE => prDE.dataElement.id === dateElementId
-                                            )
-                                        );
-                                    })
-                                    .map(att => {
-                                        const mappedDataElement = trackedEntityAttributesToDE[
-                                            att.attribute
-                                        ]?.mappedId as string;
+                                return (
+                                    dateElementId !== undefined &&
+                                    mappedProgramStage.programStageDataElements.find(
+                                        prDE => prDE.dataElement.id === dateElementId
+                                    )
+                                );
+                            })
+                            .map(att => {
+                                const mappedDataElement = trackedEntityAttributesToDE[att.attribute]
+                                    ?.mappedId as string;
 
-                                        return {
-                                            created: date,
-                                            lastUpdated: date,
-                                            dataElement: mappedDataElement,
-                                            value: mapOptionValue(att.value, [
-                                                trackedEntityAttributesToDE[att.attribute]
-                                                    ?.mapping ?? {},
-                                                this.mapping,
-                                            ]),
-                                            storedBy: "",
-                                            providedElsewhere: false,
-                                        };
-                                    }),
-                                id,
-                                status: "ACTIVE",
-                                storedBy: "",
-                                href: "",
-                            };
+                                return {
+                                    created: date,
+                                    lastUpdated: date,
+                                    dataElement: mappedDataElement,
+                                    value: mapOptionValue(att.value, [
+                                        trackedEntityAttributesToDE[att.attribute]?.mapping ?? {},
+                                        this.mapping,
+                                    ]),
+                                    storedBy: "",
+                                    providedElsewhere: false,
+                                };
+                            }),
+                        id,
+                        status: "ACTIVE",
+                        storedBy: "",
+                        href: "",
+                    };
 
-                            return [...acc, event as ProgramEvent];
-                        }
-                    },
-                    []
-                );
+                    return [...acc, event as ProgramEvent];
+                }
+            }, []);
 
-                return [...acc, ...eventsByEnrollments];
-            },
-            []
-        );
+            return [...acc, ...eventsByEnrollments];
+        }, []);
 
-        const finalEvents = this.removeDisabledItems(events).filter(
-            event => event.dataValues.length > 0
-        );
+        const finalEvents = this.removeDisabledItems(events).filter(event => event.dataValues.length > 0);
 
         return Promise.resolve({ events: finalEvents });
     }
@@ -119,9 +102,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
             .map(event => {
                 return {
                     ...event,
-                    dataValues: event.dataValues.filter(
-                        dataValue => !this.isDisabledDataValue(dataValue)
-                    ),
+                    dataValues: event.dataValues.filter(dataValue => !this.isDisabledDataValue(dataValue)),
                 };
             })
             .filter(item => !this.isDisabledEvent(item));

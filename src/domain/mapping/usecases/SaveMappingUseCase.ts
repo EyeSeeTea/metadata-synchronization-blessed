@@ -34,10 +34,7 @@ export class SaveMappingUseCase implements UseCase {
                     metadataMapping: mapping.mappingDictionary,
                 });
 
-                await storageClient.saveObjectInCollection(
-                    Namespace.INSTANCES,
-                    updatedInstance.toObject()
-                );
+                await storageClient.saveObjectInCollection(Namespace.INSTANCES, updatedInstance.toObject());
 
                 return Either.success(undefined);
             }

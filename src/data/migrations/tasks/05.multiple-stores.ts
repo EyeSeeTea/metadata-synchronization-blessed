@@ -4,11 +4,7 @@ import { Debug } from "../../../domain/migrations/entities/Debug";
 import { Store } from "../../../domain/stores/entities/Store";
 import { AppStorage, Migration } from "../client/types";
 
-export async function migrate(
-    storage: AppStorage,
-    _debug: Debug,
-    _params: MigrationParams
-): Promise<void> {
+export async function migrate(storage: AppStorage, _debug: Debug, _params: MigrationParams): Promise<void> {
     const oldKey = "store";
     const newKey = "stores";
 

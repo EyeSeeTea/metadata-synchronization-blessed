@@ -26,17 +26,13 @@ export class DownloadPackageUseCase implements UseCase {
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
         return storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
     }
 
     private async getStorePackage(storeId: string, url: string) {
-        const store = await this.repositoryFactory
-            .storeRepository(this.localInstance)
-            .getById(storeId);
+        const store = await this.repositoryFactory.storeRepository(this.localInstance).getById(storeId);
         if (!store) return undefined;
 
         const { encoding, content } = await this.repositoryFactory.gitRepository().request<{

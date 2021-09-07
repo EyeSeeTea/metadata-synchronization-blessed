@@ -15,13 +15,19 @@ export class ExpressionParser {
     private static isValidUid = /[a-zA-Z]{1}[a-zA-Z0-9]{10}/g;
 
     // Extracts ids in named groups (meant to be used with String.match()?.groups)
-    private static dataElementExp = /^#\{(?<dataElement>[a-zA-Z]{1}[a-zA-Z0-9]{10}).?(?<categoryOptionCombo>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})?.?(?<attributeOptionCombo>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})?\}$/;
-    private static programIndicatorDataElementExp = /^#\{(?<programStage>[a-zA-Z]{1}[a-zA-Z0-9]{10}).(?<dataElement>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
-    private static programDataElementExp = /^D\{(?<program>[a-zA-Z]{1}[a-zA-Z0-9]{10}).(?<dataElement>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
-    private static programAttributeExp = /^A\{(?<program>[a-zA-Z]{1}[a-zA-Z0-9]{10})?.?(?<attribute>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
+    private static dataElementExp =
+        /^#\{(?<dataElement>[a-zA-Z]{1}[a-zA-Z0-9]{10}).?(?<categoryOptionCombo>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})?.?(?<attributeOptionCombo>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})?\}$/;
+    private static programIndicatorDataElementExp =
+        /^#\{(?<programStage>[a-zA-Z]{1}[a-zA-Z0-9]{10}).(?<dataElement>\*|[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
+    private static programDataElementExp =
+        /^D\{(?<program>[a-zA-Z]{1}[a-zA-Z0-9]{10}).(?<dataElement>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
+    private static programAttributeExp =
+        /^A\{(?<program>[a-zA-Z]{1}[a-zA-Z0-9]{10})?.?(?<attribute>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
     private static programIndicatorExp = /^I\{(?<programIndicator>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
-    private static programVariableExp = /^V\{(?<variable>event_date|due_date|incident_date|current_date|completed_date|value_count|zero_pos_value_count|event_count|program_stage_name|program_stage_id|enrollment_count|tei_count|enrollment_date|enrollment_status)\}$/;
-    private static reportingRateExp = /^R\{(?<dataSet>[a-zA-Z]{1}[a-zA-Z0-9]{10}).(?<metric>REPORTING_RATE|REPORTING_RATE_ON_TIME|ACTUAL_REPORTS|ACTUAL_REPORTS_ON_TIME|EXPECTED_REPORTS)\}$/;
+    private static programVariableExp =
+        /^V\{(?<variable>event_date|due_date|incident_date|current_date|completed_date|value_count|zero_pos_value_count|event_count|program_stage_name|program_stage_id|enrollment_count|tei_count|enrollment_date|enrollment_status)\}$/;
+    private static reportingRateExp =
+        /^R\{(?<dataSet>[a-zA-Z]{1}[a-zA-Z0-9]{10}).(?<metric>REPORTING_RATE|REPORTING_RATE_ON_TIME|ACTUAL_REPORTS|ACTUAL_REPORTS_ON_TIME|EXPECTED_REPORTS)\}$/;
     private static constantExp = /^C\{(?<constant>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
     private static indicatorExp = /^N\{(?<indicator>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
     private static orgUnitGroupExp = /^OUG\{(?<organisationUnitGroup>[a-zA-Z]{1}[a-zA-Z0-9]{10})\}$/;
@@ -41,10 +47,7 @@ export class ExpressionParser {
         return Either.success(results as Expression[]);
     }
 
-    public static build(
-        type: ExpressionType,
-        expressions: Expression[]
-    ): Either<ParserError, string> {
+    public static build(type: ExpressionType, expressions: Expression[]): Either<ParserError, string> {
         const error = this.validate(expressions);
         if (error) return Either.error(error);
 
@@ -61,22 +64,15 @@ export class ExpressionParser {
 
     private static validate(expressions: Array<Expression | null>): ParserError | undefined {
         const expressionsWithoutParentheses = expressions?.filter(
-            expression =>
-                expression?.type !== "parentheses" || !["(", ")"].includes(expression.parentheses)
+            expression => expression?.type !== "parentheses" || !["(", ")"].includes(expression.parentheses)
         );
 
         for (const [index, expression] of expressionsWithoutParentheses.entries()) {
             if (expression === null) {
                 return "MALFORMED_EXPRESSION";
-            } else if (
-                this.isOperatorPosition(index) &&
-                !["operator", "logical"].includes(expression.type)
-            ) {
+            } else if (this.isOperatorPosition(index) && !["operator", "logical"].includes(expression.type)) {
                 return "OPERAND_WRONG_POSITION";
-            } else if (
-                !this.isOperatorPosition(index) &&
-                ["operator", "logical"].includes(expression.type)
-            ) {
+            } else if (!this.isOperatorPosition(index) && ["operator", "logical"].includes(expression.type)) {
                 return "OPERATOR_WRONG_POSITION";
             }
         }
@@ -246,16 +242,10 @@ export class ExpressionParser {
                 if (expression.categoryOptionCombo && !expression.dataElement) return "";
 
                 return `#{${_.compact(
-                    _.compact([
-                        expression.dataElement,
-                        expression.categoryOptionCombo,
-                        expression.attributeOptionCombo,
-                    ])
+                    _.compact([expression.dataElement, expression.categoryOptionCombo, expression.attributeOptionCombo])
                 ).join(".")}}`;
             case "programIndicatorDataElement":
-                return `#{${_.compact(
-                    _.compact([expression.programStage, expression.dataElement])
-                ).join(".")}}`;
+                return `#{${_.compact(_.compact([expression.programStage, expression.dataElement])).join(".")}}`;
             case "indicator":
                 return `N{${expression.indicator}}`;
             case "number":

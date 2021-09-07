@@ -3,10 +3,7 @@ import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import { Dictionary } from "lodash";
 import React, { ChangeEvent, useMemo, useState } from "react";
 import i18n from "../../../../../locales";
-import {
-    MSFSettings,
-    RunAnalyticsSettings,
-} from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
+import { MSFSettings, RunAnalyticsSettings } from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
 import Dropdown from "../../../core/components/dropdown/Dropdown";
 import { Toggle } from "../../../core/components/toggle/Toggle";
 import { NamedDate, OrgUnitDateSelector } from "../org-unit-date-selector/OrgUnitDateSelector";
@@ -17,11 +14,7 @@ export interface MSFSettingsDialogProps {
     onClose(): void;
 }
 
-export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({
-    onClose,
-    onSave,
-    settings: defaultSettings,
-}) => {
+export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, onSave, settings: defaultSettings }) => {
     const classes = useStyles();
 
     const [settings, updateSettings] = useState<MSFSettings>(defaultSettings);

@@ -1,10 +1,5 @@
 import SyncIcon from "@material-ui/icons/Sync";
-import {
-    ConfirmationDialog,
-    ConfirmationDialogProps,
-    useLoading,
-    useSnackbar,
-} from "@eyeseetea/d2-ui-components";
+import { ConfirmationDialog, ConfirmationDialogProps, useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
@@ -26,10 +21,7 @@ import {
     IndicatorMappedModel,
     ProgramIndicatorMappedModel,
 } from "../../../../../models/dhis/mapping";
-import {
-    DataElementGroupModel,
-    DataElementGroupSetModel,
-} from "../../../../../models/dhis/metadata";
+import { DataElementGroupModel, DataElementGroupSetModel } from "../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../utils/d2";
 import { isAppConfigurator } from "../../../../../utils/permissions";
 import DeletedObjectsTable from "../../../../react/core/components/delete-objects-table/DeletedObjectsTable";
@@ -95,9 +87,7 @@ const ManualSyncPage: React.FC = () => {
     const { type } = useParams() as { type: SynchronizationType };
     const { title, models } = config[type];
 
-    const [syncRule, updateSyncRule] = useState<SynchronizationRule>(
-        SynchronizationRule.createOnDemand(type)
-    );
+    const [syncRule, updateSyncRule] = useState<SynchronizationRule>(SynchronizationRule.createOnDemand(type));
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
@@ -145,9 +135,7 @@ const ManualSyncPage: React.FC = () => {
         if (syncRule.metadataIds.length > 0) {
             setSyncDialogOpen(true);
         } else {
-            snackbar.error(
-                i18n.t("Please select at least one element from the table to synchronize")
-            );
+            snackbar.error(i18n.t("Please select at least one element from the table to synchronize"));
         }
     };
 
@@ -248,9 +236,7 @@ const ManualSyncPage: React.FC = () => {
             loading.reset();
             if (error.response?.status === 403) {
                 snackbar.error(
-                    i18n.t(
-                        "You do not have the authority to one or multiple target instances of the sync rule"
-                    )
+                    i18n.t("You do not have the authority to one or multiple target instances of the sync rule")
                 );
             } else {
                 snackbar.error(i18n.t("An error has ocurred during the synchronization"));
@@ -330,15 +316,10 @@ const ManualSyncPage: React.FC = () => {
                 />
             )}
 
-            {!!syncReport && (
-                <SyncSummary report={syncReport} onClose={() => setSyncReport(null)} />
-            )}
+            {!!syncReport && <SyncSummary report={syncReport} onClose={() => setSyncReport(null)} />}
 
             {!!pullRequestProps && (
-                <PullRequestCreationDialog
-                    {...pullRequestProps}
-                    onClose={() => setPullRequestProps(undefined)}
-                />
+                <PullRequestCreationDialog {...pullRequestProps} onClose={() => setPullRequestProps(undefined)} />
             )}
 
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}

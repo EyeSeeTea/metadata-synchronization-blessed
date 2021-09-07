@@ -82,17 +82,11 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
                 </Section>
 
                 <Section title={i18n.t("Created")}>
-                    <PeriodSelection
-                        objectWithPeriod={filterRule.created}
-                        onChange={updateField("created")}
-                    />
+                    <PeriodSelection objectWithPeriod={filterRule.created} onChange={updateField("created")} />
                 </Section>
 
                 <Section title={i18n.t("Last updated")}>
-                    <PeriodSelection
-                        objectWithPeriod={filterRule.lastUpdated}
-                        onChange={updateField("lastUpdated")}
-                    />
+                    <PeriodSelection objectWithPeriod={filterRule.lastUpdated} onChange={updateField("lastUpdated")} />
                 </Section>
 
                 <Section title={i18n.t("Match string (name, code, description)")}>
@@ -109,11 +103,7 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
                         <TextFieldOnBlur
                             className={classes.dropdown}
                             fullWidth={true}
-                            onChange={value =>
-                                setFilterRule(filterRule =>
-                                    updateStringMatch(filterRule, { value })
-                                )
-                            }
+                            onChange={value => setFilterRule(filterRule => updateStringMatch(filterRule, { value }))}
                             label={i18n.t("String to match (*)")}
                             value={filterRule.stringMatch?.value || ""}
                         />

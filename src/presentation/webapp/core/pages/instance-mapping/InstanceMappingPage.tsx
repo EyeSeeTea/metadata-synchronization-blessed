@@ -2,10 +2,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
-import {
-    MetadataMapping,
-    MetadataMappingDictionary,
-} from "../../../../../domain/mapping/entities/MetadataMapping";
+import { MetadataMapping, MetadataMappingDictionary } from "../../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../../locales";
 import {
     AggregatedDataElementModel,

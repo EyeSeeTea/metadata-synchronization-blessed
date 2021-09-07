@@ -22,10 +22,7 @@ import { FileRejection } from "react-dropzone";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
-import {
-    SynchronizationRule,
-    SynchronizationRuleData,
-} from "../../../../../domain/rules/entities/SynchronizationRule";
+import { SynchronizationRule, SynchronizationRuleData } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
 import i18n from "../../../../../locales";
 import { promiseMap } from "../../../../../utils/common";
@@ -247,9 +244,7 @@ export const SyncRulesListPage: React.FC = () => {
             loading.reset();
             if (error.response?.status === 403) {
                 snackbar.error(
-                    i18n.t(
-                        "You do not have the authority to one or multiple target instances of the sync rule"
-                    )
+                    i18n.t("You do not have the authority to one or multiple target instances of the sync rule")
                 );
             } else {
                 snackbar.error(i18n.t("An error has ocurred during the download"));
@@ -275,9 +270,7 @@ export const SyncRulesListPage: React.FC = () => {
 
         await promiseMap(toDelete, id => compositionRoot.rules.delete(id));
 
-        snackbar.success(
-            i18n.t("Successfully deleted {{count}} rules", { count: toDelete.length })
-        );
+        snackbar.success(i18n.t("Successfully deleted {{count}} rules", { count: toDelete.length }));
 
         loading.reset();
         setToDelete([]);
@@ -496,9 +489,7 @@ export const SyncRulesListPage: React.FC = () => {
                         description: <SyncRuleImportSummary rules={validRules} errors={errors} />,
                         onSave: async () => {
                             await compositionRoot.rules.save(validRules);
-                            snackbar.success(
-                                i18n.t("Imported {{n}} rules", { n: validRules.length })
-                            );
+                            snackbar.success(i18n.t("Imported {{n}} rules", { n: validRules.length }));
                             setRefreshKey(Math.random());
                             updateDialog(null);
                         },
@@ -615,9 +606,7 @@ export const SyncRulesListPage: React.FC = () => {
             },
         };
 
-        const syncRule = SynchronizationRule.build(
-            newSharingSettings.object as SynchronizationRuleData
-        );
+        const syncRule = SynchronizationRule.build(newSharingSettings.object as SynchronizationRuleData);
         await compositionRoot.rules.save([syncRule]);
 
         setSharingSettingsObject(newSharingSettings);
@@ -660,9 +649,7 @@ export const SyncRulesListPage: React.FC = () => {
 
             <Dropzone
                 ref={fileRef}
-                accept={
-                    "application/zip,application/zip-compressed,application/x-zip-compressed,application/json"
-                }
+                accept={"application/zip,application/zip-compressed,application/x-zip-compressed,application/json"}
                 onDrop={handleFileUpload}
             >
                 <ObjectsTable<SynchronizationRule>
@@ -697,9 +684,7 @@ export const SyncRulesListPage: React.FC = () => {
                 />
             )}
 
-            {!!syncReport && (
-                <SyncSummary report={syncReport} onClose={() => setSyncReport(null)} />
-            )}
+            {!!syncReport && <SyncSummary report={syncReport} onClose={() => setSyncReport(null)} />}
 
             {!!sharingSettingsObject && (
                 <SharingDialog
@@ -717,10 +702,7 @@ export const SyncRulesListPage: React.FC = () => {
             )}
 
             {!!pullRequestProps && (
-                <PullRequestCreationDialog
-                    {...pullRequestProps}
-                    onClose={() => setPullRequestProps(undefined)}
-                />
+                <PullRequestCreationDialog {...pullRequestProps} onClose={() => setPullRequestProps(undefined)} />
             )}
 
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}

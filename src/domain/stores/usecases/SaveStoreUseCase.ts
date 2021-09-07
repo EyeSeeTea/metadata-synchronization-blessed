@@ -15,9 +15,7 @@ export class SaveStoreUseCase implements UseCase {
             if (validation.isError()) return Either.error(validation.value.error ?? "UNKNOWN");
         }
 
-        const currentStores = await this.repositoryFactory
-            .storeRepository(this.localInstance)
-            .list();
+        const currentStores = await this.repositoryFactory.storeRepository(this.localInstance).list();
 
         const isFirstStore = !store.id && currentStores.length === 0;
 

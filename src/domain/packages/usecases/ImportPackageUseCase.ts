@@ -38,16 +38,10 @@ export class ImportPackageUseCase implements UseCase {
             .metadataRepository(destinationInstance)
             .getCategoryOptionCombos();
 
-        const mapper = new MappingMapper(
-            mapping,
-            originCategoryOptionCombos,
-            destinationCategoryOptionCombos
-        );
+        const mapper = new MappingMapper(mapping, originCategoryOptionCombos, destinationCategoryOptionCombos);
 
         const payload = mapper.applyMapping(item.contents);
-        const result = await this.repositoryFactory
-            .metadataRepository(destinationInstance)
-            .save(payload);
+        const result = await this.repositoryFactory.metadataRepository(destinationInstance).save(payload);
 
         debug("Import package", {
             originInstance,

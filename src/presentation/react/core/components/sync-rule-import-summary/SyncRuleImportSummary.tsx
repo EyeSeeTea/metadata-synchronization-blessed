@@ -25,9 +25,7 @@ export const SyncRuleImportSummary = (props: SyncRuleImportSummaryProps) => {
             <p className={classes.overview}>
                 {errors.length === 0 && rules.length > 0
                     ? i18n.t("You're about to import the following synchronization rules:")
-                    : i18n.t(
-                          "We found some errors while trying to upload the following sync rules:"
-                      )}
+                    : i18n.t("We found some errors while trying to upload the following sync rules:")}
             </p>
 
             {rules.map((rule, idx) => {

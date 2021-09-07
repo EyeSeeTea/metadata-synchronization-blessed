@@ -11,11 +11,7 @@ export default class MappingInstancePageObject extends PageObject {
     }
 
     openRowMenu() {
-        this.cy
-            .get(
-                ".MuiTableBody-root > :nth-child(1) > .MuiTableCell-alignCenter > .MuiButtonBase-root"
-            )
-            .click();
+        this.cy.get(".MuiTableBody-root > :nth-child(1) > .MuiTableCell-alignCenter > .MuiButtonBase-root").click();
         return this;
     }
 

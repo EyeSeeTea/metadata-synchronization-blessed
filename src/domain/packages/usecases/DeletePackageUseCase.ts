@@ -8,15 +8,10 @@ export class DeletePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string, instance = this.localInstance): Promise<boolean> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
         try {
-            const item = await storageClient.getObjectInCollection<BasePackage>(
-                Namespace.PACKAGES,
-                id
-            );
+            const item = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
 
             if (!item) return false;
 

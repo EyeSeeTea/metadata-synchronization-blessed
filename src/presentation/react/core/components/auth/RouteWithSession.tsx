@@ -11,13 +11,7 @@ export interface RouteWithSessionProps {
 const RouteWithSession: React.FC<RouteWithSessionProps> = ({ path, render, exact }) => {
     const key = path?.toString() ?? "";
 
-    return (
-        <Route
-            path={path}
-            exact={exact}
-            render={props => <WithSession key={key}>{render(props)}</WithSession>}
-        />
-    );
+    return <Route path={path} exact={exact} render={props => <WithSession key={key}>{render(props)}</WithSession>} />;
 };
 
 export default RouteWithSession;

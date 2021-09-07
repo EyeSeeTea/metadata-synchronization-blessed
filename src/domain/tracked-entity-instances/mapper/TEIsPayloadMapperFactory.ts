@@ -13,11 +13,7 @@ export async function createTEIsPayloadMapper(
     teis: TrackedEntityInstance[],
     mapping: MetadataMappingDictionary
 ) {
-    const destinationMappingPrograms = await getAllPossibleDestinationPrograms(
-        metadataRepository,
-        mapping,
-        teis
-    );
+    const destinationMappingPrograms = await getAllPossibleDestinationPrograms(metadataRepository, mapping, teis);
 
     return new TEIsPayloadMapper(mapping, destinationMappingPrograms);
 }
@@ -26,10 +22,7 @@ export async function createTEIsToEventPayloadMapper(
     metadataRepository: MetadataRepository,
     mapping: MetadataMappingDictionary
 ) {
-    const destinationMappingPrograms = await getAllPossibleDestinationPrograms(
-        metadataRepository,
-        mapping
-    );
+    const destinationMappingPrograms = await getAllPossibleDestinationPrograms(metadataRepository, mapping);
 
     return new TEIsToEventPayloadMapper(
         mapping,
@@ -50,14 +43,9 @@ async function getAllPossibleDestinationPrograms(
         ? _.compact(Object.values(trackerProgramsMapping).map(mapping => mapping.mappedId))
         : [];
 
-    const destinationProgramsByPayload = teis
-        .map(tei => tei.programOwners.map(owner => owner.program))
-        .flat();
+    const destinationProgramsByPayload = teis.map(tei => tei.programOwners.map(owner => owner.program)).flat();
 
-    const allPossibleDestinationProgramIds = [
-        ...destinationProgramsByMapping,
-        ...destinationProgramsByPayload,
-    ];
+    const allPossibleDestinationProgramIds = [...destinationProgramsByMapping, ...destinationProgramsByPayload];
 
     if (allPossibleDestinationProgramIds.length > 0) {
         const programs = (

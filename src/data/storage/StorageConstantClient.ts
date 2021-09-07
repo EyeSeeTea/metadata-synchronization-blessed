@@ -77,9 +77,7 @@ export class StorageConstantClient extends StorageClient {
         try {
             const objects = await this.getConstants({ id: true, code: true, name: true });
 
-            await this.api.metadata
-                .post({ constants: objects }, { importStrategy: "DELETE" })
-                .getData();
+            await this.api.metadata.post({ constants: objects }, { importStrategy: "DELETE" }).getData();
         } catch (error) {
             console.error(error);
         }
@@ -113,13 +111,7 @@ export class StorageConstantClient extends StorageClient {
     }
 
     public async getObjectSharing(key: string): Promise<ObjectSharing | undefined> {
-        const {
-            user,
-            userAccesses,
-            userGroupAccesses,
-            publicAccess,
-            externalAccess,
-        } = await this.getConstant(key);
+        const { user, userAccesses, userGroupAccesses, publicAccess, externalAccess } = await this.getConstant(key);
 
         return { user, userAccesses, userGroupAccesses, publicAccess, externalAccess };
     }

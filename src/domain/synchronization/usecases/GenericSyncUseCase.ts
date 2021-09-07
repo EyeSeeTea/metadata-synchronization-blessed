@@ -19,10 +19,7 @@ import {
     SynchronizationReport,
     SynchronizationReportStatus,
 } from "../../reports/entities/SynchronizationReport";
-import {
-    SynchronizationResult,
-    SynchronizationStatus,
-} from "../../reports/entities/SynchronizationResult";
+import { SynchronizationResult, SynchronizationStatus } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { SynchronizationPayload } from "../entities/SynchronizationPayload";
 import { SynchronizationType } from "../entities/SynchronizationType";
@@ -47,18 +44,13 @@ export abstract class GenericSyncUseCase {
     }
 
     public abstract buildPayload(): Promise<SynchronizationPayload>;
-    public abstract mapPayload(
-        instance: Instance,
-        payload: SynchronizationPayload
-    ): Promise<SynchronizationPayload>;
+    public abstract mapPayload(instance: Instance, payload: SynchronizationPayload): Promise<SynchronizationPayload>;
 
     // We start to use domain concepts:
     // for the moment old model instance and domain entity instance are going to live together for a while on sync classes.
     // Little by little through refactors the old instance model should disappear
     public abstract postPayload(instance: Instance): Promise<SynchronizationResult[]>;
-    public abstract buildDataStats(): Promise<
-        AggregatedDataStats[] | EventsDataStats[] | undefined
-    >;
+    public abstract buildDataStats(): Promise<AggregatedDataStats[] | EventsDataStats[] | undefined>;
 
     @cache()
     public async extractMetadata<T>(remoteInstance = this.localInstance) {
@@ -127,9 +119,7 @@ export abstract class GenericSyncUseCase {
         const remoteInstance = await this.getOriginInstance();
 
         // TODO: This should be revisited in the future, does not fully work with nested ids (programs)
-        const transformMapping = (
-            mapping: MetadataMappingDictionary
-        ): MetadataMappingDictionary => {
+        const transformMapping = (mapping: MetadataMappingDictionary): MetadataMappingDictionary => {
             return _.mapValues(mapping, value => {
                 return _.transform(
                     value,
@@ -168,9 +158,7 @@ export abstract class GenericSyncUseCase {
     }
 
     private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const instance = await this.repositoryFactory
-            .instanceRepository(this.localInstance)
-            .getById(id);
+        const instance = await this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
         if (!instance) return undefined;
 
         try {
@@ -197,9 +185,7 @@ export abstract class GenericSyncUseCase {
         yield { message: i18n.t("Preparing synchronization") };
 
         // Build instance list
-        const targetInstances = _.compact(
-            await promiseMap(targetInstanceIds, id => this.getInstanceById(id))
-        );
+        const targetInstances = _.compact(await promiseMap(targetInstanceIds, id => this.getInstanceById(id)));
 
         // Initialize sync report
         const syncReport = await this.buildSyncReport();
@@ -245,9 +231,7 @@ export abstract class GenericSyncUseCase {
 
         // Phase 4: Update sync rule last executed date and last executed user name and id
         if (syncRule) {
-            const oldRule = await this.repositoryFactory
-                .rulesRepository(this.localInstance)
-                .getById(syncRule);
+            const oldRule = await this.repositoryFactory.rulesRepository(this.localInstance).getById(syncRule);
 
             if (oldRule) {
                 const currentUser = await this.api.currentUser
@@ -257,9 +241,7 @@ export abstract class GenericSyncUseCase {
                     id: currentUser.id,
                     name: currentUser.userCredentials.name,
                 });
-                await this.repositoryFactory
-                    .rulesRepository(this.localInstance)
-                    .save([updatedRule]);
+                await this.repositoryFactory.rulesRepository(this.localInstance).save([updatedRule]);
             }
         }
 

@@ -20,11 +20,7 @@ import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { JSONDataSource } from "../../../../../domain/instance/entities/JSONDataSource";
 import { Module } from "../../../../../domain/modules/entities/Module";
 import { ImportedPackage } from "../../../../../domain/package-import/entities/ImportedPackage";
-import {
-    isInstance,
-    isStore,
-    PackageSource,
-} from "../../../../../domain/package-import/entities/PackageSource";
+import { isInstance, isStore, PackageSource } from "../../../../../domain/package-import/entities/PackageSource";
 import { mapToImportedPackage } from "../../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { ListPackage, Package } from "../../../../../domain/packages/entities/Package";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
@@ -159,9 +155,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             snackbar.error(i18n.t("Could not read package"));
                             return;
                         case "WRITE_PERMISSIONS":
-                            snackbar.error(
-                                i18n.t("You don't have permissions to create file on GitHub")
-                            );
+                            snackbar.error(i18n.t("You don't have permissions to create file on GitHub"));
                             return;
                         case "UNKNOWN":
                             snackbar.error(i18n.t("Unknown error while creating file on GitHub"));
@@ -181,19 +175,11 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                                 onSave: async () => {
                                     updateDialog(null);
                                     loading.show(true, i18n.t("Publishing package to Store"));
-                                    const validation = await compositionRoot.packages.publish(
-                                        ids[0],
-                                        true
-                                    );
+                                    const validation = await compositionRoot.packages.publish(ids[0], true);
                                     validation.match({
                                         success: () =>
-                                            snackbar.success(
-                                                i18n.t("Package published to store in a new branch")
-                                            ),
-                                        error: () =>
-                                            snackbar.error(
-                                                i18n.t("Couldn't create new branch on store")
-                                            ),
+                                            snackbar.success(i18n.t("Package published to store in a new branch")),
+                                        error: () => snackbar.error(i18n.t("Couldn't create new branch on store")),
                                     });
                                     loading.reset();
                                 },
@@ -226,12 +212,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             const [packageBase, packageMerge] = ids.map(packageId => {
                 return rows.find(row => row.id === packageId);
             });
-            if (
-                packageBase &&
-                packageMerge &&
-                isPackageItem(packageBase) &&
-                isPackageItem(packageMerge)
-            ) {
+            if (packageBase && packageMerge && isPackageItem(packageBase) && isPackageItem(packageMerge)) {
                 setPackagesToDiff({ base: packageBase, merge: packageMerge });
             }
         },
@@ -241,18 +222,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const closePackageDiffDialog = useCallback(() => setPackagesToDiff(null), [setPackagesToDiff]);
 
     const saveImportedPackage = useCallback(
-        async (
-            pkg: Package,
-            author: NamedRef,
-            packageSource: PackageSource,
-            storePackageUrl?: string
-        ) => {
-            const importedPackage = mapToImportedPackage(
-                pkg,
-                author,
-                packageSource,
-                storePackageUrl
-            );
+        async (pkg: Package, author: NamedRef, packageSource: PackageSource, storePackageUrl?: string) => {
+            const importedPackage = mapToImportedPackage(pkg, author, packageSource, storePackageUrl);
 
             const result = await compositionRoot.importedPackages.save([importedPackage]);
 
@@ -267,10 +238,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     );
 
     const getPackage = useCallback(
-        (
-            packageSource: PackageSource,
-            packageId: string
-        ): Promise<Either<"NOT_FOUND", Package>> => {
+        (packageSource: PackageSource, packageId: string): Promise<Either<"NOT_FOUND", Package>> => {
             if (isInstance(packageSource)) {
                 return compositionRoot.packages.get(packageId, packageSource);
             } else {
@@ -301,9 +269,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
             const selectedPackage = rows.find(row => row.id === ids[0]);
             const module = selectedPackage
-                ? modules.find(
-                      module => selectedPackage.module && module.id === selectedPackage.module.id
-                  )
+                ? modules.find(module => selectedPackage.module && module.id === selectedPackage.module.id)
                 : undefined;
 
             if (module) {
@@ -339,10 +305,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                             .get({ fields: { id: true, userCredentials: { username: true } } })
                             .getData();
 
-                        loading.show(
-                            true,
-                            i18n.t("Importing package {{name}}", { name: originPackage.name })
-                        );
+                        loading.show(true, i18n.t("Importing package {{name}}", { name: originPackage.name }));
 
                         const mapping = await compositionRoot.mapping.get({
                             type: isInstance(packageSource) ? "instance" : "store",
@@ -353,10 +316,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         const originDataSource =
                             remoteInstance && isInstance(packageSource)
                                 ? remoteInstance
-                                : JSONDataSource.build(
-                                      originPackage.dhisVersion,
-                                      originPackage.contents
-                                  );
+                                : JSONDataSource.build(originPackage.dhisVersion, originPackage.contents);
 
                         const result = await compositionRoot.packages.import(
                             originPackage,
@@ -373,9 +333,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         report.setTypes(_.keys(originPackage.contents));
 
                         report.setStatus(
-                            result.status === "ERROR" || result.status === "NETWORK ERROR"
-                                ? "FAILURE"
-                                : "DONE"
+                            result.status === "ERROR" || result.status === "NETWORK ERROR" ? "FAILURE" : "DONE"
                         );
 
                         report.addSyncResult({
@@ -580,9 +538,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 onClick: generateModule,
                 icon: <Icon>note_add</Icon>,
                 isActive: (rows: PackageModuleItem[]) => {
-                    const module = modules.find(
-                        module => rows[0].module && module.id === rows[0].module.id
-                    );
+                    const module = modules.find(module => rows[0].module && module.id === rows[0].module.id);
 
                     return (
                         _.every(rows, row => isPackageItem(row)) &&
@@ -655,10 +611,12 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     }, [instancePackages, storePackages, remoteStore]);
 
     const filterComponents = useMemo(() => {
-        const updateFilter = (fn: Function) => (...args: unknown[]) => {
-            fn(...args);
-            setResetKey(Math.random());
-        };
+        const updateFilter =
+            (fn: Function) =>
+            (...args: unknown[]) => {
+                fn(...args);
+                setResetKey(Math.random());
+            };
 
         const moduleFilterComponent = (
             <Dropdown
@@ -689,12 +647,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 label={i18n.t("Status")}
             />
         );
-        return [
-            externalComponents,
-            moduleFilterComponent,
-            dhis2VersionFilterComponent,
-            installStateFilterComponent,
-        ];
+        return [externalComponents, moduleFilterComponent, dhis2VersionFilterComponent, installStateFilterComponent];
     }, [
         externalComponents,
         moduleFilter,
@@ -743,9 +696,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         compositionRoot.packages
             .list(globalAdmin, remoteInstance)
             .then(packages => {
-                setInstancePackages(
-                    mapPackagesToPackageItems(modules, packages, importedPackages, packageSource)
-                );
+                setInstancePackages(mapPackagesToPackageItems(modules, packages, importedPackages, packageSource));
             })
             .catch((error: Error) => {
                 snackbar.error(error.message);
@@ -769,14 +720,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             compositionRoot.packages.listStore(remoteStore.id).then(validation => {
                 validation.match({
                     success: packages => {
-                        setStorePackages(
-                            mapPackagesToPackageItems(
-                                modules,
-                                packages,
-                                importedPackages,
-                                packageSource
-                            )
-                        );
+                        setStorePackages(mapPackagesToPackageItems(modules, packages, importedPackages, packageSource));
                     },
                     error: () => {
                         snackbar.error(i18n.t("Can't connect to store"));
@@ -787,16 +731,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         } else {
             setStorePackages([]);
         }
-    }, [
-        compositionRoot,
-        snackbar,
-        remoteStore,
-        importedPackages,
-        remoteInstance,
-        resetKey,
-        modules,
-        packageSource,
-    ]);
+    }, [compositionRoot, snackbar, remoteStore, importedPackages, remoteInstance, resetKey, modules, packageSource]);
 
     useEffect(() => {
         compositionRoot.importedPackages.list().then(result =>
@@ -913,11 +848,7 @@ function mapPackagesToPackageItems(
                 );
             });
 
-            const installStatus: InstallStatus = installed
-                ? "Installed"
-                : newUpdates
-                ? "Upgrade"
-                : "NotInstalled";
+            const installStatus: InstallStatus = installed ? "Installed" : newUpdates ? "Upgrade" : "NotInstalled";
 
             return { ...pkg, installStatus };
         });
@@ -933,9 +864,7 @@ function mapPackagesToPackageItems(
 
             const installed = !isPackageFromFile || (isPackageFromFile && isPackageImported);
 
-            const installStatus: InstallStatus = installed
-                ? "InstalledLocalPackage"
-                : "NotInstalledLocalPackage";
+            const installStatus: InstallStatus = installed ? "InstalledLocalPackage" : "NotInstalledLocalPackage";
 
             return { ...pkg, installStatus };
         });

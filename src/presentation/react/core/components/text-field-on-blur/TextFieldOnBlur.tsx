@@ -21,7 +21,7 @@ const TextFieldOnBlur: React.FC<TextFieldOnBlurProps> = props => {
 
     useEffect(() => {
         if (propValue !== prevPropValue.current) {
-            console.log("upchange", { value, propValue, prev: prevPropValue.current });
+            console.debug("upchange", { value, propValue, prev: prevPropValue.current });
             setValue(propValue);
             prevPropValue.current = propValue;
         }
@@ -38,14 +38,7 @@ const TextFieldOnBlur: React.FC<TextFieldOnBlurProps> = props => {
         [setValue]
     );
 
-    return (
-        <TextField
-            {...props}
-            value={value}
-            onBlur={callParentOnChange}
-            onChange={setValueFromEvent}
-        />
-    );
+    return <TextField {...props} value={value} onBlur={callParentOnChange} onChange={setValueFromEvent} />;
 };
 
 export default React.memo(TextFieldOnBlur);

@@ -47,9 +47,10 @@ function getRelationshipWithLongestChildren(
     return children.size > 0 ? { parent, children: Array.from(children) } : undefined;
 }
 
-export function buildPeriodFromParams(
-    params: Pick<DataSynchronizationParams, "period" | "startDate" | "endDate">
-): { startDate: Moment; endDate: Moment } {
+export function buildPeriodFromParams(params: Pick<DataSynchronizationParams, "period" | "startDate" | "endDate">): {
+    startDate: Moment;
+    endDate: Moment;
+} {
     const { period, startDate, endDate } = params;
 
     if (!period || period === "ALL" || period === "FIXED") {

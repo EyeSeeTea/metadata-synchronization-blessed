@@ -10,29 +10,21 @@ const isValidNumberRange = (range, x, y) => {
     const boundaries = range.split("-");
     if (!boundaries || boundaries.length !== 2) return false;
 
-    return (
-        isValidNumber(boundaries[0], x, y) &&
-        isValidNumber(boundaries[1], x, y) &&
-        boundaries[0] <= boundaries[1]
-    );
+    return isValidNumber(boundaries[0], x, y) && isValidNumber(boundaries[1], x, y) && boundaries[0] <= boundaries[1];
 };
 
 const isValidFraction = (fraction, x, y) => {
     const components = fraction.split("/");
     if (!components || components.length !== 2) return false;
 
-    return (
-        (isWildcard(components[0]) || isValidNumber(components[0], x, y)) &&
-        isValidNumber(components[1], x, y)
-    );
+    return (isWildcard(components[0]) || isValidNumber(components[0], x, y)) && isValidNumber(components[1], x, y);
 };
 
 const isAlphabeticWeekday = field => {
     const weekdays = field.split("-");
     const [firstDay, secondDay] = weekdays.map(c => WEEKDAYS.indexOf(c));
     return (
-        (firstDay !== -1 && secondDay === undefined) ||
-        (firstDay !== -1 && secondDay !== -1 && firstDay <= secondDay)
+        (firstDay !== -1 && secondDay === undefined) || (firstDay !== -1 && secondDay !== -1 && firstDay <= secondDay)
     );
 };
 
@@ -46,10 +38,7 @@ const isAlphabeticMonth = field => {
 };
 
 const isValidWithinRange = (field, x, y) =>
-    isWildcard(field) ||
-    isValidNumber(field, x, y) ||
-    isValidNumberRange(field, x, y) ||
-    isValidFraction(field, x, y);
+    isWildcard(field) || isValidNumber(field, x, y) || isValidNumberRange(field, x, y) || isValidFraction(field, x, y);
 
 const isValidSecondField = field => isValidWithinRange(field, 0, 59);
 const isValidMinuteField = field => isValidWithinRange(field, 0, 59);

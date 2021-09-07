@@ -1,8 +1,5 @@
 import _ from "lodash";
-import {
-    cleanNestedMappedId,
-    EXCLUDED_KEY,
-} from "../../../presentation/react/core/components/mapping-table/utils";
+import { cleanNestedMappedId, EXCLUDED_KEY } from "../../../presentation/react/core/components/mapping-table/utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { DataSource } from "../../instance/entities/DataSource";
 import { cleanOrgUnitPath } from "../../synchronization/utils";
@@ -27,20 +24,14 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
         const errors: string[] = [];
 
         for (const id of ids) {
-            const item = elements.find(
-                item => item.id === cleanNestedMappedId(cleanOrgUnitPath(id))
-            );
+            const item = elements.find(item => item.id === cleanNestedMappedId(cleanOrgUnitPath(id)));
 
             // Special scenario: indicators look-up the id from a property
             const itemId = item?.aggregateExportCategoryOptionCombo
                 ? _.first(item?.aggregateExportCategoryOptionCombo?.split("."))
                 : item?.id;
 
-            const filter = await this.buildDataElementFilterForProgram(
-                destinationInstance,
-                id,
-                mapping
-            );
+            const filter = await this.buildDataElementFilterForProgram(destinationInstance, id, mapping);
 
             const candidates = await this.autoMap({
                 destinationInstance,

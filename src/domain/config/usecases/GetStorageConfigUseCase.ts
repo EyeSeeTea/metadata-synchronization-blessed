@@ -6,9 +6,7 @@ export class GetStorageConfigUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<"dataStore" | "constant"> {
-        const client = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+        const client = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
         return client.type;
     }

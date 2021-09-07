@@ -154,10 +154,7 @@ function getPendingMigrationsText(versions: MigrationVersions): string {
 
 const isDebug = process.env.NODE_ENV === "development";
 
-const MigrationsError: React.FC<{ versions: MigrationVersions; onFinish: () => void }> = ({
-    versions,
-    onFinish,
-}) => (
+const MigrationsError: React.FC<{ versions: MigrationVersions; onFinish: () => void }> = ({ versions, onFinish }) => (
     <ConfirmationDialog
         isOpen={true}
         title={i18n.t("Error")}

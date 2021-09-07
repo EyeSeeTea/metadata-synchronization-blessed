@@ -64,8 +64,7 @@ export const PackageImportWizard: React.FC<PackageImportWizardProps> = props => 
         .filter(
             step =>
                 !props.disablePackageSelection ||
-                (props.disablePackageSelection &&
-                    !stepsRelatedToPackageSelection.includes(step.key))
+                (props.disablePackageSelection && !stepsRelatedToPackageSelection.includes(step.key))
         )
         .map(step => ({ ...step, props }));
 

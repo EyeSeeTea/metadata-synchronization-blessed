@@ -89,9 +89,7 @@ describe("Cache decorator with clearing", () => {
     });
 
     it("memoize - should be the same number", () => {
-        expect(test.memoized({ value: 10 }, { value: 20 })).toEqual(
-            test.memoized({ value: 10 }, { value: 20 })
-        );
+        expect(test.memoized({ value: 10 }, { value: 20 })).toEqual(test.memoized({ value: 10 }, { value: 20 }));
     });
 
     it("function - should be the same number", () => {
@@ -145,15 +143,11 @@ describe("Cache decorator with clearing", () => {
     });
 
     it("static - should be a different number", () => {
-        expect(TestClass.getMultipleStatic(20, 30)).not.toEqual(
-            TestClass.getMultipleStatic(10, 20)
-        );
+        expect(TestClass.getMultipleStatic(20, 30)).not.toEqual(TestClass.getMultipleStatic(10, 20));
     });
 
     it("memoize - should be a different number", () => {
-        expect(test.memoized({ value: 10 }, { value: 20 })).not.toEqual(
-            test.memoized({ value: 30 }, { value: 20 })
-        );
+        expect(test.memoized({ value: 10 }, { value: 20 })).not.toEqual(test.memoized({ value: 30 }, { value: 20 }));
     });
 
     it("function - should be a different number", () => {
@@ -183,15 +177,11 @@ describe("Cache decorator with clearing", () => {
     });
 
     it("object - should be the same number", () => {
-        expect(test.getObjectComparison({ a: "test", b: 13 })).toEqual(
-            test.getObjectComparison({ a: "test", b: 13 })
-        );
+        expect(test.getObjectComparison({ a: "test", b: 13 })).toEqual(test.getObjectComparison({ a: "test", b: 13 }));
     });
 
     it("object - should be the same number", () => {
-        expect(
-            test.getObjectComparison({ e: [2, 1], d: { b: 1, a: 2 }, c: false, a: "test", b: 13 })
-        ).toEqual(
+        expect(test.getObjectComparison({ e: [2, 1], d: { b: 1, a: 2 }, c: false, a: "test", b: 13 })).toEqual(
             test.getObjectComparison({ a: "test", b: 13, c: false, d: { a: 2, b: 1 }, e: [1, 2] })
         );
     });

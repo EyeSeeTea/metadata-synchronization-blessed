@@ -30,9 +30,7 @@ export const groupPackageByModuleAndVersion = (packages: PackageItem[]) => {
 
         if (parent) {
             return acc.map(parentItem =>
-                parentItem.id === parentKey
-                    ? { ...parentItem, packages: [...parentItem.packages, item] }
-                    : parentItem
+                parentItem.id === parentKey ? { ...parentItem, packages: [...parentItem.packages, item] } : parentItem
             );
         } else {
             const newParent = {

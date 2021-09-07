@@ -5,27 +5,15 @@ import { DataSource } from "../../instance/entities/DataSource";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { FilterRule } from "../entities/FilterRule";
-import {
-    CategoryOptionCombo,
-    MetadataEntities,
-    MetadataEntity,
-    MetadataPackage,
-} from "../entities/MetadataEntities";
+import { CategoryOptionCombo, MetadataEntities, MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
 import { MetadataImportParams } from "../entities/MetadataSynchronizationParams";
 
 export interface MetadataRepositoryConstructor {
-    new (
-        instance: DataSource,
-        transformationRepository: TransformationRepository
-    ): MetadataRepository;
+    new (instance: DataSource, transformationRepository: TransformationRepository): MetadataRepository;
 }
 
 export interface MetadataRepository {
-    getMetadataByIds<T>(
-        ids: Id[],
-        fields?: object | string,
-        includeDefaults?: boolean
-    ): Promise<MetadataPackage<T>>;
+    getMetadataByIds<T>(ids: Id[], fields?: object | string, includeDefaults?: boolean): Promise<MetadataPackage<T>>;
     getByFilterRules(filterRules: FilterRule[]): Promise<Id[]>;
     getDefaultIds(filter?: string): Promise<string[]>;
     getCategoryOptionCombos(): Promise<
@@ -36,15 +24,9 @@ export interface MetadataRepository {
     listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]>;
     lookupSimilar(query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>>;
 
-    save(
-        metadata: MetadataPackage,
-        additionalParams?: MetadataImportParams
-    ): Promise<SynchronizationResult>;
+    save(metadata: MetadataPackage, additionalParams?: MetadataImportParams): Promise<SynchronizationResult>;
 
-    remove(
-        metadata: MetadataPackage<Ref>,
-        additionalParams?: MetadataImportParams
-    ): Promise<SynchronizationResult>;
+    remove(metadata: MetadataPackage<Ref>, additionalParams?: MetadataImportParams): Promise<SynchronizationResult>;
 }
 
 export interface ListMetadataParams {

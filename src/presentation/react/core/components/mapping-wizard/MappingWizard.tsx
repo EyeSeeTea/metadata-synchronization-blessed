@@ -3,10 +3,7 @@ import { ConfirmationDialog, Wizard, WizardStep } from "@eyeseetea/d2-ui-compone
 import _ from "lodash";
 import React, { useState } from "react";
 import { DataSource } from "../../../../../domain/instance/entities/DataSource";
-import {
-    MetadataMapping,
-    MetadataMappingDictionary,
-} from "../../../../../domain/mapping/entities/MetadataMapping";
+import { MetadataMapping, MetadataMappingDictionary } from "../../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../../locales";
 import { MetadataType } from "../../../../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
@@ -50,11 +47,7 @@ const MappingWizard: React.FC<MappingWizardProps> = ({
 }) => {
     const { mappingPath, type, element } = config;
 
-    const { mappedId = "", mapping = {} }: MetadataMapping = _.get(
-        instanceMapping,
-        mappingPath,
-        {}
-    );
+    const { mappedId = "", mapping = {} }: MetadataMapping = _.get(instanceMapping, mappingPath, {});
 
     const mappingKeys = _(mapping).mapValues(Object.keys).values().flatten().value();
 

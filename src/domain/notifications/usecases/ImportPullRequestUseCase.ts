@@ -7,10 +7,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { AppNotification } from "../entities/Notification";
-import {
-    PullRequestStatus,
-    ReceivedPullRequestNotification,
-} from "../entities/PullRequestNotification";
+import { PullRequestStatus, ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
 
 export type ImportPullRequestError =
     | "INSTANCE_NOT_FOUND"
@@ -24,12 +21,8 @@ export type ImportPullRequestError =
 export class ImportPullRequestUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
-    public async execute(
-        notificationId: string
-    ): Promise<Either<ImportPullRequestError, SynchronizationResult>> {
-        const localStorageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+    public async execute(notificationId: string): Promise<Either<ImportPullRequestError, SynchronizationResult>> {
+        const localStorageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
         const notification = await this.getNotification(this.localInstance, notificationId);
         if (!notification) return Either.error("NOTIFICATION_NOT_FOUND");
@@ -38,18 +31,12 @@ export class ImportPullRequestUseCase implements UseCase {
         const remoteInstance = await this.getInstanceById(notification.instance.id);
         if (!remoteInstance) return Either.error("INSTANCE_NOT_FOUND");
 
-        const remoteStorageClient = await this.repositoryFactory
-            .configRepository(remoteInstance)
-            .getStorageClient();
+        const remoteStorageClient = await this.repositoryFactory.configRepository(remoteInstance).getStorageClient();
 
-        const remoteNotification = await this.getNotification(
-            remoteInstance,
-            notification.remoteNotification
-        );
+        const remoteNotification = await this.getNotification(remoteInstance, notification.remoteNotification);
 
         if (!remoteNotification) return Either.error("REMOTE_NOTIFICATION_NOT_FOUND");
-        if (remoteNotification.type !== "received-pull-request")
-            return Either.error("REMOTE_INVALID_NOTIFICATION");
+        if (remoteNotification.type !== "received-pull-request") return Either.error("REMOTE_INVALID_NOTIFICATION");
         if (remoteNotification.status === "IMPORTED") return Either.error("ALREADY_IMPORTED");
         if (remoteNotification.status === "PENDING" || remoteNotification.status === "REJECTED")
             return Either.error("NOT_APPROVED");
@@ -58,8 +45,7 @@ export class ImportPullRequestUseCase implements UseCase {
             .metadataRepository(this.localInstance)
             .save(remoteNotification.payload);
 
-        const status: PullRequestStatus =
-            result.status === "SUCCESS" ? "IMPORTED" : "IMPORTED_WITH_ERRORS";
+        const status: PullRequestStatus = result.status === "SUCCESS" ? "IMPORTED" : "IMPORTED_WITH_ERRORS";
 
         const payload = status === "IMPORTED" ? {} : remoteNotification.payload;
 
@@ -89,32 +75,15 @@ export class ImportPullRequestUseCase implements UseCase {
         return this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
     }
 
-    private async getNotification(
-        instance: Instance,
-        id: string
-    ): Promise<AppNotification | undefined> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+    private async getNotification(instance: Instance, id: string): Promise<AppNotification | undefined> {
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
-        return await storageClient.getObjectInCollection<AppNotification>(
-            Namespace.NOTIFICATIONS,
-            id
-        );
+        return await storageClient.getObjectInCollection<AppNotification>(Namespace.NOTIFICATIONS, id);
     }
 
     private async sendMessage(
         instance: Instance,
-        {
-            id,
-            subject,
-            text,
-            owner,
-            instance: origin,
-            users,
-            userGroups,
-            selectedIds,
-        }: ReceivedPullRequestNotification,
+        { id, subject, text, owner, instance: origin, users, userGroups, selectedIds }: ReceivedPullRequestNotification,
         title: string
     ): Promise<void> {
         const recipients = [...users, ...userGroups].map(({ name }) => name);
@@ -138,13 +107,9 @@ export class ImportPullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const storageClient = await this.repositoryFactory
-            .configRepository(instance)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
 
-        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(
-            Namespace.RESPONSIBLES
-        );
+        const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
         const metadataResponsibles = responsibles.filter(({ id }) => ids.includes(id));
 

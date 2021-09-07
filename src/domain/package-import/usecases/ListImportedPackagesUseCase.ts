@@ -11,14 +11,10 @@ export class ListImportedPackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<Either<ListImportedPackageError, ImportedPackageData[]>> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
 
         try {
-            const items = await storageClient.listObjectsInCollection<ImportedPackageData>(
-                Namespace.IMPORTEDPACKAGES
-            );
+            const items = await storageClient.listObjectsInCollection<ImportedPackageData>(Namespace.IMPORTEDPACKAGES);
 
             return Either.success(items);
         } catch (error) {

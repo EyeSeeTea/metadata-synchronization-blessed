@@ -27,10 +27,7 @@ export class MappingMapper {
     public applyMapping(payload: MetadataPackage) {
         return _.mapValues(payload, (items, model) => {
             const collectionName = modelFactory(model).getCollectionName();
-            const properties = _.keyBy(
-                this.api.models[collectionName]?.schema.properties,
-                "fieldName"
-            );
+            const properties = _.keyBy(this.api.models[collectionName]?.schema.properties, "fieldName");
 
             return items?.map((object: any) => {
                 if (typeof object !== "object") return object;
@@ -45,9 +42,7 @@ export class MappingMapper {
                     }
 
                     if (itemPropertyType === "REFERENCE" && Array.isArray(value)) {
-                        return value.map(item =>
-                            this.mapReference({ parent: model, key, object: item })
-                        );
+                        return value.map(item => this.mapReference({ parent: model, key, object: item }));
                     }
 
                     if (propertyType === "COMPLEX" || itemPropertyType === "COMPLEX") {
@@ -74,27 +69,19 @@ export class MappingMapper {
         });
     }
 
-    private mapReference<T extends Ref>({
-        parent,
-        key,
-        object,
-    }: {
-        parent?: string;
-        key: string;
-        object: T;
-    }): T {
+    private mapReference<T extends Ref>({ parent, key, object }: { parent?: string; key: string; object: T }): T {
         const modelName = cleanToModelName(this.api, key, parent);
         if (!modelName) return object;
 
         const mappedId = this.lookup(object.id) ?? object.id;
 
         if (modelName === "indicators") {
-            const indicator = (object as unknown) as Partial<Indicator>;
+            const indicator = object as unknown as Partial<Indicator>;
             const numerator = this.mapExpression("indicator", indicator.numerator);
             const denominator = this.mapExpression("indicator", indicator.denominator);
             return { ...object, id: mappedId, numerator, denominator };
         } else if (modelName === "programIndicators") {
-            const indicator = (object as unknown) as Partial<ProgramIndicator>;
+            const indicator = object as unknown as Partial<ProgramIndicator>;
             const expression = this.mapExpression("programIndicator", indicator.expression);
             const filter = this.mapExpression("programIndicator", indicator.filter);
             return { ...object, id: mappedId, expression, filter };
@@ -103,10 +90,7 @@ export class MappingMapper {
         return { ...object, id: mappedId };
     }
 
-    private mapExpression(
-        type: ExpressionType,
-        expression: string | undefined
-    ): string | undefined {
+    private mapExpression(type: ExpressionType, expression: string | undefined): string | undefined {
         if (!expression) return undefined;
 
         const config = ExpressionParser.parse(type, expression).value.data ?? [];
@@ -162,9 +146,7 @@ export class MappingMapper {
             }
             case "programDataElement": {
                 const { mappedId: program = expression.program } =
-                    (this.mapping["eventPrograms"] &&
-                        this.mapping["eventPrograms"][expression.program]) ??
-                    {};
+                    (this.mapping["eventPrograms"] && this.mapping["eventPrograms"][expression.program]) ?? {};
 
                 const dataElementId = _.keys(this.mapping["programDataElements"]).find(id => {
                     const parts = id.split("-");

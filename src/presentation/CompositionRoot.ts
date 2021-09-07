@@ -132,15 +132,8 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
         this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
         this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
-        this.repositoryFactory.bind(
-            Repositories.MetadataRepository,
-            MetadataJSONRepository,
-            "json"
-        );
-        this.repositoryFactory.bind(
-            Repositories.TransformationRepository,
-            TransformationD2ApiRepository
-        );
+        this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
+        this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
     }
 
     @cache()
@@ -164,10 +157,7 @@ export class CompositionRoot {
         return {
             ...getExecute({
                 prepare: new PrepareSyncUseCase(this.repositoryFactory, this.localInstance),
-                createPullRequest: new CreatePullRequestUseCase(
-                    this.repositoryFactory,
-                    this.localInstance
-                ),
+                createPullRequest: new CreatePullRequestUseCase(this.repositoryFactory, this.localInstance),
             }),
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(builder, this.repositoryFactory, this.localInstance),
@@ -265,22 +255,10 @@ export class CompositionRoot {
     public get notifications() {
         return getExecute({
             list: new ListNotificationsUseCase(this.repositoryFactory, this.localInstance),
-            updatePullRequestStatus: new UpdatePullRequestStatusUseCase(
-                this.repositoryFactory,
-                this.localInstance
-            ),
-            markReadNotifications: new MarkReadNotificationsUseCase(
-                this.repositoryFactory,
-                this.localInstance
-            ),
-            importPullRequest: new ImportPullRequestUseCase(
-                this.repositoryFactory,
-                this.localInstance
-            ),
-            cancelPullRequest: new CancelPullRequestUseCase(
-                this.repositoryFactory,
-                this.localInstance
-            ),
+            updatePullRequestStatus: new UpdatePullRequestStatusUseCase(this.repositoryFactory, this.localInstance),
+            markReadNotifications: new MarkReadNotificationsUseCase(this.repositoryFactory, this.localInstance),
+            importPullRequest: new ImportPullRequestUseCase(this.repositoryFactory, this.localInstance),
+            cancelPullRequest: new CancelPullRequestUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -336,10 +314,7 @@ export class CompositionRoot {
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
-            downloadPayloads: new DownloadPayloadUseCase(
-                this.repositoryFactory,
-                this.localInstance
-            ),
+            downloadPayloads: new DownloadPayloadUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -352,11 +327,7 @@ export class CompositionRoot {
             get: new GetSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             readFiles: new ReadSyncRuleFilesUseCase(this.repositoryFactory, this.localInstance),
             export: new ExportSyncRuleUseCase(this.repositoryFactory, this.localInstance),
-            downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(
-                this,
-                this.repositoryFactory,
-                this.localInstance
-            ),
+            downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(this, this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -372,10 +343,7 @@ export class CompositionRoot {
     public get migrations() {
         return getExecute({
             run: new RunMigrationsUseCase(this.repositoryFactory, this.localInstance),
-            getVersions: new GetMigrationVersionsUseCase(
-                this.repositoryFactory,
-                this.localInstance
-            ),
+            getVersions: new GetMigrationVersionsUseCase(this.repositoryFactory, this.localInstance),
             hasPending: new HasPendingMigrationsUseCase(this.repositoryFactory, this.localInstance),
         });
     }

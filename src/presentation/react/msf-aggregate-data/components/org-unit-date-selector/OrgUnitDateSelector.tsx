@@ -87,9 +87,7 @@ export const OrgUnitDateSelector: React.FC<OrgUnitDateSelectorProps> = React.mem
                                 <Picker
                                     label={i18n.t("Minimum date")}
                                     value={projectMinimumDates[orgUnitPath]?.date}
-                                    onChange={(date: Date | null) =>
-                                        addProjectMinimumDate(orgUnitPath, date)
-                                    }
+                                    onChange={(date: Date | null) => addProjectMinimumDate(orgUnitPath, date)}
                                 />
                             </React.Fragment>
                         ))}

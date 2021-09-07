@@ -1,6 +1,5 @@
 import { FormControlLabel, Switch } from "@material-ui/core";
 import _ from "lodash";
-import React from "react";
 
 interface InputParameters {
     disabled?: boolean;
@@ -10,13 +9,7 @@ interface InputParameters {
     value: boolean;
 }
 
-export const Toggle = ({
-    label,
-    onChange = _.noop,
-    onValueChange = _.noop,
-    value,
-    disabled,
-}: InputParameters) => (
+export const Toggle = ({ label, onChange = _.noop, onValueChange = _.noop, value, disabled }: InputParameters) => (
     <FormControlLabel
         control={
             <Switch

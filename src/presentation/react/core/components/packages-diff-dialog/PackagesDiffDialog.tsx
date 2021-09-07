@@ -4,10 +4,7 @@ import { makeStyles } from "@material-ui/styles";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
-import {
-    MetadataPackageDiff,
-    ModelDiff,
-} from "../../../../../domain/packages/entities/MetadataPackageDiff";
+import { MetadataPackageDiff, ModelDiff } from "../../../../../domain/packages/entities/MetadataPackageDiff";
 import { Store } from "../../../../../domain/stores/entities/Store";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
@@ -37,26 +34,16 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
     const showImportButton = !packageBase;
 
     useEffect(() => {
-        compositionRoot.packages
-            .diff(packageBase?.id, packageMerge.id, remoteStore?.id, remoteInstance)
-            .then(res => {
-                res.match({
-                    error: msg => {
-                        snackbar.error(i18n.t("Cannot get data from remote instance") + ": " + msg);
-                        onClose();
-                    },
-                    success: setMetadataDiff,
-                });
+        compositionRoot.packages.diff(packageBase?.id, packageMerge.id, remoteStore?.id, remoteInstance).then(res => {
+            res.match({
+                error: msg => {
+                    snackbar.error(i18n.t("Cannot get data from remote instance") + ": " + msg);
+                    onClose();
+                },
+                success: setMetadataDiff,
             });
-    }, [
-        compositionRoot,
-        packageBase,
-        packageMerge,
-        remoteStore,
-        remoteInstance,
-        onClose,
-        snackbar,
-    ]);
+        });
+    }, [compositionRoot, packageBase, packageMerge, remoteStore, remoteInstance, onClose, snackbar]);
 
     const hasChanges = metadataDiff && metadataDiff.hasChanges;
     const packageName = `${packageMerge.name} (${remoteInstance?.name ?? "Store"})`;
@@ -79,11 +66,7 @@ export const PackagesDiffDialog: React.FC<PackagesDiffDialogProps> = props => {
                 cancelText={i18n.t("Close")}
                 saveText={i18n.t("Import")}
             >
-                {metadataDiff ? (
-                    <MetadataDiffTable metadataDiff={metadataDiff.changes} />
-                ) : (
-                    <LinearProgress />
-                )}
+                {metadataDiff ? <MetadataDiffTable metadataDiff={metadataDiff.changes} /> : <LinearProgress />}
             </ConfirmationDialog>
 
             {!!syncReport && <SyncSummary report={syncReport} onClose={closeSyncReport} />}
@@ -101,10 +84,9 @@ export const MetadataDiffTable: React.FC<{
         <ul>
             {_.map(metadataDiff, (modelDiff, model) => (
                 <li key={model}>
-                    <h3 className={classes.modelTitle}>{model}</h3>: {modelDiff.total}{" "}
-                    {i18n.t("objects")} ({i18n.t("Unmodified")}: {modelDiff.unmodified.length},{" "}
-                    {i18n.t("New")}: {modelDiff.created.length}, {i18n.t("Updated")}:{" "}
-                    {modelDiff.updates.length})
+                    <h3 className={classes.modelTitle}>{model}</h3>: {modelDiff.total} {i18n.t("objects")} (
+                    {i18n.t("Unmodified")}: {modelDiff.unmodified.length}, {i18n.t("New")}: {modelDiff.created.length},{" "}
+                    {i18n.t("Updated")}: {modelDiff.updates.length})
                     <ModelDiffList modelDiff={modelDiff} />
                 </li>
             ))}

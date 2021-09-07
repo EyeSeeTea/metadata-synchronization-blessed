@@ -3,13 +3,7 @@ import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { BaseNotification } from "./Notification";
 
-export type PullRequestStatus =
-    | "PENDING"
-    | "APPROVED"
-    | "REJECTED"
-    | "IMPORTED"
-    | "IMPORTED_WITH_ERRORS"
-    | "CANCELLED";
+export type PullRequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "IMPORTED" | "IMPORTED_WITH_ERRORS" | "CANCELLED";
 
 export interface PullRequestNotification extends BaseNotification {
     syncType: SynchronizationType;
@@ -29,10 +23,7 @@ export interface ReceivedPullRequestNotification extends PullRequestNotification
 
 export class SentPullRequestNotification implements SentPullRequestNotification {
     static create(
-        props: Omit<
-            SentPullRequestNotification,
-            "id" | "notification" | "type" | "read" | "created" | "status"
-        >
+        props: Omit<SentPullRequestNotification, "id" | "notification" | "type" | "read" | "created" | "status">
     ): SentPullRequestNotification {
         return {
             ...props,
@@ -47,10 +38,7 @@ export class SentPullRequestNotification implements SentPullRequestNotification 
 
 export class ReceivedPullRequestNotification implements ReceivedPullRequestNotification {
     static create(
-        props: Omit<
-            ReceivedPullRequestNotification,
-            "id" | "notification" | "type" | "read" | "created" | "status"
-        >
+        props: Omit<ReceivedPullRequestNotification, "id" | "notification" | "type" | "read" | "created" | "status">
     ): ReceivedPullRequestNotification {
         return {
             ...props,

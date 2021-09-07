@@ -1,10 +1,7 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import {
-    Repositories,
-    RepositoryFactory,
-} from "../../../../domain/common/factories/RepositoryFactory";
+import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
@@ -106,24 +103,21 @@ describe("Sync metadata", () => {
             id: "Db5532sXKXT",
         }));
 
-        local.get(
-            "/dataStore/metadata-synchronization/instances-DESTINATION/metaData",
-            async () => ({
-                created: "2021-03-30T01:59:59.191",
-                lastUpdated: "2021-04-20T09:34:00.780",
-                externalAccess: false,
-                publicAccess: "rw------",
-                user: { id: "H4atNsEuKxP" },
-                userGroupAccesses: [],
-                userAccesses: [],
-                lastUpdatedBy: { id: "s5EVHUwoFKu" },
-                namespace: "metadata-synchronization",
-                key: "instances-DESTINATION",
-                value: "",
-                favorite: false,
-                id: "Db5532sXKX1",
-            })
-        );
+        local.get("/dataStore/metadata-synchronization/instances-DESTINATION/metaData", async () => ({
+            created: "2021-03-30T01:59:59.191",
+            lastUpdated: "2021-04-20T09:34:00.780",
+            externalAccess: false,
+            publicAccess: "rw------",
+            user: { id: "H4atNsEuKxP" },
+            userGroupAccesses: [],
+            userAccesses: [],
+            lastUpdatedBy: { id: "s5EVHUwoFKu" },
+            namespace: "metadata-synchronization",
+            key: "instances-DESTINATION",
+            value: "",
+            favorite: false,
+            id: "Db5532sXKX1",
+        }));
 
         const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.metadata.insert(JSON.parse(request.requestBody));

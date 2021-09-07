@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import {
@@ -88,9 +88,7 @@ const buildSummaryTable = (stats: SynchronizationStats[]) => {
                         <TableCell>{updated}</TableCell>
                         <TableCell>{deleted}</TableCell>
                         <TableCell>{ignored}</TableCell>
-                        <TableCell>
-                            {total || _.sum([imported, deleted, ignored, updated])}
-                        </TableCell>
+                        <TableCell>{total || _.sum([imported, deleted, ignored, updated])}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
@@ -223,20 +221,7 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
         >
             <DialogContent>
                 {results.map(
-                    (
-                        {
-                            origin,
-                            instance,
-                            status,
-                            typeStats = [],
-                            stats,
-                            message,
-                            errors,
-                            type,
-                            originPackage,
-                        },
-                        i
-                    ) => (
+                    ({ origin, instance, status, typeStats = [], stats, message, errors, type, originPackage }, i) => (
                         <Accordion
                             defaultExpanded={results.length === 1}
                             className={classes.accordion}
@@ -248,8 +233,7 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
                                     <br />
                                     {origin && `${i18n.t("Origin")}: ${getOriginName(origin)}`}
                                     {origin && <br />}
-                                    {originPackage &&
-                                        `${i18n.t("Origin package")}: ${originPackage.name}`}
+                                    {originPackage && `${i18n.t("Origin package")}: ${originPackage.name}`}
                                     {originPackage && <br />}
                                     {`${i18n.t("Destination instance")}: ${instance.name}`}
                                 </Typography>
@@ -271,19 +255,14 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
 
                             {stats && (
                                 <AccordionDetails className={classes.accordionDetails}>
-                                    {buildSummaryTable([
-                                        ...typeStats,
-                                        { ...stats, type: i18n.t("Total") },
-                                    ])}
+                                    {buildSummaryTable([...typeStats, { ...stats, type: i18n.t("Total") }])}
                                 </AccordionDetails>
                             )}
 
                             {errors && errors.length > 0 && (
                                 <div>
                                     <AccordionDetails className={classes.accordionDetails}>
-                                        <Typography variant="overline">
-                                            {i18n.t("Messages")}
-                                        </Typography>
+                                        <Typography variant="overline">{i18n.t("Messages")}</Typography>
                                     </AccordionDetails>
                                     <AccordionDetails className={classes.accordionDetails}>
                                         {buildMessageTable(_.take(errors, 10))}
@@ -297,9 +276,7 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
                 {report.dataStats && (
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography className={classes.accordionHeading1}>
-                                {i18n.t("Data Statistics")}
-                            </Typography>
+                            <Typography className={classes.accordionHeading1}>{i18n.t("Data Statistics")}</Typography>
                         </AccordionSummary>
 
                         <AccordionDetails>
@@ -310,17 +287,11 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography className={classes.accordionHeading1}>
-                            {i18n.t("JSON Response")}
-                        </Typography>
+                        <Typography className={classes.accordionHeading1}>{i18n.t("JSON Response")}</Typography>
                     </AccordionSummary>
 
                     <AccordionDetails>
-                        <ReactJson
-                            src={{ ...report, results }}
-                            collapsed={2}
-                            enableClipboard={false}
-                        />
+                        <ReactJson src={{ ...report, results }} collapsed={2} enableClipboard={false} />
                     </AccordionDetails>
                 </Accordion>
             </DialogContent>

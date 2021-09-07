@@ -1,14 +1,8 @@
 import _ from "lodash";
 import { D2Model } from "../../../models/dhis/default";
-import {
-    extractChildrenFromRules,
-    extractParentsFromRule,
-} from "../../../utils/metadataIncludeExclude";
+import { extractChildrenFromRules, extractParentsFromRule } from "../../../utils/metadataIncludeExclude";
 import { ModelValidation } from "../../common/entities/Validations";
-import {
-    ExcludeIncludeRules,
-    MetadataIncludeExcludeRules,
-} from "../../metadata/entities/MetadataExcludeIncludeRules";
+import { ExcludeIncludeRules, MetadataIncludeExcludeRules } from "../../metadata/entities/MetadataExcludeIncludeRules";
 import { SynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
 import { BaseModule, GenericModule } from "./Module";
 
@@ -84,15 +78,10 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
     }
 
     public moveRuleFromExcludeToInclude(type: string, rulesToInclude: string[]): MetadataModule {
-        const {
-            includeRules: oldIncludeRules,
-            excludeRules: oldExcludeRules,
-        } = this.metadataIncludeExcludeRules[type];
+        const { includeRules: oldIncludeRules, excludeRules: oldExcludeRules } = this.metadataIncludeExcludeRules[type];
 
         if (_.difference(rulesToInclude, oldExcludeRules).length > 0) {
-            throw Error(
-                "Rules error: It's not possible move rules that do not exist in exclude to include"
-            );
+            throw Error("Rules error: It's not possible move rules that do not exist in exclude to include");
         }
 
         const rulesToIncludeWithParents = _(rulesToInclude)
@@ -111,15 +100,10 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
     }
 
     public moveRuleFromIncludeToExclude(type: string, rulesToExclude: string[]): MetadataModule {
-        const {
-            includeRules: oldIncludeRules,
-            excludeRules: oldExcludeRules,
-        } = this.metadataIncludeExcludeRules[type];
+        const { includeRules: oldIncludeRules, excludeRules: oldExcludeRules } = this.metadataIncludeExcludeRules[type];
 
         if (_.difference(rulesToExclude, oldIncludeRules).length > 0) {
-            throw Error(
-                "Rules error: It's not possible move rules that do not exist in include to exclude"
-            );
+            throw Error("Rules error: It's not possible move rules that do not exist in include to exclude");
         }
 
         const rulesToExcludeWithChildren = _(rulesToExclude)
@@ -130,9 +114,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             .value();
 
         const excludeIncludeRules = {
-            includeRules: oldIncludeRules.filter(
-                rule => !rulesToExcludeWithChildren.includes(rule)
-            ),
+            includeRules: oldIncludeRules.filter(rule => !rulesToExcludeWithChildren.includes(rule)),
             excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
         };
 
@@ -161,10 +143,7 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
         };
     };
 
-    private updateIncludeExcludeRules(
-        type: string,
-        excludeIncludeRules: ExcludeIncludeRules
-    ): MetadataModule {
+    private updateIncludeExcludeRules(type: string, excludeIncludeRules: ExcludeIncludeRules): MetadataModule {
         const metadataIncludeExcludeRules = {
             ...this.metadataIncludeExcludeRules,
             [type]: excludeIncludeRules,

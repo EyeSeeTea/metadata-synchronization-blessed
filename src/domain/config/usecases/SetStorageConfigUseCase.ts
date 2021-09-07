@@ -6,8 +6,6 @@ export class SetStorageConfigUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(client: "dataStore" | "constant"): Promise<void> {
-        await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .changeStorageClient(client);
+        await this.repositoryFactory.configRepository(this.localInstance).changeStorageClient(client);
     }
 }

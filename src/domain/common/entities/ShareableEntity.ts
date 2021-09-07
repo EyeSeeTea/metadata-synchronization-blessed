@@ -8,12 +8,7 @@ export class ShareableEntity<T extends SharedRef> {
     public hasPermissions(permission: "read" | "write", currentUser: User) {
         if (currentUser.isGlobalAdmin) return true;
 
-        const {
-            publicAccess = "--------",
-            userAccesses = [],
-            userGroupAccesses = [],
-            user,
-        } = this.data;
+        const { publicAccess = "--------", userAccesses = [], userGroupAccesses = [], user } = this.data;
         const token = permission === "read" ? "r" : "w";
 
         const isUserOwner = user?.id === currentUser.id;
@@ -29,9 +24,6 @@ export class ShareableEntity<T extends SharedRef> {
                 .intersectionBy(currentUser.userGroups, "id")
                 .value().length > 0;
 
-        return (
-            currentUser.isAppConfigurator &&
-            (isUserOwner || isPublic || hasUserAccess || hasGroupAccess)
-        );
+        return currentUser.isAppConfigurator && (isUserOwner || isPublic || hasUserAccess || hasGroupAccess);
     }
 }

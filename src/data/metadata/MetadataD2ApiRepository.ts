@@ -95,15 +95,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     @cache()
     public async listMetadata(listParams: ListMetadataParams): Promise<ListMetadataResponse> {
-        const {
-            type,
-            fields = { $owner: true },
-            page,
-            pageSize,
-            order,
-            rootJunction,
-            ...params
-        } = listParams;
+        const { type, fields = { $owner: true }, page, pageSize, order, rootJunction, ...params } = listParams;
 
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
@@ -252,13 +244,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         }
     }
 
-    private async getListAll({
-        type,
-        fields,
-        filter,
-        order = defaultOrder,
-        rootJunction,
-    }: GetListAllOptions) {
+    private async getListAll({ type, fields, filter, order = defaultOrder, rootJunction }: GetListAllOptions) {
         const list = await this.getListGeneric({ type, fields, filter, order, rootJunction });
 
         if (list.useSingleApiRequest) {
@@ -596,10 +582,7 @@ type GetListGenericResponse =
     | { useSingleApiRequest: false; objects: unknown[] }
     | { useSingleApiRequest: true; order: string };
 
-function getIdFilter(
-    filter: GetListAllOptions["filter"],
-    maxIds: number
-): { inIds: string[]; value: object } | null {
+function getIdFilter(filter: GetListAllOptions["filter"], maxIds: number): { inIds: string[]; value: object } | null {
     const filterIdOrList = filter?.id;
     if (!filterIdOrList) return null;
 

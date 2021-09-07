@@ -31,10 +31,7 @@ export interface AggregatedRepository {
 
     getDimensions(): Promise<string[]>;
 
-    save(
-        data: AggregatedPackage,
-        additionalParams?: DataImportParams
-    ): Promise<SynchronizationResult>;
+    save(data: AggregatedPackage, additionalParams?: DataImportParams): Promise<SynchronizationResult>;
 
     delete(data: AggregatedPackage): Promise<SynchronizationResult>;
 }

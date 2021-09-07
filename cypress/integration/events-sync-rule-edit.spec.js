@@ -35,11 +35,7 @@ context("Event sync rule edit", function () {
     });
 
     it("should have the correct selected event", () => {
-        page.next()
-            .next()
-            .next()
-            .next()
-            .assertSelectedEvent(`${this.syncRule.builder.dataParams.events[0]}`);
+        page.next().next().next().next().assertSelectedEvent(`${this.syncRule.builder.dataParams.events[0]}`);
     });
 
     it("should have the correct selected org unit", () => {

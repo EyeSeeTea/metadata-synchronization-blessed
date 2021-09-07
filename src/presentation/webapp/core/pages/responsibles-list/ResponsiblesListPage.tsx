@@ -26,12 +26,9 @@ export const ResponsiblesListPage: React.FC = () => {
         history.push("/dashboard");
     }, [history]);
 
-    const updateRemoteInstance = useCallback(
-        (_type: InstanceSelectionOption, instance?: Instance | Store) => {
-            setRemoteInstance(instance !== undefined ? (instance as Instance) : undefined);
-        },
-        []
-    );
+    const updateRemoteInstance = useCallback((_type: InstanceSelectionOption, instance?: Instance | Store) => {
+        setRemoteInstance(instance !== undefined ? (instance as Instance) : undefined);
+    }, []);
 
     useEffect(() => {
         compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);

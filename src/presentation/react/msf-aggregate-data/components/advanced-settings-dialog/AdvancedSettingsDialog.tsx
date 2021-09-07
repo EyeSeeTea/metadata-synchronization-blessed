@@ -23,9 +23,7 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
     const classes = useStyles();
     const snackbar = useSnackbar();
 
-    const [objectWithPeriod, setObjectWithPeriod] = useState<ObjectWithPeriod | undefined>(
-        advancedSettings.period
-    );
+    const [objectWithPeriod, setObjectWithPeriod] = useState<ObjectWithPeriod | undefined>(advancedSettings.period);
 
     const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setObjectWithPeriod(event.target.checked ? undefined : { period: "FIXED" });
@@ -77,12 +75,7 @@ export const AdvancedSettingsDialog: React.FC<AdvancedSettingsDialogProps> = ({
             saveText={i18n.t("Save")}
         >
             <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={objectWithPeriod === undefined}
-                        onChange={handleCheckBoxChange}
-                    />
-                }
+                control={<Checkbox checked={objectWithPeriod === undefined} onChange={handleCheckBoxChange} />}
                 label={i18n.t("Use sync rules periods")}
             />
 
