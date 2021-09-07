@@ -25,7 +25,7 @@ export class ApplyMappingUseCase extends GenericMappingUseCase implements UseCas
 
             const newMapping = _.cloneDeep(mapping);
 
-            for (const { selection, mappingType, mappedId, global = false, overrides = {} } of updates) {
+            for (const { selection, mappingType, mappedId, mappedValue, global = false, overrides = {} } of updates) {
                 for (const id of selection) {
                     _.unset(newMapping, [mappingType, id]);
                     if (isChildrenMapping || mappedId) {
@@ -35,6 +35,7 @@ export class ApplyMappingUseCase extends GenericMappingUseCase implements UseCas
                             destinationInstance,
                             originalId: _.last(id.split("-")) ?? id,
                             mappedId: cleanOrgUnitPath(mappedId),
+                            mappedValue,
                         });
 
                         _.set(newMapping, [mappingType, id], {

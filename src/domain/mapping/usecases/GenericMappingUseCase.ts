@@ -1,6 +1,10 @@
 import _ from "lodash";
 import { OptionModel } from "../../../models/dhis/metadata";
-import { cleanNestedMappedId, EXCLUDED_KEY } from "../../../presentation/react/core/components/mapping-table/utils";
+import {
+    cleanNestedMappedId,
+    EXCLUDED_KEY,
+    MAPPED_BY_VALUE_KEY,
+} from "../../../presentation/react/core/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { IdentifiableRef, NamedRef } from "../../common/entities/Ref";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
@@ -43,15 +47,17 @@ export abstract class GenericMappingUseCase {
         destinationInstance,
         originalId,
         mappedId = "",
+        mappedValue,
     }: {
         metadata: Record<string, CombinedMetadata>;
         originInstance: DataSource;
         destinationInstance: DataSource;
         originalId: string;
         mappedId?: string;
+        mappedValue?: string;
     }): Promise<MetadataMapping> {
         const originMetadata = metadata[originalId];
-        if (mappedId === EXCLUDED_KEY)
+        if (mappedId === EXCLUDED_KEY) {
             return {
                 mappedId: EXCLUDED_KEY,
                 mappedCode: EXCLUDED_KEY,
@@ -60,6 +66,17 @@ export abstract class GenericMappingUseCase {
                 global: false,
                 mapping: {},
             };
+        } else if (mappedId === MAPPED_BY_VALUE_KEY) {
+            return {
+                mappedId: MAPPED_BY_VALUE_KEY,
+                mappedCode: MAPPED_BY_VALUE_KEY,
+                mappedValue,
+                code: originMetadata?.code,
+                conflicts: false,
+                global: false,
+                mapping: {},
+            };
+        }
 
         const metadataResponse = await this.getMetadata(destinationInstance, [mappedId]);
         const destinationMetadata = this.createMetadataDictionary(metadataResponse);
