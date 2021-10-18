@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-10-15T11:39:41.313Z\n"
-"PO-Revision-Date: 2021-10-15T11:39:41.313Z\n"
+"POT-Creation-Date: 2021-10-18T06:57:16.962Z\n"
+"PO-Revision-Date: 2021-10-18T06:57:16.962Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -282,10 +282,16 @@ msgstr ""
 msgid "Deleting History Notifications"
 msgstr ""
 
+msgid "Successfully deleted {{total}} history notifications"
+msgstr ""
+
 msgid "Synchronization status"
 msgstr ""
 
 msgid "Delete History Notifications?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{total}} history notifications?"
 msgstr ""
 
 msgid "Ok"
@@ -1599,6 +1605,9 @@ msgstr ""
 msgid "Failed to delete some instances"
 msgstr ""
 
+msgid "Successfully deleted {{total}} instances"
+msgstr ""
+
 msgid "Server name"
 msgstr ""
 
@@ -1615,6 +1624,9 @@ msgid "An error has ocurred editing share settings"
 msgstr ""
 
 msgid "Delete Instances?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{total}} instances?"
 msgstr ""
 
 msgid "Instance Settings"
@@ -1839,6 +1851,9 @@ msgstr ""
 msgid "Delete Stores?"
 msgstr ""
 
+msgid "Are you sure you want to delete {{total}} stores?"
+msgstr ""
+
 msgid "New {{type}} synchronization rule"
 msgstr ""
 
@@ -1884,6 +1899,9 @@ msgstr ""
 msgid "Deleting Sync Rules"
 msgstr ""
 
+msgid "Successfully deleted {{total}} rules"
+msgstr ""
+
 msgid "Synchronizing {{name}}"
 msgstr ""
 
@@ -1927,6 +1945,9 @@ msgid "Search by name"
 msgstr ""
 
 msgid "Delete Rules?"
+msgstr ""
+
+msgid "Are you sure you want to delete {{total}} rules?"
 msgstr ""
 
 msgid "Synchronization History"

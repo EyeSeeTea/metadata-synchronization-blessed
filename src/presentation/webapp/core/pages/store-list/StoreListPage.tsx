@@ -193,8 +193,8 @@ export const StoreListPage: React.FC = () => {
                     title={i18n.t("Delete Stores?")}
                     description={
                         toDelete
-                            ? i18n.t("Are you sure you want to delete {{count}} stores?", {
-                                  count: toDelete.length,
+                            ? i18n.t("Are you sure you want to delete {{total}} stores?", {
+                                  total: toDelete.length,
                               })
                             : ""
                     }
