@@ -45,7 +45,19 @@ To connect to the destination instance, it requires a configuration file. If no 
 $ yarn start
 ```
 
-This will open the development server for the main application at port 8081 and will connect to DHIS 2 instance http://localhost:8080.
+Now in your browser, go to `http://localhost:8081`.
+
+Notes:
+
+-   Requests to DHIS2 will be transparently proxied (see `src/setupProxy.js`) from `http://localhost:8081/dhis2/path` to `http://localhost:8080/path` to avoid CORS and cross-domain problems.
+
+-   The optional environment variable `REACT_APP_DHIS2_AUTH=USERNAME:PASSWORD` forces some credentials to be used by the proxy. This variable is usually not set, so the app has the same user logged in at `REACT_APP_DHIS2_BASE_URL`.
+
+-   The optional environment variable `REACT_APP_PROXY_LOG_LEVEL` can be helpful to debug the proxyfied requests (accepts: "warn" | "debug" | "info" | "error" | "silent")
+
+-   Create a file `.env.local` (copy it from `.env`) to customize environment variables so you can simply run `yarn start`.
+
+-   [why-did-you-render](https://github.com/welldone-software/why-did-you-render) is installed, but it does not work when using standard react scripts (`yarn start`). Instead, use `yarn craco-start` to debug re-renders with WDYR. Note that hot reloading does not work out-of-the-box with [craco](https://github.com/gsoft-inc/craco).
 
 ### Customization of the development server:
 
