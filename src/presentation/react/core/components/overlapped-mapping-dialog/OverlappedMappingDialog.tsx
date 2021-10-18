@@ -23,10 +23,10 @@ export const OverlappedMappingDialog = (props: OverlappedMappingDialogProps) => 
     const overlappedMappings = useMemo(
         () =>
             _(mapping.programDataElements)
-                .pickBy((_value, key) => key !== EXCLUDED_KEY && key.startsWith(program))
+                .pickBy((_value, key) => key.startsWith(program))
                 .mapValues((value, key) => ({ ...value, key }))
                 .groupBy(item => item?.mappedId)
-                .pickBy(value => value.length > 1)
+                .pickBy((value, key) => key !== EXCLUDED_KEY && value.length > 1)
                 .mapValues(value => value?.map(({ key }) => key) ?? [])
                 .value(),
         [mapping, program]
