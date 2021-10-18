@@ -28,7 +28,7 @@
         "axios": "0.23.0",
         "btoa": "1.2.1",
         "cronstrue": "1.119.0",
-        "cryptr": "6.0.2",
+        "cryptr": "4.0.2",
         "d2": "31.10.0",
         "d2-manifest": "1.0.0",
         "file-saver": "2.0.5",

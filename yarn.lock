@@ -5907,12 +5907,7 @@ crypto-random-string@^1.0.0:
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-1.0.0.tgz#a230f64f568310e1498009940790ec99545bca7e"
   integrity sha1-ojD2T1aDEOFJgAmUB5DsmVRbyn4=
 
-cryptr@6.0.2:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/cryptr/-/cryptr-6.0.2.tgz#3f9e97f825ffb93f425eb24068efbb6a652bf947"
-  integrity sha512-1TRHI4bmuLIB8WgkH9eeYXzhEg1T4tonO4vVaMBKKde8Dre51J68nAgTVXTwMYXAf7+mV2gBCkm/9wksjSb2sA==
-
-cryptr@^4.0.2:
+cryptr@4.0.2, cryptr@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/cryptr/-/cryptr-4.0.2.tgz#8a93b5ca7667d1a6131e396bab23a134ff1f5dc6"
   integrity sha512-gLTcYjmLGe0Kk1yyacvjNKvSdkWBNNgG2tDnbRQP7yE559x/RJLo/I3WAmwCXNXf/fzMHCNp9vDv3PCopZDpXw==
