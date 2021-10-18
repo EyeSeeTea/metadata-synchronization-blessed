@@ -77,7 +77,7 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
 
             onClose();
             snackbar.success(i18n.t("Pull request created"));
-        } catch (err) {
+        } catch (err: any) {
             snackbar.error(err.message);
         } finally {
             loading.reset();

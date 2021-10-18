@@ -37,7 +37,7 @@ export class SaveInstanceUseCase implements UseCase {
         try {
             const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
             return version;
-        } catch (error) {
+        } catch (error: any) {
             return instance.version;
         }
     }

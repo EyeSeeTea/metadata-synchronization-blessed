@@ -203,7 +203,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             }
 
             return this.cleanEventsImportResponse(result);
-        } catch (error) {
+        } catch (error: any) {
             if (error?.response?.data) {
                 return this.cleanEventsImportResponse(error.response.data);
             }

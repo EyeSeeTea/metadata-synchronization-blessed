@@ -17,7 +17,7 @@ export class SaveImportedPackagesUseCase implements UseCase {
             await storageClient.saveObjectsInCollection(Namespace.IMPORTEDPACKAGES, importedPackages);
 
             return Either.success(undefined);
-        } catch (error) {
+        } catch (error: any) {
             console.error({ error });
             return Either.error("UNEXPECTED_ERROR");
         }

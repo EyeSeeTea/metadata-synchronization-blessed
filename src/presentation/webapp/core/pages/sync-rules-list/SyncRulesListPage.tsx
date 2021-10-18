@@ -240,7 +240,7 @@ export const SyncRulesListPage: React.FC = () => {
             });
 
             loading.reset();
-        } catch (error) {
+        } catch (error: any) {
             loading.reset();
             if (error.response?.status === 403) {
                 snackbar.error(
@@ -390,7 +390,7 @@ export const SyncRulesListPage: React.FC = () => {
             setRefreshKey(Math.random());
 
             loading.reset();
-        } catch (error) {
+        } catch (error: any) {
             loading.reset();
             console.error(error);
             snackbar.error(i18n.t("An error has ocurred during the synchronization"));
@@ -499,7 +499,7 @@ export const SyncRulesListPage: React.FC = () => {
                         maxWidth: "lg",
                         fullWidth: true,
                     });
-                } catch (err) {
+                } catch (err: any) {
                     snackbar.error((err && err.message) || err.toString());
                 } finally {
                     loading.reset();

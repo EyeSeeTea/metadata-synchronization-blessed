@@ -107,7 +107,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                     )
                     .value(),
             };
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             return { dataValues: [] };
         }
@@ -253,9 +253,9 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                     .values()
                     .groupBy(({ mappedId }) => mappedId)
                     .pickBy((values, mappedId) => values.length > 1 && mappedId !== "DISABLED")
-                    .mapValues((values = [], mappedCategoryOption) => ({
+                    .mapValues((values, mappedCategoryOption) => ({
                         dataElement,
-                        categoryOptions: values.map(({ categoryOption }) => categoryOption),
+                        categoryOptions: values?.map(({ categoryOption }) => categoryOption) ?? [],
                         mappedOptionCombo: findOptionCombo(mappedCategoryOption, _.values(categoryCombos)[0]?.mappedId),
                     }))
                     .values()
@@ -316,7 +316,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             }
 
             return this.cleanAggregatedImportResponse(result);
-        } catch (error) {
+        } catch (error: any) {
             if (error?.response?.data) {
                 return this.cleanAggregatedImportResponse(error.response.data);
             }

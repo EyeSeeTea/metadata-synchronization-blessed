@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-09-07T19:05:23.568Z\n"
-"PO-Revision-Date: 2021-09-07T19:05:23.568Z\n"
+"POT-Creation-Date: 2021-10-15T11:39:41.313Z\n"
+"PO-Revision-Date: 2021-10-15T11:39:41.313Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -282,21 +282,11 @@ msgstr ""
 msgid "Deleting History Notifications"
 msgstr ""
 
-msgid "Successfully deleted {{count}} history notifications"
-msgid_plural "Successfully deleted {{count}} history notifications"
-msgstr[0] ""
-msgstr[1] ""
-
 msgid "Synchronization status"
 msgstr ""
 
 msgid "Delete History Notifications?"
 msgstr ""
-
-msgid "Are you sure you want to delete {{count}} history notifications?"
-msgid_plural "Are you sure you want to delete {{count}} history notifications?"
-msgstr[0] ""
-msgstr[1] ""
 
 msgid "Ok"
 msgstr ""
@@ -1609,11 +1599,6 @@ msgstr ""
 msgid "Failed to delete some instances"
 msgstr ""
 
-msgid "Successfully deleted {{count}} instances"
-msgid_plural "Successfully deleted {{count}} instances"
-msgstr[0] ""
-msgstr[1] ""
-
 msgid "Server name"
 msgstr ""
 
@@ -1631,11 +1616,6 @@ msgstr ""
 
 msgid "Delete Instances?"
 msgstr ""
-
-msgid "Are you sure you want to delete {{count}} instances?"
-msgid_plural "Are you sure you want to delete {{count}} instances?"
-msgstr[0] ""
-msgstr[1] ""
 
 msgid "Instance Settings"
 msgstr ""
@@ -1859,11 +1839,6 @@ msgstr ""
 msgid "Delete Stores?"
 msgstr ""
 
-msgid "Are you sure you want to delete {{count}} stores?"
-msgid_plural "Are you sure you want to delete {{count}} stores?"
-msgstr[0] ""
-msgstr[1] ""
-
 msgid "New {{type}} synchronization rule"
 msgstr ""
 
@@ -1909,11 +1884,6 @@ msgstr ""
 msgid "Deleting Sync Rules"
 msgstr ""
 
-msgid "Successfully deleted {{count}} rules"
-msgid_plural "Successfully deleted {{count}} rules"
-msgstr[0] ""
-msgstr[1] ""
-
 msgid "Synchronizing {{name}}"
 msgstr ""
 
@@ -1958,11 +1928,6 @@ msgstr ""
 
 msgid "Delete Rules?"
 msgstr ""
-
-msgid "Are you sure you want to delete {{count}} rules?"
-msgid_plural "Are you sure you want to delete {{count}} rules?"
-msgstr[0] ""
-msgstr[1] ""
 
 msgid "Synchronization History"
 msgstr ""

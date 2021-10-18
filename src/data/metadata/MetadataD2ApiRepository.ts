@@ -248,6 +248,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const list = await this.getListGeneric({ type, fields, filter, order, rootJunction });
 
         if (list.useSingleApiRequest) {
+            //@ts-ignore Type instantation is too deep
             const { objects } = await this.getApiModel(type)
                 .get({ paging: false, fields, filter, order: list.order })
                 .getData();
@@ -354,11 +355,11 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             }
 
             return this.cleanMetadataImportResponse(response, "metadata");
-        } catch (error) {
+        } catch (error: any) {
             if (error?.response?.data) {
                 try {
                     return this.cleanMetadataImportResponse(error.response.data, "metadata");
-                } catch (error) {
+                } catch (error: any) {
                     return {
                         status: "NETWORK ERROR",
                         instance: this.instance.toPublicObject(),
@@ -397,7 +398,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             }
 
             return this.cleanMetadataImportResponse(response, "deleted");
-        } catch (error) {
+        } catch (error: any) {
             if (error?.response?.data) {
                 return this.cleanMetadataImportResponse(error.response.data, "deleted");
             }

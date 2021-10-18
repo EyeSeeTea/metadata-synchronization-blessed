@@ -1,6 +1,6 @@
 import { useConfig } from "@dhis2/app-runtime";
 //@ts-ignore
-import { HeaderBar } from "@dhis2/ui-widgets";
+import { HeaderBar } from "@dhis2/ui";
 import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";

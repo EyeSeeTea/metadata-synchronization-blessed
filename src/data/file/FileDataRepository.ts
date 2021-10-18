@@ -40,7 +40,7 @@ export class FileDataRepository implements FileRepository {
         try {
             const text = await file.text();
             return JSON.parse(text) as ReturnType;
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             return undefined;
         }

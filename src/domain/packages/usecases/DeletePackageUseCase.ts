@@ -20,7 +20,7 @@ export class DeletePackageUseCase implements UseCase {
                 deleted: true,
                 contents: {},
             });
-        } catch (error) {
+        } catch (error: any) {
             return false;
         }
 

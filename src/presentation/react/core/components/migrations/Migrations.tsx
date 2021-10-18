@@ -63,7 +63,7 @@ const MigrationsDialog: React.FC<MigrationsRunnerProps> = ({ onFinish }) => {
             setState({ type: "migrating" });
             await compositionRoot.migrations.run(debug);
             setState({ type: "success" });
-        } catch (err) {
+        } catch (err: any) {
             debug({ message: "---" });
             debug({ message: `Error: ${err.message}` });
             debug({
