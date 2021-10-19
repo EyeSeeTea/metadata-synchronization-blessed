@@ -1,0 +1,13 @@
+{
+    "organisationUnits": {
+        "A5HZNrJc2ir": {
+            "code": "origin",
+            "global": false,
+            "mapping": {},
+            "mappedId": "DISABLED",
+            "conflicts": false,
+            "mappedCode": "DISABLED",
+            "mappedLevel": 3
+        }
+    }
+}

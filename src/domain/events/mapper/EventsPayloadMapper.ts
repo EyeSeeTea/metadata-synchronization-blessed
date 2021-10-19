@@ -26,9 +26,9 @@ export class EventsPayloadMapper implements PayloadMapper {
 
     public async mapPayload({ events: oldEvents }: EventsPackage): Promise<SynchronizationPayload> {
         const events = oldEvents
-            .map(dataValue =>
-                this.buildMappedDataValue(
-                    dataValue,
+            .map(event =>
+                this.buildMappedEvent(
+                    event,
                     this.mapping,
                     this.originCategoryOptionCombos,
                     this.destinationCategoryOptionCombos,
@@ -40,7 +40,7 @@ export class EventsPayloadMapper implements PayloadMapper {
         return { events };
     }
 
-    private buildMappedDataValue(
+    private buildMappedEvent(
         { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
         globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
