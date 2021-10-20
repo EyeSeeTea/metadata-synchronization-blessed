@@ -184,7 +184,7 @@ export class EventsPayloadMapper implements PayloadMapper {
 
     private isDisabledEvent(event: ProgramEvent | ProgramEventDataValue): boolean {
         return !_(event)
-            .pick(["orgUnit", "attributeOptionCombo", "dataElement", "value"])
+            .pick(["program", "orgUnit", "attributeOptionCombo", "dataElement", "value"])
             .values()
             .includes("DISABLED");
     }
