@@ -1,11 +1,12 @@
+import { command, option, run, string } from "cmd-ts";
 import "dotenv/config";
 import fs from "fs";
 import { configure, getLogger } from "log4js";
 import path from "path";
-import * as yargs from "yargs";
 import { Instance } from "../domain/instance/entities/Instance";
 import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
+import { ConfigModel, SchedulerConfig } from "./entities/SchedulerConfig";
 import Scheduler from "./scheduler";
 
 const development = process.env.NODE_ENV === "development";
@@ -18,20 +19,34 @@ configure({
     categories: { default: { appenders: ["file", "out"], level: development ? "all" : "debug" } },
 });
 
-// Root folder on "yarn start" is ./src, ask path to go back one level
-const rootFolder = development ? ".." : "";
-const { config } = yargs
-    .options({
-        config: {
-            type: "string",
-            alias: "c",
-            describe: "Configuration file",
-            default: path.join(__dirname, rootFolder, "app-config.json"),
+async function main() {
+    const cmd = command({
+        name: path.basename(__filename),
+        description: "Scheduler to execute predictors on multiple DHIS2 instances",
+        args: {
+            config: option({
+                type: string,
+                long: "config",
+                short: "c",
+                description: "Configuration file",
+            }),
         },
-    })
-    .coerce("config", path => {
-        return JSON.parse(fs.readFileSync(path, "utf8"));
-    }).argv;
+        handler: async args => {
+            try {
+                const text = fs.readFileSync(args.config, "utf8");
+                const contents = JSON.parse(text);
+                const config = ConfigModel.unsafeDecode(contents);
+                
+                await start(config);
+            } catch (err) {
+                getLogger("main").fatal(err);
+                process.exit(1);
+            }
+        },
+    });
+
+    run(cmd, process.argv.slice(2));
+}
 
 const checkMigrations = async (compositionRoot: CompositionRoot) => {
     if (await compositionRoot.migrations.hasPending()) {
@@ -40,7 +55,7 @@ const checkMigrations = async (compositionRoot: CompositionRoot) => {
     }
 };
 
-const start = async (): Promise<void> => {
+const start = async (config: SchedulerConfig): Promise<void> => {
     const { baseUrl, username, password, encryptionKey } = config;
     if (!baseUrl || !username || !password || !encryptionKey) {
         getLogger("main").fatal("Missing fields from configuration file");
@@ -70,4 +85,4 @@ const start = async (): Promise<void> => {
     new Scheduler(api, compositionRoot).initialize();
 };
 
-start().catch(console.error);
+main();
