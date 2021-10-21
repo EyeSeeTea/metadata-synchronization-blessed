@@ -11,11 +11,12 @@ import mappingProgram from "./data/event_program/mapping/mapping_program.json";
 import mappingDisabledProgram from "./data/event_program/mapping/mapping_disabled_program.json";
 import mappingDataElement from "./data/event_program/mapping/mapping_dataelement.json";
 import mappingDataElementAndGlobalDataElement from "./data/event_program/mapping/mapping_dataelement_and_global_dataelement.json";
+import mappingDisabledDataElement from "./data/event_program/mapping/mapping_disabled_dataelement.json";
+import mappingDisabledGlobalDataElement from "./data/event_program/mapping/mapping_disabled_global_dataelement.json";
 import mappingGlobalDataElement from "./data/event_program/mapping/mapping_global_dataelement.json";
 import mappingOptions from "./data/event_program/mapping/mapping_options.json";
 import mappingOptionsAndGlobalOptions from "./data/event_program/mapping/mapping_options_and_global_options.json";
 import mappingGlobalOptions from "./data/event_program/mapping/mapping_global_options.json";
-import mappingDisabledDataElement from "./data/event_program/mapping/mapping_disabled_dataelement.json";
 import mappingDisabledOptions from "./data/event_program/mapping/mapping_disabled_options.json";
 import mappingDisabledGlobalOptions from "./data/event_program/mapping/mapping_disabled_global_options.json";
 
@@ -106,6 +107,15 @@ describe("EventsPayloadMapper", () => {
         });
         it("should return the payload without the data value of disabled data element if mapping contain data element but disabled", async () => {
             const eventMapper = createEventsPayloadMapper(mappingDisabledDataElement, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventDisabledDataElementMapping);
+        });
+        it("should return the payload without the data value of disabled global data element if mapping contain global data element but disabled", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingDisabledGlobalDataElement, []);
 
             const payload = singleEvent as EventsPackage;
 
