@@ -1,0 +1,52 @@
+{
+    "options": {
+        "RnkuWU7N1Xz": {
+            "code": "A",
+            "global": true,
+            "mapping": {},
+            "mappedId": "bBbEcKGQh3j",
+            "conflicts": false,
+            "mappedCode": "AAA",
+            "mappedName": "A Global"
+        },
+        "TblWe7BZJMs": {
+            "code": "B",
+            "global": true,
+            "mapping": {},
+            "mappedId": "aAaEcKGQh3j",
+            "conflicts": false,
+            "mappedCode": "BBB",
+            "mappedName": "B Global"
+        }
+    },
+    "programDataElements": {
+        "u6pCofOY3O7-iv2t5GZRVOc-BwonwK3JDq4": {
+            "global": false,
+            "mapping": {
+                "options": {
+                    "RnkuWU7N1Xz": {
+                        "code": "A",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "lIt38I4jG5F",
+                        "conflicts": false,
+                        "mappedCode": "AA",
+                        "mappedName": "A Clone"
+                    },
+                    "TblWe7BZJMs": {
+                        "code": "B",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "yTgEcKGQh3j",
+                        "conflicts": false,
+                        "mappedCode": "BB",
+                        "mappedName": "B Clone"
+                    }
+                }
+            },
+            "mappedId": "Z8MHEKrZbWF",
+            "conflicts": false,
+            "mappedName": "Jorge DE 2 Clone"
+        }
+    }
+}
