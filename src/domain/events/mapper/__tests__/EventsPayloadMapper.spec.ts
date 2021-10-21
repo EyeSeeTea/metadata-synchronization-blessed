@@ -9,10 +9,14 @@ import mappingOrgUnits from "./data/event_program/mapping/mapping_orgUnits.json"
 import mappingDisabledOrgUnits from "./data/event_program/mapping/mapping_disabled_orgUnits.json";
 import mappingProgram from "./data/event_program/mapping/mapping_program.json";
 import mappingDisabledProgram from "./data/event_program/mapping/mapping_disabled_program.json";
+import mappingDataElement from "./data/event_program/mapping/mapping_dataelement.json";
+import mappingDisabledDataElement from "./data/event_program/mapping/mapping_disabled_dataelement.json";
 
-import singleEventWithoutMapping from "./data/event_program/expected/singleEvent_without_mapping.json";
-import singleEventOrgUnitsMapping from "./data/event_program/expected/singleEvent_orgUnits_mapping.json";
-import singleEventProgramMapping from "./data/event_program/expected/singleEvent_program_mapping.json";
+import eventWithoutMapping from "./data/event_program/expected/event_without_mapping.json";
+import eventOrgUnitsMapping from "./data/event_program/expected/event_orgUnits_mapping.json";
+import eventProgramMapping from "./data/event_program/expected/event_program_mapping.json";
+import eventDataElementMapping from "./data/event_program/expected/event_dataelement_mapping.json";
+import eventDisabledDataElementMapping from "./data/event_program/expected/event_disabled_dataelement_mapping.json";
 import emptyEvents from "./data/event_program/expected/empty_events.json";
 
 describe("EventsPayloadMapper", () => {
@@ -24,7 +28,7 @@ describe("EventsPayloadMapper", () => {
 
             const mappedPayload = await eventMapper.map(payload);
 
-            expect(mappedPayload).toEqual(singleEventWithoutMapping);
+            expect(mappedPayload).toEqual(eventWithoutMapping);
         });
         it("should return the payload with mapped orgUnit if mapping contain orgUnits", async () => {
             const eventMapper = createEventsPayloadMapper(mappingOrgUnits, []);
@@ -33,7 +37,7 @@ describe("EventsPayloadMapper", () => {
 
             const mappedPayload = await eventMapper.map(payload);
 
-            expect(mappedPayload).toEqual(singleEventOrgUnitsMapping);
+            expect(mappedPayload).toEqual(eventOrgUnitsMapping);
         });
         it("should return the payload with empty events if mapping contain orgUnits but disabled", async () => {
             const eventMapper = createEventsPayloadMapper(mappingDisabledOrgUnits, []);
@@ -51,7 +55,7 @@ describe("EventsPayloadMapper", () => {
 
             const mappedPayload = await eventMapper.map(payload);
 
-            expect(mappedPayload).toEqual(singleEventProgramMapping);
+            expect(mappedPayload).toEqual(eventProgramMapping);
         });
         it("should return the payload with empty events if mapping contain programs but disabled", async () => {
             const eventMapper = createEventsPayloadMapper(mappingDisabledProgram, []);
@@ -61,6 +65,24 @@ describe("EventsPayloadMapper", () => {
             const mappedPayload = await eventMapper.map(payload);
 
             expect(mappedPayload).toEqual(emptyEvents);
+        });
+        it("should return the payload with mapped data element if mapping contain data element", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingDataElement, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventDataElementMapping);
+        });
+        it("should return the payload without the data value of disabled data element if mapping contain data element but disabled", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingDisabledDataElement, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventDisabledDataElementMapping);
         });
     });
     describe("tracker program", () => {});
