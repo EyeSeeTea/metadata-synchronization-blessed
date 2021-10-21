@@ -175,7 +175,5 @@ export class Instance extends ShareableEntity<InstanceData> {
         { property: "password", validation: "hasText" },
     ];
 
-    private localInstanceValidations = (): ModelValidation[] => [
-        { property: "name", validation: "hasText" }
-    ];
+    private localInstanceValidations = (): ModelValidation[] => [{ property: "name", validation: "hasText" }];
 }
