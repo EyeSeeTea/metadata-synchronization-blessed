@@ -10,6 +10,8 @@ import mappingDisabledOrgUnits from "./data/event_program/mapping/mapping_disabl
 import mappingProgram from "./data/event_program/mapping/mapping_program.json";
 import mappingDisabledProgram from "./data/event_program/mapping/mapping_disabled_program.json";
 import mappingDataElement from "./data/event_program/mapping/mapping_dataelement.json";
+import mappingDataElementAndGlobalDataElement from "./data/event_program/mapping/mapping_dataelement_and_global_dataelement.json";
+import mappingGlobalDataElement from "./data/event_program/mapping/mapping_global_dataelement.json";
 import mappingOptions from "./data/event_program/mapping/mapping_options.json";
 import mappingOptionsAndGlobalOptions from "./data/event_program/mapping/mapping_options_and_global_options.json";
 import mappingGlobalOptions from "./data/event_program/mapping/mapping_global_options.json";
@@ -22,6 +24,7 @@ import eventWithoutMapping from "./data/event_program/expected/event_without_map
 import eventOrgUnitsMapping from "./data/event_program/expected/event_orgUnits_mapping.json";
 import eventProgramMapping from "./data/event_program/expected/event_program_mapping.json";
 import eventDataElementMapping from "./data/event_program/expected/event_dataelement_mapping.json";
+import eventGlobalDataElementMapping from "./data/event_program/expected/event_global_dataelement_mapping.json";
 import eventOptionsMapping from "./data/event_program/expected/event_options_mapping.json";
 import eventGlobalOptionsMapping from "./data/event_program/expected/event_global_options_mapping.json";
 import eventDisabledDataElementMapping from "./data/event_program/expected/event_disabled_dataelement_mapping.json";
@@ -82,6 +85,24 @@ describe("EventsPayloadMapper", () => {
             const mappedPayload = await eventMapper.map(payload);
 
             expect(mappedPayload).toEqual(eventDataElementMapping);
+        });
+        it("should return the payload with mapped data element by program if mapping contain data element and global data element", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingDataElementAndGlobalDataElement, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventDataElementMapping);
+        });
+        it("should return the payload with global mapped data element by program if mapping contain global data element", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingGlobalDataElement, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventGlobalDataElementMapping);
         });
         it("should return the payload without the data value of disabled data element if mapping contain data element but disabled", async () => {
             const eventMapper = createEventsPayloadMapper(mappingDisabledDataElement, []);
