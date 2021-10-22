@@ -16,6 +16,8 @@ import mappingDisabledDataElement from "./data/event_program/mapping/mapping_dis
 import mappingDisabledGlobalDataElement from "./data/event_program/mapping/mapping_disabled_global_dataelement.json";
 import mappingGlobalDataElement from "./data/event_program/mapping/mapping_global_dataelement.json";
 import mappingOptions from "./data/event_program/mapping/mapping_options.json";
+import mappingOptionByValue from "./data/event_program/mapping/mapping_option_by_value.json";
+import mappingGlobalOptionByValue from "./data/event_program/mapping/mapping_global_option_by_value.json";
 import mappingOptionsAndGlobalOptions from "./data/event_program/mapping/mapping_options_and_global_options.json";
 import mappingGlobalOptions from "./data/event_program/mapping/mapping_global_options.json";
 import mappingDisabledOptions from "./data/event_program/mapping/mapping_disabled_options.json";
@@ -30,6 +32,8 @@ import eventProgramStageMapping from "./data/event_program/expected/event_progra
 import eventDataElementMapping from "./data/event_program/expected/event_dataelement_mapping.json";
 import eventGlobalDataElementMapping from "./data/event_program/expected/event_global_dataelement_mapping.json";
 import eventOptionsMapping from "./data/event_program/expected/event_options_mapping.json";
+import eventOptionsMappingByValue from "./data/event_program/expected/event_options_mapping_by_value.json";
+import eventOptionsGlobalMappingByValue from "./data/event_program/expected/event_options_global_mapping_by_value.json";
 import eventGlobalOptionsMapping from "./data/event_program/expected/event_global_options_mapping.json";
 import eventDisabledDataElementMapping from "./data/event_program/expected/event_disabled_dataelement_mapping.json";
 import eventDisabledOptionsMapping from "./data/event_program/expected/event_disabled_options_mapping.json";
@@ -144,6 +148,24 @@ describe("EventsPayloadMapper", () => {
             const mappedPayload = await eventMapper.map(payload);
 
             expect(mappedPayload).toEqual(eventOptionsMapping);
+        });
+        it("should return the payload with mapped option by value if mapping contain option by value", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingOptionByValue, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventOptionsMappingByValue);
+        });
+        it("should return the payload with global mapped option by value if mapping contain global option by value", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingGlobalOptionByValue, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventOptionsGlobalMappingByValue);
         });
         it("should return the payload with mapped option value by DE if mapping contain option and global option", async () => {
             const eventMapper = createEventsPayloadMapper(mappingOptionsAndGlobalOptions, []);
