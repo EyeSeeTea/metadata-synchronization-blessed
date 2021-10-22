@@ -156,11 +156,11 @@ export const mapProgramDataElement = (
     dataElement: string,
     mapping: MetadataMappingDictionary
 ): MetadataMapping => {
-    const { programDataElements = {}, dataElements = {} } = mapping;
+    const { programDataElements = {} } = mapping;
     const complexId = `${program}-${programStage}-${dataElement}`;
     const candidate = programDataElements[complexId]?.mappedId
         ? programDataElements[complexId]
-        : dataElements[dataElement];
+        : programDataElements[dataElement];
 
     return candidate ?? {};
 };
