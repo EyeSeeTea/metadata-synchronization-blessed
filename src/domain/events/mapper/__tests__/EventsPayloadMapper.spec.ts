@@ -20,6 +20,7 @@ import mappingOptionsAndGlobalOptions from "./data/event_program/mapping/mapping
 import mappingGlobalOptions from "./data/event_program/mapping/mapping_global_options.json";
 import mappingDisabledOptions from "./data/event_program/mapping/mapping_disabled_options.json";
 import mappingDisabledGlobalOptions from "./data/event_program/mapping/mapping_disabled_global_options.json";
+import mappingProgramCategoryOptions from "./data/event_program/mapping/mapping_program_category_options.json";
 
 import emptyEvents from "./data/event_program/expected/empty_events.json";
 import eventWithoutMapping from "./data/event_program/expected/event_without_mapping.json";
@@ -32,6 +33,7 @@ import eventOptionsMapping from "./data/event_program/expected/event_options_map
 import eventGlobalOptionsMapping from "./data/event_program/expected/event_global_options_mapping.json";
 import eventDisabledDataElementMapping from "./data/event_program/expected/event_disabled_dataelement_mapping.json";
 import eventDisabledOptionsMapping from "./data/event_program/expected/event_disabled_options_mapping.json";
+import eventProgramCategoryOptionMapping from "./data/event_program/expected/event_program_category_options_mapping.json";
 
 describe("EventsPayloadMapper", () => {
     describe("event program and tracker program", () => {
@@ -179,6 +181,15 @@ describe("EventsPayloadMapper", () => {
 
             expect(mappedPayload).toEqual(eventDisabledOptionsMapping);
         });
+        it("should return the payload with the expected attributeOptionCombo if mapping contain category option", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingProgramCategoryOptions, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventProgramCategoryOptionMapping);
+        });
     });
     describe("tracker program", () => {});
 });
@@ -187,5 +198,41 @@ function createEventsPayloadMapper(
     mapping: MetadataMappingDictionary,
     destinationProgramstages: ProgramStageRef[]
 ): EventsPayloadMapper {
-    return new EventsPayloadMapper(mapping, [], [], "def4UultPRGS", destinationProgramstages);
+    const originCategoryOptionCombos = [
+        {
+            name: "default",
+            id: "XfXL6fEveof",
+            categoryCombo: {
+                id: "bjDvmb4bfuf",
+            },
+            categoryOptions: [
+                {
+                    id: "xYerKDKCefk",
+                },
+            ],
+        },
+    ];
+
+    const destinationCategoryOptionCombos = [
+        {
+            name: "default",
+            id: "Xr12mI7VPn3",
+            categoryCombo: {
+                id: "JzvGfLYkX17",
+            },
+            categoryOptions: [
+                {
+                    id: "Y7fcspgsU43",
+                },
+            ],
+        },
+    ];
+
+    return new EventsPayloadMapper(
+        mapping,
+        originCategoryOptionCombos,
+        destinationCategoryOptionCombos,
+        "XfXL6fEveof",
+        destinationProgramstages
+    );
 }
