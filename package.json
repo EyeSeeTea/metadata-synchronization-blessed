@@ -130,7 +130,6 @@
         "prettier": "2.4.1",
         "prop-types": "15.7.2",
         "rimraf": "3.0.2",
-        "run-ts": "1.1.2",
         "rxjs-compat": "6.6.7",
         "sinon": "11.1.2",
         "ts-jest": "27.0.7",
