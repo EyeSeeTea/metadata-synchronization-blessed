@@ -1,14 +1,12 @@
 {
-    "dataElements": {
+    "programDataElements": {
         "OoTtQGOoq1N": {
             "global": true,
             "mapping": {},
             "mappedId": "aaACJMrNyxk",
             "conflicts": false,
             "mappedName": "global DE mapping"
-        }
-    },
-    "programDataElements": {
+        },
         "u6pCofOY3O7-iv2t5GZRVOc-OoTtQGOoq1N": {
             "global": false,
             "mapping": {},
