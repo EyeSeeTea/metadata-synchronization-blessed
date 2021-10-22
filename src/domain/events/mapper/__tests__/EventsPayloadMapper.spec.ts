@@ -8,6 +8,7 @@ import singleEvent from "./data/event_program/events/singleEvent.json";
 import mappingOrgUnits from "./data/event_program/mapping/mapping_orgUnits.json";
 import mappingDisabledOrgUnits from "./data/event_program/mapping/mapping_disabled_orgUnits.json";
 import mappingProgram from "./data/event_program/mapping/mapping_program.json";
+import mappingProgramstage from "./data/event_program/mapping/mapping_program_program_stage.json";
 import mappingDisabledProgram from "./data/event_program/mapping/mapping_disabled_program.json";
 import mappingDataElement from "./data/event_program/mapping/mapping_dataelement.json";
 import mappingDataElementAndGlobalDataElement from "./data/event_program/mapping/mapping_dataelement_and_global_dataelement.json";
@@ -24,6 +25,7 @@ import emptyEvents from "./data/event_program/expected/empty_events.json";
 import eventWithoutMapping from "./data/event_program/expected/event_without_mapping.json";
 import eventOrgUnitsMapping from "./data/event_program/expected/event_orgUnits_mapping.json";
 import eventProgramMapping from "./data/event_program/expected/event_program_mapping.json";
+import eventProgramStageMapping from "./data/event_program/expected/event_program_program_stage_mapping.json";
 import eventDataElementMapping from "./data/event_program/expected/event_dataelement_mapping.json";
 import eventGlobalDataElementMapping from "./data/event_program/expected/event_global_dataelement_mapping.json";
 import eventOptionsMapping from "./data/event_program/expected/event_options_mapping.json";
@@ -32,7 +34,7 @@ import eventDisabledDataElementMapping from "./data/event_program/expected/event
 import eventDisabledOptionsMapping from "./data/event_program/expected/event_disabled_options_mapping.json";
 
 describe("EventsPayloadMapper", () => {
-    describe("event program", () => {
+    describe("event program and tracker program", () => {
         it("should return the expected payload if mapping is empty", async () => {
             const eventMapper = createEventsPayloadMapper({}, []);
 
@@ -68,6 +70,15 @@ describe("EventsPayloadMapper", () => {
             const mappedPayload = await eventMapper.map(payload);
 
             expect(mappedPayload).toEqual(eventProgramMapping);
+        });
+        it("should return the payload with mapped program stage if mapping contain program stage", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingProgramstage, []);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventProgramStageMapping);
         });
         it("should return the payload with empty events if mapping contain programs but disabled", async () => {
             const eventMapper = createEventsPayloadMapper(mappingDisabledProgram, []);
