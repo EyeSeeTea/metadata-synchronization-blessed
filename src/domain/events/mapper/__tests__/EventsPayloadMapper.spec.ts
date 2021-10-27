@@ -5,6 +5,9 @@ import { ProgramStageRef } from "../Models";
 
 import singleEvent from "./data/events/singleEvent.json";
 
+import originCategoryOptionCombos from "./data/category_option_combos/origin.json";
+import destinationCategoryOptionCombos from "./data/category_option_combos/destination.json";
+
 import mappingOrgUnits from "./data/mapping/mapping_orgUnits.json";
 import mappingDisabledOrgUnits from "./data/mapping/mapping_disabled_orgUnits.json";
 import mappingProgram from "./data/mapping/mapping_program.json";
@@ -22,7 +25,7 @@ import mappingOptionsAndGlobalOptions from "./data/mapping/mapping_options_and_g
 import mappingGlobalOptions from "./data/mapping/mapping_global_options.json";
 import mappingDisabledOptions from "./data/mapping/mapping_disabled_options.json";
 import mappingDisabledGlobalOptions from "./data/mapping/mapping_disabled_global_options.json";
-import mappingProgramCategoryOptions from "./data/mapping/mapping_program_category_options.json";
+import mappingProgramCategoryOptions from "./data/mapping/mapping_program_category_options_1_1.json";
 import mappingTrackerProgramStage from "./data/mapping/mapping_tracker_program_stage.json";
 import mappingDiabledTrackerProgramStage from "./data/mapping/mapping_disabled_tracker_program_stage.json";
 
@@ -212,15 +215,6 @@ describe("EventsPayloadMapper", () => {
 
             expect(mappedPayload).toEqual(eventDisabledOptionsMapping);
         });
-        it("should return the payload with the expected attributeOptionCombo if mapping contain category option", async () => {
-            const eventMapper = createEventsPayloadMapper(mappingProgramCategoryOptions, emptyTrackerProgramStages);
-
-            const payload = singleEvent as EventsPackage;
-
-            const mappedPayload = await eventMapper.map(payload);
-
-            expect(mappedPayload).toEqual(eventProgramCategoryOptionMapping);
-        });
         it("should return the payload with the expected tracker program stage if mapping contain tracker program stage", async () => {
             const eventMapper = createEventsPayloadMapper(mappingTrackerProgramStage, trackerProgramStage);
 
@@ -239,6 +233,15 @@ describe("EventsPayloadMapper", () => {
 
             expect(mappedPayload).toEqual(emptyEvents);
         });
+        it("should return the payload with the expected attributeOptionCombo if mapping contain category option", async () => {
+            const eventMapper = createEventsPayloadMapper(mappingProgramCategoryOptions, emptyTrackerProgramStages);
+
+            const payload = singleEvent as EventsPackage;
+
+            const mappedPayload = await eventMapper.map(payload);
+
+            expect(mappedPayload).toEqual(eventProgramCategoryOptionMapping);
+        });
     });
 });
 
@@ -246,36 +249,6 @@ function createEventsPayloadMapper(
     mapping: MetadataMappingDictionary,
     destinationProgramstages: ProgramStageRef[]
 ): EventsPayloadMapper {
-    const originCategoryOptionCombos = [
-        {
-            name: "default",
-            id: "XfXL6fEveof",
-            categoryCombo: {
-                id: "bjDvmb4bfuf",
-            },
-            categoryOptions: [
-                {
-                    id: "xYerKDKCefk",
-                },
-            ],
-        },
-    ];
-
-    const destinationCategoryOptionCombos = [
-        {
-            name: "default",
-            id: "Xr12mI7VPn3",
-            categoryCombo: {
-                id: "JzvGfLYkX17",
-            },
-            categoryOptions: [
-                {
-                    id: "Y7fcspgsU43",
-                },
-            ],
-        },
-    ];
-
     return new EventsPayloadMapper(
         mapping,
         originCategoryOptionCombos,
