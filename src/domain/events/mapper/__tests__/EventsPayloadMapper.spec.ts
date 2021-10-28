@@ -33,6 +33,7 @@ import mappingProgramCategoryOptions2to2 from "./data/mapping/mapping_program_ca
 import mappingGlobalCategoryOptions2to2 from "./data/mapping/mapping_global_category_options_2_2.json";
 import mappingProgramCategoryOptions2to1 from "./data/mapping/mapping_program_category_options_2_1.json";
 import mappingGlobalCategoryOptions2to1 from "./data/mapping/mapping_global_category_options_2_1.json";
+import mappingAggregatedDataElement from "./data/mapping/mapping_aggregated_dataelement.json";
 
 import emptyEvents from "./data/expected/empty_events.json";
 import eventWithoutMapping from "./data/expected/event_without_mapping.json";
@@ -54,6 +55,8 @@ import eventGlobalCategoryOption2To2Mapping from "./data/expected/event_program_
 import eventProgramCategoryOption2To1Mapping from "./data/expected/event_program_category_options_2_1_mapping.json";
 import eventGlobalCategoryOption2To1Mapping from "./data/expected/event_global_category_options_2_1_mapping.json";
 import trackerProgramStageMapping from "./data/expected/event_program_stage_mapping.json";
+
+import eventAggregatedDataElementMapping from "./data/expected/event_aggregated_dataelement_mapping.json";
 
 import emptyTrackerProgramStages from "./data/destination_tracker_programs_stages/empty_tracker_program_stages.json";
 import trackerProgramStage from "./data/destination_tracker_programs_stages/tracker_program_stage.json";
@@ -244,6 +247,16 @@ describe("EventsPayloadMapper", () => {
             const mappedPayload = await eventMapper.map(singleEventCatOptions2);
 
             expect(mappedPayload).toEqual(eventGlobalCategoryOption2To1Mapping);
+        });
+        it("should return the payload with mapped aggregated data element if mapping contain aggregated data element", async () => {
+            const eventMapper = createEventsPayloadMapper(
+                mappingAggregatedDataElement as MetadataMappingDictionary,
+                emptyTrackerProgramStages
+            );
+
+            const mappedPayload = await eventMapper.map(singleEvent);
+
+            expect(mappedPayload).toEqual(eventAggregatedDataElementMapping);
         });
     });
 });
