@@ -1,0 +1,30 @@
+{
+    "programDataElements": {
+        "u6pCofOY3O7-iv2t5GZRVOc-BwonwK3JDq4": {
+            "global": false,
+            "mapping": {
+                "options": {
+                    "RnkuWU7N1Xz": {
+                        "code": "A",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedCode": "DISABLED"
+                    },
+                    "TblWe7BZJMs": {
+                        "code": "B",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedCode": "DISABLED"
+                    }
+                }
+            },
+            "mappedId": "Z8MHEKrZbWF",
+            "conflicts": false,
+            "mappedName": "Jorge DE 2 Clone"
+        }
+    }
+}

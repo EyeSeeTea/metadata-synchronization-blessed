@@ -1,0 +1,51 @@
+{
+    "eventPrograms": {
+        "u6pCofOY3O7": {
+            "code": "origin",
+            "global": false,
+            "mapping": {
+                "categoryCombos": {
+                    "bjDvmb4bfuf": {
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedName": "DISABLED"
+                    }
+                },
+                "categoryOptions": {
+                    "GLevLNI9wkl-xYerKDKCefk": {
+                        "code": "default",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedCode": "DISABLED"
+                    }
+                }
+            },
+            "mappedId": "a7pCofOY3O7",
+            "conflicts": false,
+            "mappedCode": "destination",
+            "mappedName": "destination"
+        }
+    },
+    "categoryCombos": {
+        "bjDvmb4bfuf": {
+            "mapping": {},
+            "mappedId": "JzvGfLYkX17",
+            "conflicts": false,
+            "mappedName": "default"
+        }
+    },
+    "categoryOptions": {
+        "GLevLNI9wkl-xYerKDKCefk": {
+            "code": "default",
+            "global": false,
+            "mapping": {},
+            "mappedId": "Y7fcspgsU43",
+            "conflicts": false,
+            "mappedCode": "default",
+            "mappedName": "default"
+        }
+    }
+}

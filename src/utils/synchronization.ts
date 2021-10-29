@@ -94,23 +94,22 @@ export const mapCategoryOptionCombo = (
             { mappedId: "DISABLED" }
         );
 
+        const mappedCategoryOptions = _.uniqBy(
+            origin?.categoryOptions?.map(({ id }) => {
+                const nestedId = _.keys(categoryOptions).find(candidate => _.last(candidate.split("-")) === id);
+
+                return nestedId
+                    ? {
+                          id: categoryOptions[nestedId]?.mappedId,
+                      }
+                    : undefined;
+            }),
+            "id"
+        );
+
         // Candidates built from equal category options
         const candidates = destinationCategoryOptionCombos.filter(o =>
-            _.isEqual(
-                _.sortBy(o.categoryOptions, ["id"]),
-                _.sortBy(
-                    origin?.categoryOptions?.map(({ id }) => {
-                        const nestedId = _.keys(categoryOptions).find(candidate => _.last(candidate.split("-")) === id);
-
-                        return nestedId
-                            ? {
-                                  id: categoryOptions[nestedId]?.mappedId,
-                              }
-                            : undefined;
-                    }),
-                    ["id"]
-                )
-            )
+            _.isEqual(_.sortBy(o.categoryOptions, ["id"]), _.sortBy(mappedCategoryOptions, ["id"]))
         );
 
         // Exact object built from equal category options and combo
