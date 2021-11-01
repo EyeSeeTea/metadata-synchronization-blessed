@@ -19,6 +19,7 @@ import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUs
 import { buildMetadataDictionary, cleanObjectDefault, cleanOrgUnitPath } from "../../synchronization/utils";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataValue } from "../entities/DataValue";
+import { createAggregatedPayloadMapper } from "../mapper/AggregatedPayloadMapperFactory";
 import { getMinimumParents } from "../utils";
 
 export class AggregatedSyncUseCase extends GenericSyncUseCase {
@@ -175,7 +176,26 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
             .value();
     }
 
-    public async mapPayload(
+    public async mapPayload(instance: Instance, payload: AggregatedPackage): Promise<AggregatedPackage> {
+        // TODO: when we have mappers for all cases, this method should be removed in base class and use the mappers
+        const metadataRepository = await this.getMetadataRepository();
+        const remoteMetadataRepository = await this.getMetadataRepository(instance);
+        const aggregatedRepository = await this.getAggregatedRepository();
+        const mapping = await this.getMapping(instance);
+        const { dataParams = {} } = this.builder;
+
+        const eventMapper = await createAggregatedPayloadMapper(
+            metadataRepository,
+            remoteMetadataRepository,
+            aggregatedRepository,
+            mapping,
+            dataParams
+        );
+
+        return (await eventMapper.map(payload)) as AggregatedPackage;
+    }
+
+    public async mapPayloadOld(
         instance: Instance,
         { dataValues: oldDataValues = [] }: AggregatedPackage
     ): Promise<AggregatedPackage> {
