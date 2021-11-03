@@ -18,24 +18,47 @@ export async function migrate(storage: AppStorage, _debug: Debug, _params: Migra
     await promiseMap(instances, async instance => {
         const oldInstanceDetails = await storage.get<InstanceDetails>("instances-" + instance.id);
 
-        if (oldInstanceDetails?.metadataMapping?.programDataElements) {
+        if (
+            oldInstanceDetails?.metadataMapping?.programDataElements ||
+            oldInstanceDetails?.metadataMapping?.aggregatedDataElements
+        ) {
             const oldProgramDataElements = oldInstanceDetails.metadataMapping.programDataElements;
 
-            const programDataElements = Object.keys(oldProgramDataElements).reduce((previous, key) => {
-                return {
-                    ...previous,
-                    [key]: {
-                        ...oldProgramDataElements[key],
-                        mapping: _.omit(oldProgramDataElements[key].mapping, [
-                            "categoryCombos",
-                            "categoryOptions",
-                            "categoryOptionCombos",
-                        ]),
-                    },
-                };
-            }, {});
+            const programDataElements = oldProgramDataElements
+                ? Object.keys(oldProgramDataElements).reduce((previous, key) => {
+                      return {
+                          ...previous,
+                          [key]: {
+                              ...oldProgramDataElements[key],
+                              mapping: _.omit(oldProgramDataElements[key].mapping, [
+                                  "categoryCombos",
+                                  "categoryOptions",
+                                  "categoryOptionCombos",
+                              ]),
+                          },
+                      };
+                  }, {})
+                : undefined;
 
-            const metadataMapping = { ...oldInstanceDetails.metadataMapping, programDataElements };
+            const oldAggregatedDataElements = oldInstanceDetails.metadataMapping.aggregatedDataElements;
+
+            const aggregatedDataElements = oldAggregatedDataElements
+                ? Object.keys(oldAggregatedDataElements).reduce((previous, key) => {
+                      return {
+                          ...previous,
+                          [key]: {
+                              ...oldAggregatedDataElements[key],
+                              mapping: _.omit(oldAggregatedDataElements[key].mapping, ["categoryOptionCombos"]),
+                          },
+                      };
+                  }, {})
+                : undefined;
+
+            const metadataMapping = {
+                ...oldInstanceDetails.metadataMapping,
+                programDataElements,
+                aggregatedDataElements,
+            };
 
             const newInstanceDatails = { ...oldInstanceDetails, metadataMapping };
 
@@ -45,7 +68,7 @@ export async function migrate(storage: AppStorage, _debug: Debug, _params: Migra
 }
 
 const migration: Migration<MigrationParams> = {
-    name: "Remove categoryCombos, categoryOptions, categoryOptioncombo inner mapping for tracker data elements",
+    name: "Remove categoryCombos, categoryOptions, categoryOptioncombo inner mapping from program data elements and categoryOptioncombo from aggregated data elements",
     migrate,
 };
 
