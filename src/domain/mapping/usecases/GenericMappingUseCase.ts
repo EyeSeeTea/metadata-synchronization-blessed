@@ -290,6 +290,7 @@ export abstract class GenericMappingUseCase {
     protected getCategoryOptions(object: CombinedMetadata) {
         // TODO: This method should properly validate original model from object
         if (["categoryOptionCombos"].includes(object.model)) return [];
+        if (object.model === "dataElements" && object.domainType === "TRACKER") return [];
 
         return _.flatten(
             object.categoryCombo?.categories?.map(({ id: category, categoryOptions }) =>
@@ -310,7 +311,10 @@ export abstract class GenericMappingUseCase {
     }
 
     protected autoMapCategoryCombo(originMetadata: CombinedMetadata, destinationMetadata: CombinedMetadata) {
-        if (originMetadata.categoryCombo) {
+        if (
+            originMetadata.categoryCombo &&
+            !(originMetadata.model === "dataElements" && originMetadata.domainType === "TRACKER")
+        ) {
             const { id } = originMetadata.categoryCombo;
             const { id: mappedId = EXCLUDED_KEY, name: mappedName } = destinationMetadata.categoryCombo ?? {};
 
@@ -345,15 +349,6 @@ export abstract class GenericMappingUseCase {
                     },
                 ];
             }
-            case "dataElements": {
-                return (
-                    object.categoryCombo?.categoryOptionCombos.map(({ id, name }) => ({
-                        id,
-                        name,
-                        model: "categoryOptionCombos",
-                    })) ?? []
-                );
-            }
             default: {
                 return [];
             }
@@ -385,6 +380,7 @@ interface CombinedMetadata {
     path?: string;
     level?: number;
     programType?: "WITH_REGISTRATION" | "WITHOUT_REGISTRATION";
+    domainType?: "AGGREGATE" | "TRACKER";
     categoryCombo?: {
         id: string;
         name: string;
@@ -439,6 +435,7 @@ const fields = {
     path: true,
     level: true,
     programType: true,
+    domainType: true,
     categoryCombo: {
         id: true,
         name: true,
