@@ -16,10 +16,10 @@
                         "code": "default",
                         "global": false,
                         "mapping": {},
-                        "mappedId": "Y7fcspgsU43",
+                        "mappedId": "CatOption43",
                         "conflicts": false,
-                        "mappedCode": "default",
-                        "mappedName": "default"
+                        "mappedCode": "No default",
+                        "mappedName": "No default"
                     }
                 }
             },
@@ -43,10 +43,10 @@
                         "code": "default",
                         "global": false,
                         "mapping": {},
-                        "mappedId": "Y7fcspgsU43",
+                        "mappedId": "CatOption43",
                         "conflicts": false,
-                        "mappedCode": "default",
-                        "mappedName": "default"
+                        "mappedCode": "No default",
+                        "mappedName": "No default"
                     }
                 }
             },

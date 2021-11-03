@@ -10,5 +10,17 @@
                 "id": "Y7fcspgsU43"
             }
         ]
+    },
+    {
+        "name": "no default",
+        "id": "CatOptCom01",
+        "categoryCombo": {
+            "id": "CatCoMBoX17"
+        },
+        "categoryOptions": [
+            {
+                "id": "CatOption43"
+            }
+        ]
     }
 ]
