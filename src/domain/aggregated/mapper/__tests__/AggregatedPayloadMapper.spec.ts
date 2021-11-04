@@ -15,6 +15,10 @@ import deOptionMappingByValue from "./data/mapping/mapping_de_option_by_value.js
 import globalOptionMapping from "./data/mapping/mapping_global_options.json";
 import globalOptionMappingByValue from "./data/mapping/mapping_global_option_by_value.json";
 import deOptionAndGlobalMapping from "./data/mapping/mapping_de_options.json";
+import disabledDataElementsMapping from "./data/mapping/mapping_disabled_dataelements.json";
+import disabledDeOptionMapping from "./data/mapping/mapping_disabled_de_options.json";
+import disabledGlobalOptionMapping from "./data/mapping/mapping_disabled_global_options.json";
+import disabledOrgUnitsMapping from "./data/mapping/mapping_disabled_orgUnits.json";
 
 import dataValuesWithoutMapping from "./data/expected/dataValues_without_mapping.json";
 import dataValuesOrgUnitsMapping from "./data/expected/dataValues_orgunits_mapping.json";
@@ -26,6 +30,8 @@ import dataValuesDEOptionAndGlobalMapping from "./data/expected/dataValues_de_op
 import dataValuesDEOptionMappingByValue from "./data/expected/dataValues_de_option_mapping_by_value.json";
 import dataValuesGlobalOptionMapping from "./data/expected/dataValues_global_option_mapping.json";
 import dataValuesGlobalOptionMappingByValue from "./data/expected/dataValues_global_option_mapping_by_value.json";
+import dataValuesEmpty from "./data/expected/dataValues_empty.json";
+import dataValuesDisabledOptionMapping from "./data/expected/dataValues_disabled_option_mapping.json";
 
 describe("AggreggatedPayloadMapper", () => {
     it("should return the expected payload if mapping is empty", async () => {
@@ -97,6 +103,34 @@ describe("AggreggatedPayloadMapper", () => {
         const mappedPayload = await aggregatedMapper.map(dataValues);
 
         expect(mappedPayload).toEqual(dataValuesDEOptionAndGlobalMapping);
+    });
+    it("should return the payload with empty data values if mapping contain disabled data elements", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(disabledDataElementsMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesEmpty);
+    });
+    it("should return the payload with empty data values if mapping contain disabled DE options", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(disabledDeOptionMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesDisabledOptionMapping);
+    });
+    it("should return the payload with empty data values if mapping contain disabled global options", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(disabledGlobalOptionMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesDisabledOptionMapping);
+    });
+    it("should return the payload with empty data values if mapping contain disabled org unit", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(disabledOrgUnitsMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesEmpty);
     });
 });
 

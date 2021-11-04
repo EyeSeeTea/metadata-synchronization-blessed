@@ -1,0 +1,30 @@
+{
+    "aggregatedDataElements": {
+        "HDiPuHnjfMI": {
+            "global": false,
+            "mapping": {
+                "options": {
+                    "RnkuWU7N1Xz": {
+                        "code": "A",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedCode": "DISABLED"
+                    },
+                    "TblWe7BZJMs": {
+                        "code": "B",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedCode": "DISABLED"
+                    }
+                }
+            },
+            "mappedId": "TPEszSDxJxw",
+            "conflicts": false,
+            "mappedName": "TT Aggregated DE 3"
+        }
+    }
+}
