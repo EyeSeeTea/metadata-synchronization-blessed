@@ -10,12 +10,22 @@ import orgUnitsMapping from "./data/mapping/mapping_orgUnits.json";
 import dataElementsMapping from "./data/mapping/mapping_dataelements.json";
 import deCategoryOptionMapping from "./data/mapping/mapping_de_category_option.json";
 import globalCategoryOptionMapping from "./data/mapping/mapping_global_category_option.json";
+import deOptionMapping from "./data/mapping/mapping_de_options.json";
+import deOptionMappingByValue from "./data/mapping/mapping_de_option_by_value.json";
+import globalOptionMapping from "./data/mapping/mapping_global_options.json";
+import globalOptionMappingByValue from "./data/mapping/mapping_global_option_by_value.json";
+import deOptionAndGlobalMapping from "./data/mapping/mapping_de_options.json";
 
 import dataValuesWithoutMapping from "./data/expected/dataValues_without_mapping.json";
 import dataValuesOrgUnitsMapping from "./data/expected/dataValues_orgunits_mapping.json";
 import dataValuesDataElementsMapping from "./data/expected/dataValues_dataelements_mapping.json";
 import dataValuesDECategoryOptionMapping from "./data/expected/dataValues_de_category_option_mapping.json";
 import dataValuesGlobalCategoryOptionMapping from "./data/expected/dataValues_global_category_option_mapping.json";
+import dataValuesDEOptionMapping from "./data/expected/dataValues_de_option_mapping.json";
+import dataValuesDEOptionAndGlobalMapping from "./data/expected/dataValues_de_option_and_global_mapping.json";
+import dataValuesDEOptionMappingByValue from "./data/expected/dataValues_de_option_mapping_by_value.json";
+import dataValuesGlobalOptionMapping from "./data/expected/dataValues_global_option_mapping.json";
+import dataValuesGlobalOptionMappingByValue from "./data/expected/dataValues_global_option_mapping_by_value.json";
 
 describe("AggreggatedPayloadMapper", () => {
     it("should return the expected payload if mapping is empty", async () => {
@@ -52,6 +62,41 @@ describe("AggreggatedPayloadMapper", () => {
         const mappedPayload = await aggregatedMapper.map(dataValues);
 
         expect(mappedPayload).toEqual(dataValuesGlobalCategoryOptionMapping);
+    });
+    it("should return the payload with mapped option if mapping contain options by DE", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(deOptionMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesDEOptionMapping);
+    });
+    it("should return the payload with mapped option if mapping contain options by DE and value", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(deOptionMappingByValue);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesDEOptionMappingByValue);
+    });
+    it("should return the payload with mapped option if mapping contain global option", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(globalOptionMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesGlobalOptionMapping);
+    });
+    it("should return the payload with mapped option if mapping contain global option by value", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(globalOptionMappingByValue);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesGlobalOptionMappingByValue);
+    });
+    it("should return the payload with mapped option by DE if mapping contain global options and options by DE", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(deOptionAndGlobalMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValues);
+
+        expect(mappedPayload).toEqual(dataValuesDEOptionAndGlobalMapping);
     });
 });
 
