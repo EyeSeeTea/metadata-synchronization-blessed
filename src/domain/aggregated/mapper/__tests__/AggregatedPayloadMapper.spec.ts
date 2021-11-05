@@ -5,6 +5,7 @@ import originCategoryOptionCombos from "./data/category_option_combos/origin.jso
 import destinationCategoryOptionCombos from "./data/category_option_combos/destination.json";
 
 import dataValues from "./data/data-values/dataValues.json";
+import dataValuesIndicator from "./data/data-values/dataValues_indicator.json";
 
 import orgUnitsMapping from "./data/mapping/mapping_orgUnits.json";
 import dataElementsMapping from "./data/mapping/mapping_dataelements.json";
@@ -19,6 +20,7 @@ import disabledDataElementsMapping from "./data/mapping/mapping_disabled_dataele
 import disabledDeOptionMapping from "./data/mapping/mapping_disabled_de_options.json";
 import disabledGlobalOptionMapping from "./data/mapping/mapping_disabled_global_options.json";
 import disabledOrgUnitsMapping from "./data/mapping/mapping_disabled_orgUnits.json";
+import indicatorDataElementMapping from "./data/mapping/mapping_indicator_dataelement.json";
 
 import dataValuesWithoutMapping from "./data/expected/dataValues_without_mapping.json";
 import dataValuesOrgUnitsMapping from "./data/expected/dataValues_orgunits_mapping.json";
@@ -32,6 +34,7 @@ import dataValuesGlobalOptionMapping from "./data/expected/dataValues_global_opt
 import dataValuesGlobalOptionMappingByValue from "./data/expected/dataValues_global_option_mapping_by_value.json";
 import dataValuesEmpty from "./data/expected/dataValues_empty.json";
 import dataValuesDisabledOptionMapping from "./data/expected/dataValues_disabled_option_mapping.json";
+import dataValuesIndicatorDataElementMapping from "./data/expected/dataValues_indicator_dataelement_mapping.json";
 
 describe("AggreggatedPayloadMapper", () => {
     it("should return the expected payload if mapping is empty", async () => {
@@ -131,6 +134,13 @@ describe("AggreggatedPayloadMapper", () => {
         const mappedPayload = await aggregatedMapper.map(dataValues);
 
         expect(mappedPayload).toEqual(dataValuesEmpty);
+    });
+    it("should return the payload with mapped data element if mapping contain indicator to data element mapping", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(indicatorDataElementMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValuesIndicator);
+
+        expect(mappedPayload).toEqual(dataValuesIndicatorDataElementMapping);
     });
 });
 
