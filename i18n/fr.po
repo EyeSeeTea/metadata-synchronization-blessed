@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2021-10-18T06:56:50.772Z\n"
+"POT-Creation-Date: 2021-11-05T09:47:05.842Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -139,6 +139,9 @@ msgid "Tracked Entity Attribute (to TEI)"
 msgstr ""
 
 msgid "Tracked Entity Attribute (to DE)"
+msgstr ""
+
+msgid "Tracker Data Elements"
 msgstr ""
 
 msgid "Unauthorized - You do not have permission to view this page."
