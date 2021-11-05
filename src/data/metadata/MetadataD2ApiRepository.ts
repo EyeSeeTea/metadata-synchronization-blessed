@@ -301,6 +301,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         search,
         disableFilterRows = false,
         programType,
+        domainType,
         childrenPropInList,
     }: Partial<ListMetadataParams>) {
         const filter: Dictionary<FilterValueBase> = {};
@@ -313,6 +314,10 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
         if (programType) {
             filter["programType"] = { eq: programType };
+        }
+
+        if (domainType) {
+            filter["domainType"] = { eq: domainType };
         }
 
         if (optionSet) filter["optionSet.id"] = { eq: optionSet };
