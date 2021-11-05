@@ -307,5 +307,6 @@ export class GlobalOptionModel extends OptionModel {
 }
 
 export class GlobalDataElementModel extends ProgramDataElementModel {
+    protected static modelName = i18n.t("Tracker Data Elements");
     protected static isGlobalMapping = true;
 }
