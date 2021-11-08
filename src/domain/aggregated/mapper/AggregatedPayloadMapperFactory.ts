@@ -41,6 +41,10 @@ async function buildInstanceAggregation(
     categoryOptionCombos: Partial<CategoryOptionCombo>[],
     dataParams: DataSynchronizationParams
 ): Promise<DataValue[]> {
+    // This instance aggregated data value logic is unclear, but we keep it for historical
+    // the original commit where this logic was created is this.
+    // b8c4f063e84f44403ae4657bb1fe66c4829cb647
+
     const { enableAggregation = false } = dataParams;
     if (!enableAggregation) return [];
 
