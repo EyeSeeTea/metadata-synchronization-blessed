@@ -6,6 +6,7 @@ import destinationCategoryOptionCombos from "./data/category_option_combos/desti
 
 import dataValues from "./data/data-values/dataValues.json";
 import dataValuesIndicator from "./data/data-values/dataValues_indicator.json";
+import dataValuesCommentOption from "./data/data-values/dataValues_comment_option.json";
 
 import orgUnitsMapping from "./data/mapping/mapping_orgUnits.json";
 import dataElementsMapping from "./data/mapping/mapping_dataelements.json";
@@ -35,6 +36,7 @@ import dataValuesGlobalOptionMappingByValue from "./data/expected/dataValues_glo
 import dataValuesEmpty from "./data/expected/dataValues_empty.json";
 import dataValuesDisabledOptionMapping from "./data/expected/dataValues_disabled_option_mapping.json";
 import dataValuesIndicatorDataElementMapping from "./data/expected/dataValues_indicator_dataelement_mapping.json";
+import dataValuesCommentMapping from "./data/expected/dataValues_comment_option_mapping.json";
 
 describe("AggreggatedPayloadMapper", () => {
     it("should return the expected payload if mapping is empty", async () => {
@@ -141,6 +143,13 @@ describe("AggreggatedPayloadMapper", () => {
         const mappedPayload = await aggregatedMapper.map(dataValuesIndicator);
 
         expect(mappedPayload).toEqual(dataValuesIndicatorDataElementMapping);
+    });
+    it("should return the payload with mapped comment if mapping contain option", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(deOptionMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValuesCommentOption);
+
+        expect(mappedPayload).toEqual(dataValuesCommentMapping);
     });
 });
 
