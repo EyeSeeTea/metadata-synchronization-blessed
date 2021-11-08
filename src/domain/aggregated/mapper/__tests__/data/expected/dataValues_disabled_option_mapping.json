@@ -4,7 +4,8 @@
             "dataElement": "hrv4hSVUzSH",
             "period": "202110",
             "orgUnit": "BWW8zaLISW4",
-            "value": "1"
+            "value": "1",
+            "comment": "test"
         }
     ]
 }
