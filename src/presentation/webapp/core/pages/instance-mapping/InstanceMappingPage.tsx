@@ -2,6 +2,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
+import { DataSourceMapping } from "../../../../../domain/mapping/entities/DataSourceMapping";
 import { MetadataMapping, MetadataMappingDictionary } from "../../../../../domain/mapping/entities/MetadataMapping";
 import i18n from "../../../../../locales";
 import {
@@ -76,6 +77,7 @@ export default function InstanceMappingPage() {
     const { id, section } = useParams() as InstanceMappingParams;
     const { models, title: sectionTitle } = config[section];
 
+    const [dataSourceMapping, setDataSourceMapping] = useState<DataSourceMapping>();
     const [instance, setInstance] = useState<Instance>();
 
     useEffect(() => {
@@ -85,6 +87,19 @@ export default function InstanceMappingPage() {
                 error: () => {},
             })
         );
+
+        compositionRoot.mapping.get({ type: "instance", id }).then(result => {
+            setDataSourceMapping(
+                result ??
+                    DataSourceMapping.build({
+                        owner: {
+                            type: "instance" as const,
+                            id,
+                        },
+                        mappingDictionary: {},
+                    })
+            );
+        });
     }, [compositionRoot, id]);
 
     const backHome = () => {
@@ -92,17 +107,17 @@ export default function InstanceMappingPage() {
     };
 
     const onChangeMapping = async (metadataMapping: MetadataMappingDictionary) => {
-        if (!instance) return;
+        if (!dataSourceMapping) return;
 
-        const newInstance = instance.update({ metadataMapping });
-        await compositionRoot.instances.save(newInstance);
-        setInstance(newInstance);
+        const newDataSourceMapping = dataSourceMapping.updateMappingDictionary(metadataMapping);
+        await compositionRoot.mapping.save(newDataSourceMapping);
+        setDataSourceMapping(newDataSourceMapping);
     };
 
     const onApplyGlobalMapping = async (type: string, id: string, subMapping: MetadataMapping) => {
-        if (!instance) return;
+        if (!dataSourceMapping) return;
 
-        const newMapping = _.clone(instance.metadataMapping);
+        const newMapping = _.clone(dataSourceMapping.mappingDictionary);
         _.set(newMapping, [type, id], { ...subMapping, global: true });
         await onChangeMapping(newMapping);
     };
@@ -114,12 +129,12 @@ export default function InstanceMappingPage() {
         <React.Fragment>
             <PageHeader title={title} onBackClick={backHome} />
 
-            {!!instance && (
+            {instance && dataSourceMapping && (
                 <MappingTable
                     models={models}
                     destinationInstance={instance}
-                    mapping={instance.metadataMapping}
-                    globalMapping={instance.metadataMapping}
+                    mapping={dataSourceMapping.mappingDictionary}
+                    globalMapping={dataSourceMapping.mappingDictionary}
                     onChangeMapping={onChangeMapping}
                     onApplyGlobalMapping={onApplyGlobalMapping}
                 />

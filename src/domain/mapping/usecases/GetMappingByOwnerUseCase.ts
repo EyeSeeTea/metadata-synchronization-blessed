@@ -12,37 +12,28 @@ export class GetMappingByOwnerUseCase implements UseCase {
     public async execute(owner: MappingOwner): Promise<DataSourceMapping | undefined> {
         const storageClient = await this.getStorageClient();
 
-        if (isMappingOwnerStore(owner)) {
-            const mappings = await storageClient.listObjectsInCollection<DataSourceMapping>(Namespace.MAPPINGS);
+        const mappings = await storageClient.listObjectsInCollection<DataSourceMapping>(Namespace.MAPPINGS);
 
-            const rawMapping = mappings.find(
-                mapping =>
-                    isMappingOwnerStore(mapping.owner) &&
+        const rawMapping = mappings.find(
+            mapping =>
+                (isMappingOwnerStore(mapping.owner) &&
+                    isMappingOwnerStore(owner) &&
                     mapping.owner.id === owner.id &&
-                    mapping.owner.moduleId === owner.moduleId
+                    mapping.owner.moduleId === owner.moduleId) ||
+                mapping.owner.id === owner.id
+        );
+
+        if (rawMapping) {
+            const mappingRawWithMetadataMapping = await storageClient.getObjectInCollection<DataSourceMapping>(
+                Namespace.MAPPINGS,
+                rawMapping?.id
             );
 
-            if (rawMapping) {
-                const mappingRawWithMetadataMapping = await storageClient.getObjectInCollection<DataSourceMapping>(
-                    Namespace.MAPPINGS,
-                    rawMapping?.id
-                );
-
-                return mappingRawWithMetadataMapping
-                    ? DataSourceMapping.build({ ...mappingRawWithMetadataMapping })
-                    : undefined;
-            } else {
-                return undefined;
-            }
-        } else {
-            const instance = await storageClient.getObjectInCollection<Instance>(Namespace.INSTANCES, owner.id);
-
-            return instance
-                ? DataSourceMapping.build({
-                      owner: { type: "instance", id: instance.id },
-                      mappingDictionary: instance.metadataMapping ?? {},
-                  })
+            return mappingRawWithMetadataMapping
+                ? DataSourceMapping.build({ ...mappingRawWithMetadataMapping })
                 : undefined;
+        } else {
+            return undefined;
         }
     }
 
