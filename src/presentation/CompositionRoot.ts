@@ -5,6 +5,7 @@ import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { FileDataRepository } from "../data/file/FileDataRepository";
 import { InstanceD2ApiRepository } from "../data/instance/InstanceD2ApiRepository";
 import { InstanceFileD2Repository } from "../data/instance/InstanceFileD2Repository";
+import { MappingD2ApiRepository } from "../data/mapping/MappingD2ApiRepository";
 import { MetadataD2ApiRepository } from "../data/metadata/MetadataD2ApiRepository";
 import { MetadataJSONRepository } from "../data/metadata/MetadataJSONRepository";
 import { MigrationsAppRepository } from "../data/migrations/MigrationsAppRepository";
@@ -134,6 +135,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
         this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
     }
 
     @cache()
