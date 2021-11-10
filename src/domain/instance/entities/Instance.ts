@@ -5,7 +5,6 @@ import { NamedRef, SharedRef } from "../../common/entities/Ref";
 import { ShareableEntity } from "../../common/entities/ShareableEntity";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
-import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 
 export type PublicInstance = Omit<InstanceData, "password">;
 export type InstanceType = "local" | "dhis";
@@ -15,7 +14,6 @@ export interface InstanceData extends SharedRef {
     id: string;
     name: string;
     url: string;
-    metadataMapping?: MetadataMappingDictionary;
     username?: string;
     password?: string;
     description?: string;
@@ -57,10 +55,6 @@ export class Instance extends ShareableEntity<InstanceData> {
 
     public get description(): string {
         return this.data.description ?? "";
-    }
-
-    public get metadataMapping(): MetadataMappingDictionary {
-        return this.data.metadataMapping ?? {};
     }
 
     public get version(): string | undefined {
