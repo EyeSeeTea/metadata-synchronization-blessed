@@ -12,6 +12,7 @@ import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepositor
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
 import { FileRulesDefaultRepository } from "../data/rules/FileRulesDefaultRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
+import { SchedulerD2ApiRepository } from "../data/scheduler/SchedulerD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
 import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
@@ -93,6 +94,8 @@ import { GetSyncRuleUseCase } from "../domain/rules/usecases/GetSyncRuleUseCase"
 import { ListSyncRuleUseCase } from "../domain/rules/usecases/ListSyncRuleUseCase";
 import { ReadSyncRuleFilesUseCase } from "../domain/rules/usecases/ReadSyncRuleFilesUseCase";
 import { SaveSyncRuleUseCase } from "../domain/rules/usecases/SaveSyncRuleUseCase";
+import { GetLastSchedulerExecutionUseCase } from "../domain/scheduler/usecases/GetLastSchedulerExecutionUseCase";
+import { UpdateLastSchedulerExecutionUseCase } from "../domain/scheduler/usecases/UpdateLastSchedulerExecutionUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
 import { GetStoreUseCase } from "../domain/stores/usecases/GetStoreUseCase";
@@ -134,6 +137,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
         this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.SchedulerRepository, SchedulerD2ApiRepository);
     }
 
     @cache()
@@ -359,6 +363,14 @@ export class CompositionRoot {
     public get user() {
         return getExecute({
             current: new GetCurrentUserUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get scheduler() {
+        return getExecute({
+            getLastExecution: new GetLastSchedulerExecutionUseCase(this.repositoryFactory, this.localInstance),
+            updateLastExecution: new UpdateLastSchedulerExecutionUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

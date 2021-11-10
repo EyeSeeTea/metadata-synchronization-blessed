@@ -9,7 +9,7 @@ import {
     ProgramModel,
     ProgramRuleModel,
     RelationshipTypeModel,
-    UserGroupModel
+    UserGroupModel,
 } from "../../../../../../models/dhis/metadata";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { ModuleWizardStepProps } from "../Steps";

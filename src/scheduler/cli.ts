@@ -3,6 +3,7 @@ import "dotenv/config";
 import fs from "fs";
 import { configure, getLogger } from "log4js";
 import path from "path";
+import { Future, FutureData } from "../domain/common/entities/Future";
 import { Instance } from "../domain/instance/entities/Instance";
 import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
@@ -18,6 +19,20 @@ configure({
     },
     categories: { default: { appenders: ["file", "out"], level: development ? "all" : "debug" } },
 });
+
+const checkMigrations = (compositionRoot: CompositionRoot): FutureData<boolean> => {
+    return Future.fromPromise(compositionRoot.migrations.hasPending())
+        .mapError(() => {
+            return "Unable to connect with remote instance";
+        })
+        .flatMap(pendingMigrations => {
+            if (pendingMigrations) {
+                return Future.error<string, boolean>("There are pending migrations, unable to continue");
+            }
+
+            return Future.success(pendingMigrations);
+        });
+};
 
 async function main() {
     const cmd = command({
@@ -36,7 +51,7 @@ async function main() {
                 const text = fs.readFileSync(args.config, "utf8");
                 const contents = JSON.parse(text);
                 const config = ConfigModel.unsafeDecode(contents);
-                
+
                 await start(config);
             } catch (err) {
                 getLogger("main").fatal(err);
@@ -47,13 +62,6 @@ async function main() {
 
     run(cmd, process.argv.slice(2));
 }
-
-const checkMigrations = async (compositionRoot: CompositionRoot) => {
-    if (await compositionRoot.migrations.hasPending()) {
-        getLogger("migrations").fatal("Scheduler is unable to continue due to database migrations");
-        throw new Error("There are pending migrations to be applied to the data store");
-    }
-};
 
 const start = async (config: SchedulerConfig): Promise<void> => {
     const { baseUrl, username, password, encryptionKey } = config;
@@ -76,7 +84,7 @@ const start = async (config: SchedulerConfig): Promise<void> => {
         encryptionKey
     );
 
-    await checkMigrations(compositionRoot);
+    await checkMigrations(compositionRoot).toPromise();
 
     const welcomeMessage = `Script initialized on ${baseUrl} with user ${username}`;
     getLogger("main").info("-".repeat(welcomeMessage.length));
