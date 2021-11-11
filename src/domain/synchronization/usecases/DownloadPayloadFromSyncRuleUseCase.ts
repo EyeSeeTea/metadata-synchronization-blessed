@@ -105,7 +105,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                         content: mappedPayload,
                         apiVersion: instance.apiVersion,
                     };
-                } catch (error) {
+                } catch (error: any) {
                     return i18n.t(`An error has ocurred mapping payload for instance {{name}}`, {
                         name: instance.name,
                     });

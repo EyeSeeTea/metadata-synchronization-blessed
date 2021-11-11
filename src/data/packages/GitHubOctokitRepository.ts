@@ -39,7 +39,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             }));
 
             return Either.success(items);
-        } catch (error) {
+        } catch (error: any) {
             return Either.error(this.validateError(error));
         }
     }
@@ -48,7 +48,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
         try {
             const { encoding, content } = await this.getFile(store, branch, path);
             return this.readFileContents(encoding, content);
-        } catch (error) {
+        } catch (error: any) {
             return Either.error(this.validateError(error));
         }
     }
@@ -59,7 +59,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             const result = Buffer.from(content, "base64").toString("utf8");
 
             return Either.success(this.parseFileContents(result) as T);
-        } catch (error) {
+        } catch (error: any) {
             return Either.error(this.validateError(error));
         }
     }
@@ -93,7 +93,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             });
 
             return Either.success(undefined);
-        } catch (error) {
+        } catch (error: any) {
             switch (error.message) {
                 // GitHub API returns 404 if user does not have write permissions
                 case "Not Found":
@@ -129,7 +129,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             });
 
             return Either.success(undefined);
-        } catch (error) {
+        } catch (error: any) {
             return Either.error(this.validateError(error));
         }
     }
@@ -147,7 +147,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             const items: GithubBranch[] = data.map(branch => _.pick(branch, ["name", "commit", "protected"]));
 
             return Either.success(items);
-        } catch (error) {
+        } catch (error: any) {
             return Either.error(this.validateError(error));
         }
     }
@@ -171,7 +171,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             });
 
             return Either.success(undefined);
-        } catch (error) {
+        } catch (error: any) {
             return Either.error(this.validateError(error));
         }
     }
@@ -198,7 +198,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
                 read: permission !== "none",
                 write: permission === "admin" || permission === "write",
             });
-        } catch (error) {
+        } catch (error: any) {
             return Either.error(this.validateError(error));
         }
     }
@@ -249,7 +249,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
         try {
             const { sha } = await this.getFile(store, branch, path);
             return sha;
-        } catch (error) {
+        } catch (error: any) {
             return undefined;
         }
     }
@@ -271,7 +271,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
             });
 
             return data as { encoding: string; content: string; sha: string };
-        } catch (error) {
+        } catch (error: any) {
             if (!error.errors?.find((error: { code?: string }) => error.code === "too_large")) {
                 throw error;
             }
@@ -293,7 +293,7 @@ export class GitHubOctokitRepository implements GitHubRepository {
     private parseFileContents(contents: string): unknown {
         try {
             return JSON.parse(contents);
-        } catch (error) {
+        } catch (error: any) {
             return contents;
         }
     }

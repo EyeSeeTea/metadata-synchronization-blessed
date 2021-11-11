@@ -24,7 +24,7 @@ export class StorageDataStoreClient extends StorageClient {
         try {
             const value = await this.dataStore.get<T>(key).getData();
             return value;
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             return undefined;
         }
@@ -43,7 +43,7 @@ export class StorageDataStoreClient extends StorageClient {
     public async removeObject(key: string): Promise<void> {
         try {
             await this.dataStore.delete(key).getData();
-        } catch (error) {
+        } catch (error: any) {
             if (!error.response || error.response.status !== 404) {
                 throw error;
             }
@@ -104,7 +104,7 @@ export class StorageDataStoreClient extends StorageClient {
             if (!data) throw new Error(`Invalid dataStore key ${key}`);
 
             return data;
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             return undefined;
         }

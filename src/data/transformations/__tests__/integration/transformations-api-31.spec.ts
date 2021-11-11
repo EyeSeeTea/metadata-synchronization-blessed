@@ -137,24 +137,18 @@ describe("Transformations for 2.31 -> 2.30", () => {
         const chartLine = charts["chart-line"];
         expect(chartLine).toBeDefined();
 
-        expect(
-            chartLine.relativePeriods,
-            "to be set from yearlySeries for keys thisYear/lastYear/last5Years"
-        ).toMatchObject({
+        expect(chartLine.relativePeriods).toMatchObject({
             thisYear: true,
             lastYear: true,
             last5Years: true,
         });
 
-        expect(chartLine.relativePeriods, "to be set to false for other values").toMatchObject({
+        expect(chartLine.relativePeriods).toMatchObject({
             last12Weeks: true,
             last4Quarters: false,
         });
 
-        expect(chartLine.periods, "to contain the absolute years from yearlySeries").toEqual([
-            { id: "2016" },
-            { id: "2018" },
-        ]);
+        expect(chartLine.periods).toEqual([{ id: "2016" }, { id: "2018" }]);
     });
 });
 

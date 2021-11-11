@@ -240,7 +240,7 @@ export const SyncRulesListPage: React.FC = () => {
             });
 
             loading.reset();
-        } catch (error) {
+        } catch (error: any) {
             loading.reset();
             if (error.response?.status === 403) {
                 snackbar.error(
@@ -270,7 +270,7 @@ export const SyncRulesListPage: React.FC = () => {
 
         await promiseMap(toDelete, id => compositionRoot.rules.delete(id));
 
-        snackbar.success(i18n.t("Successfully deleted {{count}} rules", { count: toDelete.length }));
+        snackbar.success(i18n.t("Successfully deleted {{total}} rules", { total: toDelete.length }));
 
         loading.reset();
         setToDelete([]);
@@ -390,7 +390,7 @@ export const SyncRulesListPage: React.FC = () => {
             setRefreshKey(Math.random());
 
             loading.reset();
-        } catch (error) {
+        } catch (error: any) {
             loading.reset();
             console.error(error);
             snackbar.error(i18n.t("An error has ocurred during the synchronization"));
@@ -499,7 +499,7 @@ export const SyncRulesListPage: React.FC = () => {
                         maxWidth: "lg",
                         fullWidth: true,
                     });
-                } catch (err) {
+                } catch (err: any) {
                     snackbar.error((err && err.message) || err.toString());
                 } finally {
                     loading.reset();
@@ -675,8 +675,8 @@ export const SyncRulesListPage: React.FC = () => {
                     title={i18n.t("Delete Rules?")}
                     description={
                         toDelete
-                            ? i18n.t("Are you sure you want to delete {{count}} rules?", {
-                                  count: toDelete.length,
+                            ? i18n.t("Are you sure you want to delete {{total}} rules?", {
+                                  total: toDelete.length,
                               })
                             : ""
                     }

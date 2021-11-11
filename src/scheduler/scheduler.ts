@@ -55,7 +55,7 @@ export default class Scheduler {
                     }
                 },
             });
-        } catch (error) {
+        } catch (error: any) {
             logger.error(`Failed executing rule`, error);
         }
     };

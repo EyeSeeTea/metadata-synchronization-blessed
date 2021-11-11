@@ -49,7 +49,7 @@ export const decodeModel = <T>(model: Codec<T>, value: unknown): Either<string, 
         }
 
         return Either.error(either.leftOrDefault("Couldn't decode input"));
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
         return Either.error("Couldn't read JSON");
     }

@@ -105,7 +105,7 @@ export const MSFHomePage: React.FC = () => {
                 globalAdmin
             );
             setSyncReports(reports);
-        } catch (err) {
+        } catch (err: any) {
             const errMessage = err ? err.message : i18n.t("Unknown error");
             const message = `${i18n.t("Server error on aggregation")}: ${errMessage}`;
             snackbar.error(message);

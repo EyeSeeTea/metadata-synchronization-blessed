@@ -186,7 +186,7 @@ const PackageImportDialog: React.FC<PackageImportDialogProps> = ({
             if (openSyncSummary) {
                 openSyncSummary(report);
             }
-        } catch (error) {
+        } catch (error: any) {
             loading.reset();
             snackbar.error(i18n.t("An error has ocurred importing packages"));
         }

@@ -11,7 +11,7 @@ export class DeleteInstanceUseCase implements UseCase {
 
         try {
             await storageClient.removeObjectInCollection(Namespace.INSTANCES, id);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             return false;
         }

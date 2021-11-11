@@ -127,7 +127,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         async (ids: string[]) => {
             try {
                 compositionRoot.packages.download(remoteStore?.id, ids[0], remoteInstance);
-            } catch (error) {
+            } catch (error: any) {
                 snackbar.error(i18n.t("Invalid package"));
             }
         },
@@ -360,7 +360,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
                         openSyncSummary(report);
                         setResetKey(Math.random());
-                    } catch (error) {
+                    } catch (error: any) {
                         snackbar.error(error.message);
                     }
                     loading.reset();

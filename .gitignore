@@ -10,8 +10,8 @@
 manifest.webapp
 /build
 /dist
-*.zip
 metadata-synchronization-server.js
+
 
 # misc
 .DS_Store
@@ -22,7 +22,7 @@ metadata-synchronization-server.js
 *.sublime-project
 *.sublime-workspace
 *.code-workspace
-src/react-app*.d.ts
+*.zip
 
 npm-debug.log*
 yarn-debug.log*

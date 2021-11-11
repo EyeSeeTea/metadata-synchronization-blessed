@@ -212,8 +212,8 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
         loading.reset();
 
         snackbar.success(
-            i18n.t("Successfully deleted {{count}} history notifications", {
-                count: toDelete.length,
+            i18n.t("Successfully deleted {{total}} history notifications", {
+                total: toDelete.length,
             })
         );
 
@@ -262,8 +262,8 @@ export const HistoryTable: React.FC<HistoryTableProps> = React.memo(props => {
                     onSave={confirmDelete}
                     onCancel={() => setToDelete([])}
                     title={i18n.t("Delete History Notifications?")}
-                    description={i18n.t("Are you sure you want to delete {{count}} history notifications?", {
-                        count: toDelete.length,
+                    description={i18n.t("Are you sure you want to delete {{total}} history notifications?", {
+                        total: toDelete.length,
                     })}
                     saveText={i18n.t("Ok")}
                 />

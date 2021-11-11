@@ -83,10 +83,10 @@ describe("API 34", () => {
             expect(item).toBeDefined();
 
             expect(item.type).toEqual("VISUALIZATION");
-            expect(item.visualization, "to keep referencing the chart").toEqual({
+            expect(item.visualization).toEqual({
                 id: "v7g3iMUFcsD",
             });
-            expect(item.chart, "is no longer set").toBeUndefined();
+            expect(item.chart).toBeUndefined();
         });
 
         it("Transforms charts and report tables to visualizations", async () => {
@@ -97,14 +97,9 @@ describe("API 34", () => {
                 models: ["visualizations"],
             });
 
-            expect(payload.visualizations["LW0O27b7TdD"], "Chart to be transformed into a visualization").toMatchObject(
-                visualizations34.visualizations[0]
-            );
+            expect(payload.visualizations["LW0O27b7TdD"]).toMatchObject(visualizations34.visualizations[0]);
 
-            expect(
-                payload.visualizations["qfMh2IjOxvw"],
-                "Report table to be transformed into a visualization"
-            ).toMatchObject(visualizations34.visualizations[1]);
+            expect(payload.visualizations["qfMh2IjOxvw"]).toMatchObject(visualizations34.visualizations[1]);
         });
     });
 
@@ -151,27 +146,27 @@ describe("API 34", () => {
             expect(chartItem).toBeDefined();
 
             expect(chartItem.type).toEqual("CHART");
-            expect(chartItem.chart, "to reference the chart").toEqual({
+            expect(chartItem.chart).toEqual({
                 id: "chart1",
                 type: "LINE",
             });
-            expect(chartItem.visualization, "is no longer set").toBeUndefined();
+            expect(chartItem.visualization).toBeUndefined();
 
             // Report table item
             expect(reportTableItem).toBeDefined();
 
             expect(reportTableItem.type).toEqual("REPORT_TABLE");
-            expect(reportTableItem.reportTable, "to reference the report table").toEqual({
+            expect(reportTableItem.reportTable).toEqual({
                 id: "reportTable1",
                 type: "PIVOT_TABLE",
             });
-            expect(reportTableItem.visualization, "is no longer set").toBeUndefined();
+            expect(reportTableItem.visualization).toBeUndefined();
 
             // Other item
             expect(mapItem).toBeDefined();
 
             expect(mapItem.type).toEqual("MAP");
-            expect(mapItem.map, "to reference the map").toEqual({
+            expect(mapItem.map).toEqual({
                 id: "map1",
             });
             expect(mapItem.visualization).toBeUndefined();
@@ -185,14 +180,9 @@ describe("API 34", () => {
                 models: ["charts", "reportTables"],
             });
 
-            expect(payload.charts["LW0O27b7TdD"], "Chart to be transformed into a visualization").toMatchObject(
-                visualizations30.charts[0]
-            );
+            expect(payload.charts["LW0O27b7TdD"]).toMatchObject(visualizations30.charts[0]);
 
-            expect(
-                payload.reportTables["qfMh2IjOxvw"],
-                "Report table to be transformed into a visualization"
-            ).toMatchObject(visualizations30.reportTables[0]);
+            expect(payload.reportTables["qfMh2IjOxvw"]).toMatchObject(visualizations30.reportTables[0]);
         });
     });
 });

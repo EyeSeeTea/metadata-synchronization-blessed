@@ -78,7 +78,7 @@ export class StorageConstantClient extends StorageClient {
             const objects = await this.getConstants({ id: true, code: true, name: true });
 
             await this.api.metadata.post({ constants: objects }, { importStrategy: "DELETE" }).getData();
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
         }
     }
@@ -157,7 +157,7 @@ export class StorageConstantClient extends StorageClient {
         try {
             const value = description ? JSON.parse(description) : undefined;
             return { ...this.formatConstant({ id, description, ...rest }), value };
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             return this.formatConstant({ id, description, ...rest });
         }

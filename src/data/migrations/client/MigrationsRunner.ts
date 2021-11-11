@@ -84,7 +84,7 @@ export class MigrationsRunner<T> {
             });
             try {
                 await migration.migrate(storage, debug, migrationParams);
-            } catch (error) {
+            } catch (error: any) {
                 const errorMsg = `${migration.name}: ${error.message}`;
                 await this.saveConfig({ errorMsg });
                 throw error;
@@ -106,7 +106,7 @@ export class MigrationsRunner<T> {
             debug({ message: `Delete backup entries` });
 
             await promiseMap(backupKeys, backupKey => storage.remove(backupKey));
-        } catch (err) {
+        } catch (err: any) {
             this.debug({ message: `Error deleting backup (non-fatal)` });
         }
     }
