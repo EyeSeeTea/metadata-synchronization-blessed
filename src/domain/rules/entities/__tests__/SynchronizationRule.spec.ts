@@ -498,9 +498,9 @@ describe("SyncRule", () => {
 
             const editedSyncRule = syncRule.updateDataSyncPeriod("SINCE_LAST_EXECUTED_DATE");
 
-            expect(editedSyncRule.dataSyncStartDate.getDay()).toEqual(now.getDay());
-            expect(editedSyncRule.dataSyncStartDate.getMonth()).toEqual(now.getMonth());
-            expect(editedSyncRule.dataSyncStartDate.getFullYear()).toEqual(now.getFullYear());
+            expect(editedSyncRule.dataSyncStartDate?.getDay()).toEqual(now.getDay());
+            expect(editedSyncRule.dataSyncStartDate?.getMonth()).toEqual(now.getMonth());
+            expect(editedSyncRule.dataSyncStartDate?.getFullYear()).toEqual(now.getFullYear());
         });
         it("should has start date as last executed after build if the period is since last executed and exist last executed", () => {
             const lastExecuted = new Date();
@@ -523,9 +523,9 @@ describe("SyncRule", () => {
 
             const syncRule = SynchronizationRule.build(syncRuleData);
 
-            expect(syncRule.dataSyncStartDate.getDay()).toEqual(now.getDay());
-            expect(syncRule.dataSyncStartDate.getMonth()).toEqual(now.getMonth());
-            expect(syncRule.dataSyncStartDate.getFullYear()).toEqual(now.getFullYear());
+            expect(syncRule.dataSyncStartDate?.getDay()).toEqual(now.getDay());
+            expect(syncRule.dataSyncStartDate?.getMonth()).toEqual(now.getMonth());
+            expect(syncRule.dataSyncStartDate?.getFullYear()).toEqual(now.getFullYear());
         });
     });
 });

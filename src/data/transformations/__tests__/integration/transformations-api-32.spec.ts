@@ -155,7 +155,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await useCase.buildPayload();
         expect(payload.organisationUnits?.find(({ id }) => id === "ou_id1")).toBeDefined();
@@ -195,7 +195,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await useCase.buildPayload();
         expect(payload.organisationUnits?.find(({ id }) => id === "ou_id2")).toBeDefined();
@@ -237,7 +237,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await useCase.buildPayload();
         expect(payload.organisationUnits?.find(({ id }) => id === "ou_id3")).toBeDefined();
@@ -281,7 +281,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
 
         await useCase.buildPayload();
 
