@@ -3,15 +3,28 @@ import _ from "lodash";
 import { useCallback } from "react";
 import { MetadataModule } from "../../../../../../domain/modules/entities/MetadataModule";
 import i18n from "../../../../../../locales";
-
-import { DashboardModel, DataSetModel, ProgramModel, ProgramRuleModel } from "../../../../../../models/dhis/metadata";
+import {
+    DashboardModel,
+    DataSetModel,
+    ProgramModel,
+    ProgramRuleModel,
+    RelationshipTypeModel,
+    UserGroupModel
+} from "../../../../../../models/dhis/metadata";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { ModuleWizardStepProps } from "../Steps";
 
 const config = {
     module: {
         metadata: {
-            models: [DataSetModel, ProgramModel, ProgramRuleModel, DashboardModel],
+            models: [
+                DataSetModel,
+                ProgramModel,
+                ProgramRuleModel,
+                DashboardModel,
+                RelationshipTypeModel,
+                UserGroupModel,
+            ],
             childrenKeys: [],
         },
     },
