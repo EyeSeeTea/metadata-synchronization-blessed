@@ -58,20 +58,10 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             programs?.map(({ programIndicators }: Partial<D2Program>) => programIndicators?.map(({ id }) => id) ?? [])
         );
 
-        const dataElementsByProgram = _(programs)
-            .flatMap(({ id, programStages }: Partial<D2Program>) =>
-                _.flatMap(
-                    programStages,
-                    ({ programStageDataElements }) =>
-                        programStageDataElements.map(({ dataElement }) => `${id}.${dataElement.id}`) ?? []
-                )
-            )
-            .value();
-
         const { dataValues: candidateDataValues = [] } = enableAggregation
             ? await aggregatedRepository.getAnalytics({
                   dataParams,
-                  dimensionIds: [...directIndicators, ...indicatorsByProgram, ...dataElementsByProgram],
+                  dimensionIds: [...directIndicators, ...indicatorsByProgram],
                   includeCategories: false,
               })
             : {};
