@@ -174,7 +174,7 @@ export const initializeAppRoles = async (baseUrl: string) => {
                             withCredentials: true,
                         }
                     );
-                } catch (error) {
+                } catch (error: any) {
                     console.error(error);
                 }
             }

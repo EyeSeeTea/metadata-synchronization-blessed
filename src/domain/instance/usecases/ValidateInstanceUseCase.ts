@@ -21,7 +21,7 @@ export class ValidateInstanceUseCase implements UseCase {
             } else {
                 return Either.error(i18n.t("Not a valid DHIS2 instance"));
             }
-        } catch (error) {
+        } catch (error: any) {
             if (error.response) {
                 switch (error.response.status) {
                     case 401:

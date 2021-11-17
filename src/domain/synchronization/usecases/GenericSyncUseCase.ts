@@ -164,7 +164,7 @@ export abstract class GenericSyncUseCase {
         try {
             const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
             return instance.update({ version });
-        } catch (error) {
+        } catch (error: any) {
             return instance;
         }
     }
@@ -215,7 +215,7 @@ export abstract class GenericSyncUseCase {
                 syncReport.addSyncResult(...syncResults);
 
                 debug("Finished import on instance", instance.toPublicObject());
-            } catch (error) {
+            } catch (error: any) {
                 syncReport.addSyncResult({
                     status: "ERROR",
                     message: error.message,

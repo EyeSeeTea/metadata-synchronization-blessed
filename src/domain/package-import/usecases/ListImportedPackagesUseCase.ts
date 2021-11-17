@@ -17,7 +17,7 @@ export class ListImportedPackagesUseCase implements UseCase {
             const items = await storageClient.listObjectsInCollection<ImportedPackageData>(Namespace.IMPORTEDPACKAGES);
 
             return Either.success(items);
-        } catch (error) {
+        } catch (error: any) {
             return Either.error("UNEXPECTED_ERROR");
         }
     }

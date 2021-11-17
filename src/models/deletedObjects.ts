@@ -80,7 +80,7 @@ export default class DeletedObject {
         const { page = 1, pageSize = 20, paging = true, sorting = ["id", "asc"] } = pagination || {};
 
         const { deletedObjects: rawData } = (
-            await axios.get(api.apiPath + "/deletedObjects", {
+            await axios.get<any>(api.apiPath + "/deletedObjects", {
                 withCredentials: true,
                 params: {
                     fields: ":all,uid~rename(id)",

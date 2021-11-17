@@ -13,6 +13,7 @@ module.exports = {
         "no-console": ["warn", { allow: ["debug", "warn", "error"] }],
         "@typescript-eslint/camelcase": "off",
         "@typescript-eslint/explicit-function-return-type": ["off"],
+        "unused-imports/no-unused-imports": "warn",
         "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
         "react/prop-types": "off",
         "react/display-name": "off",
@@ -42,7 +43,7 @@ module.exports = {
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
     },
-    plugins: ["cypress", "@typescript-eslint", "react-hooks"],
+    plugins: ["cypress", "@typescript-eslint", "react-hooks", "unused-imports"],
     env: { "cypress/globals": true },
     settings: {
         react: {

@@ -142,7 +142,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
             const objectSharing = await storageClient.getObjectSharing(`${Namespace.INSTANCES}-${data.id}`);
 
             return objectSharing ? Either.success(objectSharing) : Either.error("unexpected-error");
-        } catch (error) {
+        } catch (error: any) {
             if (error.response?.status === 403) {
                 return Either.error("authority-error");
             } else {

@@ -1,6 +1,5 @@
 import { List, ListItem, ListItemText } from "@material-ui/core";
 import Editor from "@monaco-editor/react";
-import _ from "lodash";
 import { editor } from "monaco-editor";
 import { useRef } from "react";
 import styled from "styled-components";

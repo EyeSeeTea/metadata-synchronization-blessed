@@ -147,7 +147,7 @@ const InstanceListPage = () => {
         if (_.some(results, [false])) {
             snackbar.error(i18n.t("Failed to delete some instances"));
         } else {
-            snackbar.success(i18n.t("Successfully deleted {{count}} instances", { count: toDelete.length }));
+            snackbar.success(i18n.t("Successfully deleted {{total}} instances", { total: toDelete.length }));
         }
     };
 
@@ -339,8 +339,8 @@ const InstanceListPage = () => {
                 onSave={confirmDelete}
                 onCancel={cancelDelete}
                 title={i18n.t("Delete Instances?")}
-                description={i18n.t("Are you sure you want to delete {{count}} instances?", {
-                    count: toDelete.length,
+                description={i18n.t("Are you sure you want to delete {{total}} instances?", {
+                    total: toDelete.length,
                 })}
                 saveText={i18n.t("Ok")}
             />

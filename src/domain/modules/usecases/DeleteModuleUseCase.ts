@@ -14,7 +14,7 @@ export class DeleteModuleUseCase implements UseCase {
         try {
             await storageClient.removeObjectInCollection(Namespace.MODULES, id);
             await this.deletePackagesFromModule(id, instance);
-        } catch (error) {
+        } catch (error: any) {
             return false;
         }
 

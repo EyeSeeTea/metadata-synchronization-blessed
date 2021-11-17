@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@material-ui/core";
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles";
 import _ from "lodash";
 import i18n from "../../../../../locales";
 import { muiTheme } from "../../themes/dhis2.theme";
@@ -26,7 +26,7 @@ interface DropdownProps<T extends string = string> {
 const getTheme = (view: DropdownViewOption) => {
     switch (view) {
         case "filter":
-            return createMuiTheme({
+            return createTheme({
                 ...muiTheme,
                 overrides: {
                     MuiFormLabel: {
@@ -54,7 +54,7 @@ const getTheme = (view: DropdownViewOption) => {
                 },
             });
         case "inline":
-            return createMuiTheme({
+            return createTheme({
                 ...muiTheme,
                 overrides: {
                     MuiFormControl: {

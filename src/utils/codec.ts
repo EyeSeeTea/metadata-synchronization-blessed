@@ -33,7 +33,6 @@ import {
     NonEmptyString,
     NumberFromString,
     NumberRangedIn,
-    RegExpMatchedString,
     StringLengthRangedIn,
 } from "purify-ts-extra-codec";
 import { Either } from "../domain/common/entities/Either";
@@ -49,7 +48,7 @@ export const decodeModel = <T>(model: Codec<T>, value: unknown): Either<string, 
         }
 
         return Either.error(either.leftOrDefault("Couldn't decode input"));
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
         return Either.error("Couldn't read JSON");
     }
@@ -84,20 +83,6 @@ const undefinedType = Codec.custom<undefined>({
     schema: () => ({ type: "null" }),
 });
 
-// Short and long HEX color format
-const colorRegExp = /^#[0-9a-fA-F]{3,6}$/;
-
-// RFC2822 email format
-const emailRegExp =
-    /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-
-// Diego Perini (License: MIT)
-const urlRegExp =
-    /^(?:(?:https?:\/\/)?localhost(?::\d{2,5})?)$|(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/;
-
-// DHIS2 valid uid
-const dhis2Uid = /^[a-zA-Z]{1}[a-zA-Z0-9]{10}$/;
-
 export const Schema = {
     object: Interface,
     stringObject: JsonFromString,
@@ -125,11 +110,6 @@ export const Schema = {
     exact: exactly,
     extend: intersect,
     maybe,
-    regex: RegExpMatchedString,
-    color: RegExpMatchedString(colorRegExp),
-    email: RegExpMatchedString(emailRegExp),
-    url: RegExpMatchedString(urlRegExp),
-    dhis2Id: RegExpMatchedString(dhis2Uid),
     chain: chainCodec,
     custom: Codec.custom,
     lazy,

@@ -87,7 +87,7 @@ export class TEID2ApiRepository implements TEIRepository {
                 .getData();
 
             return this.cleanTEIsImportResponse(response);
-        } catch (error) {
+        } catch (error: any) {
             if (error?.response?.data) {
                 return this.cleanTEIsImportResponse(error.response.data);
             }

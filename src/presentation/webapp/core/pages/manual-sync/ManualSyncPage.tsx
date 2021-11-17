@@ -232,7 +232,7 @@ const ManualSyncPage: React.FC = () => {
 
             loading.reset();
             closeDialogs();
-        } catch (error) {
+        } catch (error: any) {
             loading.reset();
             if (error.response?.status === 403) {
                 snackbar.error(
