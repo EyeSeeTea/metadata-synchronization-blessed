@@ -1,0 +1,32 @@
+{
+    "aggregatedDataElements": {
+        "xQWBiTAywVq": {
+            "global": false,
+            "mapping": {
+                "categoryOptionCombos": {
+                    "HllvX50cXC0": {
+                        "code": "default",
+                        "global": false,
+                        "mapping": {
+                            "categoryCombos": {
+                                "bjDvmb4bfuf": {
+                                    "mapping": {},
+                                    "mappedId": "JzvGfLYkX17",
+                                    "conflicts": false,
+                                    "mappedName": "default"
+                                }
+                            }
+                        },
+                        "mappedId": "Xr12mI7VPn3",
+                        "conflicts": false,
+                        "mappedCode": "default",
+                        "mappedName": "default"
+                    }
+                }
+            },
+            "mappedId": "F6yeCU8jIbq",
+            "conflicts": false,
+            "mappedName": "TT from program indicator 1"
+        }
+    }
+}

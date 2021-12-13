@@ -1,0 +1,17 @@
+{
+    "dataValues": [
+        {
+            "dataElement": "hrv4hSVUzSH",
+            "period": "202110",
+            "orgUnit": "DiszpKrYNg8",
+            "value": "1",
+            "comment": "test"
+        },
+        {
+            "dataElement": "HDiPuHnjfMI",
+            "period": "202110",
+            "orgUnit": "DiszpKrYNg8",
+            "value": "A"
+        }
+    ]
+}
