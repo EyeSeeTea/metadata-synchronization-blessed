@@ -1,0 +1,32 @@
+{
+    "aggregatedDataElements": {
+        "HDiPuHnjfMI": {
+            "global": false,
+            "mapping": {
+                "options": {
+                    "RnkuWU7N1Xz": {
+                        "code": "A",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "lIt38I4jG5F",
+                        "conflicts": false,
+                        "mappedCode": "AA",
+                        "mappedName": "A Clone"
+                    },
+                    "TblWe7BZJMs": {
+                        "code": "B",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "yTgEcKGQh3j",
+                        "conflicts": false,
+                        "mappedCode": "BB",
+                        "mappedName": "B Clone"
+                    }
+                }
+            },
+            "mappedId": "TPEszSDxJxw",
+            "conflicts": false,
+            "mappedName": "TT Aggregated DE 3"
+        }
+    }
+}

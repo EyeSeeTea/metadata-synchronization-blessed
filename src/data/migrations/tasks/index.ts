@@ -10,6 +10,8 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
         [5, import("./05.multiple-stores")],
         [6, import("./06.this-instance")],
         [7, import("./07.instances-user-password")],
+        [8, import("./08.remove-coc-inner-mappings")],
+        [9, import("./09.mapping-instances")],
     ];
 }
 

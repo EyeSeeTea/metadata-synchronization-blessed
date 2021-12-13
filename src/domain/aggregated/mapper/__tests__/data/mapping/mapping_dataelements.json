@@ -1,0 +1,18 @@
+{
+    "aggregatedDataElements": {
+        "hrv4hSVUzSH": {
+            "global": false,
+            "mapping": {},
+            "mappedId": "F6yeCU8jIbq",
+            "conflicts": false,
+            "mappedName": "TT Aggregated DE 1"
+        },
+        "HDiPuHnjfMI": {
+            "global": false,
+            "mapping": {},
+            "mappedId": "TPEszSDxJxw",
+            "conflicts": false,
+            "mappedName": "TT Aggregated DE 2"
+        }
+    }
+}

@@ -1,0 +1,110 @@
+[
+    {
+        "name": "default",
+        "id": "XfXL6fEveof",
+        "categoryCombo": {
+            "id": "bjDvmb4bfuf"
+        },
+        "categoryOptions": [
+            {
+                "id": "xYerKDKCefk"
+            }
+        ]
+    },
+    {
+        "name": "Cat Option A1",
+        "id": "AuNsXUDe1oQ",
+        "categoryCombo": {
+            "id": "lnLwxItlDk4"
+        },
+        "categoryOptions": [
+            {
+                "id": "csejUvSNjRJ"
+            }
+        ]
+    },
+    {
+        "name": "Cat Option A1, Cat Option B1",
+        "id": "qV9pfrHzBI8",
+        "categoryCombo": {
+            "id": "BGg0ZSWeRRO"
+        },
+        "categoryOptions": [
+            {
+                "id": "L3gl3nlQi4A"
+            },
+            {
+                "id": "csejUvSNjRJ"
+            }
+        ]
+    },
+    {
+        "name": "Cat Option A1, Cat Option B2",
+        "id": "kuBjqnCTkmP",
+        "categoryCombo": {
+            "id": "BGg0ZSWeRRO"
+        },
+        "categoryOptions": [
+            {
+                "id": "jaSTZd3ie1A"
+            },
+            {
+                "id": "csejUvSNjRJ"
+            }
+        ]
+    },
+    {
+        "name": "Cat Option A2",
+        "id": "zBQdMbGbIo7",
+        "categoryCombo": {
+            "id": "lnLwxItlDk4"
+        },
+        "categoryOptions": [
+            {
+                "id": "tstWJ0HcPRo"
+            }
+        ]
+    },
+    {
+        "name": "Cat Option A2, Cat Option B1",
+        "id": "TAIArGAPOlK",
+        "categoryCombo": {
+            "id": "BGg0ZSWeRRO"
+        },
+        "categoryOptions": [
+            {
+                "id": "L3gl3nlQi4A"
+            },
+            {
+                "id": "tstWJ0HcPRo"
+            }
+        ]
+    },
+    {
+        "name": "Cat Option A2, Cat Option B2",
+        "id": "QHUx0ZNyO7j",
+        "categoryCombo": {
+            "id": "BGg0ZSWeRRO"
+        },
+        "categoryOptions": [
+            {
+                "id": "jaSTZd3ie1A"
+            },
+            {
+                "id": "tstWJ0HcPRo"
+            }
+        ]
+    },
+    {
+        "name": "default",
+        "id": "HllvX50cXC0",
+        "categoryCombo": {
+            "id": "bjDvmb4bfuf"
+        },
+        "categoryOptions": [
+            {
+                "id": "xYerKDKCefk"
+            }
+        ]
+    }
+]

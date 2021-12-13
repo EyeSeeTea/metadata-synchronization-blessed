@@ -1,0 +1,21 @@
+{
+    "dataValues": [
+        {
+            "dataElement": "hrv4hSVUzSH",
+            "period": "202110",
+            "orgUnit": "BWW8zaLISW4",
+            "value": "1",
+            "comment": "test",
+            "categoryOptionCombo": "HllvX50cXC0",
+            "attributeOptionCombo": "HllvX50cXC0"
+        },
+        {
+            "dataElement": "HDiPuHnjfMI",
+            "period": "202110",
+            "orgUnit": "BWW8zaLISW4",
+            "categoryOptionCombo": "HllvX50cXC0",
+            "attributeOptionCombo": "HllvX50cXC0",
+            "value": "A"
+        }
+    ]
+}
