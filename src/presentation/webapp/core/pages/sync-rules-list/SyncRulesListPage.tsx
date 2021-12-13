@@ -42,6 +42,7 @@ import {
     PullRequestCreation,
     PullRequestCreationDialog,
 } from "../../../../react/core/components/pull-request-creation-dialog/PullRequestCreationDialog";
+import { SchedulerInfo } from "../../../../react/core/components/scheduler-info/SchedulerInfo";
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
 import { SyncRuleImportSummary } from "../../../../react/core/components/sync-rule-import-summary/SyncRuleImportSummary";
 import SyncSummary from "../../../../react/core/components/sync-summary/SyncSummary";
@@ -645,7 +646,9 @@ export const SyncRulesListPage: React.FC = () => {
 
     return (
         <TestWrapper>
-            <PageHeader title={title} onBackClick={back} />
+            <PageHeader title={title} onBackClick={back}>
+                <SchedulerInfo />
+            </PageHeader>
 
             <Dropzone
                 ref={fileRef}
