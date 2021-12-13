@@ -1,0 +1,96 @@
+{
+    "eventPrograms": {
+        "lSl07qiDkrR": {
+            "global": false,
+            "mapping": {
+                "programStages": {
+                    "OP5GQTOfLac": {
+                        "mapping": {},
+                        "mappedId": "tao6YebS3Q0",
+                        "conflicts": false,
+                        "mappedName": "TT program category A y B"
+                    }
+                },
+                "categoryCombos": {
+                    "BGg0ZSWeRRO": {
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedName": "DISABLED"
+                    }
+                },
+                "categoryOptions": {
+                    "AcLxsNOKqWH-L3gl3nlQi4A": {
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedName": "DISABLED"
+                    },
+                    "AcLxsNOKqWH-jaSTZd3ie1A": {
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedName": "DISABLED"
+                    },
+                    "WsDbh8fR7Qq-csejUvSNjRJ": {
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedName": "DISABLED"
+                    },
+                    "WsDbh8fR7Qq-tstWJ0HcPRo": {
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "DISABLED",
+                        "conflicts": false,
+                        "mappedName": "DISABLED"
+                    }
+                }
+            },
+            "mappedId": "ycGCZqXuw2u",
+            "conflicts": false,
+            "mappedName": "TT program category A y B"
+        }
+    },
+    "categoryCombos": {
+        "BGg0ZSWeRRO": {
+            "mapping": {},
+            "mappedId": "PjA8ZpKfEPG",
+            "conflicts": false,
+            "mappedName": "TT Category combo A y B"
+        }
+    },
+    "categoryOptions": {
+        "AcLxsNOKqWH-L3gl3nlQi4A": {
+            "global": true,
+            "mapping": {},
+            "mappedId": "W853XCzFJUF",
+            "conflicts": false,
+            "mappedName": "TT Category B1"
+        },
+        "AcLxsNOKqWH-jaSTZd3ie1A": {
+            "global": true,
+            "mapping": {},
+            "mappedId": "NumSEoPPOx1",
+            "conflicts": false,
+            "mappedName": "TT Category B2"
+        },
+        "WsDbh8fR7Qq-csejUvSNjRJ": {
+            "global": true,
+            "mapping": {},
+            "mappedId": "JL2fNB6gbJ9",
+            "conflicts": false,
+            "mappedName": "TT Category A1"
+        },
+        "WsDbh8fR7Qq-tstWJ0HcPRo": {
+            "global": true,
+            "mapping": {},
+            "mappedId": "J55tvlWi2I7",
+            "conflicts": false,
+            "mappedName": "TT Category A2"
+        }
+    }
+}

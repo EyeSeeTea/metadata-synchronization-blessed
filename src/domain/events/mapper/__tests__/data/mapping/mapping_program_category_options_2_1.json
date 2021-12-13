@@ -1,0 +1,58 @@
+{
+    "eventPrograms": {
+        "lSl07qiDkrR": {
+            "global": false,
+            "mapping": {
+                "programStages": {
+                    "OP5GQTOfLac": {
+                        "mapping": {},
+                        "mappedId": "Jgc3fbk0yIg",
+                        "conflicts": false,
+                        "mappedName": "TT program category A"
+                    }
+                },
+                "categoryCombos": {
+                    "BGg0ZSWeRRO": {
+                        "mapping": {},
+                        "mappedId": "PRzPowOj1UJ",
+                        "conflicts": false,
+                        "mappedName": "TT Category combo A"
+                    }
+                },
+                "categoryOptions": {
+                    "AcLxsNOKqWH-L3gl3nlQi4A": {
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "JL2fNB6gbJ9",
+                        "conflicts": false,
+                        "mappedName": "TT Category A1"
+                    },
+                    "AcLxsNOKqWH-jaSTZd3ie1A": {
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "J55tvlWi2I7",
+                        "conflicts": false,
+                        "mappedName": "TT Category A2"
+                    },
+                    "WsDbh8fR7Qq-csejUvSNjRJ": {
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "JL2fNB6gbJ9",
+                        "conflicts": false,
+                        "mappedName": "TT Category A1"
+                    },
+                    "WsDbh8fR7Qq-tstWJ0HcPRo": {
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "J55tvlWi2I7",
+                        "conflicts": false,
+                        "mappedName": "TT Category A2"
+                    }
+                }
+            },
+            "mappedId": "kX8EWjSVwSW",
+            "conflicts": false,
+            "mappedName": "TT program category A"
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "options": {
+        "RnkuWU7N1Xz": {
+            "code": "A",
+            "global": true,
+            "mapping": {},
+            "mappedId": "bBbEcKGQh3j",
+            "conflicts": false,
+            "mappedCode": "AAA",
+            "mappedName": "A Global"
+        },
+        "TblWe7BZJMs": {
+            "code": "B",
+            "global": true,
+            "mapping": {},
+            "mappedId": "aAaEcKGQh3j",
+            "conflicts": false,
+            "mappedCode": "BBB",
+            "mappedName": "B Global"
+        }
+    }
+}
