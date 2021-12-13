@@ -101,6 +101,12 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
+    protected async getMappingRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.mappingRepository(remoteInstance ?? defaultInstance);
+    }
+
+    @cache()
     public async getOriginInstance(): Promise<Instance> {
         const { originInstance: originInstanceId } = this.builder;
         const instance = await this.getInstanceById(originInstanceId);
@@ -112,11 +118,17 @@ export abstract class GenericSyncUseCase {
     public async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
         const { originInstance: originInstanceId } = this.builder;
 
+        const mappingRepository = await this.getMappingRepository();
+
         // If sync is LOCAL -> REMOTE, use the destination instance mapping
-        if (originInstanceId === "LOCAL") return instance.metadataMapping;
+        if (originInstanceId === "LOCAL") {
+            const dataSourceMapping = await mappingRepository.getByOwner({ type: "instance", id: instance.id });
+            return dataSourceMapping?.mappingDictionary ?? {};
+        }
 
         // Otherwise use the origin (REMOTE) destination instance mapping
         const remoteInstance = await this.getOriginInstance();
+        const remoteDsMapping = await mappingRepository.getByOwner({ type: "instance", id: remoteInstance.id });
 
         // TODO: This should be revisited in the future, does not fully work with nested ids (programs)
         const transformMapping = (mapping: MetadataMappingDictionary): MetadataMappingDictionary => {
@@ -136,7 +148,7 @@ export abstract class GenericSyncUseCase {
             });
         };
 
-        return transformMapping(remoteInstance.metadataMapping);
+        return transformMapping(remoteDsMapping?.mappingDictionary ?? {});
     }
 
     private async buildSyncReport() {

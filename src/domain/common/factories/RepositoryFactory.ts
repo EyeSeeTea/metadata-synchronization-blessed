@@ -11,6 +11,7 @@ import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceFileRepositoryConstructor } from "../../instance/repositories/InstanceFileRepository";
 import { InstanceRepositoryConstructor } from "../../instance/repositories/InstanceRepository";
+import { MappingRepositoryConstructor } from "../../mapping/repositories/MappingRepository";
 import { MetadataRepository, MetadataRepositoryConstructor } from "../../metadata/repositories/MetadataRepository";
 import { MigrationsRepositoryConstructor } from "../../migrations/repositories/MigrationsRepository";
 import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubRepository";
@@ -163,6 +164,13 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public mappingRepository(instance: Instance) {
+        const config = this.configRepository(instance);
+
+        return this.get<MappingRepositoryConstructor>(Repositories.MappingRepository, [config]);
+    }
+
+    @cache()
     public schedulerRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<SchedulerRepositoryConstructor>(Repositories.SchedulerRepository, [config]);
@@ -191,5 +199,6 @@ export const Repositories = {
     MigrationsRepository: "migrationsRepository",
     TEIsRepository: "teisRepository",
     UserRepository: "userRepository",
+    MappingRepository: "mappingRepository",
     SchedulerRepository: "schedulerRepository",
 } as const;

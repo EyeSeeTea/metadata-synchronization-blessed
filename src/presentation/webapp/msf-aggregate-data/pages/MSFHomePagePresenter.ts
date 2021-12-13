@@ -434,9 +434,12 @@ async function deletePreviousDataValues(
                 const payload = await sync.buildPayload();
                 const mappedPayload = await sync.mapPayload(instance, payload);
 
+                const dataSourceMapping = await compositionRoot.mapping.get({ type: "instance", id: instance.id });
+                const mapping = dataSourceMapping?.mappingDictionary ?? {};
+
                 const filteredDataValues = mappedPayload.dataValues?.filter(
                     ({ dataElement, categoryOptionCombo = "" }) =>
-                        _(instance.metadataMapping.aggregatedDataElements)
+                        _(mapping.aggregatedDataElements)
                             .values()
                             .filter(({ mappedId }) => mappedId === dataElement)
                             .flatMap(({ mapping = {} }) => _.values(mapping.categoryOptionCombos))
