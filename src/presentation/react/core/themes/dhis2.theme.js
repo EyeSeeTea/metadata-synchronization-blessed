@@ -1,4 +1,4 @@
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles";
 
 // Color palette from https://projects.invisionapp.com/share/A7LT4TJYETS#/screens/302550228_Color
 export const colors = {
@@ -74,7 +74,7 @@ export const palette = {
     shadow: colors.grey,
 };
 
-export const muiTheme = createMuiTheme({
+export const muiTheme = createTheme({
     colors,
     palette,
     typography: {

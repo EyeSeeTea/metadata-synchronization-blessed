@@ -9,46 +9,70 @@ export class ReportsD2ApiRepository implements ReportsRepository {
     constructor(private configRepository: ConfigRepository) {}
 
     public async getById(id: string): Promise<SynchronizationReport | undefined> {
-        const storageClient = await this.getStorageClient();
-        const data = await storageClient.getObjectInCollection<SynchronizationReportData>(Namespace.HISTORY, id);
-
-        return data ? SynchronizationReport.build(data) : undefined;
+        try {
+            const storageClient = await this.getStorageClient();
+            const data = await storageClient.getObjectInCollection<SynchronizationReportData>(Namespace.HISTORY, id);
+            return data ? SynchronizationReport.build(data) : undefined;
+        } catch (error: any) {
+            console.error(error);
+            return undefined;
+        }
     }
 
     public async getSyncResults(id: string): Promise<SynchronizationResult[]> {
-        const storageClient = await this.getStorageClient();
-        const data = await storageClient.getObject<SynchronizationResult[]>(`${Namespace.HISTORY}-${id}`);
-
-        return data ?? [];
+        try {
+            const storageClient = await this.getStorageClient();
+            const data = await storageClient.getObject<SynchronizationResult[]>(`${Namespace.HISTORY}-${id}`);
+            return data ?? [];
+        } catch (error: any) {
+            console.error(error);
+            return [];
+        }
     }
 
     public async list(): Promise<SynchronizationReport[]> {
-        const storageClient = await this.getStorageClient();
-        const stores = await storageClient.listObjectsInCollection<SynchronizationReportData>(Namespace.HISTORY);
-
-        return stores.map(data => SynchronizationReport.build(data));
+        try {
+            const storageClient = await this.getStorageClient();
+            const stores = await storageClient.listObjectsInCollection<SynchronizationReportData>(Namespace.HISTORY);
+            return stores.map(data => SynchronizationReport.build(data));
+        } catch (error: any) {
+            console.error(error);
+            return [];
+        }
     }
 
     public async save(report: SynchronizationReport): Promise<void> {
-        const storageClient = await this.getStorageClient();
+        try {
+            const storageClient = await this.getStorageClient();
 
-        await storageClient.saveObjectInCollection<SynchronizationReportData>(Namespace.HISTORY, report.toObject());
+            await storageClient.saveObjectInCollection<SynchronizationReportData>(Namespace.HISTORY, report.toObject());
 
-        // We do not store payload on the data store
-        await storageClient.saveObject<SynchronizationResult[]>(
-            `${Namespace.HISTORY}-${report.id}`,
-            report.getResultsForSave()
-        );
+            // We do not store payload on the data store
+            await storageClient.saveObject<SynchronizationResult[]>(
+                `${Namespace.HISTORY}-${report.id}`,
+                report.getResultsForSave()
+            );
+        } catch (error: any) {
+            console.error(error);
+        }
     }
 
     public async clean(): Promise<void> {
-        const storageClient = await this.getStorageClient();
-        await storageClient.clean();
+        try {
+            const storageClient = await this.getStorageClient();
+            await storageClient.clean();
+        } catch (error: any) {
+            console.error(error);
+        }
     }
 
     public async delete(id: string): Promise<void> {
-        const storageClient = await this.getStorageClient();
-        await storageClient.removeObjectInCollection(Namespace.HISTORY, id);
+        try {
+            const storageClient = await this.getStorageClient();
+            await storageClient.removeObjectInCollection(Namespace.HISTORY, id);
+        } catch (error: any) {
+            console.error(error);
+        }
     }
 
     private getStorageClient(): Promise<StorageClient> {
