@@ -75,10 +75,10 @@ export async function migrate(storage: AppStorage, _debug: Debug, params: Migrat
         if (oldMetadataMapping?.programDataElements || oldMetadataMapping?.aggregatedDataElements) {
             const programDataElements = cleanProgramDataElements(oldMetadataMapping.programDataElements);
 
-            const aggregatedDataElements = await cleanAggregatedDataElements(
+            const aggregatedDataElements = oldMetadataMapping.aggregatedDataElements ? await cleanAggregatedDataElements(
                 d2Api,
                 oldMetadataMapping.aggregatedDataElements
-            );
+            ) : undefined;
 
             const metadataMapping = {
                 ...oldMetadataMapping,
