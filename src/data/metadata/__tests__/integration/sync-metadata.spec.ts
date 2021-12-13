@@ -138,7 +138,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await sync.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id1")).toBeDefined();
@@ -166,7 +166,7 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, "");
+        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
 
         const payload = await sync.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id2")).toBeDefined();

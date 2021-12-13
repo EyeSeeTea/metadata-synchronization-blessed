@@ -10,6 +10,7 @@ export const Namespace = {
     STORES: "stores",
     RESPONSIBLES: "responsibles",
     MAPPINGS: "mappings",
+    SCHEDULER_EXECUTIONS: "scheduler-executions",
 };
 
 export const NamespaceProperties: Record<string, string[]> = {

@@ -18,6 +18,7 @@ import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubR
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
 import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
+import { SchedulerRepositoryConstructor } from "../../scheduler/repositories/SchedulerRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
 import { TEIRepository, TEIRepositoryConstructor } from "../../tracked-entity-instances/repositories/TEIRepository";
@@ -168,6 +169,12 @@ export class RepositoryFactory {
 
         return this.get<MappingRepositoryConstructor>(Repositories.MappingRepository, [config]);
     }
+
+    @cache()
+    public schedulerRepository(instance: Instance) {
+        const config = this.configRepository(instance);
+        return this.get<SchedulerRepositoryConstructor>(Repositories.SchedulerRepository, [config]);
+    }
 }
 
 type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
@@ -193,4 +200,5 @@ export const Repositories = {
     TEIsRepository: "teisRepository",
     UserRepository: "userRepository",
     MappingRepository: "mappingRepository",
+    SchedulerRepository: "schedulerRepository",
 } as const;

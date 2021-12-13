@@ -45,3 +45,5 @@ declare module "nano-memoize" {
 declare module "json-stringify-deterministic" {
     export default function stringify(obj: any): string;
 }
+
+declare module "*.png";

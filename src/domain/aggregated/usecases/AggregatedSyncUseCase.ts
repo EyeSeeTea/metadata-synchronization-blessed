@@ -1,12 +1,8 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
-import { mapCategoryOptionCombo, mapOptionValue } from "../../../utils/synchronization";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
 import {
-    CategoryOptionCombo,
     DataElement,
     DataElementGroup,
     DataElementGroupSet,
@@ -16,9 +12,8 @@ import {
 } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { buildMetadataDictionary, cleanObjectDefault, cleanOrgUnitPath } from "../../synchronization/utils";
+import { buildMetadataDictionary } from "../../synchronization/utils";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
-import { DataValue } from "../entities/DataValue";
 import { createAggregatedPayloadMapper } from "../mapper/AggregatedPayloadMapperFactory";
 import { getMinimumParents } from "../utils";
 
@@ -193,113 +188,6 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         );
 
         return (await eventMapper.map(payload)) as AggregatedPackage;
-    }
-
-    public async mapPayloadOld(
-        instance: Instance,
-        { dataValues: oldDataValues = [] }: AggregatedPackage
-    ): Promise<AggregatedPackage> {
-        const metadataRepository = await this.getMetadataRepository();
-        const remoteMetadataRepository = await this.getMetadataRepository(instance);
-
-        const defaultIds = await metadataRepository.getDefaultIds();
-        const originCategoryOptionCombos = await metadataRepository.getCategoryOptionCombos();
-        const destinationCategoryOptionCombos = await remoteMetadataRepository.getCategoryOptionCombos();
-        const mapping = await this.getMapping(instance);
-
-        const instanceAggregatedValues = await this.buildInstanceAggregation(mapping, destinationCategoryOptionCombos);
-
-        const dataValues = _([...instanceAggregatedValues, ...oldDataValues])
-            .map(dataValue =>
-                this.buildMappedDataValue(
-                    dataValue,
-                    mapping,
-                    originCategoryOptionCombos,
-                    destinationCategoryOptionCombos
-                )
-            )
-            .map(dataValue => cleanObjectDefault(dataValue, defaultIds))
-            .filter(this.isDisabledDataValue)
-            .uniqBy(({ orgUnit, period, dataElement, categoryOptionCombo }) =>
-                [orgUnit, period, dataElement, categoryOptionCombo].join("-")
-            )
-            .value();
-
-        return { dataValues };
-    }
-
-    private buildMappedDataValue(
-        { orgUnit, dataElement, categoryOptionCombo, attributeOptionCombo, value, comment, ...rest }: DataValue,
-        globalMapping: MetadataMappingDictionary,
-        originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
-        destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[]
-    ): DataValue {
-        const { organisationUnits = {}, aggregatedDataElements = {} } = globalMapping;
-        const { mapping: innerMapping = {} } = aggregatedDataElements[dataElement] ?? {};
-
-        const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-        const mappedDataElement = aggregatedDataElements[dataElement]?.mappedId ?? dataElement;
-        const mappedValue = mapOptionValue(value, [innerMapping, globalMapping]);
-        const mappedComment = mapOptionValue(comment, [innerMapping, globalMapping]);
-        const mappedCategory =
-            mapCategoryOptionCombo(
-                categoryOptionCombo,
-                [innerMapping, globalMapping],
-                originCategoryOptionCombos,
-                destinationCategoryOptionCombos
-            ) ?? categoryOptionCombo;
-        const mappedAttribute = mapCategoryOptionCombo(
-            attributeOptionCombo,
-            [innerMapping, globalMapping],
-            originCategoryOptionCombos,
-            destinationCategoryOptionCombos
-        );
-
-        return {
-            orgUnit: cleanOrgUnitPath(mappedOrgUnit),
-            dataElement: mappedDataElement,
-            categoryOptionCombo: mappedCategory,
-            attributeOptionCombo: mappedAttribute,
-            value: mappedValue,
-            comment: comment ? mappedComment : undefined,
-            ...rest,
-        };
-    }
-
-    private isDisabledDataValue(dataValue: DataValue): boolean {
-        return !_(dataValue)
-            .pick(["orgUnit", "dataElement", "categoryOptionCombo", "attributeOptionCombo", "value"])
-            .values()
-            .includes("DISABLED");
-    }
-
-    private async buildInstanceAggregation(
-        mapping: MetadataMappingDictionary,
-        categoryOptionCombos: Partial<CategoryOptionCombo>[]
-    ): Promise<DataValue[]> {
-        const { dataParams = {} } = this.builder;
-        const { enableAggregation = false } = dataParams;
-        if (!enableAggregation) return [];
-
-        const aggregatedRepository = await this.getAggregatedRepository();
-        const result = await promiseMap(
-            await aggregatedRepository.getOptions(mapping, categoryOptionCombos),
-            async ({ dataElement, categoryOptions, mappedOptionCombo }) => {
-                const { dataValues = [] } = await aggregatedRepository.getAnalytics({
-                    dataParams,
-                    dimensionIds: [dataElement],
-                    includeCategories: false,
-                    filter: categoryOptions.map(id => id.replace("-", ":")),
-                });
-
-                return dataValues.map(dataValue => ({
-                    ...dataValue,
-                    categoryOptionCombo: mappedOptionCombo,
-                }));
-            }
-        );
-
-        return _.flatten(result);
     }
 
     public filterPayload(payload: AggregatedPackage, filter: AggregatedPackage): AggregatedPackage {
