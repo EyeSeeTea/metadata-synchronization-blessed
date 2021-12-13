@@ -120,7 +120,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
                 },
             });
         });
-    }, [compositionRoot, snackbar, syncRule]);
+    }, [compositionRoot, snackbar, syncRule.originInstance]);
 
     const notifyNewModel = useCallback(model => {
         setModel(() => model);

@@ -1,7 +1,7 @@
 {
     "name": "metadata-synchronization",
     "description": "Advanced metadata & data synchronization utility",
-    "version": "2.12.0",
+    "version": "2.13.0",
     "license": "GPL-3.0",
     "author": "EyeSeeTea team",
     "homepage": ".",
@@ -17,8 +17,8 @@
         "@dhis2/d2-ui-core": "7.3.3",
         "@dhis2/d2-ui-forms": "7.3.3",
         "@dhis2/ui": "7.4.1",
-        "@eyeseetea/d2-api": "1.9.2",
-        "@eyeseetea/d2-ui-components": "2.6.7",
+        "@eyeseetea/d2-api": "1.9.3",
+        "@eyeseetea/d2-ui-components": "2.6.8",
         "@material-ui/core": "4.12.3",
         "@material-ui/icons": "4.11.2",
         "@material-ui/lab": "4.0.0-alpha.60",
@@ -27,11 +27,13 @@
         "@octokit/rest": "18.12.0",
         "axios": "0.23.0",
         "btoa": "1.2.1",
+        "cmd-ts": "0.7.0",
         "cronstrue": "1.119.0",
         "cryptr": "4.0.2",
         "d2": "31.10.0",
         "d2-manifest": "1.0.0",
         "file-saver": "2.0.5",
+        "fluture": "14.0.0",
         "font-awesome": "4.7.0",
         "json-stringify-deterministic": "1.0.1",
         "jszip": "3.7.1",
@@ -53,7 +55,6 @@
         "react-scripts": "4.0.3",
         "react-virtualized-auto-sizer": "1.0.6",
         "react-window": "1.8.6",
-        "run-ts": "1.1.2",
         "semver": "7.3.5",
         "styled-components": "5.3.1",
         "styled-jsx": "4.0.1"
@@ -134,8 +135,7 @@
         "sinon": "11.1.2",
         "ts-jest": "27.0.7",
         "typescript": "4.4.4",
-        "wait-on": "6.0.0",
-        "yargs": "17.2.1"
+        "wait-on": "6.0.0"
     },
     "manifest.webapp": {
         "name": "MetaData Synchronization",

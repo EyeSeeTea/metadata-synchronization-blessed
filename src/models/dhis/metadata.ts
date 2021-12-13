@@ -161,6 +161,7 @@ export class DashboardModel extends D2Model {
         "charts",
         "charts.programIndicators",
         "charts.indicators",
+        "charts.indicators.indicatorTypes",
         "charts.organisationUnitGroupSets",
         "charts.organisationUnitGroups",
         "charts.categoryOptionGroupSets",
@@ -173,11 +174,13 @@ export class DashboardModel extends D2Model {
         "maps.mapViews.legendSets",
         "maps.mapViews.programIndicators",
         "maps.mapViews.indicators",
+        "maps.mapViews.indicators.indicatorTypes",
         "reports",
         "reportTables",
         "reportTables.legendSets",
         "reportTables.programIndicators",
         "reportTables.indicators",
+        "reportTables.indicators.indicatorTypes",
         "reportTables.organisationUnitGroupSets",
         "reportTables.organisationUnitGroups",
         "reportTables.categoryOptionGroupSets",
@@ -261,13 +264,7 @@ export class DataSetModel extends D2Model {
     protected static collectionName = "dataSets" as const;
     protected static fields = dataSetFields;
 
-    protected static excludeRules = [
-        "indicators.dataSets",
-        "indicators.programs",
-        "dataElements.dataSets",
-        "dataElements.dataElementGroups.dataElements",
-        "dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
-    ];
+    protected static excludeRules = ["indicators.dataSets", "indicators.programs", "dataElements.dataSets"];
     protected static includeRules = [
         "attributes",
         "legendSets",
@@ -496,10 +493,7 @@ export class ProgramModel extends D2Model {
     protected static collectionName = "programs" as const;
     protected static fields = programFields;
 
-    protected static excludeRules = [
-        "programStages.dataElements.dataElementGroups.dataElements",
-        "programStages.dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
-    ];
+    protected static excludeRules = [];
     protected static includeRules = [
         "attributes",
         "categoryCombos",
@@ -565,8 +559,10 @@ export class ProgramModel extends D2Model {
         "trackedEntityAttributes.optionSets.options",
         "programNotificationTemplates",
         "programSections",
+        "programSections.trackedEntityAttributes",
         "programRules",
         "programRules.programRuleActions",
+        "programRules.programRuleActions.optionGroups",
     ];
 }
 
@@ -574,10 +570,7 @@ export class ProgramStageModel extends D2Model {
     protected static metadataType = "programStage";
     protected static collectionName = "programStages" as const;
 
-    protected static excludeRules = [
-        "dataElements.dataElementGroups.dataElements",
-        "dataElements.dataElementGroups.dataElementGroupSets.dataElementGroups",
-    ];
+    protected static excludeRules = [];
     protected static includeRules = [
         "programs",
         "programStageSections",
