@@ -3,6 +3,7 @@ import {
     ObjectsTable,
     ObjectsTableDetailField,
     TableColumn,
+    TablePagination,
     TableState,
     useSnackbar,
 } from "@eyeseetea/d2-ui-components";
@@ -34,6 +35,9 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
     const [programs, setPrograms] = useState<Program[]>([]);
     const [programFilter, setProgramFilter] = useState<string>("");
     const [error, setError] = useState<unknown>();
+    const [paginationFilters, setPaginationFilters] = useState({ page: 1, pageSize: 25 });
+    const [pager, setPager] = useState<Partial<TablePagination>>({});
+    const [rowsLoading, setRowsLoading] = useState(false);
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
@@ -50,6 +54,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
 
     useEffect(() => {
         if (programFilter) {
+            setRowsLoading(true);
             compositionRoot.instances.getById(syncRule.originInstance).then(result => {
                 result.match({
                     error: () => snackbar.error(i18n.t("Invalid origin instance")),
@@ -58,12 +63,22 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
                             .list(
                                 {
                                     ...memoizedSyncRule.dataParams,
-                                    allEvents: true,
                                 },
                                 programFilter,
-                                instance
+                                instance,
+                                paginationFilters.page,
+                                paginationFilters.pageSize
                             )
-                            .then(teis => setRows(teis.map(tei => ({ ...tei, id: tei.trackedEntityInstance }))))
+                            .then(teisResponse => {
+                                setPager(teisResponse.pager);
+                                setRows(
+                                    teisResponse.trackedEntityInstances.map(tei => ({
+                                        ...tei,
+                                        id: tei.trackedEntityInstance,
+                                    }))
+                                );
+                                setRowsLoading(false);
+                            })
                             .catch(setError);
                     },
                 });
@@ -71,12 +86,20 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
         } else {
             setRows([]);
         }
-    }, [compositionRoot, programFilter, memoizedSyncRule, syncRule.originInstance, snackbar]);
+    }, [
+        compositionRoot,
+        programFilter,
+        memoizedSyncRule.dataParams,
+        syncRule.originInstance,
+        snackbar,
+        paginationFilters,
+    ]);
 
     const handleTableChange = useCallback(
         (tableState: TableState<TEIObject>) => {
-            const { selection } = tableState;
+            const { selection, pagination } = tableState;
             onChange(syncRule.updateDataSyncTEIs(selection.map(({ id }) => id)));
+            setPaginationFilters({ page: pagination.page, pageSize: pagination.pageSize });
         },
         [onChange, syncRule]
     );
@@ -189,7 +212,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
         <React.Fragment>
             <ObjectsTable<TEIObject>
                 rows={rows}
-                loading={rows === undefined}
+                loading={rowsLoading}
                 columns={columns}
                 details={details}
                 actions={actions}
@@ -197,6 +220,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
                 onChange={handleTableChange}
                 selection={syncRule.dataSyncTeis?.map(id => ({ id })) ?? []}
                 filterComponents={filterComponents}
+                pagination={pager}
             />
 
             <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
