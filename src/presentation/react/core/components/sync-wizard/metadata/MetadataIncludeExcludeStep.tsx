@@ -32,6 +32,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
 
     const [modelSelectItems, setModelSelectItems] = useState<DropdownOption[]>([]);
     const [models, setModels] = useState<typeof D2Model[]>([]);
+    const [pendingApplyUseDefaultChange, setPendingApplyUseDefaultChange] = useState(false);
     const [selectedType, setSelectedType] = useState<string>("");
     const { compositionRoot } = useAppContext();
 
@@ -57,11 +58,19 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
 
                             setModels(models);
                             setModelSelectItems(options);
+
+                            if (pendingApplyUseDefaultChange) {
+                                onChange(
+                                    syncRule.useDefaultIncludeExclude
+                                        ? syncRule.markToUseDefaultIncludeExclude()
+                                        : syncRule.markToNotUseDefaultIncludeExclude(models)
+                                );
+                            }
                         });
                 },
             });
         });
-    }, [compositionRoot, api, syncRule, snackbar]);
+    }, [compositionRoot, api, syncRule, snackbar, pendingApplyUseDefaultChange, onChange]);
 
     const { includeRules = [], excludeRules = [] } = syncRule.metadataIncludeExcludeRules[selectedType] || {};
     const allRules = [...includeRules, ...excludeRules];
@@ -71,6 +80,9 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     }));
 
     const changeUseDefaultIncludeExclude = (useDefault: boolean) => {
+        if (models.length === 0) {
+            setPendingApplyUseDefaultChange(true);
+        }
         onChange(
             useDefault ? syncRule.markToUseDefaultIncludeExclude() : syncRule.markToNotUseDefaultIncludeExclude(models)
         );
