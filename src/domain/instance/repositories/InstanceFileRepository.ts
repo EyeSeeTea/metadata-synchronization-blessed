@@ -6,7 +6,9 @@ export interface InstanceFileRepositoryConstructor {
 
 export type FileId = string;
 
+export type FileResourceDomain = "DOCUMENT" | "DATA_VALUE";
+
 export interface InstanceFileRepository {
     getById(fileId: FileId): Promise<File>;
-    save(file: File): Promise<FileId>;
+    save(file: File, domain?: FileResourceDomain): Promise<FileId>;
 }

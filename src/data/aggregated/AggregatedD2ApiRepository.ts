@@ -19,6 +19,7 @@ import { D2Api, DataValueSetsPostResponse } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
+import mime from "mime-types";
 
 export class AggregatedD2ApiRepository implements AggregatedRepository {
     private api: D2Api;
@@ -328,6 +329,39 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
                 type: "aggregated",
             };
         }
+    }
+
+    async getDataValueFile(
+        orgUnit: string,
+        period: string,
+        dataElement: string,
+        categoryOptionCombo: string,
+        value: string
+    ): Promise<File> {
+        const blob = await this.api
+            .request<Blob>({
+                method: "get",
+                url: `/dataValues/files`,
+                responseDataType: "raw",
+                params: {
+                    ou: orgUnit,
+                    pe: period,
+                    de: dataElement,
+                    co: categoryOptionCombo,
+                    value,
+                },
+            })
+            .getData();
+
+        if (!blob) throw Error("An error has ocurred retrieving the file resource of data value");
+
+        const fileResource = await this.api
+            .get<{ name: string; contentType: string }>(`/fileResources/${value}`)
+            .getData();
+
+        const fileName = fileResource?.name || `File.${mime.extension(fileResource.contentType)}`;
+
+        return new File([blob], fileName, { type: fileResource.contentType });
     }
 
     private cleanAggregatedImportResponse(importResult: DataValueSetsPostResponse): SynchronizationResult {
