@@ -95,7 +95,7 @@ export class AggregatedDataElementModel extends DataElementModel {
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
 
-    protected static modelFilters = { domainType: { eq: "AGGREGATE" } };
+    protected static modelFilters = { domainType: "AGGREGATE" };
 }
 
 export class DataSetWithDataElementsModel extends DataSetModel {
@@ -120,7 +120,7 @@ export class ProgramDataElementModel extends DataElementModel {
     protected static fields = dataElementFields;
     protected static isSelectable = false;
 
-    protected static modelFilters = { domainType: { neq: "AGGREGATE" } };
+    protected static modelFilters = { domainType: "TRACKER" };
 }
 
 export class TrackerProgramDataElementModel extends ProgramDataElementModel {
@@ -307,5 +307,6 @@ export class GlobalOptionModel extends OptionModel {
 }
 
 export class GlobalDataElementModel extends ProgramDataElementModel {
+    protected static modelName = i18n.t("Tracker Data Elements");
     protected static isGlobalMapping = true;
 }

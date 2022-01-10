@@ -1,0 +1,122 @@
+[
+    {
+        "name": "default",
+        "id": "Xr12mI7VPn3",
+        "categoryCombo": {
+            "id": "JzvGfLYkX17"
+        },
+        "categoryOptions": [
+            {
+                "id": "Y7fcspgsU43"
+            }
+        ]
+    },
+    {
+        "name": "Jorge Category A1",
+        "id": "eCBz5bGs5u1",
+        "categoryCombo": {
+            "id": "PRzPowOj1UJ"
+        },
+        "categoryOptions": [
+            {
+                "id": "JL2fNB6gbJ9"
+            }
+        ]
+    },
+    {
+        "name": "Jorge Category A2",
+        "id": "EFLzNMRRwn5",
+        "categoryCombo": {
+            "id": "PRzPowOj1UJ"
+        },
+        "categoryOptions": [
+            {
+                "id": "J55tvlWi2I7"
+            }
+        ]
+    },
+    {
+        "name": "Jorge Category B1",
+        "id": "XyUExHybAMN",
+        "categoryCombo": {
+            "id": "PjA8ZpKfEPG"
+        },
+        "categoryOptions": [
+            {
+                "id": "W853XCzFJUF"
+            }
+        ]
+    },
+    {
+        "name": "Jorge Category B1, Jorge Category A1",
+        "id": "gyb4qYeBRLs",
+        "categoryCombo": {
+            "id": "PjA8ZpKfEPG"
+        },
+        "categoryOptions": [
+            {
+                "id": "W853XCzFJUF"
+            },
+            {
+                "id": "JL2fNB6gbJ9"
+            }
+        ]
+    },
+    {
+        "name": "Jorge Category B1, Jorge Category A2",
+        "id": "X7Rq1FsEzWm",
+        "categoryCombo": {
+            "id": "PjA8ZpKfEPG"
+        },
+        "categoryOptions": [
+            {
+                "id": "W853XCzFJUF"
+            },
+            {
+                "id": "J55tvlWi2I7"
+            }
+        ]
+    },
+    {
+        "name": "TT Category B2",
+        "id": "WBv5GAxT9ES",
+        "categoryCombo": {
+            "id": "PjA8ZpKfEPG"
+        },
+        "categoryOptions": [
+            {
+                "id": "NumSEoPPOx1"
+            }
+        ]
+    },
+    {
+        "name": "TT  Category B2, TT Category A1",
+        "id": "YP06ucgh3Xq",
+        "categoryCombo": {
+            "id": "PjA8ZpKfEPG"
+        },
+        "categoryOptions": [
+            {
+                "id": "NumSEoPPOx1"
+            },
+            {
+                "id": "JL2fNB6gbJ9"
+            }
+        ]
+    },
+    {
+        "name": "TT Category B2, TT Category A2",
+        "id": "dhU21un3QV6",
+        "categoryCombo": {
+            "id": "PjA8ZpKfEPG"
+        },
+        "categoryOptions": [
+            {
+                "id": "NumSEoPPOx1"
+            },
+            {
+                "id": "J55tvlWi2I7"
+            }
+        ]
+    }
+]

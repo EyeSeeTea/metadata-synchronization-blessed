@@ -1,0 +1,26 @@
+[
+    {
+        "name": "default",
+        "id": "Xr12mI7VPn3",
+        "categoryCombo": {
+            "id": "JzvGfLYkX17"
+        },
+        "categoryOptions": [
+            {
+                "id": "Y7fcspgsU43"
+            }
+        ]
+    },
+    {
+        "name": "no default",
+        "id": "CatOptCom01",
+        "categoryCombo": {
+            "id": "CatCoMBoX17"
+        },
+        "categoryOptions": [
+            {
+                "id": "CatOption43"
+            }
+        ]
+    }
+]

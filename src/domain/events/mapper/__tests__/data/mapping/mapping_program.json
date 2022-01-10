@@ -1,0 +1,13 @@
+{
+    "eventPrograms": {
+        "u6pCofOY3O7": {
+            "code": "origin",
+            "global": false,
+            "mapping": {},
+            "mappedId": "a7pCofOY3O7",
+            "conflicts": false,
+            "mappedCode": "destination",
+            "mappedName": "destination"
+        }
+    }
+}

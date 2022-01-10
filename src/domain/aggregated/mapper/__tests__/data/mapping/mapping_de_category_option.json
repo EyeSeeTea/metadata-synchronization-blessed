@@ -1,0 +1,58 @@
+{
+    "aggregatedDataElements": {
+        "hrv4hSVUzSH": {
+            "global": false,
+            "mapping": {
+                "categoryCombos": {
+                    "bjDvmb4bfuf": {
+                        "mapping": {},
+                        "mappedId": "JzvGfLYkX17",
+                        "conflicts": false,
+                        "mappedName": "default"
+                    }
+                },
+                "categoryOptions": {
+                    "GLevLNI9wkl-xYerKDKCefk": {
+                        "code": "default",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "CatOption43",
+                        "conflicts": false,
+                        "mappedCode": "No default",
+                        "mappedName": "No default"
+                    }
+                }
+            },
+            "mappedId": "F6yeCU8jIbq",
+            "conflicts": false,
+            "mappedName": "TT Aggregated DE 1"
+        },
+        "HDiPuHnjfMI": {
+            "global": false,
+            "mapping": {
+                "categoryCombos": {
+                    "bjDvmb4bfuf": {
+                        "mapping": {},
+                        "mappedId": "JzvGfLYkX17",
+                        "conflicts": false,
+                        "mappedName": "default"
+                    }
+                },
+                "categoryOptions": {
+                    "GLevLNI9wkl-xYerKDKCefk": {
+                        "code": "default",
+                        "global": false,
+                        "mapping": {},
+                        "mappedId": "CatOption43",
+                        "conflicts": false,
+                        "mappedCode": "No default",
+                        "mappedName": "No default"
+                    }
+                }
+            },
+            "mappedId": "TPEszSDxJxw",
+            "conflicts": false,
+            "mappedName": "TT Aggregated DE 2"
+        }
+    }
+}

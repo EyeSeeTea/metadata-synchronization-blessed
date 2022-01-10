@@ -141,6 +141,9 @@ msgstr ""
 msgid "Tracked Entity Attribute (to DE)"
 msgstr ""
 
+msgid "Tracker Data Elements"
+msgstr ""
+
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
 

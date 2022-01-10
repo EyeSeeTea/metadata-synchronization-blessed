@@ -1,0 +1,22 @@
+{
+    "options": {
+        "RnkuWU7N1Xz": {
+            "code": "A",
+            "global": false,
+            "mapping": {},
+            "mappedId": "MAPPED_BY_VALUE",
+            "conflicts": false,
+            "mappedCode": "MAPPED_BY_VALUE",
+            "mappedValue": "AAA"
+        },
+        "TblWe7BZJMs": {
+            "code": "B",
+            "global": false,
+            "mapping": {},
+            "mappedId": "yTgEcKGQh3j",
+            "conflicts": false,
+            "mappedCode": "BB",
+            "mappedName": "B Clone"
+        }
+    }
+}

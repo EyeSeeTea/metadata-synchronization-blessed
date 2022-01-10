@@ -35,6 +35,10 @@ export function cleanObjectDefault(object: ProgramEvent | DataValue, defaults: s
     return _.pickBy(object, value => !defaults.includes(String(value)));
 }
 
+export function stripUndefined<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj));
+}
+
 export function cleanOrgUnitPath(orgUnitPath?: string): string {
     return _(orgUnitPath).split("/").last() ?? "";
 }

@@ -35,6 +35,7 @@ export interface ListMetadataParams {
     group?: { type: string; value: string };
     level?: string;
     program?: string;
+    domainType?: string;
     optionSet?: string;
     category?: string;
     includeParents?: boolean;
