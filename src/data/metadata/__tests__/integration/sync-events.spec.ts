@@ -13,10 +13,11 @@ import { TEID2ApiRepository } from "../../../tracked-entity-instances/TEID2ApiRe
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
+import { MappingD2ApiRepository } from "../../../mapping/MappingD2ApiRepository";
 
 const repositoryFactory = buildRepositoryFactory();
 
-describe("Sync metadata", () => {
+describe("Sync events", () => {
     let local: Server;
     let remote: Server;
 
@@ -187,6 +188,7 @@ describe("Sync metadata", () => {
 
         local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
         local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
+        local.get("/dataStore/metadata-synchronization/mappings", async () => []);
 
         local.get("/dataStore/metadata-synchronization/instances-LOCAL/metaData", async () => ({
             created: "2021-03-30T01:59:59.191",
@@ -328,6 +330,7 @@ function buildRepositoryFactory() {
     repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
     repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
     repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
+    repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
     return repositoryFactory;
 }
 

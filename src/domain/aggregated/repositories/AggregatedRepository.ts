@@ -35,5 +35,11 @@ export interface AggregatedRepository {
 
     delete(data: AggregatedPackage): Promise<SynchronizationResult>;
 
-    getDataValueFile(orgUnit: string, period: string, dataElement: string, value: string, categoryOptionCombo: string): Promise<File>;
+    getDataValueFile(
+        orgUnit: string,
+        period: string,
+        dataElement: string,
+        value: string,
+        categoryOptionCombo: string
+    ): Promise<File>;
 }
