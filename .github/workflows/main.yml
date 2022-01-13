@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         
-      - name: Install dependencies
+      - name: Install apt libraries
         run: sudo apt install gettext -y
     
       - name: Setup Node
@@ -34,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Installing Dependencies
+      - name: Install dependencies
         run: yarn install --frozen-lockfile --silent
 
       - name: Install translations
