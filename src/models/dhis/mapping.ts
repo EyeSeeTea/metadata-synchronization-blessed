@@ -184,7 +184,7 @@ export class ProgramWithDataElementsToAggregatedModel extends EventProgramWithDa
     protected static modelFilters: any = {};
 
     // Due to a limitation in the analytics endpoint, it's not possible request with dx dimension by program stage and data element
-    // only program and data element is allowed. For this reason the complex id for program data element to aggregated data element is 
+    // only program and data element is allowed. For this reason the complex id for program data element to aggregated data element is
     // program-dataElement
     // Jira-issue: https://jira.dhis2.org/browse/DHIS2-12382
 
