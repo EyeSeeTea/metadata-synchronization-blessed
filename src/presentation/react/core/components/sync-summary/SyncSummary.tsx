@@ -160,7 +160,7 @@ const buildMessageTable = (messages: ErrorMessage[]) => {
 const getTypeName = (reportType: SynchronizationResultType, syncType: string) => {
     switch (reportType) {
         case "aggregated":
-            return syncType === "events" ? i18n.t("Program Indicators") : i18n.t("Aggregated");
+            return syncType === "events" ? i18n.t("Program Indicators / Program Data Elements") : i18n.t("Aggregated");
         case "events":
             return i18n.t("Events");
         case "trackedEntityInstances":
