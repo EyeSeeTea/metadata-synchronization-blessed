@@ -69,6 +69,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
                         programStageDataElements.map(({ dataElement }) => `${id}.${dataElement.id}`) ?? []
                 )
             )
+            .uniq()
             .value();
 
         const { dataValues: candidateDataValues = [] } = enableAggregation
