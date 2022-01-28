@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-01-28T05:44:49.524Z\n"
-"PO-Revision-Date: 2022-01-28T05:44:49.524Z\n"
+"POT-Creation-Date: 2022-01-28T11:07:08.981Z\n"
+"PO-Revision-Date: 2022-01-28T11:07:08.981Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -768,6 +768,15 @@ msgstr ""
 msgid "Invalid package"
 msgstr ""
 
+msgid "Extending Dhis2 compatibility"
+msgstr ""
+
+msgid "Dhis2 Compatibility extended successfully"
+msgstr ""
+
+msgid "An error has ocurred extending Dhis2 compatibility"
+msgstr ""
+
 msgid "Publishing package to Store"
 msgstr ""
 
@@ -839,6 +848,9 @@ msgstr ""
 msgid "Download as JSON"
 msgstr ""
 
+msgid "Extend DHIS2 version compatibility"
+msgstr ""
+
 msgid "Publish to Store"
 msgstr ""
 
@@ -891,6 +903,20 @@ msgid "No changes found"
 msgstr ""
 
 msgid "Local"
+msgstr ""
+
+msgid ""
+"Extend DHIS2 version compatibility for module {{module}} and version "
+"{{version}}"
+msgstr ""
+
+msgid "Create package(s)"
+msgstr ""
+
+msgid "Copy From (*)"
+msgstr ""
+
+msgid "New DHIS2 version compatibility (*)"
 msgstr ""
 
 msgid "Back"
