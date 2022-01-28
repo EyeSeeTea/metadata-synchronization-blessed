@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { BasePackage } from "../../../../../domain/packages/entities/Package";
 import { FlattenUnion } from "../../../../../utils/flatten-union";
 
@@ -27,7 +28,9 @@ export const isModuleItem = (item: PackageModuleItem): item is PackageItem => {
 };
 
 export const groupPackageByModuleAndVersion = (packages: PackageItem[]) => {
-    return packages.reduce((acc, item) => {
+    const sortedPackages = _(packages).sortBy("dhisVersion").value();
+
+    return sortedPackages.reduce((acc, item) => {
         const parentKey = `${item.module.id}-${item.version}`;
 
         const parent = acc.find(parent => parent.id === parentKey);
