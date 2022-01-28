@@ -187,7 +187,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     setPackagesToExtendCompatibility(undefined);
                 });
         },
-        [compositionRoot, snackbar]
+        [compositionRoot, snackbar, loading]
     );
 
     const publishPackage = useCallback(

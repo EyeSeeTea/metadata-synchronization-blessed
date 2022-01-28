@@ -14,7 +14,6 @@ export class ExtendsPackagesFromPackageUseCase implements UseCase {
         const packageData = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageSourceId);
 
         const pkg = Package.build(packageData);
-        debugger;
 
         const user = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
 
@@ -27,11 +26,8 @@ export class ExtendsPackagesFromPackageUseCase implements UseCase {
                 lastUpdatedBy: user,
                 user: user,
             });
-            debugger;
 
             await storageClient.saveObjectInCollection(Namespace.PACKAGES, newPackage);
         }
-
-        debugger;
     }
 }

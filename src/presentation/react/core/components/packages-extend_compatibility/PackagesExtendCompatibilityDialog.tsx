@@ -52,7 +52,7 @@ export const PackagesExtendCompatibilityDialog: React.FC<PackagesExtendCompatibi
         if (!selectedPkg) return;
 
         onSave(selectedPkg.id, selectedNewDhis2Versions);
-    }, [onSave, selectedExistedDhis2Version, selectedNewDhis2Versions]);
+    }, [onSave, selectedExistedDhis2Version, selectedNewDhis2Versions, packages]);
 
     return (
         <React.Fragment>
