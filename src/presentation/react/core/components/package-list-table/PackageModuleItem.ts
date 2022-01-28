@@ -22,6 +22,10 @@ export const isPackageItem = (item: PackageModuleItem): item is PackageItem => {
     return (item as PackageItem).module !== undefined;
 };
 
+export const isModuleItem = (item: PackageModuleItem): item is PackageItem => {
+    return (item as PackageItem).module === undefined;
+};
+
 export const groupPackageByModuleAndVersion = (packages: PackageItem[]) => {
     return packages.reduce((acc, item) => {
         const parentKey = `${item.module.id}-${item.version}`;
