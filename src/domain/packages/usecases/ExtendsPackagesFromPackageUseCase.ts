@@ -1,5 +1,7 @@
 import { generateUid } from "d2/uid";
 import { Namespace } from "../../../data/storage/Namespaces";
+import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
+import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
@@ -10,6 +12,7 @@ export class ExtendsPackagesFromPackageUseCase implements UseCase {
 
     public async execute(packageSourceId: string, dhisVersions: string[]): Promise<void> {
         const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const transformationRepository = this.repositoryFactory.transformationRepository();
 
         const packageData = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageSourceId);
 
@@ -18,6 +21,24 @@ export class ExtendsPackagesFromPackageUseCase implements UseCase {
         const user = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
 
         for (const dhisVersion of dhisVersions) {
+            const originApiVersion = getMajorVersion(pkg.dhisVersion);
+            const destinationApiVersion = getMajorVersion(dhisVersion);
+
+            const versionedPayload =
+                destinationApiVersion > originApiVersion
+                    ? transformationRepository.mapPackageTo(
+                          destinationApiVersion,
+                          pkg.contents,
+                          metadataTransformations,
+                          originApiVersion
+                      )
+                    : transformationRepository.mapPackageFrom(
+                          originApiVersion,
+                          pkg.contents,
+                          metadataTransformations,
+                          destinationApiVersion
+                      );
+
             const newPackage = pkg.update({
                 id: generateUid(),
                 dhisVersion,
@@ -25,6 +46,7 @@ export class ExtendsPackagesFromPackageUseCase implements UseCase {
                 lastUpdated: new Date(),
                 lastUpdatedBy: user,
                 user: user,
+                contents: versionedPayload,
             });
 
             await storageClient.saveObjectInCollection(Namespace.PACKAGES, newPackage);

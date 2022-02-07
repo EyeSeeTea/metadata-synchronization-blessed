@@ -15,10 +15,11 @@ export class TransformationD2ApiRepository implements TransformationRepository {
     public mapPackageTo<Input, Output>(
         destination: number,
         payload: Input,
-        transformations: Transformation[] = []
+        transformations: Transformation[] = [],
+        origin?: number
     ): Output {
         const transformationstoApply = _.orderBy(transformations, ["apiVersion"]).filter(
-            ({ apiVersion }) => apiVersion <= destination && apiVersion > API_VERSION
+            ({ apiVersion }) => apiVersion <= destination && apiVersion > (origin || API_VERSION)
         );
 
         if (transformationstoApply.length > 0) {
@@ -40,10 +41,11 @@ export class TransformationD2ApiRepository implements TransformationRepository {
     public mapPackageFrom<Input, Output>(
         origin: number,
         payload: Input,
-        transformations: Transformation[] = []
+        transformations: Transformation[] = [],
+        destination?: number
     ): Output {
         const transformationstoApply = _.orderBy(transformations, ["apiVersion"], ["desc"]).filter(
-            ({ apiVersion }) => apiVersion <= origin && apiVersion > API_VERSION
+            ({ apiVersion }) => apiVersion <= origin && apiVersion > (destination || API_VERSION)
         );
 
         if (transformationstoApply.length > 0) {
