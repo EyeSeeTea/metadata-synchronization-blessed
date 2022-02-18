@@ -73,6 +73,8 @@ export class EventsD2ApiRepository implements EventsRepository {
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
                     lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
+                    // @ts-ignore FIXME: Add property in d2-api
+                    fields: ":all",
                 })
                 .getData();
         };
@@ -119,6 +121,8 @@ export class EventsD2ApiRepository implements EventsRepository {
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
                     lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
+                    // @ts-ignore FIXME: Add property in d2-api
+                    fields: ":all",
                 })
                 .getData();
         };
@@ -162,6 +166,8 @@ export class EventsD2ApiRepository implements EventsRepository {
                     .getAll({
                         programStage,
                         event: ids.join(";"),
+                        // @ts-ignore FIXME: Add property in d2-api
+                        fields: ":all",
                     })
                     .getData();
                 result.push(...events);
