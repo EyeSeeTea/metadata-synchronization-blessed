@@ -196,6 +196,7 @@ export const eventsSteps: SyncWizardStep[] = [
     },
     {
         ...commonSteps.aggregation,
+        validationKeys: ["dataSyncAggregation", "dataSyncEventsTeisOrAggregation"],
         warning: i18n.t(
             "If aggregation is enabled, the synchronization will use the Analytics endpoint and group data by organisation units children and the chosen time periods. Program indicators are only included during a synchronization if aggregation is enabled."
         ),

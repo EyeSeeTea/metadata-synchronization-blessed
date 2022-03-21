@@ -118,7 +118,7 @@ export abstract class GenericSyncUseCase {
     public async getMapping(instance: Instance): Promise<MetadataMappingDictionary> {
         const { originInstance: originInstanceId } = this.builder;
 
-        const mappingRepository = await this.getMappingRepository();
+        const mappingRepository = await this.getMappingRepository(instance.id === "LOCAL" ? instance : undefined);
 
         // If sync is LOCAL -> REMOTE, use the destination instance mapping
         if (originInstanceId === "LOCAL") {

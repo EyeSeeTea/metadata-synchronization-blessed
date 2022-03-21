@@ -13,7 +13,7 @@ import {
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TEIsPackage } from "../../domain/tracked-entity-instances/entities/TEIsPackage";
 import { TrackedEntityInstance } from "../../domain/tracked-entity-instances/entities/TrackedEntityInstance";
-import { TEIRepository } from "../../domain/tracked-entity-instances/repositories/TEIRepository";
+import { TEIRepository, TEIsResponse } from "../../domain/tracked-entity-instances/repositories/TEIRepository";
 import { D2Api } from "../../types/d2-api";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
@@ -28,13 +28,26 @@ export class TEID2ApiRepository implements TEIRepository {
     constructor(private instance: Instance) {
         this.api = getD2APiFromInstance(instance);
     }
-    async getTEIs(params: DataSynchronizationParams, program: string): Promise<TrackedEntityInstance[]> {
+    async getTEIs(
+        params: DataSynchronizationParams,
+        program: string,
+        page: number,
+        pageSize: number
+    ): Promise<TEIsResponse> {
         const { period, orgUnitPaths = [] } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
-        if (orgUnits.length === 0) return [];
+        if (orgUnits.length === 0)
+            return {
+                trackedEntityInstances: [],
+                pager: {
+                    pageSize,
+                    total: 0,
+                    page,
+                },
+            };
 
         const result = await this.api
             .get<TEIsResponse>("/trackedEntityInstances", {
@@ -43,10 +56,13 @@ export class TEID2ApiRepository implements TEIRepository {
                 fields: this.fields,
                 programStartDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                 programEndDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                totalPages: true,
+                page,
+                pageSize,
             })
             .getData();
 
-        return result.trackedEntityInstances;
+        return { ...result };
     }
 
     async getTEIsById(params: DataSynchronizationParams, ids: string[]): Promise<TrackedEntityInstance[]> {
@@ -146,8 +162,4 @@ interface TEIsPostResponse {
             }[];
         }[];
     };
-}
-
-interface TEIsResponse {
-    trackedEntityInstances: TrackedEntityInstance[];
 }

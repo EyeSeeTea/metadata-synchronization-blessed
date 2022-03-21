@@ -8,6 +8,7 @@ import dataValues from "./data/data-values/dataValues.json";
 import dataValuesIndicator from "./data/data-values/dataValues_indicator.json";
 import dataValuesCommentOption from "./data/data-values/dataValues_comment_option.json";
 import dataValuesProgramIndicator from "./data/data-values/dataValues_program_indicator.json";
+import dataValuesProgramdataElement from "./data/data-values/dataValues_program_data_element.json";
 
 import orgUnitsMapping from "./data/mapping/mapping_orgUnits.json";
 import dataElementsMapping from "./data/mapping/mapping_dataelements.json";
@@ -24,6 +25,7 @@ import disabledGlobalOptionMapping from "./data/mapping/mapping_disabled_global_
 import disabledOrgUnitsMapping from "./data/mapping/mapping_disabled_orgUnits.json";
 import indicatorDataElementMapping from "./data/mapping/mapping_indicator_dataelement.json";
 import programIndicatorDataElementMapping from "./data/mapping/mapping_program_indicator_dataelement.json";
+import programDataElementToAggregatedMapping from "./data/mapping/mapping_program_data_element_aggregated.json";
 
 import dataValuesWithoutMapping from "./data/expected/dataValues_without_mapping.json";
 import dataValuesOrgUnitsMapping from "./data/expected/dataValues_orgunits_mapping.json";
@@ -40,6 +42,7 @@ import dataValuesDisabledOptionMapping from "./data/expected/dataValues_disabled
 import dataValuesIndicatorDataElementMapping from "./data/expected/dataValues_indicator_dataelement_mapping.json";
 import dataValuesCommentMapping from "./data/expected/dataValues_comment_option_mapping.json";
 import dataValuesProgramIndicatorDataElementMapping from "./data/expected/dataValues_program_indicator_de_mapping.json";
+import dataValuesProgramDataElementToAggregatedMapping from "./data/expected/dataValues_program_DE_Aggregated_mapping.json";
 
 describe("AggreggatedPayloadMapper", () => {
     it("should return the expected payload if mapping is empty", async () => {
@@ -160,6 +163,13 @@ describe("AggreggatedPayloadMapper", () => {
         const mappedPayload = await aggregatedMapper.map(dataValuesProgramIndicator);
 
         expect(mappedPayload).toEqual(dataValuesProgramIndicatorDataElementMapping);
+    });
+    it("should return the payload with mapped data element if mapping contain program dataelement to aggregated mapping", async () => {
+        const aggregatedMapper = createAggregatedPayloadMapper(programDataElementToAggregatedMapping);
+
+        const mappedPayload = await aggregatedMapper.map(dataValuesProgramdataElement);
+
+        expect(mappedPayload).toEqual(dataValuesProgramDataElementToAggregatedMapping);
     });
 });
 

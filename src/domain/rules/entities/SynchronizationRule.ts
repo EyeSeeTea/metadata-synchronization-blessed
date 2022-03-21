@@ -636,14 +636,15 @@ export class SynchronizationRule {
                       }
                     : null,
             ]),
-            dataSyncEventsOrTeis: _.compact([
+            dataSyncEventsTeisOrAggregation: _.compact([
                 this.type === "events" &&
                 !this.dataSyncAllEvents &&
                 this.dataSyncEvents.length === 0 &&
-                this.dataSyncTeis.length === 0
+                this.dataSyncTeis.length === 0 &&
+                !this.dataSyncEnableAggregation
                     ? {
                           key: "cannot_be_empty",
-                          namespace: { element: "event or TEI" },
+                          namespace: { element: "event, TEI or enable data aggregation" },
                       }
                     : null,
             ]),
