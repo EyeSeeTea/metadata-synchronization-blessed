@@ -5,10 +5,13 @@ on:
 jobs:
   unit-tests:
     name: Unit tests
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        
+      - name: Install apt libraries
+        run: sudo apt install gettext -y
     
       - name: Setup Node
         uses: actions/setup-node@v1
@@ -31,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Installing Dependencies
+      - name: Install dependencies
         run: yarn install --frozen-lockfile --silent
 
       - name: Install translations

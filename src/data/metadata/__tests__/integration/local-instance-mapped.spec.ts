@@ -9,12 +9,14 @@ import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { ConfigAppRepository } from "../../../config/ConfigAppRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
+import { InstanceFileD2Repository } from "../../../instance/InstanceFileD2Repository";
+import { MappingD2ApiRepository } from "../../../mapping/MappingD2ApiRepository";
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 
 const repositoryFactory = buildRepositoryFactory();
 
-describe("Sync metadata", () => {
+describe("Sync local instance mapped", () => {
     let local: Server;
 
     beforeAll(() => {
@@ -36,7 +38,7 @@ describe("Sync metadata", () => {
         }));
 
         local.get("/metadata", async (_schema, request) => {
-            if (request.queryParams.filter === "id:in:[dataSet1]")
+            if (request.queryParams.filter === "id:in:[dataSet1]") {
                 return {
                     dataSets: [
                         {
@@ -56,16 +58,25 @@ describe("Sync metadata", () => {
                         },
                     ],
                 };
-
-            if (request.queryParams.filter === "identifiable:eq:default")
+            } else if (request.queryParams.filter === "identifiable:eq:default") {
                 return {
                     categoryOptions: [{ id: "default1" }],
                     categories: [{ id: "default2" }],
                     categoryCombos: [{ id: "default3" }],
                     categoryOptionCombos: [{ id: "default4" }],
                 };
-
-            console.error("Unknown metadata request", request.queryParams);
+            } else if (request.queryParams.filter === "id:in:[id1]" && request.queryParams.fields === "id,valueType") {
+                return {
+                    dataElements: [
+                        {
+                            id: "id1",
+                            valueType: "TEXT",
+                        },
+                    ],
+                };
+            } else {
+                console.error("Unknown metadata request", request.queryParams);
+            }
         });
 
         local.get("/dataValueSets", async () => ({
@@ -95,8 +106,18 @@ describe("Sync metadata", () => {
             },
         ]);
 
-        local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({
-            metadataMapping: {
+        local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
+        local.get("/dataStore/metadata-synchronization/mappings", async () => [
+            {
+                id: "MAPPINGLOCAL",
+                owner: {
+                    id: "LOCAL",
+                    type: "instance",
+                },
+            },
+        ]);
+        local.get("/dataStore/metadata-synchronization/mappings-MAPPINGLOCAL", async () => ({
+            mappingDictionary: {
                 aggregatedDataElements: {
                     id1: {
                         mappedId: "id2",
@@ -189,6 +210,8 @@ function buildRepositoryFactory() {
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
     repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
     repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
+    repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
+    repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
     return repositoryFactory;
 }
 

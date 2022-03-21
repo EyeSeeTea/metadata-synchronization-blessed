@@ -14,13 +14,15 @@ import { SynchronizationResult } from "../../reports/entities/SynchronizationRes
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary } from "../../synchronization/utils";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
+import { DataValue } from "../entities/DataValue";
 import { createAggregatedPayloadMapper } from "../mapper/AggregatedPayloadMapperFactory";
 import { getMinimumParents } from "../utils";
+import { promiseMap } from "../../../utils/common";
 
 export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly type = "aggregated";
     public readonly fields =
-        "id,dataElements[id,name],dataSetElements[:all,dataElement[id,name]],dataElementGroups[id,dataElements[id,name]],name";
+        "id,dataElements[id,name,valueType],dataSetElements[:all,dataElement[id,name,valueType]],dataElementGroups[id,dataElements[id,name,valueType]],name";
 
     public buildPayload = memoize(async (remoteInstance?: Instance) => {
         const { dataParams: { enableAggregation = false } = {} } = this.builder;
@@ -134,7 +136,10 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { dataParams = {} } = this.builder;
 
-        const originalPayload = await this.buildPayload();
+        const previousOriginalPayload = await this.buildPayload();
+
+        const originalPayload = await this.manageDataElementWithFileType(previousOriginalPayload, instance);
+
         const mappedPayload = await this.mapPayload(instance, originalPayload);
 
         const existingPayload = dataParams.ignoreDuplicateExistingValues
@@ -154,6 +159,43 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         const origin = await this.getOriginInstance();
 
         return [{ ...syncResult, origin: origin.toPublicObject(), payload }];
+    }
+
+    private async manageDataElementWithFileType(
+        payload: { dataValues: DataValue[] },
+        remoteInstance: Instance
+    ): Promise<{ dataValues: DataValue[] }> {
+        const metadataRepository = await this.getMetadataRepository();
+        const { dataElements = [] } = await metadataRepository.getMetadataByIds<DataElement>(
+            payload.dataValues.map(dv => dv.dataElement).flat(),
+            "id,valueType"
+        );
+
+        const dataElementFileTypes = dataElements.filter(de => de.valueType === "FILE_RESOURCE").map(de => de.id);
+
+        const aggregatedRepository = await this.getAggregatedRepository();
+        const fileRemoteRepository = await this.getInstanceFileRepository(remoteInstance);
+
+        const dataValues = await promiseMap(payload.dataValues, async dataValue => {
+            const isFileType = dataElementFileTypes.includes(dataValue.dataElement);
+
+            if (isFileType) {
+                const file = await aggregatedRepository.getDataValueFile(
+                    dataValue.orgUnit,
+                    dataValue.period,
+                    dataValue.dataElement,
+                    dataValue.categoryOptionCombo || "",
+                    dataValue.value
+                );
+
+                const destinationFileId = await fileRemoteRepository.save(file, "DATA_VALUE");
+                return { ...dataValue, value: destinationFileId };
+            } else {
+                return dataValue;
+            }
+        });
+
+        return { dataValues };
     }
 
     public async buildDataStats() {
