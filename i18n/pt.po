@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2022-01-28T11:07:08.981Z\n"
+"POT-Creation-Date: 2022-01-14T07:42:34.635Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -127,6 +127,9 @@ msgid "Importing in instance {{instance}}"
 msgstr ""
 
 msgid "Event Program with Data Elements"
+msgstr ""
+
+msgid "Program with Data Elements to Aggregated"
 msgstr ""
 
 msgid "Tracker Program with Program Stages"
@@ -1095,7 +1098,7 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-msgid "Program Indicators"
+msgid "Program Indicators / Program Data Elements"
 msgstr ""
 
 msgid "Aggregated"
@@ -2050,6 +2053,9 @@ msgid "Error found: {{message}}"
 msgstr ""
 
 msgid "Finished Sync Rule {{name}}"
+msgstr ""
+
+msgid "Program Indicators"
 msgstr ""
 
 msgid "never"

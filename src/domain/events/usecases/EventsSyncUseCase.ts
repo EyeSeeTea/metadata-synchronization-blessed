@@ -61,10 +61,26 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             programs?.map(({ programIndicators }: Partial<D2Program>) => programIndicators?.map(({ id }) => id) ?? [])
         );
 
+        // Due to a limitation in the analytics endpoint, it's not possible request with dx dimension by program stage and data element
+        // only program and data element is allowed. For this reason to avoid duplicate dimension error, we remove data element duplicated
+        // using the uniq function. Duplicate data elements is possible for tracker programs here if two stages has the same data element
+        // Jira-issue: https://jira.dhis2.org/browse/DHIS2-12382
+
+        const dataElementsByProgram = _(programs)
+            .flatMap(({ id, programStages }: Partial<D2Program>) =>
+                _.flatMap(
+                    programStages,
+                    ({ programStageDataElements }) =>
+                        programStageDataElements.map(({ dataElement }) => `${id}.${dataElement.id}`) ?? []
+                )
+            )
+            .uniq()
+            .value();
+
         const { dataValues: candidateDataValues = [] } = enableAggregation
             ? await aggregatedRepository.getAnalytics({
                   dataParams,
-                  dimensionIds: [...directIndicators, ...indicatorsByProgram],
+                  dimensionIds: [...directIndicators, ...indicatorsByProgram, ...dataElementsByProgram],
                   includeCategories: false,
               })
             : {};

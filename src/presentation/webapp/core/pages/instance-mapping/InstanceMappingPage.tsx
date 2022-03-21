@@ -20,6 +20,7 @@ import {
     IndicatorMappedModel,
     OrganisationUnitMappedModel,
     ProgramIndicatorMappedModel,
+    ProgramWithDataElementsToAggregatedModel,
     RelationshipTypeMappedModel,
     TrackedEntityAttributeToDEMappedModel,
     TrackedEntityAttributeToTEIMappedModel,
@@ -40,6 +41,7 @@ const config = {
         models: [
             EventProgramWithDataElementsModel,
             EventProgramWithProgramStagesMappedModel,
+            ProgramWithDataElementsToAggregatedModel,
             EventProgramWithIndicatorsModel,
             ProgramIndicatorMappedModel,
             RelationshipTypeMappedModel,

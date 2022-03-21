@@ -176,6 +176,48 @@ export class EventProgramWithDataElementsModel extends EventProgramModel {
     };
 }
 
+export class ProgramWithDataElementsToAggregatedModel extends EventProgramWithDataElementsModel {
+    protected static metadataType = "programWithDataElementsToAggregated";
+    protected static modelName = i18n.t("Program with Data Elements to Aggregated");
+    protected static childrenKeys = ["dataElements"];
+    protected static fields = programFieldsWithDataElements;
+    protected static modelFilters: any = {};
+
+    // Due to a limitation in the analytics endpoint, it's not possible request with dx dimension by program stage and data element
+    // only program and data element is allowed. For this reason the complex id for program data element to aggregated data element is
+    // program-dataElement
+    // Jira-issue: https://jira.dhis2.org/browse/DHIS2-12382
+
+    protected static modelTransform = (
+        objects: SelectedPick<D2ProgramSchema, typeof programFieldsWithDataElements>[]
+    ) => {
+        return objects.map(program => ({
+            ...program,
+            dataElements: _.flatten(
+                program.programStages?.map(({ displayName, programStageDataElements }) =>
+                    programStageDataElements
+                        .filter(({ dataElement }) => !!dataElement)
+                        .map(({ dataElement }) => ({
+                            ...dataElement,
+                            id: `${program.id}-${dataElement.id}`,
+                            parentId: `${program.id}`,
+                            model: ProgramDataElementToAggregatedModel,
+                            displayName:
+                                program.programStages.length > 1
+                                    ? `[${displayName}] ${dataElement.displayName}`
+                                    : dataElement.displayName,
+                        }))
+                ) ?? []
+            ),
+        }));
+    };
+}
+
+export class ProgramDataElementToAggregatedModel extends ProgramDataElementModel {
+    protected static parentMappingType = "programWithDataElementsToAggregated";
+    protected static mappingType = "aggregatedDataElements";
+}
+
 export class EventProgramWithProgramStagesModel extends TrackerProgramModel {
     protected static metadataType = "programWithProgramStages";
     protected static modelName = i18n.t("Tracker Program with Program Stages");

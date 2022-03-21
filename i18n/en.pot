@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-02-07T05:54:44.865Z\n"
-"PO-Revision-Date: 2022-02-07T05:54:44.865Z\n"
+"POT-Creation-Date: 2021-12-30T06:26:16.031Z\n"
+"PO-Revision-Date: 2021-12-30T06:26:16.031Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -127,6 +127,9 @@ msgid "Importing in instance {{instance}}"
 msgstr ""
 
 msgid "Event Program with Data Elements"
+msgstr ""
+
+msgid "Program with Data Elements to Aggregated"
 msgstr ""
 
 msgid "Tracker Program with Program Stages"
@@ -1092,7 +1095,7 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-msgid "Program Indicators"
+msgid "Program Indicators / Program Data Elements"
 msgstr ""
 
 msgid "Aggregated"
@@ -2046,6 +2049,9 @@ msgid "Error found: {{message}}"
 msgstr ""
 
 msgid "Finished Sync Rule {{name}}"
+msgstr ""
+
+msgid "Program Indicators"
 msgstr ""
 
 msgid "never"

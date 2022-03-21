@@ -1,7 +1,12 @@
+import { FileUploadParameters } from "@eyeseetea/d2-api/api/files";
 import mime from "mime-types";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { FileId, InstanceFileRepository } from "../../domain/instance/repositories/InstanceFileRepository";
-import { D2Api } from "../../types/d2-api";
+import {
+    FileId,
+    FileResourceDomain,
+    InstanceFileRepository,
+} from "../../domain/instance/repositories/InstanceFileRepository";
+import { D2Api, D2ApiResponse } from "../../types/d2-api";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class InstanceFileD2Repository implements InstanceFileRepository {
@@ -23,18 +28,62 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
         return this.blobToFile(response, `${documentName}.${mime.extension(response.type)}`);
     }
 
-    public async save(file: File): Promise<FileId> {
-        const fileResourceId = await this.api.files
-            .saveFileResource({
-                name: file.name,
-                data: file,
-            })
-            .getData();
+    public async save(file: File, domain: FileResourceDomain = "DOCUMENT"): Promise<FileId> {
+        if (domain === "DOCUMENT") {
+            const fileResourceId = await this.api.files
+                .saveFileResource({
+                    name: file.name,
+                    data: file,
+                })
+                .getData();
 
-        return fileResourceId;
+            return fileResourceId;
+        } else {
+            const fileResourceId = await this.saveFileResource(
+                {
+                    name: file.name,
+                    data: file,
+                },
+                domain
+            ).getData();
+
+            return fileResourceId;
+        }
+    }
+
+    saveFileResource(params: Omit<FileUploadParameters, "id">, domain: FileResourceDomain): D2ApiResponse<string> {
+        const { name, data } = params;
+
+        const formData = new FormData();
+        formData.append("file", data, name);
+        formData.append("contentType", data.type);
+        formData.append("domain", domain);
+
+        return this.api.apiConnection
+            .request<PartialSaveResponse>({
+                method: "post",
+                url: "/fileResources",
+                data: formData,
+                requestBodyType: "raw",
+            })
+            .map(({ data }) => {
+                if (!data.response || !data.response.fileResource || !data.response.fileResource.id) {
+                    throw new Error("Unable to store file, couldn't find resource");
+                }
+
+                return data.response.fileResource.id;
+            });
     }
 
     private blobToFile = (blob: Blob, fileName: string): File => {
         return new File([blob], fileName, { type: blob.type });
+    };
+}
+
+interface PartialSaveResponse {
+    response?: {
+        fileResource?: {
+            id?: string;
+        };
     };
 }
