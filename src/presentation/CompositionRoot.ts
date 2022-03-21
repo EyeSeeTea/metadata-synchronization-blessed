@@ -76,6 +76,7 @@ import { CreatePackageUseCase } from "../domain/packages/usecases/CreatePackageU
 import { DeletePackageUseCase } from "../domain/packages/usecases/DeletePackageUseCase";
 import { DiffPackageUseCase } from "../domain/packages/usecases/DiffPackageUseCase";
 import { DownloadPackageUseCase } from "../domain/packages/usecases/DownloadPackageUseCase";
+import { ExtendsPackagesFromPackageUseCase } from "../domain/packages/usecases/ExtendsPackagesFromPackageUseCase";
 import { GetPackageUseCase } from "../domain/packages/usecases/GetPackageUseCase";
 import { GetStorePackageUseCase } from "../domain/packages/usecases/GetStorePackageUseCase";
 import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageUseCase";
@@ -239,6 +240,7 @@ export class CompositionRoot {
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
             diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
             import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
+            extend: new ExtendsPackagesFromPackageUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

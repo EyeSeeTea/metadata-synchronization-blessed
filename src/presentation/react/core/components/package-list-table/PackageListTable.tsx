@@ -34,10 +34,12 @@ import { DiffPackages, PackagesDiffDialog } from "../packages-diff-dialog/Packag
 import {
     groupPackageByModuleAndVersion as groupPackagesByModuleAndVersion,
     InstallStatus,
+    isModuleItem,
     isPackageItem,
     PackageItem,
     PackageModuleItem,
 } from "./PackageModuleItem";
+import { PackagesExtendCompatibilityDialog } from "../packages-extend_compatibility/PackagesExtendCompatibilityDialog";
 
 interface PackagesListTableProps extends ModulePackageListPageProps {
     isImportDialog?: boolean;
@@ -86,11 +88,28 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
     const [toImportWizard, setToImportWizard] = useState<string[]>([]);
 
+    const [packagesToExtendCompatibility, setPackagesToExtendCompatibility] = useState<PackageItem[] | undefined>(
+        undefined
+    );
+
     const isRemoteInstance = !!remoteInstance;
 
     useEffect(() => {
         compositionRoot.modules.list(globalAdmin, remoteInstance, true).then(setModules);
     }, [compositionRoot, globalAdmin, remoteInstance]);
+
+    const rowsFiltered = useMemo(() => {
+        setLoadingTable(false);
+
+        const packageItems = rows.filter(
+            row =>
+                (row.module.id === moduleFilter || !moduleFilter) &&
+                (row.dhisVersion === dhis2VersionFilter || !dhis2VersionFilter) &&
+                (row.installStatus === installStatusFilter || !installStatusFilter)
+        );
+
+        return groupPackagesByModuleAndVersion(packageItems);
+    }, [moduleFilter, rows, dhis2VersionFilter, installStatusFilter]);
 
     const updateSelection = useCallback(
         (selection: TableSelection[]) => {
@@ -132,6 +151,43 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             }
         },
         [compositionRoot, remoteInstance, snackbar, remoteStore]
+    );
+
+    const openExtendPackageCompatibilityDialog = useCallback(
+        async (ids: string[]) => {
+            const id = _.first(ids);
+            if (!id) return;
+
+            const parent = rowsFiltered.find(parent => parent.id === id);
+
+            setPackagesToExtendCompatibility(parent?.packages);
+        },
+        [rowsFiltered]
+    );
+
+    const closeExtendPackageCompatibilityDialog = useCallback(
+        () => setPackagesToExtendCompatibility(undefined),
+        [setPackagesToExtendCompatibility]
+    );
+
+    const extendsPackagesFromPackageUseCase = useCallback(
+        (packageId: string, dhis2Versions: string[]) => {
+            loading.show(true, i18n.t("Extending Dhis2 compatibility"));
+            compositionRoot.packages
+                .extend(packageId, dhis2Versions)
+                .then(() => {
+                    snackbar.success(i18n.t("Dhis2 Compatibility extended successfully"));
+                    setResetKey(Math.random());
+                    loading.reset();
+                    setPackagesToExtendCompatibility(undefined);
+                })
+                .catch(() => {
+                    snackbar.error(i18n.t("An error has ocurred extending Dhis2 compatibility"));
+                    loading.reset();
+                    setPackagesToExtendCompatibility(undefined);
+                });
+        },
+        [compositionRoot, snackbar, loading]
     );
 
     const publishPackage = useCallback(
@@ -469,6 +525,20 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 isActive: (rows: PackageModuleItem[]) => _.every(rows, row => isPackageItem(row)),
             },
             {
+                name: "extendCompatibility",
+                text: i18n.t("Extend DHIS2 version compatibility"),
+                multiple: false,
+                onClick: openExtendPackageCompatibilityDialog,
+                icon: <Icon>extension</Icon>,
+                isActive: (rows: PackageModuleItem[]) =>
+                    _.every(rows, row => isModuleItem(row)) &&
+                    !isImportDialog &&
+                    presentation === "app" &&
+                    !isRemoteInstance &&
+                    !remoteStore &&
+                    appConfigurator,
+            },
+            {
                 name: "publish",
                 text: i18n.t("Publish to Store"),
                 multiple: false,
@@ -568,6 +638,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             selectedIds,
             generateModule,
             modules,
+            openExtendPackageCompatibilityDialog,
         ]
     );
 
@@ -657,19 +728,6 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         installStatusFilterItems,
         installStatusFilter,
     ]);
-
-    const rowsFiltered = useMemo(() => {
-        setLoadingTable(false);
-
-        const packageItems = rows.filter(
-            row =>
-                (row.module.id === moduleFilter || !moduleFilter) &&
-                (row.dhisVersion === dhis2VersionFilter || !dhis2VersionFilter) &&
-                (row.installStatus === installStatusFilter || !installStatusFilter)
-        );
-
-        return groupPackagesByModuleAndVersion(packageItems);
-    }, [moduleFilter, rows, dhis2VersionFilter, installStatusFilter]);
 
     const handleOpenSyncSummaryFromDialog = (syncReport: SynchronizationReport) => {
         setOpenImportPackageDialog(false);
@@ -802,6 +860,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     instance={packageSource}
                     selectedPackagesId={toImportWizard}
                     openSyncSummary={handleOpenSyncSummaryFromDialog}
+                />
+            )}
+
+            {packagesToExtendCompatibility && (
+                <PackagesExtendCompatibilityDialog
+                    onClose={closeExtendPackageCompatibilityDialog}
+                    packages={packagesToExtendCompatibility}
+                    onSave={extendsPackagesFromPackageUseCase}
                 />
             )}
         </React.Fragment>

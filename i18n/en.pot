@@ -771,6 +771,15 @@ msgstr ""
 msgid "Invalid package"
 msgstr ""
 
+msgid "Extending Dhis2 compatibility"
+msgstr ""
+
+msgid "Dhis2 Compatibility extended successfully"
+msgstr ""
+
+msgid "An error has ocurred extending Dhis2 compatibility"
+msgstr ""
+
 msgid "Publishing package to Store"
 msgstr ""
 
@@ -842,6 +851,9 @@ msgstr ""
 msgid "Download as JSON"
 msgstr ""
 
+msgid "Extend DHIS2 version compatibility"
+msgstr ""
+
 msgid "Publish to Store"
 msgstr ""
 
@@ -894,6 +906,20 @@ msgid "No changes found"
 msgstr ""
 
 msgid "Local"
+msgstr ""
+
+msgid ""
+"Extend DHIS2 version compatibility for module {{module}} and version "
+"{{version}}"
+msgstr ""
+
+msgid "Create package(s)"
+msgstr ""
+
+msgid "Copy From (*)"
+msgstr ""
+
+msgid "New DHIS2 version compatibility (*)"
 msgstr ""
 
 msgid "Back"

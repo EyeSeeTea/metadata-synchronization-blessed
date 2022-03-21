@@ -7,14 +7,16 @@ export interface TransformationRepositoryConstructor {
 
 export interface TransformationRepository {
     mapPackageTo<Input = MetadataPackage, Output = MetadataPackage>(
-        version: number,
+        destination: number,
         payload: Input,
-        transformations: Transformation[]
+        transformations: Transformation[],
+        origin?: number
     ): Output;
 
     mapPackageFrom<Input = MetadataPackage, Output = MetadataPackage>(
-        version: number,
+        origin: number,
         payload: Input,
-        transformations: Transformation[]
+        transformations: Transformation[],
+        destination?: number
     ): Output;
 }
