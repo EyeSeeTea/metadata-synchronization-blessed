@@ -51,8 +51,10 @@ export class AggregatedPayloadMapper implements PayloadMapper {
         const { organisationUnits = {}, aggregatedDataElements = {} } = globalMapping;
         const { mapping: innerMapping = {} } = aggregatedDataElements[dataElement] ?? {};
 
+        const dataElementId = dataElement.replace(".", "-");
+
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
-        const mappedDataElement = aggregatedDataElements[dataElement]?.mappedId ?? dataElement;
+        const mappedDataElement = aggregatedDataElements[dataElementId]?.mappedId ?? dataElement;
         const mappedValue = mapOptionValue(value, [innerMapping, globalMapping]);
         const mappedComment = mapOptionValue(comment, [innerMapping, globalMapping]);
         const mappedCategory =

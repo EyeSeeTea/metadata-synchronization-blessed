@@ -129,6 +129,9 @@ msgstr ""
 msgid "Event Program with Data Elements"
 msgstr ""
 
+msgid "Program with Data Elements to Aggregated"
+msgstr ""
+
 msgid "Tracker Program with Program Stages"
 msgstr ""
 
@@ -1066,7 +1069,7 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-msgid "Program Indicators"
+msgid "Program Indicators / Program Data Elements"
 msgstr ""
 
 msgid "Aggregated"
@@ -2020,6 +2023,9 @@ msgid "Error found: {{message}}"
 msgstr ""
 
 msgid "Finished Sync Rule {{name}}"
+msgstr ""
+
+msgid "Program Indicators"
 msgstr ""
 
 msgid "never"
