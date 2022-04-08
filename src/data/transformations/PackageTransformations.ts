@@ -271,13 +271,13 @@ export const metadataTransformations: Transformation[] = [
 
                 const newCharts = charts.map((chart: any) => {
                     return {
-                        series: (chart.columnDimensions || [])[0],
                         category: (chart.rowDimensions || [])[0],
                         seriesItems: (chart.optionalAxes || []).map(({ dimensionalItem, axis }: any) => ({
                             series: dimensionalItem,
                             axis,
                         })),
                         ...chart,
+                        series: (chart.columnDimensions || [])[0],
                     };
                 });
 
@@ -488,7 +488,7 @@ function getPeriodDataFromYearlySeries(object: any) {
                 .fromPairs()
                 .value(),
         },
-        periods: years.map(year => ({ id: year })),
+        periods: object.periods?.length > 0 ? object.periods : years.map(year => ({ id: year })),
     };
 
     return periodsData;
