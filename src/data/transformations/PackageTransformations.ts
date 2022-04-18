@@ -403,6 +403,31 @@ export const metadataTransformations: Transformation[] = [
             }
         },
     },
+    {
+        name: "fix duplicate translations error",
+        apiVersion: 36,
+        apply: (metadata: any) => {
+            const fixedMetadata = _.omitBy(metadata, _.isNil);
+
+            const newMetadata = Object.keys(fixedMetadata).reduce((acc, key) => {
+                const items = metadata[key].map((item: any) => {
+                    return {
+                        ...item,
+                        translations: item.translations
+                            ? _.uniqWith(
+                                  item.translations,
+                                  (transA: any, transB: any) =>
+                                      transA.property === transB.property && transA.locale === transB.locale
+                              )
+                            : item.translations,
+                    };
+                });
+                return { ...acc, [key]: items };
+            }, {});
+
+            return newMetadata;
+        },
+    },
 ];
 
 const itemsMapping = {
