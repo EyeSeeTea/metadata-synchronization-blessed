@@ -18,7 +18,7 @@ import { formatDateLong } from "../../../../utils/date";
 import { availablePeriods } from "../../../../utils/synchronization";
 import { CompositionRoot } from "../../../CompositionRoot";
 import { AdvancedSettings, MSFSettings } from "./MSFEntities";
-import { NamedRef } from "../../../../domain/common/entities/Ref";
+import { NamedRef, Ref } from "../../../../domain/common/entities/Ref";
 
 type LoggerFunction = (event: string, userType?: "user" | "admin") => void;
 
@@ -140,7 +140,7 @@ async function validatePreviousDataValues(
             if (!rule.dataParams || !rule.dataParams.period) return undefined;
             const { startDate } = buildPeriodFromParams(rule.dataParams);
 
-            const programs = await getRulePrograms(compositionRoot, rule, instance);
+            const programStageIds = await getRuleProgramStageIds(compositionRoot, rule, instance);
 
             const events = await promiseMap(rule.dataSyncOrgUnitPaths, async orgUnit => {
                 const executionKey = `${rule.id}-${cleanOrgUnitPath(orgUnit)}`;
@@ -156,7 +156,7 @@ async function validatePreviousDataValues(
                         orgUnitPaths: [orgUnit],
                         allEvents: true,
                     },
-                    programs
+                    programStageIds
                 );
             });
 
@@ -479,7 +479,7 @@ async function getRuleDataElements(
         .value();
 }
 
-async function getRulePrograms(
+async function getRuleProgramStageIds(
     compositionRoot: CompositionRoot,
     rule: SynchronizationRule,
     instance: Instance
@@ -487,15 +487,18 @@ async function getRulePrograms(
     const { objects } = await compositionRoot.metadata.list(
         {
             type: "programIndicators",
-            fields: { id: true, program: true },
+            fields: { id: true, program: { id: true, programStages: true } },
             filterRows: rule.metadataIds,
             paging: false,
         },
         instance
     );
 
-    return _(objects as Partial<ProgramIndicator>[])
-        .map(({ program }) => program?.id)
+    debugger;
+
+    return _(objects as Partial<{ id: string; program: { id: string; programStages: Ref[] } }>[])
+        .map(({ program }) => program?.programStages.map(({ id }) => id))
+        .flatten()
         .compact()
         .uniq()
         .value();
