@@ -4,7 +4,6 @@ import { DataSyncAggregation } from "../../../../domain/aggregated/entities/Data
 import { DataSyncPeriod } from "../../../../domain/aggregated/entities/DataSyncPeriod";
 import { buildPeriodFromParams } from "../../../../domain/aggregated/utils";
 import { Instance } from "../../../../domain/instance/entities/Instance";
-import { ProgramIndicator } from "../../../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../domain/stores/entities/Store";
@@ -493,8 +492,6 @@ async function getRuleProgramStageIds(
         },
         instance
     );
-
-    debugger;
 
     return _(objects as Partial<{ id: string; program: { id: string; programStages: Ref[] } }>[])
         .map(({ program }) => program?.programStages.map(({ id }) => id))

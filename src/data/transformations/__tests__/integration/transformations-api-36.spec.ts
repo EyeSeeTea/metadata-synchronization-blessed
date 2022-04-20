@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { sync } from "./helpers";
 
 describe("API 36", () => {
