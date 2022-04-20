@@ -14,6 +14,28 @@ interface InstanceDetails {
     password?: string;
 }
 
+async function getMetadata(d2Api: D2Api, ids: string[]): Promise<MetadataPackage> {
+    const promises = [];
+    const chunkSize = 50;
+
+    for (let i = 0; i < ids.length; i += chunkSize) {
+        const requestIds = ids.slice(i, i + chunkSize).toString();
+
+        promises.push(
+            d2Api
+                .get<MetadataPackage>("/metadata", {
+                    fields: "id",
+                    filter: "id:in:[" + requestIds + "]",
+                })
+                .getData()
+        );
+    }
+    const response = await Promise.all(promises);
+    const results = _.deepMerge({}, ...response);
+    if (results.system) delete results.system;
+    return results;
+}
+
 function cleanProgramDataElements(oldProgramDataElements: { [id: string]: MetadataMapping }) {
     return oldProgramDataElements
         ? Object.keys(oldProgramDataElements).reduce((previous, key) => {
@@ -35,12 +57,8 @@ function cleanProgramDataElements(oldProgramDataElements: { [id: string]: Metada
 async function cleanAggregatedDataElements(d2Api: D2Api, oldAggregatedItems: { [id: string]: MetadataMapping }) {
     // aggregatedDataElements mappping key can contain dataElements, indicators and programIndicators
     // We only need remove categoryOptionCombos from the inner mapping for data elements
-    const aggregatedMetadata = await d2Api
-        .get<MetadataPackage>("/metadata", {
-            fields: "id",
-            filter: "id:in:[" + Object.keys(oldAggregatedItems) + "]",
-        })
-        .getData();
+    const oldAggregatedDataElements = Object.keys(oldAggregatedItems);
+    const aggregatedMetadata = await getMetadata(d2Api, oldAggregatedDataElements);
 
     return oldAggregatedItems
         ? Object.keys(oldAggregatedItems).reduce((previous, key) => {
