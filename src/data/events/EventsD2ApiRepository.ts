@@ -183,32 +183,48 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async save(data: EventsPackage, params: DataImportParams = {}): Promise<SynchronizationResult> {
         try {
-            const { response } = await this.api.events
-                .postAsync(
-                    {
-                        idScheme: params.idScheme ?? "UID",
-                        dataElementIdScheme: params.dataElementIdScheme ?? "UID",
-                        orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
-                        dryRun: params.dryRun ?? false,
-                        preheatCache: params.preheatCache ?? false,
-                        skipExistingCheck: params.skipExistingCheck ?? false,
-                    },
-                    data
-                )
-                .getData();
-
-            const result = await this.api.system.waitFor(response.jobType, response.id).getData();
-
-            if (!result) {
+            if (data.events.length === 0) {
                 return {
-                    status: "ERROR",
+                    status: "SUCCESS",
+                    stats: {
+                        imported: 0,
+                        updated: 0,
+                        deleted: 0,
+                        ignored: 0,
+                        total: 0,
+                    },
                     instance: this.instance.toPublicObject(),
                     date: new Date(),
                     type: "events",
                 };
-            }
+            } else {
+                const { response } = await this.api.events
+                    .postAsync(
+                        {
+                            idScheme: params.idScheme ?? "UID",
+                            dataElementIdScheme: params.dataElementIdScheme ?? "UID",
+                            orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
+                            dryRun: params.dryRun ?? false,
+                            preheatCache: params.preheatCache ?? false,
+                            skipExistingCheck: params.skipExistingCheck ?? false,
+                        },
+                        data
+                    )
+                    .getData();
 
-            return this.cleanEventsImportResponse(result);
+                const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+
+                if (!result) {
+                    return {
+                        status: "ERROR",
+                        instance: this.instance.toPublicObject(),
+                        date: new Date(),
+                        type: "events",
+                    };
+                }
+
+                return this.cleanEventsImportResponse(result);
+            }
         } catch (error: any) {
             if (error?.response?.data) {
                 return this.cleanEventsImportResponse(error.response.data);
