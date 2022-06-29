@@ -271,13 +271,13 @@ export const metadataTransformations: Transformation[] = [
 
                 const newCharts = charts.map((chart: any) => {
                     return {
-                        series: (chart.columnDimensions || [])[0],
                         category: (chart.rowDimensions || [])[0],
                         seriesItems: (chart.optionalAxes || []).map(({ dimensionalItem, axis }: any) => ({
                             series: dimensionalItem,
                             axis,
                         })),
                         ...chart,
+                        series: (chart.columnDimensions || [])[0],
                     };
                 });
 
@@ -403,6 +403,31 @@ export const metadataTransformations: Transformation[] = [
             }
         },
     },
+    {
+        name: "fix duplicate translations error",
+        apiVersion: 36,
+        apply: (metadata: any) => {
+            const fixedMetadata = _.omitBy(metadata, _.isNil);
+
+            const newMetadata = Object.keys(fixedMetadata).reduce((acc, key) => {
+                const items = metadata[key].map((item: any) => {
+                    return {
+                        ...item,
+                        translations: item.translations
+                            ? _.uniqWith(
+                                  item.translations,
+                                  (transA: any, transB: any) =>
+                                      transA.property === transB.property && transA.locale === transB.locale
+                              )
+                            : item.translations,
+                    };
+                });
+                return { ...acc, [key]: items };
+            }, {});
+
+            return newMetadata;
+        },
+    },
 ];
 
 const itemsMapping = {
@@ -488,7 +513,7 @@ function getPeriodDataFromYearlySeries(object: any) {
                 .fromPairs()
                 .value(),
         },
-        periods: years.map(year => ({ id: year })),
+        periods: object.periods?.length > 0 ? object.periods : years.map(year => ({ id: year })),
     };
 
     return periodsData;

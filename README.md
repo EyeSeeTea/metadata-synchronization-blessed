@@ -20,10 +20,13 @@ $ yarn migrate 'http://admin:PASSWORD@localhost:8080'
 
 ## Scheduler
 
-The app provides a server-side scheduler script that runs synchronization rules in the background. The script requires Node v10+ and can be executed like this:
+The app provides a server-side scheduler script that runs synchronization rules in the background. The script requires Node v10+.
+
+* Unzip metadata-synchronization-server.zip and can be executed like this:
 
 ```
-$ node metadata-synchronization-server.js -c app-config.json
+$ cd metadata-synchronization-server
+$ node index.js -c app-config.json
 ```
 
 To connect to the destination instance, it requires a configuration file. If no configuration file is supplied the following is used as a placeholder:
@@ -120,6 +123,8 @@ To build the scheduler:
 ```
 $ yarn build-scheduler
 ```
+
+This script generate a metadata-synchronization-server.zip file.
 
 ## i18n
 
