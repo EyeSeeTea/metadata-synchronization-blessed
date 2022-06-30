@@ -186,7 +186,7 @@ export abstract class GenericSyncUseCase {
 
         const origin = await this.getOriginInstance();
 
-        if (dataParams?.enableAggregation && dataParams?.runAnalytics) {
+        if (dataParams?.enableAggregation && dataParams?.runAnalyticsBefore) {
             for await (const message of executeAnalytics(origin)) {
                 yield { message };
             }

@@ -58,7 +58,7 @@ export async function executeAggregateData(
 
     addEventToProgress(i18n.t(`Synchronizing aggregated data...`));
 
-    if (isGlobalInstance() && msfSettings.runAnalytics === "false") {
+    if (isGlobalInstance() && msfSettings.runAnalyticsBefore === "false") {
         const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
         addEventToProgress(
@@ -70,16 +70,16 @@ export async function executeAggregateData(
         );
     }
 
-    const runAnalyticsIsRequired =
-        msfSettings.runAnalytics === "by-sync-rule-settings"
-            ? syncRules.some(rule => rule.builder.dataParams?.runAnalytics ?? false)
-            : msfSettings.runAnalytics === "true";
+    const runAnalyticsBeforeIsRequired =
+        msfSettings.runAnalyticsBefore === "by-sync-rule-settings"
+            ? syncRules.some(rule => rule.builder.dataParams?.runAnalyticsBefore ?? false)
+            : msfSettings.runAnalyticsBefore === "true";
 
     const rulesWithoutRunAnalylics = syncRules.map(rule =>
-        rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalytics: false })
+        rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalyticsBefore: false })
     );
 
-    if (runAnalyticsIsRequired) {
+    if (runAnalyticsBeforeIsRequired) {
         await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
     }
 

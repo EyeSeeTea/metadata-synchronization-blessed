@@ -36,8 +36,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
         ];
     }, []);
 
-    const setRunAnalytics = (runAnalytics: RunAnalyticsSettings) => {
-        updateSettings(settings => ({ ...settings, runAnalytics }));
+    const setRunAnalyticsBefore = (runAnalyticsBefore: RunAnalyticsSettings) => {
+        updateSettings(settings => ({ ...settings, runAnalyticsBefore }));
     };
 
     const setAnalyticsYears = (event: ChangeEvent<HTMLInputElement>) => {
@@ -79,8 +79,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
                     <Dropdown<RunAnalyticsSettings>
                         label={i18n.t("Run Analytics")}
                         items={analyticsSettingItems}
-                        onValueChange={setRunAnalytics}
-                        value={settings.runAnalytics}
+                        onValueChange={setRunAnalyticsBefore}
+                        value={settings.runAnalyticsBefore}
                         hideEmpty
                     />
                     <TextField
