@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-07-01T06:01:24.413Z\n"
-"PO-Revision-Date: 2022-07-01T06:01:24.413Z\n"
+"POT-Creation-Date: 2022-07-01T09:22:28.472Z\n"
+"PO-Revision-Date: 2022-07-01T09:22:28.472Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1443,7 +1443,10 @@ msgstr ""
 msgid "Analytics"
 msgstr ""
 
-msgid "Run Analytics"
+msgid "Run Analytics Before"
+msgstr ""
+
+msgid "Run Analytics After"
 msgstr ""
 
 msgid "Number of years to include"
@@ -2030,7 +2033,10 @@ msgstr ""
 msgid "Synchronizing aggregated data..."
 msgstr ""
 
-msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
+msgid "Run analytics after is disabled, last analytics execution: {{lastExecution}}"
+msgstr ""
+
+msgid "An error has ocurred retrieving the instance {{name}}"
 msgstr ""
 
 msgid "Finished aggregated data synchronization with errors"
