@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-07-01T09:40:09.540Z\n"
-"PO-Revision-Date: 2022-07-01T09:40:09.540Z\n"
+"POT-Creation-Date: 2022-07-01T10:41:01.913Z\n"
+"PO-Revision-Date: 2022-07-01T10:41:01.913Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -2036,13 +2036,13 @@ msgstr ""
 msgid "Run analytics after is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
-msgid "An error has ocurred retrieving the instance {{name}}"
-msgstr ""
-
 msgid "Finished aggregated data synchronization with errors"
 msgstr ""
 
 msgid "Finished aggregated data synchronization successfully"
+msgstr ""
+
+msgid "An error has ocurred retrieving the instance {{name}}"
 msgstr ""
 
 msgid "Checking data values in previous periods ...."
