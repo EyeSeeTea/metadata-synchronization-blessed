@@ -88,7 +88,7 @@ export async function executeAggregateData(
         })
     );
 
-    const targetInstances = syncRules.map(rule => rule.targetInstances).flat();
+    const targetInstances = _.uniq(syncRules.map(rule => rule.targetInstances).flat());
 
     if (runAnalyticsBeforeIsRequired) {
         const localInstance = await compositionRoot.instances.getLocal();
@@ -98,6 +98,16 @@ export async function executeAggregateData(
     const reports = await promiseMap(rulesWithoutRunAnalylics, syncRule =>
         executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings)
     );
+
+    const hasErrors = _(reports)
+        .flatMap(report => report.getResults())
+        .some(({ status }) => !["SUCCESS", "OK"].includes(status));
+
+    if (hasErrors) {
+        addEventToProgress(i18n.t(`Finished aggregated data synchronization with errors`));
+    } else {
+        addEventToProgress(i18n.t(`Finished aggregated data synchronization successfully`));
+    }
 
     if (runAnalyticsAfterIsRequired) {
         await promiseMap(targetInstances, async instanceId => {
@@ -113,16 +123,6 @@ export async function executeAggregateData(
                 },
             });
         });
-    }
-
-    const hasErrors = _(reports)
-        .flatMap(report => report.getResults())
-        .some(({ status }) => !["SUCCESS", "OK"].includes(status));
-
-    if (hasErrors) {
-        addEventToProgress(i18n.t(`Finished aggregated data synchronization with errors`));
-    } else {
-        addEventToProgress(i18n.t(`Finished aggregated data synchronization successfully`));
     }
 
     // Store last executed dates to msf storage (only if period is not overriden)
