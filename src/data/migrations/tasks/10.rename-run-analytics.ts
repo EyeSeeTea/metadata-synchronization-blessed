@@ -1,14 +1,11 @@
-import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { MigrationParams } from ".";
 import { DataSyncAggregation } from "../../../domain/aggregated/entities/DataSyncAggregation";
 import { DataImportParams } from "../../../domain/aggregated/entities/DataSynchronizationParams";
 import { DataSyncPeriod } from "../../../domain/aggregated/entities/DataSyncPeriod";
-import { NamedRef, SharedRef } from "../../../domain/common/entities/Ref";
 import { FilterRule } from "../../../domain/metadata/entities/FilterRule";
 import { MetadataSynchronizationParams } from "../../../domain/metadata/entities/MetadataSynchronizationParams";
 import { Debug } from "../../../domain/migrations/entities/Debug";
-import { SynchronizationType } from "../../../domain/synchronization/entities/SynchronizationType";
 import { promiseMap } from "../../../utils/common";
 import { AppStorage, Migration } from "../client/types";
 
@@ -95,8 +92,6 @@ export async function migrate(storage: AppStorage, _debug: Debug, _params: Migra
 
     await promiseMap(oldRules, async oldRule => {
         const oldRuleDetails = await storage.get<OldSynchronizationRuleDetails>("rules-" + oldRule.id);
-
-        debugger;
 
         if (oldRuleDetails) {
             const oldDataParams = oldRuleDetails.builder.dataParams;

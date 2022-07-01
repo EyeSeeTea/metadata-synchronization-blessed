@@ -62,7 +62,7 @@ export async function executeAggregateData(
         const lastExecution = await getLastAnalyticsExecution(compositionRoot);
 
         addEventToProgress(
-            i18n.t("Run analytics is disabled, last analytics execution: {{lastExecution}}", {
+            i18n.t("Run analytics after is disabled, last analytics execution: {{lastExecution}}", {
                 lastExecution,
                 nsSeparator: false,
             }),
@@ -75,17 +75,45 @@ export async function executeAggregateData(
             ? syncRules.some(rule => rule.builder.dataParams?.runAnalyticsBefore ?? false)
             : msfSettings.runAnalyticsBefore === "true";
 
+    const runAnalyticsAfterIsRequired =
+        msfSettings.runAnalyticsAfter === "by-sync-rule-settings"
+            ? syncRules.some(rule => rule.builder.dataParams?.runAnalyticsAfter ?? false)
+            : msfSettings.runAnalyticsAfter === "true";
+
     const rulesWithoutRunAnalylics = syncRules.map(rule =>
-        rule.updateBuilderDataParams({ ...rule.builder.dataParams, runAnalyticsBefore: false })
+        rule.updateBuilderDataParams({
+            ...rule.builder.dataParams,
+            runAnalyticsBefore: false,
+            runAnalyticsAfter: false,
+        })
     );
 
+    const targetInstances = syncRules.map(rule => rule.targetInstances).flat();
+
     if (runAnalyticsBeforeIsRequired) {
-        await runAnalytics(compositionRoot, addEventToProgress, msfSettings.analyticsYears);
+        const localInstance = await compositionRoot.instances.getLocal();
+        await runAnalytics(localInstance, addEventToProgress, msfSettings.analyticsYears);
     }
 
     const reports = await promiseMap(rulesWithoutRunAnalylics, syncRule =>
         executeSyncRule(compositionRoot, syncRule, addEventToProgress, msfSettings)
     );
+
+    if (runAnalyticsAfterIsRequired) {
+        await promiseMap(targetInstances, async instanceId => {
+            const instance = await compositionRoot.instances.getById(instanceId);
+
+            instance.match({
+                success: async instance => await runAnalytics(instance, addEventToProgress, msfSettings.analyticsYears),
+                error: () => {
+                    addEventToProgress(
+                        i18n.t(`An error has ocurred retrieving the instance {{name}}`, instance),
+                        "admin"
+                    );
+                },
+            });
+        });
+    }
 
     const hasErrors = _(reports)
         .flatMap(report => report.getResults())
@@ -339,14 +367,12 @@ async function getSyncRules(
         .value();
 }
 
-async function runAnalytics(compositionRoot: CompositionRoot, addEventToProgress: LoggerFunction, lastYears: number) {
-    const localInstance = await compositionRoot.instances.getLocal();
-
-    for await (const message of executeAnalytics(localInstance, { lastYears })) {
+async function runAnalytics(instance: Instance, addEventToProgress: LoggerFunction, lastYears: number) {
+    for await (const message of executeAnalytics(instance, { lastYears })) {
         addEventToProgress(message, "admin");
     }
 
-    addEventToProgress(i18n.t("Analytics execution finished on {{name}}", localInstance), "admin");
+    addEventToProgress(i18n.t("Analytics execution finished on {{name}}", instance), "admin");
 }
 
 async function getLastAnalyticsExecution(compositionRoot: CompositionRoot): Promise<string> {

@@ -47,6 +47,7 @@ export const MSFHomePage: React.FC = () => {
                 ...oldSettings,
                 ...settings,
                 runAnalyticsBefore: isGlobalInstance() ? "false" : "by-sync-rule-settings",
+                runAnalyticsAfter: isGlobalInstance() ? "false" : "by-sync-rule-settings",
             }));
         });
     }, [compositionRoot]);
@@ -85,6 +86,7 @@ export const MSFHomePage: React.FC = () => {
         await compositionRoot.customData.save(MSFStorageKey, {
             ...msfSettings,
             runAnalyticsBefore: undefined,
+            runAnalyticsAfter: undefined,
         });
     };
 

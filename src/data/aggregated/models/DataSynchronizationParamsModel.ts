@@ -44,6 +44,7 @@ export const DataSynchronizationParamsModel: Codec<DataSynchronizationParams> = 
         enableAggregation: Schema.optional(Schema.boolean),
         aggregationType: Schema.optional(DataSyncAggregationModel),
         runAnalyticsBefore: Schema.optional(Schema.boolean),
+        runAnalyticsAfter: Schema.optional(Schema.boolean),
         includeAnalyticsZeroValues: Schema.optional(Schema.boolean),
         analyticsYears: Schema.optional(Schema.number),
         ignoreDuplicateExistingValues: Schema.optional(Schema.boolean),

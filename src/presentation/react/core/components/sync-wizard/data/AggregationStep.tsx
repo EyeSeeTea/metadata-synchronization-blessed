@@ -60,6 +60,15 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
         );
     };
 
+    const changeRunAnalyticsAfter = (runAnalyticsAfter: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...syncRule.dataParams,
+                runAnalyticsAfter,
+            })
+        );
+    };
+
     const changeAnalyticsZeroValues = (includeAnalyticsZeroValues: boolean) => {
         onChange(
             syncRule.updateDataParams({
@@ -99,6 +108,14 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
                             label={i18n.t("Run Analytics before sync")}
                             onValueChange={changeRunAnalyticsBefore}
                             value={syncRule.dataParams.runAnalyticsBefore ?? false}
+                        />
+                    </div>
+
+                    <div>
+                        <Toggle
+                            label={i18n.t("Run Analytics after sync")}
+                            onValueChange={changeRunAnalyticsAfter}
+                            value={syncRule.dataParams.runAnalyticsAfter ?? false}
                         />
                     </div>
 

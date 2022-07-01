@@ -5,6 +5,7 @@ export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
 
 export type MSFSettings = {
     runAnalyticsBefore: RunAnalyticsSettings;
+    runAnalyticsAfter: RunAnalyticsSettings;
     analyticsYears: number;
     projectMinimumDates: Record<string, NamedDate>;
     deleteDataValuesBeforeSync?: boolean;
@@ -12,7 +13,7 @@ export type MSFSettings = {
     lastExecutions: Record<string, Date>;
 };
 
-export type PersistedMSFSettings = Omit<MSFSettings, "runAnalyticsBefore">;
+export type PersistedMSFSettings = Omit<MSFSettings, "runAnalyticsBefore" | "runAnalyticsAfter">;
 
 export type AdvancedSettings = {
     period?: ObjectWithPeriod;
@@ -22,6 +23,7 @@ export const MSFStorageKey = "msf-storage";
 
 export const defaultMSFSettings: MSFSettings = {
     runAnalyticsBefore: "by-sync-rule-settings",
+    runAnalyticsAfter: "by-sync-rule-settings",
     analyticsYears: 2,
     projectMinimumDates: {},
     deleteDataValuesBeforeSync: false,

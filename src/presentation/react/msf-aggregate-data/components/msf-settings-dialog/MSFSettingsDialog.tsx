@@ -1,4 +1,4 @@
-import { makeStyles, TextField, Theme } from "@material-ui/core";
+import { Divider, makeStyles, TextField, Theme } from "@material-ui/core";
 import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import { Dictionary } from "lodash";
 import React, { ChangeEvent, useMemo, useState } from "react";
@@ -40,6 +40,10 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
         updateSettings(settings => ({ ...settings, runAnalyticsBefore }));
     };
 
+    const setRunAnalyticsAfter = (runAnalyticsAfter: RunAnalyticsSettings) => {
+        updateSettings(settings => ({ ...settings, runAnalyticsAfter }));
+    };
+
     const setAnalyticsYears = (event: ChangeEvent<HTMLInputElement>) => {
         const analyticsYears = parseInt(event.target.value);
         updateSettings(settings => ({ ...settings, analyticsYears }));
@@ -77,10 +81,17 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
 
                 <div className={classes.selector}>
                     <Dropdown<RunAnalyticsSettings>
-                        label={i18n.t("Run Analytics")}
+                        label={i18n.t("Run Analytics Before")}
                         items={analyticsSettingItems}
                         onValueChange={setRunAnalyticsBefore}
                         value={settings.runAnalyticsBefore}
+                        hideEmpty
+                    />
+                    <Dropdown<RunAnalyticsSettings>
+                        label={i18n.t("Run Analytics After")}
+                        items={analyticsSettingItems}
+                        onValueChange={setRunAnalyticsAfter}
+                        value={settings.runAnalyticsAfter}
                         hideEmpty
                     />
                     <TextField
@@ -113,6 +124,8 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
                 </div>
             </div>
 
+            <Divider className={classes.divider} />
+
             <div className={classes.section}>
                 <h3 className={classes.title}>{i18n.t("Project minimum dates")}</h3>
 
@@ -144,6 +157,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginTop: 0,
     },
     section: {
+        marginBottom: 20,
+    },
+    divider: {
         marginBottom: 20,
     },
 }));
