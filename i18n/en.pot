@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-04-21T07:57:05.960Z\n"
-"PO-Revision-Date: 2022-04-21T07:57:05.960Z\n"
+"POT-Creation-Date: 2022-07-11T11:35:51.379Z\n"
+"PO-Revision-Date: 2022-07-11T11:35:51.379Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -2066,6 +2066,24 @@ msgid ""
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
+msgstr ""
+
+msgid "Sync finished - {{dateEnd}}"
+msgstr ""
+
+msgid "Stats: {{-stats}}"
+msgstr ""
+
+msgid "Status: {{status}}"
+msgstr ""
+
+msgid "Synchronizing rule {{name}} - {{dateStart}}"
+msgstr ""
+
+msgid "Error: {{code}}"
+msgstr ""
+
+msgid "Run sync"
 msgstr ""
 
 msgid "Running analytics for instance {{name}}"
