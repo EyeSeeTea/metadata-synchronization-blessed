@@ -10,6 +10,7 @@ export interface DataImportParams {
     skipExistingCheck?: boolean;
     skipAudit?: boolean;
     strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
+    async?: boolean;
 }
 
 export interface DataSynchronizationParams extends DataImportParams {
@@ -31,4 +32,5 @@ export interface DataSynchronizationParams extends DataImportParams {
     includeAnalyticsZeroValues?: boolean;
     analyticsYears?: number;
     ignoreDuplicateExistingValues?: boolean;
+    async?: boolean;
 }
