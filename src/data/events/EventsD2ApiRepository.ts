@@ -1,4 +1,4 @@
-import { EventsPostResponse } from "@eyeseetea/d2-api/api/events";
+import { EventsPostParams, EventsPostResponse } from "@eyeseetea/d2-api/api/events";
 import _ from "lodash";
 import moment from "moment";
 import {
@@ -247,20 +247,17 @@ export class EventsD2ApiRepository implements EventsRepository {
     }
 
     private async push(params: DataImportParams, data: EventsPackage): Promise<SynchronizationResult> {
+        const eventsPostParams: EventsPostParams = {
+            idScheme: params.idScheme ?? "UID",
+            dataElementIdScheme: params.dataElementIdScheme ?? "UID",
+            orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
+            dryRun: params.dryRun ?? false,
+            preheatCache: params.preheatCache ?? false,
+            skipExistingCheck: params.skipExistingCheck ?? false,
+        };
+
         if (params.async || params.async === undefined) {
-            const { response } = await this.api.events
-                .postAsync(
-                    {
-                        idScheme: params.idScheme ?? "UID",
-                        dataElementIdScheme: params.dataElementIdScheme ?? "UID",
-                        orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
-                        dryRun: params.dryRun ?? false,
-                        preheatCache: params.preheatCache ?? false,
-                        skipExistingCheck: params.skipExistingCheck ?? false,
-                    },
-                    data
-                )
-                .getData();
+            const { response } = await this.api.events.postAsync(eventsPostParams, data).getData();
 
             const result = await this.api.system.waitFor(response.jobType, response.id).getData();
 
@@ -275,19 +272,7 @@ export class EventsD2ApiRepository implements EventsRepository {
 
             return this.cleanEventsImportResponse(result);
         } else {
-            const { response } = await this.api.events
-                .post(
-                    {
-                        idScheme: params.idScheme ?? "UID",
-                        dataElementIdScheme: params.dataElementIdScheme ?? "UID",
-                        orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
-                        dryRun: params.dryRun ?? false,
-                        preheatCache: params.preheatCache ?? false,
-                        skipExistingCheck: params.skipExistingCheck ?? false,
-                    },
-                    data
-                )
-                .getData();
+            const { response } = await this.api.events.post(eventsPostParams, data).getData();
 
             return this.cleanEventsImportResponse(response);
         }

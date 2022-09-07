@@ -32,5 +32,4 @@ export interface DataSynchronizationParams extends DataImportParams {
     includeAnalyticsZeroValues?: boolean;
     analyticsYears?: number;
     ignoreDuplicateExistingValues?: boolean;
-    async?: boolean;
 }
