@@ -56,8 +56,12 @@ const executeRule = async (compositionRoot: CompositionRoot, id: string, log: (m
         }
     };
 
-    const rule = await compositionRoot.rules.get(id);
-    if (!rule) throw new Error(`Rule not found: ${id}`);
+    const persistedRule = await compositionRoot.rules.get(id);
+    if (!persistedRule) throw new Error(`Rule not found: ${id}`);
+
+    /* Select org units and TEIs in persisted rule */
+    const rule =
+        persistedRule.type === "events" ? await compositionRoot.efh.updateSyncRule(persistedRule) : persistedRule;
 
     const { builder, id: syncRule, type } = rule;
     const dateStart = formatDateLong(new Date());

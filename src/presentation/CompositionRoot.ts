@@ -32,6 +32,7 @@ import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDa
 import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
+import { UpdateEFHSyncRuleUseCase } from "../domain/events/usecases/UpdateEFHSyncRuleUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
 import { DeleteInstanceUseCase } from "../domain/instance/usecases/DeleteInstanceUseCase";
 import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
@@ -375,6 +376,13 @@ export class CompositionRoot {
         return getExecute({
             getLastExecution: new GetLastSchedulerExecutionUseCase(this.repositoryFactory, this.localInstance),
             updateLastExecution: new UpdateLastSchedulerExecutionUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get efh() {
+        return getExecute({
+            updateSyncRule: new UpdateEFHSyncRuleUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

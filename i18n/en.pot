@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-10-11T09:13:04.885Z\n"
-"PO-Revision-Date: 2022-10-11T09:13:04.885Z\n"
+"POT-Creation-Date: 2022-10-11T12:09:14.633Z\n"
+"PO-Revision-Date: 2022-10-11T12:09:14.633Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -24,6 +24,9 @@ msgid "Field {{field}} needs to be a valid url"
 msgstr ""
 
 msgid "Field {{field}} is not valid"
+msgstr ""
+
+msgid "EFH program not found"
 msgstr ""
 
 msgid "An instance with this name already exists"
