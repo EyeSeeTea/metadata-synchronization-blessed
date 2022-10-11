@@ -1,7 +1,6 @@
 import { Button, makeStyles } from "@material-ui/core";
 import React from "react";
 import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../../locales";
 
 export interface SyncRuleButtonProps {
     rule: SynchronizationRule;
@@ -25,7 +24,7 @@ export const SyncRuleButton: React.FC<SyncRuleButtonProps> = React.memo(props =>
             className={classes.runButton}
             disabled={disabled}
         >
-            {i18n.t("Run sync")}: {rule.name}
+            {rule.name}
         </Button>
     );
 });

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-07-11T11:35:51.379Z\n"
-"PO-Revision-Date: 2022-07-11T11:35:51.379Z\n"
+"POT-Creation-Date: 2022-10-11T09:13:04.885Z\n"
+"PO-Revision-Date: 2022-10-11T09:13:04.885Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -2081,9 +2081,6 @@ msgid "Synchronizing rule {{name}} - {{dateStart}}"
 msgstr ""
 
 msgid "Error: {{code}}"
-msgstr ""
-
-msgid "Run sync"
 msgstr ""
 
 msgid "Running analytics for instance {{name}}"

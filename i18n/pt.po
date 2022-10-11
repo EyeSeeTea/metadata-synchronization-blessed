@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2022-07-11T11:31:41.169Z\n"
+"POT-Creation-Date: 2022-10-11T08:58:33.285Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2085,9 +2085,6 @@ msgid "Synchronizing rule {{name}} - {{dateStart}}"
 msgstr ""
 
 msgid "Error: {{code}}"
-msgstr ""
-
-msgid "Run sync"
 msgstr ""
 
 msgid "Running analytics for instance {{name}}"

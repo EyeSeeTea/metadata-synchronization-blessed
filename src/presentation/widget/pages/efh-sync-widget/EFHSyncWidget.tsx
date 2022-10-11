@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import { Box, LinearProgress, List, makeStyles, Paper, Typography } from "@material-ui/core";
 import React from "react";
@@ -95,9 +96,16 @@ function useSyncRulesList() {
                 const { rows: rules } = await compositionRoot.rules.list({
                     paging: false,
                     sorting: { field: "name", order: "asc" },
+                    filters: { search: "EFH_" },
                 });
 
-                setRules(rules);
+                const efhRules = _(rules)
+                    .keyBy(rule => rule.code || "")
+                    .at(["EFH_METADATA", "EFH_DATA"])
+                    .compact()
+                    .value();
+
+                setRules(efhRules);
             } catch (err: any) {
                 snackbar.error(err.message);
             }
