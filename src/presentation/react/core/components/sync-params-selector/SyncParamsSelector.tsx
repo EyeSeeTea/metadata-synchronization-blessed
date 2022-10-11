@@ -21,7 +21,6 @@ const useStyles = makeStyles({
 const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onChange, generateNewUidDisabled }) => {
     const classes = useStyles();
     const { syncParams, dataParams } = syncRule;
-
     const changeSharingSettings = (includeSharingSettings: boolean) => {
         onChange(
             syncRule.updateSyncParams({
@@ -103,6 +102,15 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
             syncRule.updateDataParams({
                 ...dataParams,
                 ignoreDuplicateExistingValues,
+            })
+        );
+    };
+
+    const changeAsyncMode = (async: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...dataParams,
+                async,
             })
         );
     };
@@ -249,6 +257,16 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                         }
                         onValueChange={changeIgnoreDuplicateExistingValues}
                         value={dataParams.ignoreDuplicateExistingValues ?? false}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "events" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Async mode")}
+                        onValueChange={changeAsyncMode}
+                        value={dataParams.async ?? true}
                     />
                 </div>
             )}
