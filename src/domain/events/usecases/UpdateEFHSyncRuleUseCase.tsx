@@ -19,8 +19,8 @@ export class UpdateEFHSyncRuleUseCase {
         const program = await this.getEfhProgram();
         if (!program) throw new Error(i18n.t("EFH program not found"));
 
-        const teiIds: string[] = await this.getTeis(program);
         const orgUnitPaths = program.organisationUnits.map(ou => ou.path);
+        const teiIds: string[] = await this.getTeis(program, orgUnitPaths);
 
         return rule.updateDataSyncOrgUnitPaths(orgUnitPaths).updateDataSyncTEIs(teiIds);
     }
@@ -28,20 +28,20 @@ export class UpdateEFHSyncRuleUseCase {
     private async getEfhProgram() {
         const res = await this.metadataRepository.listMetadata({
             type: "programs",
-            fields: { organisationUnits: { path: true } },
+            fields: { id: true, organisationUnits: { path: true } },
             search: { field: "code", operator: "eq", value: this.formCode },
         });
         const form = res.objects[0] as unknown as Program | undefined;
         return form;
     }
 
-    private async getTeis(form: Program) {
+    private async getTeis(form: Program, orgUnitPaths: string[]) {
         const teiIds: string[] = [];
         let page = 1;
         let done = false;
 
-        while (done) {
-            const { trackedEntityInstances } = await this.teiRepository.getTEIs({}, form.id, page, 1000);
+        while (!done) {
+            const { trackedEntityInstances } = await this.teiRepository.getTEIs({ orgUnitPaths }, form.id, page, 1000);
             const teiIdsInPage = trackedEntityInstances.map(tei => tei.trackedEntityInstance);
             teiIds.push(...teiIdsInPage);
 
