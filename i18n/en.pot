@@ -26,6 +26,9 @@ msgstr ""
 msgid "Field {{field}} is not valid"
 msgstr ""
 
+msgid "EFH program not found"
+msgstr ""
+
 msgid "An instance with this name already exists"
 msgstr ""
 
@@ -1062,6 +1065,9 @@ msgstr ""
 msgid "Ignore data with same value on destination"
 msgstr ""
 
+msgid "Async mode"
+msgstr ""
+
 msgid "Sync rule {{idx}}: {{name}} ({{id}})"
 msgstr ""
 
@@ -1349,6 +1355,9 @@ msgid "Updates"
 msgstr ""
 
 msgid "Run Analytics before sync"
+msgstr ""
+
+msgid "{{async}}"
 msgstr ""
 
 msgid "Frequency"
@@ -2066,6 +2075,21 @@ msgid ""
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
+msgstr ""
+
+msgid "Sync finished - {{dateEnd}}"
+msgstr ""
+
+msgid "Stats: {{-stats}}"
+msgstr ""
+
+msgid "Status: {{status}}"
+msgstr ""
+
+msgid "Synchronizing rule {{name}} - {{dateStart}}"
+msgstr ""
+
+msgid "Error: {{code}}"
 msgstr ""
 
 msgid "Running analytics for instance {{name}}"
