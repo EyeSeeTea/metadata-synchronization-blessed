@@ -26,6 +26,9 @@ msgstr ""
 msgid "Field {{field}} is not valid"
 msgstr ""
 
+msgid "EFH program not found"
+msgstr ""
+
 msgid "An instance with this name already exists"
 msgstr ""
 
@@ -2072,6 +2075,21 @@ msgid ""
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
+msgstr ""
+
+msgid "Sync finished - {{dateEnd}}"
+msgstr ""
+
+msgid "Stats: {{-stats}}"
+msgstr ""
+
+msgid "Status: {{status}}"
+msgstr ""
+
+msgid "Synchronizing rule {{name}} - {{dateStart}}"
+msgstr ""
+
+msgid "Error: {{code}}"
 msgstr ""
 
 msgid "Running analytics for instance {{name}}"
