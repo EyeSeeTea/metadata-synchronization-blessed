@@ -1,7 +1,7 @@
 {
     "name": "metadata-synchronization",
     "description": "Advanced metadata & data synchronization utility",
-    "version": "2.17.0_rc_offline",
+    "version": "2.17.0",
     "license": "GPL-3.0",
     "author": "EyeSeeTea team",
     "homepage": ".",
