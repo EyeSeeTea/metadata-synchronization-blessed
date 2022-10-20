@@ -121,6 +121,13 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
         [onChange, syncRule]
     );
 
+    const updateSyncAllTEIs = useCallback(
+        (value: boolean) => {
+            onChange(syncRule.updateDataSyncAllTEIs(value));
+        },
+        [onChange, syncRule]
+    );
+
     const attributes = useMemo(
         () =>
             _(
@@ -210,28 +217,38 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
 
     return (
         <React.Fragment>
-            <ObjectsTable<TEIObject>
-                rows={rows}
-                loading={rowsLoading}
-                columns={columns}
-                details={details}
-                actions={actions}
-                forceSelectionColumn={true}
-                onChange={handleTableChange}
-                selection={syncRule.dataSyncTeis?.map(id => ({ id })) ?? []}
-                filterComponents={filterComponents}
-                pagination={pager}
-            />
-
-            <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
-                {i18n.t("Advanced options")}
-            </Typography>
-
             <Toggle
-                label={i18n.t("Exclude relationships")}
-                value={syncRule.excludeTeiRelationships}
-                onValueChange={excludeTeiRelationships}
+                label={i18n.t("Sync all TEIs")}
+                value={syncRule.dataSyncAllTEIs}
+                onValueChange={updateSyncAllTEIs}
             />
+
+            {!syncRule.dataSyncAllTEIs && (
+                <React.Fragment>
+                    <ObjectsTable<TEIObject>
+                        rows={rows}
+                        loading={rowsLoading}
+                        columns={columns}
+                        details={details}
+                        actions={actions}
+                        forceSelectionColumn={true}
+                        onChange={handleTableChange}
+                        selection={syncRule.dataSyncTeis?.map(id => ({ id })) ?? []}
+                        filterComponents={filterComponents}
+                        pagination={pager}
+                    />
+
+                    <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
+                        {i18n.t("Advanced options")}
+                    </Typography>
+
+                    <Toggle
+                        label={i18n.t("Exclude relationships")}
+                        value={syncRule.excludeTeiRelationships}
+                        onValueChange={excludeTeiRelationships}
+                    />
+                </React.Fragment>
+            )}
         </React.Fragment>
     );
 }
