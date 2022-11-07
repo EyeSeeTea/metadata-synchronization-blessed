@@ -9,7 +9,7 @@ import { CompositionRoot } from "../../../CompositionRoot";
 import { formatDateLong } from "../../../../utils/date";
 import { SyncRuleButtonProps, SyncRuleButton } from "./SyncRuleButton";
 
-export const EFHSyncWidget: React.FC = React.memo(() => {
+export const EFHSyncHomePage: React.FC = React.memo(() => {
     const classes = useStyles();
 
     const logs = useLogs();

@@ -5,6 +5,7 @@ import * as permissions from "../../utils/permissions";
 import RouteWithSession from "../react/core/components/auth/RouteWithSession";
 import RouteWithSessionAndAuth from "../react/core/components/auth/RouteWithSessionAndAuth";
 import { useAppContext } from "../react/core/contexts/AppContext";
+import { EFHSyncHomePage } from "../widget/pages/efh-sync-widget/EFHSyncWidget";
 import { HistoryPage } from "./core/pages/history/HistoryPage";
 import HomePage from "./core/pages/home/HomePage";
 import InstanceCreationPage from "./core/pages/instance-creation/InstanceCreationPage";
@@ -106,6 +107,13 @@ const VariantRoutes: React.FC<{ variant: AppVariant }> = ({ variant }) => {
                     <Redirect to="/msf" />
                 </Switch>
             );
+        case "efh-sync":
+            return (
+                <Switch>
+                    <RouteWithSession path="/" exact render={() => <EFHSyncHomePage />} />
+                    <RouteWithSession path="/dashboard" render={() => <HomePage type={"dashboard"} />} />
+                </Switch>
+            );
         default:
             return (
                 <Switch>
@@ -125,10 +133,16 @@ const getAppVariant = (): AppVariant => {
 
 const isAppVariant = (variant?: string): variant is AppVariant => {
     return (
-        !!variant && ["core-app", "data-metadata-app", "module-package-app", "msf-aggregate-data-app"].includes(variant)
+        !!variant &&
+        ["core-app", "data-metadata-app", "module-package-app", "msf-aggregate-data-app", "efh-sync"].includes(variant)
     );
 };
 
-export type AppVariant = "core-app" | "data-metadata-app" | "module-package-app" | "msf-aggregate-data-app";
+export type AppVariant =
+    | "core-app"
+    | "data-metadata-app"
+    | "module-package-app"
+    | "msf-aggregate-data-app"
+    | "efh-sync";
 
 export default Root;
