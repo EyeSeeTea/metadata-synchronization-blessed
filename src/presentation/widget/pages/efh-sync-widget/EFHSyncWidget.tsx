@@ -155,8 +155,6 @@ export const useStyles = makeStyles(theme => ({
     },
     log: {
         width: "100%",
-        margin: theme.spacing(2),
-        padding: theme.spacing(4),
         overflow: "auto",
         minHeight: 400,
         maxHeight: 400,
