@@ -162,5 +162,6 @@ export const useStyles = makeStyles(theme => ({
     list: {
         height: 275,
         overflow: "auto",
+        padding: 10,
     },
 }));

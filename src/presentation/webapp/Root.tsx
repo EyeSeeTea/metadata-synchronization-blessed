@@ -5,7 +5,7 @@ import * as permissions from "../../utils/permissions";
 import RouteWithSession from "../react/core/components/auth/RouteWithSession";
 import RouteWithSessionAndAuth from "../react/core/components/auth/RouteWithSessionAndAuth";
 import { useAppContext } from "../react/core/contexts/AppContext";
-import { EFHSyncHomePage } from "../widget/pages/efh-sync-widget/EFHSyncWidget";
+import { EFHSyncHomePage } from "../widget/pages/efh-sync-widget/EFHSyncHomePage";
 import { HistoryPage } from "./core/pages/history/HistoryPage";
 import HomePage from "./core/pages/home/HomePage";
 import InstanceCreationPage from "./core/pages/instance-creation/InstanceCreationPage";

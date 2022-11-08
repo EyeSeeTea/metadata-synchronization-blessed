@@ -43,7 +43,7 @@ const variants = [
     {
         type: "app",
         name: "efh-sync",
-        title: "MetaData Synchronization EFH Sync Widget",
+        title: "MetaData Synchronization EFH Sync",
         file: "metadata-synchronization-efh-sync",
     },
 ] as const;
