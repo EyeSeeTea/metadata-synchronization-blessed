@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-11-14T09:39:40.649Z\n"
-"PO-Revision-Date: 2022-11-14T09:39:40.649Z\n"
+"POT-Creation-Date: 2022-11-14T12:12:08.492Z\n"
+"PO-Revision-Date: 2022-11-14T12:12:08.492Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1420,6 +1420,9 @@ msgid "An error ocurred while trying to access the required events"
 msgstr ""
 
 msgid "Sync all events"
+msgstr ""
+
+msgid "Exclude coordinates"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
