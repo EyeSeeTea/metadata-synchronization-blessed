@@ -76,8 +76,6 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             }
         );
 
-        debugger;
-
         const coordinatesDataElements = this.getCoordinatesDataElements(programs);
 
         const events = excludeEventCoordinates
