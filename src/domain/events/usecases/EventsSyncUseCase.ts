@@ -35,7 +35,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
-        const { enableAggregation = false } = dataParams;
+        const { enableAggregation = false, excludeEventCoordinates = false } = dataParams;
         const eventsRepository = await this.getEventsRepository();
         const aggregatedRepository = await this.getAggregatedRepository();
         const teisRepository = await this.getTeisRepository();
@@ -48,9 +48,15 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const progamStageIds = [...programStages.map(({ id }) => id), ...stageIdsFromPrograms];
 
-        const events = (await eventsRepository.getEvents(dataParams, [...new Set(progamStageIds)])).map(event => {
-            return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
-        });
+        const retrievedEvents = (await eventsRepository.getEvents(dataParams, [...new Set(progamStageIds)])).map(
+            event => {
+                return dataParams.generateNewUid ? { ...event, event: generateUid() } : event;
+            }
+        );
+
+        const events = excludeEventCoordinates
+            ? retrievedEvents.map(event => ({ ...event, geometry: undefined }))
+            : retrievedEvents;
 
         const trackedEntityInstances = dataParams.teis
             ? await teisRepository.getTEIsById(dataParams, dataParams.teis)

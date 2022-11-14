@@ -144,6 +144,10 @@ export class SynchronizationRule {
         return this.syncRule.builder?.dataParams?.excludeTeiRelationships ?? false;
     }
 
+    public get excludeEventCoordinates(): boolean {
+        return this.syncRule.builder?.dataParams?.excludeEventCoordinates ?? false;
+    }
+
     public get dataSyncEnableAggregation(): boolean | undefined {
         return this.syncRule.builder?.dataParams?.enableAggregation;
     }
@@ -493,6 +497,10 @@ export class SynchronizationRule {
 
     public updateExcludeTeiRelationships(excludeTeiRelationships?: boolean): SynchronizationRule {
         return this.updateBuilderDataParams({ excludeTeiRelationships });
+    }
+
+    public updateExcludeEventCoordinates(excludeEventCoordinates?: boolean): SynchronizationRule {
+        return this.updateBuilderDataParams({ excludeEventCoordinates });
     }
 
     public updateDataSyncEnableAggregation(enableAggregation?: boolean): SynchronizationRule {
