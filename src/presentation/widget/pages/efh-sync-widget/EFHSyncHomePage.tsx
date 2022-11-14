@@ -8,6 +8,11 @@ import { useAppContext } from "../../../react/core/contexts/AppContext";
 import { CompositionRoot } from "../../../CompositionRoot";
 import { formatDateLong } from "../../../../utils/date";
 import { SyncRuleButtonProps, SyncRuleButton } from "./SyncRuleButton";
+import { downloadFile } from "../../../utils/download";
+import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
+import { SummaryTable } from "../../../react/core/components/sync-summary/SummaryTable";
+import { SynchronizationResult, SynchronizationStats } from "../../../../domain/reports/entities/SynchronizationResult";
+import moment from "moment";
 
 export const EFHSyncHomePage: React.FC = React.memo(() => {
     const classes = useStyles();
@@ -37,20 +42,43 @@ export const EFHSyncHomePage: React.FC = React.memo(() => {
     );
 });
 
-const executeRule = async (compositionRoot: CompositionRoot, id: string, log: (msg: string) => void) => {
+const LinkDownloadOutput: React.FC<{ syncReport: SynchronizationReport }> = props => {
+    const { syncReport } = props;
+
+    const downloadJson = React.useCallback(() => {
+        downloadFile({
+            filename: "efh-sync-response" + moment().toISOString() + ".json",
+            buffer: JSON.stringify(syncReport),
+        });
+    }, [syncReport]);
+
+    return (
+        <>
+            {i18n.t("Output: ", { nsSeparator: false })}
+
+            <a href="/download" onClick={downloadJson}>
+                {i18n.t("JSON Response")}
+            </a>
+        </>
+    );
+};
+
+const executeRule = async (compositionRoot: CompositionRoot, id: string, log: (msg: Message) => void) => {
     const synchronize = async () => {
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) log(message);
             if (syncReport) await compositionRoot.reports.save(syncReport);
             if (done && syncReport) {
-                const stats = syncReport
-                    .getResults()
-                    .map(result => JSON.stringify(result.stats))
-                    .join(" - ");
+                const stats = _(syncReport.getResults()).flatMap(getSynchronizationResultStats).value();
 
                 const dateEnd = formatDateLong(new Date());
                 log(i18n.t("Sync finished - {{dateEnd}}", { dateEnd }));
-                log(i18n.t("Stats: {{-stats}}", { stats, nsSeparator: false }));
+                log(
+                    <div style={{ marginBottom: 20 }}>
+                        <SummaryTable stats={stats} />
+                    </div>
+                );
+                log(<LinkDownloadOutput syncReport={syncReport} />);
                 log(i18n.t("Status: {{status}}", { status: syncReport.status, nsSeparator: false }));
             }
         }
@@ -76,15 +104,17 @@ const executeRule = async (compositionRoot: CompositionRoot, id: string, log: (m
     });
 };
 
+type Message = React.ReactNode;
+
 interface Logs {
-    messages: string[];
-    log(msg: string): void;
+    messages: Message[];
+    log(msg: Message): void;
     clear(): void;
 }
 
 function useLogs(): Logs {
-    const [messages, setMessages] = React.useState<string[]>([]);
-    const log = React.useCallback((msg: string) => setMessages(msgs => [...msgs, msg]), []);
+    const [messages, setMessages] = React.useState<Message[]>([]);
+    const log = React.useCallback((msg: Message) => setMessages(msgs => [...msgs, msg]), []);
     const clear = React.useCallback(() => setMessages([]), []);
     return { messages, log, clear };
 }
@@ -165,3 +195,20 @@ export const useStyles = makeStyles(theme => ({
         padding: 10,
     },
 }));
+
+function getSynchronizationResultStats(result: SynchronizationResult): SynchronizationStats[] {
+    const typeStats = result.typeStats || [];
+    const { payload } = result;
+    const isEvents = payload && "events" in payload;
+    const isTeis = payload && "trackedEntityInstances" in payload;
+
+    const type = isEvents
+        ? i18n.t("Consultations and Surgery (Events)")
+        : isTeis
+        ? i18n.t("Patients (Tracked Entity Instances)")
+        : i18n.t("Total");
+
+    const totalStats = result.stats ? [{ ...result.stats, type }] : [];
+
+    return _.concat(typeStats, totalStats);
+}
