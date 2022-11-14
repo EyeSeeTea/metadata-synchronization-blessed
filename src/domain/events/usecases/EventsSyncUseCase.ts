@@ -28,10 +28,32 @@ import { createEventsPayloadMapper } from "../mapper/EventsPayloadMapperFactory"
 // import { cleanOrgUnitPath } from "../../synchronization/utils";
 // import { ProgramEventDataValue } from "../entities/ProgramEventDataValue";
 
+interface ExtractedProgram {
+    id: string;
+    name: string;
+    programType: string;
+    programStages: {
+        id: string;
+        displayFormName: string;
+        programStageDataElements: {
+            dataElement: {
+                id: string;
+                displayFormName: string;
+                name: string;
+                valueType: string;
+            };
+        }[];
+    }[];
+    programIndicators: {
+        id: string;
+        name: string;
+    }[];
+}
+
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
     public readonly fields =
-        "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name],program";
+        "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name,valueType]]],programIndicators[id,name],program";
 
     public buildPayload = memoize(async () => {
         const { dataParams = {}, excludedIds = [] } = this.builder;
@@ -54,8 +76,18 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             }
         );
 
+        debugger;
+
+        const coordinatesDataElements = this.getCoordinatesDataElements(programs);
+
         const events = excludeEventCoordinates
-            ? retrievedEvents.map(event => ({ ...event, geometry: undefined }))
+            ? retrievedEvents.map(event => ({
+                  ...event,
+                  geometry: undefined,
+                  dataValues: event.dataValues.filter(dv =>
+                      excludeEventCoordinates ? !coordinatesDataElements.includes(dv.dataElement) : dv
+                  ),
+              }))
             : retrievedEvents;
 
         const trackedEntityInstances = dataParams.teis
@@ -95,6 +127,22 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         return { events, dataValues, trackedEntityInstances };
     });
+
+    private getCoordinatesDataElements(programs: never[]) {
+        return (programs as ExtractedProgram[])
+            .map(program =>
+                program.programStages.map(programStage =>
+                    programStage.programStageDataElements.map(({ dataElement }) => ({
+                        id: dataElement.id,
+                        valueType: dataElement.valueType,
+                    }))
+                )
+            )
+            .flat()
+            .flat()
+            .filter(de => de.valueType === "COORDINATE")
+            .map(({ id }) => id);
+    }
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { events, dataValues, trackedEntityInstances } = await this.buildPayload();
