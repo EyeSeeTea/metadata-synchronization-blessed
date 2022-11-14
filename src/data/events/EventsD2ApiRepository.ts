@@ -243,6 +243,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             errors,
             date: new Date(),
             type: "events",
+            response: importResult,
         };
     }
 
