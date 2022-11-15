@@ -186,11 +186,10 @@ export const useStyles = makeStyles(theme => ({
     log: {
         width: "100%",
         overflow: "auto",
-        minHeight: 400,
-        maxHeight: 400,
+        height: "100%",
     },
     list: {
-        height: 275,
+        minHeight: 275,
         overflow: "auto",
         padding: 10,
     },
