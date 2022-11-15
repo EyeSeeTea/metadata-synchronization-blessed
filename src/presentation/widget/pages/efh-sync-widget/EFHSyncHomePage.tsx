@@ -45,12 +45,16 @@ export const EFHSyncHomePage: React.FC = React.memo(() => {
 const LinkDownloadOutput: React.FC<{ syncReport: SynchronizationReport }> = props => {
     const { syncReport } = props;
 
-    const downloadJson = React.useCallback(() => {
-        downloadFile({
-            filename: "efh-sync-response" + moment().toISOString() + ".json",
-            buffer: JSON.stringify(syncReport),
-        });
-    }, [syncReport]);
+    const downloadJson = React.useCallback(
+        (ev: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+            ev.preventDefault();
+            downloadFile({
+                filename: "efh-sync-response" + moment().toISOString() + ".json",
+                buffer: JSON.stringify(syncReport),
+            });
+        },
+        [syncReport]
+    );
 
     return (
         <>
