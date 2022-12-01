@@ -428,6 +428,17 @@ export const metadataTransformations: Transformation[] = [
             return newMetadata;
         },
     },
+    {
+        name: "add user roles under user directly",
+        apiVersion: 38,
+        apply: ({ users, ...rest }: any) => {
+            debugger;
+            return {
+                ...rest,
+                users: users.map((user: any) => ({ ...user, userRoles: user.userCredentials.userRoles })),
+            };
+        },
+    },
 ];
 
 const itemsMapping = {
