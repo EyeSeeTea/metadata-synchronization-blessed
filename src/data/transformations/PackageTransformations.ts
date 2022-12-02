@@ -399,7 +399,7 @@ export const metadataTransformations: Transformation[] = [
                     mapViews: newMapViews.length > 0 ? newMapViews : undefined,
                 };
             } else {
-                return { ...rest };
+                return { ...rest, maps, mapViews };
             }
         },
     },
@@ -432,7 +432,6 @@ export const metadataTransformations: Transformation[] = [
         name: "add user roles under user directly",
         apiVersion: 38,
         apply: ({ users, ...rest }: any) => {
-            debugger;
             return {
                 ...rest,
                 users: users.map((user: any) => ({ ...user, userRoles: user.userCredentials.userRoles })),
