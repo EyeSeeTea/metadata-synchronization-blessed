@@ -139,6 +139,7 @@ export class TEID2ApiRepository implements TEIRepository {
             errors,
             date: new Date(),
             type: "trackedEntityInstances",
+            response: importResult,
         };
     }
 }
