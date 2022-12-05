@@ -18,11 +18,7 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 import ReactJson from "react-json-view";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
-import {
-    ErrorMessage,
-    SynchronizationResult,
-    SynchronizationStats,
-} from "../../../../../domain/reports/entities/SynchronizationResult";
+import { ErrorMessage, SynchronizationResult } from "../../../../../domain/reports/entities/SynchronizationResult";
 import { Store } from "../../../../../domain/stores/entities/Store";
 import {
     SynchronizationResultType,
@@ -31,6 +27,7 @@ import {
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
+import { SummaryTable } from "./SummaryTable";
 
 const useStyles = makeStyles(theme => ({
     accordionHeading1: {
@@ -65,35 +62,6 @@ export const formatStatusTag = (value: string) => {
             : "#3e2723";
 
     return <b style={{ color }}>{text}</b>;
-};
-
-const buildSummaryTable = (stats: SynchronizationStats[]) => {
-    return (
-        <Table>
-            <TableHead>
-                <TableRow>
-                    <TableCell>{i18n.t("Type")}</TableCell>
-                    <TableCell>{i18n.t("Imported")}</TableCell>
-                    <TableCell>{i18n.t("Updated")}</TableCell>
-                    <TableCell>{i18n.t("Deleted")}</TableCell>
-                    <TableCell>{i18n.t("Ignored")}</TableCell>
-                    <TableCell>{i18n.t("Total")}</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {stats.map(({ type, imported, updated, deleted, ignored, total }, i) => (
-                    <TableRow key={`row-${i}`}>
-                        <TableCell>{type}</TableCell>
-                        <TableCell>{imported}</TableCell>
-                        <TableCell>{updated}</TableCell>
-                        <TableCell>{deleted}</TableCell>
-                        <TableCell>{ignored}</TableCell>
-                        <TableCell>{total || _.sum([imported, deleted, ignored, updated])}</TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-    );
 };
 
 const buildDataStatsTable = (type: SynchronizationType, stats: any[], classes: any) => {
@@ -255,7 +223,7 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
 
                             {stats && (
                                 <AccordionDetails className={classes.accordionDetails}>
-                                    {buildSummaryTable([...typeStats, { ...stats, type: i18n.t("Total") }])}
+                                    <SummaryTable stats={[...typeStats, { ...stats, type: i18n.t("Total") }]} />
                                 </AccordionDetails>
                             )}
 

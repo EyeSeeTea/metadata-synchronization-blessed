@@ -41,10 +41,10 @@ const variants = [
         file: "metadata-synchronization-widget-package-exporter",
     },
     {
-        type: "widget",
+        type: "app",
         name: "efh-sync",
-        title: "MetaData Synchronization EFH Sync Widget",
-        file: "metadata-synchronization-widget-efh-sync",
+        title: "MetaData Synchronization EFH Sync",
+        file: "metadata-synchronization-efh-sync",
     },
 ] as const;
 
