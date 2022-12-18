@@ -2052,10 +2052,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@eyeseetea/d2-api@1.9.3":
-  version "1.9.3"
-  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-api/-/d2-api-1.9.3.tgz#deb965947e3f2ce007d1d7d990983b3ba7420c10"
-  integrity sha512-4cAck/b1oLPYMXIGZwrgRh4LZwN1hs+NXX4b8JHEJLMD50flrsR7t6h91MWzV2ocMNipDq4i+Ew5hbBzOEVAKQ==
+"@eyeseetea/d2-api@1.13.1":
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-api/-/d2-api-1.13.1.tgz#c630cb26a9bcb69f3970129bed6ff34d7b4012c2"
+  integrity sha512-7YnwHDJTeqwfqam7kZR+pam4o7jaYX64pQnH3xI677G/tYT1sVvzEDiTK0GmHIS0zW2ViFxCV8htRBUZhOp6ng==
   dependencies:
     "@babel/runtime" "^7.5.4"
     "@dhis2/d2-i18n" "^1.0.5"
