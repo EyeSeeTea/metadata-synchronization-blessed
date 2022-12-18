@@ -14,59 +14,59 @@ describe("Aggregated transformations - D2Api", () => {
             const transformations: Transformation<AggregatedPackage, D2AggregatedPackage>[] = [];
             const payload = givenAnAggregatedPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
         it("should no apply any transformation if there are no transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 34,
+                    apiVersion: 38,
                     apply: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "value", "34Value"),
                 },
             ];
 
             const payload = givenAnAggregatedPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(37, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     apply: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "value", "31Value"),
                 },
             ];
             const payload = givenAnAggregatedPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(_.every(transformedPayload.dataValues, dataValue => dataValue["31Value"])).toEqual(true);
         });
         it("should apply transformation if there are one version transformation equal to the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     apply: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "value", "33Value"),
                 },
             ];
 
             const payload = givenAnAggregatedPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(_.every(transformedPayload.dataValues, dataValue => dataValue["33Value"])).toEqual(true);
         });
         it("should apply all transformations if there are two transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 32,
+                    apiVersion: 37,
                     apply: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "value", "32Value"),
                 },
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     apply: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "32Value", "33Value"),
                 },
@@ -74,26 +74,26 @@ describe("Aggregated transformations - D2Api", () => {
 
             const payload = givenAnAggregatedPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(_.every(transformedPayload.dataValues, dataValue => dataValue["33Value"])).toEqual(true);
         });
         it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     apply: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "32Value", "33Value"),
                 },
                 {
-                    apiVersion: 32,
+                    apiVersion: 37,
                     apply: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "value", "32Value"),
                 },
             ];
 
             const payload = givenAnAggregatedPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(_.every(transformedPayload.dataValues, dataValue => dataValue["33Value"])).toEqual(true);
         });
@@ -110,7 +110,7 @@ describe("Aggregated transformations - D2Api", () => {
         it("should no apply any transformation if there are no transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 34,
+                    apiVersion: 39,
                     transform: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "34Value", "33Value"),
                 },
@@ -118,64 +118,64 @@ describe("Aggregated transformations - D2Api", () => {
 
             const payload = givenAnAggregatedPackage();
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(37, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     undo: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "31Value", "value"),
                 },
             ];
             const payload = givenAnAggregatedPackage("31Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(39, payload, transformations);
 
             expect(_.every(transformedPayload.dataValues, dataValue => dataValue["value"])).toEqual(true);
         });
         it("should apply transformation if there are one version transformation equal to the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 38,
                     undo: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "31Value", "value"),
                 },
             ];
 
             const payload = givenAnAggregatedPackage("31Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(31, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             expect(_.every(transformedPayload.dataValues, dataValue => dataValue["value"])).toEqual(true);
         });
         it("should apply all transformations if there are two transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 32,
+                    apiVersion: 38,
                     undo: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "32Value", "31Value"),
                 },
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     undo: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "31Value", "value"),
                 },
             ];
 
             const payload = givenAnAggregatedPackage("32Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(32, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             expect(_.every(transformedPayload.dataValues, dataValue => dataValue["value"])).toEqual(true);
         });
         it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     undo: (payload: D2AggregatedPackage) => renamePropInAggregatedPackage(payload, "31Value", "value"),
                 },
                 {
-                    apiVersion: 32,
+                    apiVersion: 38,
                     undo: (payload: D2AggregatedPackage) =>
                         renamePropInAggregatedPackage(payload, "32Value", "31Value"),
                 },
@@ -183,7 +183,7 @@ describe("Aggregated transformations - D2Api", () => {
 
             const payload = givenAnAggregatedPackage("32Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(32, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             expect(_.every(transformedPayload.dataValues, dataValue => dataValue["value"])).toEqual(true);
         });
