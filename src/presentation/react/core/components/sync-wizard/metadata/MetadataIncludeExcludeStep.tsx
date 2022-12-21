@@ -7,7 +7,7 @@ import { MetadataEntity, MetadataPackage } from "../../../../../../domain/metada
 import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import i18n from "../../../../../../locales";
 import { D2Model } from "../../../../../../models/dhis/default";
-import { modelFactory } from "../../../../../../models/dhis/factory";
+import { defaultName, modelFactory } from "../../../../../../models/dhis/factory";
 import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
@@ -47,6 +47,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                             const models = _.keys(metadata).map((type: string) => modelFactory(type));
 
                             const options = models
+                                .filter((model: typeof D2Model) => model.getMetadataType() !== defaultName)
                                 .map((model: typeof D2Model) => {
                                     const apiModel = api.models[model.getCollectionName()];
                                     return apiModel.schema;

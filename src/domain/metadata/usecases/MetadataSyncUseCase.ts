@@ -1,6 +1,7 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { modelFactory } from "../../../models/dhis/factory";
+import { defaultModel } from "../../../models/dhis/default";
+import { defaultName, modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
@@ -57,16 +58,16 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 const references = getAllReferences(this.api, object, schema.name);
                 const includedReferences = cleanReferences(references, includeRules);
 
-                const partialResults = await promiseMap(includedReferences, type =>
-                    recursiveExport({
+                const partialResults = await promiseMap(includedReferences, type => {
+                    return recursiveExport({
                         type: type as keyof MetadataEntities,
                         ids: references[type],
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
                         includeSharingSettings,
                         removeOrgUnitReferences,
-                    })
-                );
+                    });
+                });
 
                 _.deepMerge(result, ...partialResults);
             }
@@ -95,6 +96,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const myClass = modelFactory(type);
             const metadataType = myClass.getMetadataType();
             const collectionName = myClass.getCollectionName();
+
+            if (metadataType === defaultName) return Promise.resolve({});
 
             return this.exportMetadata({
                 type: collectionName,
