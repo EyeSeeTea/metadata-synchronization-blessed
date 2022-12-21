@@ -115,7 +115,7 @@ $ yarn build
 To build a given front-end:
 
 ```
-$ yarn build [all|core-app|data-metadata-app|module-package-app|modules-list|package-exporter|msf-aggregate-data-app|efh-sync]
+$ yarn build [all|core-app|data-metadata-app|module-package-app|modules-list|package-exporter|msf-aggregate-data-app|sp-emergency-responses]
 ```
 
 To build the scheduler:

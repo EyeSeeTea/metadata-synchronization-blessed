@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-11-14T13:32:52.987Z\n"
-"PO-Revision-Date: 2022-11-14T13:32:52.987Z\n"
+"POT-Creation-Date: 2022-12-21T14:40:47.095Z\n"
+"PO-Revision-Date: 2022-12-21T14:40:47.095Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Field {{field}} is not valid"
 msgstr ""
 
-msgid "EFH program not found"
+msgid "Program not found"
 msgstr ""
 
 msgid "An instance with this name already exists"
@@ -2074,9 +2074,6 @@ msgid ""
 "{{period}}..."
 msgstr ""
 
-msgid "Widget cannot be used until an administrator opens the application"
-msgstr ""
-
 msgid "Output: "
 msgstr ""
 
@@ -2096,6 +2093,9 @@ msgid "Consultations and Surgery (Events)"
 msgstr ""
 
 msgid "Patients (Tracked Entity Instances)"
+msgstr ""
+
+msgid "Widget cannot be used until an administrator opens the application"
 msgstr ""
 
 msgid "Running analytics for instance {{name}}"

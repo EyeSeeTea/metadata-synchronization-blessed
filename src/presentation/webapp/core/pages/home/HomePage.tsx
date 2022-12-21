@@ -19,7 +19,7 @@ const appVariantConfiguration: Record<AppVariant, string[]> = {
     "data-metadata-app": ["aggregated", "events", "metadata", "other", "configuration"],
     "module-package-app": ["metadata-distribution", "configuration"],
     "msf-aggregate-data-app": ["aggregated", "events", "metadata", "other", "metadata-distribution", "configuration"],
-    "efh-sync": ["aggregated", "events", "metadata", "other", "metadata-distribution", "configuration"],
+    "sp-emergency-responses": ["aggregated", "events", "metadata", "other", "metadata-distribution", "configuration"],
 };
 
 interface LandingPageProps {
