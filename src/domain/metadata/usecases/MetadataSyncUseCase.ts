@@ -1,6 +1,5 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { defaultModel } from "../../../models/dhis/default";
 import { defaultName, modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
