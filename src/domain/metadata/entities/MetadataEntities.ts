@@ -2396,7 +2396,7 @@ export type Option = {
     attributeValues: AttributeValue[];
     code: string;
     created: string;
-    createdBy: User;
+    createdBy: Partial<User>;
     description: string;
     displayDescription: string;
     displayFormName: string;
@@ -2409,16 +2409,16 @@ export type Option = {
     href: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Partial<User>;
     name: string;
-    optionSet: OptionSet;
+    optionSet: Ref;
     publicAccess: string;
     sharing: Sharing;
     shortName: string;
     sortOrder: number;
     style: Style;
     translations: Translation[];
-    user: User;
+    user: Partial<User>;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };
@@ -2573,7 +2573,7 @@ export type OptionSet = {
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
-    createdBy: User;
+    createdBy: Partial<User>;
     displayName: string;
     externalAccess: boolean;
     favorite: boolean;
@@ -2581,13 +2581,13 @@ export type OptionSet = {
     href: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Partial<User>;
     name: string;
-    options: Option[];
+    options: Ref[];
     publicAccess: string;
     sharing: Sharing;
     translations: Translation[];
-    user: User;
+    user: Partial<User>;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
     valueType:
@@ -5087,7 +5087,7 @@ export type MetadataEntities = {
     maps: Map[];
     mapViews: MapView[];
     messageConversations: MessageConversation[];
-    options: Ref[];
+    options: Option[];
     optionSets: OptionSet[];
     optionGroupSets: OptionGroupSet[];
     optionGroups: OptionGroup[];
