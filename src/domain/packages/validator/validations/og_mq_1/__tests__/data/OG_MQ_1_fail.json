@@ -1,4 +1,64 @@
 {
+    "optionGroups": [
+        {
+            "code": "ENTO_IR_10X_CONCENTRATION_CDC_BOTTLE",
+            "lastUpdated": "2022-12-21T12:14:04.919",
+            "id": "drUj8uZ7KXz",
+            "href": "http://172.16.0.99:8083/api/optionGroups/drUj8uZ7KXz",
+            "created": "2020-03-05T17:20:54.996",
+            "name": "ENTO- 10x concentration - CDC bottle",
+            "shortName": "10x concentration - CDC bottle",
+            "displayName": "ENTO- 10x concentration - CDC bottle",
+            "publicAccess": "--------",
+            "displayShortName": "10x concentration - CDC bottle",
+            "externalAccess": false,
+            "periodOffset": 0,
+            "dimensionItem": "drUj8uZ7KXz",
+            "displayFormName": "ENTO- 10x concentration - CDC bottle",
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "optionSet": {
+                "id": "gLHYGxgNteC"
+            },
+            "lastUpdatedBy": {
+                "displayName": "user dev",
+                "name": "user dev",
+                "id": "smGarTiKDdV",
+                "username": "dev.user"
+            },
+            "createdBy": {
+                "displayName": "Lucia Fernandez",
+                "name": "Lucia Fernandez",
+                "id": "I77r2A5xemt",
+                "username": "fernandezl"
+            },
+            "user": {
+                "displayName": "Lucia Fernandez",
+                "name": "Lucia Fernandez",
+                "id": "I77r2A5xemt",
+                "username": "fernandezl"
+            },
+            "favorites": [],
+            "translations": [],
+            "options": [
+                { "id": "FQN0uEwJN8C" },
+                { "id": "Yz9Z14TqC9T" },
+                { "id": "YtsjrR6MoXK" },
+                { "id": "u7bXEmmiZd0" }
+            ],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": [],
+            "legendSets": []
+        }
+    ],
     "optionSets": [
         {
             "code": "MAL_OS_TYPE_INSECTICIDE",
@@ -57,12 +117,7 @@
             "attributeValues": [],
             "translations": [],
             "userAccesses": [],
-            "options": [
-                { "id": "FQN0uEwJN8C" },
-                { "id": "Yz9Z14TqC9T" },
-                { "id": "YtsjrR6MoXK" },
-                { "id": "u7bXEmmiZd0" }
-            ]
+            "options": [{ "id": "FQN0uEwJN8C" }, { "id": "Yz9Z14TqC9T" }]
         }
     ],
     "options": [
@@ -76,7 +131,7 @@
             "displayName": "Lambda-cyhalothrin",
             "externalAccess": false,
             "displayFormName": "Lambda-cyhalothrin",
-            "sortOrder": 7,
+            "sortOrder": 1,
             "favorite": false,
             "access": {
                 "read": true,

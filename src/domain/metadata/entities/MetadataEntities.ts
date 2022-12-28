@@ -2446,7 +2446,7 @@ export type OptionGroup = {
     attributeValues: AttributeValue[];
     code: Id;
     created: string;
-    createdBy: User;
+    createdBy: Partial<User>;
     description: string;
     dimensionItem: string;
     dimensionItemType:
@@ -2475,18 +2475,18 @@ export type OptionGroup = {
     href: string;
     id: Id;
     lastUpdated: string;
-    lastUpdatedBy: User;
+    lastUpdatedBy: Partial<User>;
     legendSet: LegendSet;
     legendSets: LegendSet[];
     name: string;
-    optionSet: OptionSet;
-    options: Option[];
+    optionSet: Ref;
+    options: Ref[];
     periodOffset: number;
     publicAccess: string;
     sharing: Sharing;
     shortName: string;
     translations: Translation[];
-    user: User;
+    user: Partial<User>;
     userAccesses: UserAccess[];
     userGroupAccesses: UserGroupAccess[];
 };

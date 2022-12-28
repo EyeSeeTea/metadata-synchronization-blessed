@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { MetadataPackage, Option } from "../../../../metadata/entities/MetadataEntities";
+import { Option } from "../../../../metadata/entities/MetadataEntities";
 import { MetadataPackageToValidate } from "../../packageContentValidator";
 
 // Validate option sort order (O-MQ-2)
