@@ -13,7 +13,6 @@ import {
     Style,
     Translation,
 } from "../../common/entities/Schemas";
-import { D2Api } from "../../../types/d2-api";
 
 export type AnalyticsPeriodBoundary = {
     access: Access;
