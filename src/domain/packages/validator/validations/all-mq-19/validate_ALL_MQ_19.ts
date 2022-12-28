@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { MetadataPackageToValidate } from "../../packageContentValidator";
 
-// OG-MQ-1. Package items should not have external access
+// ALL-MQ-19. Translation duplicated
 export function validate_ALL_MQ_19(packageContents: MetadataPackageToValidate): string[] {
     const errors: string[] = [];
 

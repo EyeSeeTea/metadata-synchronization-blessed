@@ -9,6 +9,8 @@ import ALL_MQ_16_success from "../validations/all-mq-16/__tests__/data/ALL_MQ_16
 import ALL_MQ_16_fail from "../validations/all-mq-16/__tests__/data/ALL_MQ_16_fail.json";
 import ALL_MQ_19_success from "../validations/all-mq-19/__tests__/data/ALL_MQ_19_success.json";
 import ALL_MQ_19_fail from "../validations/all-mq-19/__tests__/data/ALL_MQ_19_fail.json";
+import ALL_MQ_21_success from "../validations/all-mq-21/__tests__/data/ALL_MQ_21_success.json";
+import ALL_MQ_21_fail_by_missing from "../validations/all-mq-21/__tests__/data/ALL_MQ_21_fail_by_missing.json";
 
 describe("Package contents validator", () => {
     describe("validate O-MQ-2", () => {
@@ -67,6 +69,18 @@ describe("Package contents validator", () => {
         });
         it("should return failed for invalid package", () => {
             const result = validatePackageContents(ALL_MQ_19_fail);
+
+            expect(result.isSuccess()).toBe(false);
+        });
+    });
+    describe("validate ALL-MQ-21", () => {
+        it("should return a success for valid package", () => {
+            const result = validatePackageContents(ALL_MQ_21_success);
+
+            expect(result.isSuccess()).toBe(true);
+        });
+        it("should return failed for invalid package", () => {
+            const result = validatePackageContents(ALL_MQ_21_fail_by_missing);
 
             expect(result.isSuccess()).toBe(false);
         });
