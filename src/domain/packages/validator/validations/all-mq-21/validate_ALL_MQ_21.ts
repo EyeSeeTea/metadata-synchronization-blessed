@@ -20,7 +20,7 @@ export function validate_ALL_MQ_21(packageContents: MetadataPackageToValidate): 
                 const restTranslations = _.difference(entity.translations, noLocaleTranslations);
 
                 const isValidLocale = (locale: string) => {
-                    return /^[A-Za-z]+$/.test(locale);
+                    return /^[A-Za-z\_\-]+$/.test(locale);
                 };
 
                 const unexpectedSymbolsTranslations =

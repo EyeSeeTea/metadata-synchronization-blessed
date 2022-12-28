@@ -25,7 +25,7 @@
             "translations": [
                 { "property": "DESCRIPTION", "locale": "es", "value": "LAMBDA-CYHALOTHRIN" },
                 { "property": "NAME", "locale": "es", "value": "LAMBDA-CYHALOTHRIN" },
-                { "property": "FORM_NAME", "locale": "es", "value": "LAMBDA-CYHALOTHRIN" }
+                { "property": "FORM_NAME", "locale": "es-ES", "value": "LAMBDA-CYHALOTHRIN" }
             ],
             "userGroupAccesses": [],
             "attributeValues": [],
