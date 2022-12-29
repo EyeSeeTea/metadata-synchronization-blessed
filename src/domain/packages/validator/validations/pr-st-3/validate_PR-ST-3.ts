@@ -2,7 +2,7 @@ import _ from "lodash";
 import { ProgramRule } from "../../../../metadata/entities/MetadataEntities";
 import { MetadataPackageToValidate } from "../../packageContentValidator";
 
-// PR-ST-3. Package items should not have external access
+// PR-ST-3. Error. Program Rule without action
 export function validate_PR_ST_3(packageContents: MetadataPackageToValidate): string[] {
     const programRules = (packageContents.programRules || []) as ProgramRule[];
 

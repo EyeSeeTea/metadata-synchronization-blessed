@@ -3400,7 +3400,7 @@ export type ProgramRuleVariable = {
     lastUpdated: string;
     lastUpdatedBy: User;
     name: string;
-    program: Program;
+    program: Ref;
     programRuleVariableSourceType:
         | "DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE"
         | "DATAELEMENT_NEWEST_EVENT_PROGRAM"
