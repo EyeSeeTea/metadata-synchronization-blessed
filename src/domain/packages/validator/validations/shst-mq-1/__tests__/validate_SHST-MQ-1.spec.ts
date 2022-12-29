@@ -1,6 +1,6 @@
-import { validate_SHST_MQ_1 } from "../validate_SHST_MQ_1";
-import SHST_MQ_1_success from "./data/SHST_MQ_1_success.json";
-import SHST_MQ_1_fail from "./data/SHST_MQ_1_fail.json";
+import { validate_SHST_MQ_1 } from "../validate_SHST-MQ-1";
+import SHST_MQ_1_success from "./data/SHST-MQ-1_success.json";
+import SHST_MQ_1_fail from "./data/SHST-MQ-1_fail.json";
 
 describe("validate SHST-MQ-1", () => {
     it("should not return errors for empty package", () => {

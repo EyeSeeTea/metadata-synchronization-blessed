@@ -1,6 +1,6 @@
-import { validate_ALL_MQ_16 } from "../validate_ALL_MQ_16";
-import ALL_MQ_16_success from "./data/ALL_MQ_16_success.json";
-import ALL_MQ_16_fail from "./data/ALL_MQ_16_fail.json";
+import { validate_ALL_MQ_16 } from "../validate_ALL-MQ-16";
+import ALL_MQ_16_success from "./data/ALL-MQ-16_success.json";
+import ALL_MQ_16_fail from "./data/ALL-MQ-16_fail.json";
 
 describe("validate ALL-MQ-16", () => {
     it("should not return errors for empty package", () => {

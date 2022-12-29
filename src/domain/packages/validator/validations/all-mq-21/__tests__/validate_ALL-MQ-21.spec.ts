@@ -1,7 +1,7 @@
-import { validate_ALL_MQ_21 } from "../validate_ALL_MQ_21";
-import ALL_MQ_21_success from "./data/ALL_MQ_21_success.json";
-import ALL_MQ_21_fail_by_missing from "./data/ALL_MQ_21_fail_by_missing.json";
-import ALL_MQ_21_fail_by_unexpected_symbol from "./data/ALL_MQ_21_fail_by_unexpected_symbol.json";
+import { validate_ALL_MQ_21 } from "../validate_ALL-MQ-21";
+import ALL_MQ_21_success from "./data/ALL-MQ-21_success.json";
+import ALL_MQ_21_fail_by_missing from "./data/ALL-MQ-21_fail_by_missing.json";
+import ALL_MQ_21_fail_by_unexpected_symbol from "./data/ALL-MQ-21_fail_by_unexpected_symbol.json";
 
 describe("validate ALL-MQ-21", () => {
     it("should not return errors for empty package", () => {

@@ -1,12 +1,12 @@
 import { MetadataEntities, MetadataEntity } from "../../metadata/entities/MetadataEntities";
 import { Either } from "../../common/entities/Either";
-import { validate_O_MQ_2 } from "./validations/o-mq-2/validate_O_MQ_2";
-import { validate_OG_MQ_1 } from "./validations/og-mq-1/validate-OG-MQ-1";
-import { validate_SHST_MQ_1 } from "./validations/shst-mq-1/validate_SHST_MQ_1";
-import { validate_ALL_MQ_16 } from "./validations/all-mq-16/validate_ALL_MQ_16";
-import { validate_ALL_MQ_19 } from "./validations/all-mq-19/validate_ALL_MQ_19";
-import { validate_ALL_MQ_21 } from "./validations/all-mq-21/validate_ALL_MQ_21";
-import { validate_PR_ST_3 } from "./validations/pr-st-3/validate_PR_ST_3";
+import { validate_O_MQ_2 } from "./validations/O-MQ-2/validate_O-MQ-2";
+import { validate_OG_MQ_1 } from "./validations/OG-MQ-1/validate-OG-MQ-1";
+import { validate_SHST_MQ_1 } from "./validations/SHST-MQ-1/validate_SHST-MQ-1";
+import { validate_ALL_MQ_16 } from "./validations/ALL-MQ-16/validate_ALL-MQ-16";
+import { validate_ALL_MQ_19 } from "./validations/ALL-MQ-19/validate_ALL-MQ-19";
+import { validate_ALL_MQ_21 } from "./validations/ALL-MQ-21/validate_ALL-MQ-21";
+import { validate_PR_ST_3 } from "./validations/PR-ST-3/validate_PR-ST-3";
 
 export type MetadataPackageToValidate<T = MetadataEntity> = Partial<Record<keyof MetadataEntities, Partial<T>[]>>;
 
