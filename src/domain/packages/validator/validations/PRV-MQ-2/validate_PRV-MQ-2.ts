@@ -17,7 +17,7 @@ export function validate_PRV_MQ_2(packageContents: MetadataPackageToValidate): s
             _.toLower(name).includes("not")
         ) {
             errors.push(`PRV-MQ-2: The PRV '${name}' (${id}) contains 'and/or/not'`);
-        } else if (!name.match(/^[a-zA-Z\d_\-\.\ ]+$/)) {
+        } else if (!name.match(/^[a-zA-Z\d_\-. ]+$/)) {
             errors.push(`PRV-MQ-2: The PRV '${name}' (${id}) contains unexpected characters`);
         }
     });
