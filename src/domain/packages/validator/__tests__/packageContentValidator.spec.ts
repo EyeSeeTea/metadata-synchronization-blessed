@@ -19,6 +19,8 @@ import PRV_MQ_2_success from "../validations/PRV-MQ-2/__tests__/data/PRV-MQ-2_su
 import PRV_MQ_2_fail from "../validations/PRV-MQ-2/__tests__/data/PRV-MQ-2_fail_by_and.json";
 import PR_ST_4_success from "../validations/PR-ST-4/__tests__/data/PR-ST-4_success.json";
 import PR_ST_4_fail from "../validations/PR-ST-4/__tests__/data/PR-ST-4_fail.json";
+import PR_ST_5_success from "../validations/PR-ST-5/__tests__/data/PR-ST-5_success.json";
+import PR_ST_5_fail from "../validations/PR-ST-5/__tests__/data/PR-ST-5_fail.json";
 
 describe("Package contents validator", () => {
     describe("validate O-MQ-2", () => {
@@ -137,6 +139,18 @@ describe("Package contents validator", () => {
         });
         it("should return failed for invalid package", () => {
             const result = validatePackageContents(PR_ST_4_fail);
+
+            expect(result.isSuccess()).toBe(false);
+        });
+    });
+    describe("validate PR-ST-5", () => {
+        it("should return a success for valid package", () => {
+            const result = validatePackageContents(PR_ST_5_success);
+
+            expect(result.isSuccess()).toBe(true);
+        });
+        it("should return failed for invalid package", () => {
+            const result = validatePackageContents(PR_ST_5_fail);
 
             expect(result.isSuccess()).toBe(false);
         });

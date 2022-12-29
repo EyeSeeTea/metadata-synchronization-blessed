@@ -10,6 +10,7 @@ import { validate_PR_ST_3 } from "./validations/PR-ST-3/validate_PR-ST-3";
 import { validate_PRV_MQ_1 } from "./validations/PRV-MQ-1/validate_PRV-MQ-1";
 import { validate_PRV_MQ_2 } from "./validations/PRV-MQ-2/validate_PRV-MQ-2";
 import { validate_PR_ST_4 } from "./validations/PR-ST-4/validate_PR-ST-4";
+import { validate_PR_ST_5 } from "./validations/PR-ST-5/validate_PR-ST-5";
 
 export type MetadataPackageToValidate<T = MetadataEntity> = Partial<Record<keyof MetadataEntities, Partial<T>[]>>;
 
@@ -24,6 +25,7 @@ export function validatePackageContents(contents: MetadataPackageToValidate): Ei
     const prv_mq_1_errors = validate_PRV_MQ_1(contents);
     const prv_mq_2_errors = validate_PRV_MQ_2(contents);
     const pr_st_4_errors = validate_PR_ST_4(contents);
+    const pr_st_5_errors = validate_PR_ST_5(contents);
 
     const errors = [
         ...o_mq_2_errors,
@@ -36,6 +38,7 @@ export function validatePackageContents(contents: MetadataPackageToValidate): Ei
         ...prv_mq_1_errors,
         ...prv_mq_2_errors,
         ...pr_st_4_errors,
+        ...pr_st_5_errors,
     ];
 
     return errors.length === 0 ? Either.success(undefined) : Either.error(errors);

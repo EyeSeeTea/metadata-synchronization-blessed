@@ -22,6 +22,8 @@ export function validate_PR_ST_4(packageContents: MetadataPackageToValidate): st
         .value();
 
     _(programRuleActions).forEach(({ id, dataElement, programRule }) => {
+        if (!dataElement) return;
+
         const rule = programRules.find(rule => rule.id === programRule?.id);
         if (!rule) {
             errors.push(`Program rule action ${id} is not associated to a valid program rule`);
