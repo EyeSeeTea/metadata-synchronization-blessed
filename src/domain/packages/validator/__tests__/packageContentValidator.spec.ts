@@ -1,18 +1,18 @@
 import { validatePackageContents } from "../packageContentValidator";
-import O_MQ_2_success from "../validations/o_mq_2/__tests__/data/O_MQ_2_success.json";
-import O_MQ_2_fail_by_first from "../validations/o_mq_2/__tests__/data/O_MQ_2_fail_by_first.json";
-import OG_MQ_1_success from "../validations/og_mq_1/__tests__/data/OG_MQ_1_success.json";
-import OG_MQ_1_fail from "../validations/og_mq_1/__tests__/data/OG_MQ_1_fail.json";
-import SHST_MQ_1_success from "../validations/shst_mq_1/__tests__/data/SHST_MQ_1_success.json";
-import SHST_MQ_1_fail from "../validations/shst_mq_1/__tests__/data/SHST_MQ_1_fail.json";
+import O_MQ_2_success from "../validations/o-mq-2/__tests__/data/O_MQ_2_success.json";
+import O_MQ_2_fail_by_first from "../validations/o-mq-2/__tests__/data/O_MQ_2_fail_by_first.json";
+import OG_MQ_1_success from "../validations/og-mq-1/__tests__/data/OG_MQ_1_success.json";
+import OG_MQ_1_fail from "../validations/og-mq-1/__tests__/data/OG_MQ_1_fail.json";
+import SHST_MQ_1_success from "../validations/shst-mq-1/__tests__/data/SHST_MQ_1_success.json";
+import SHST_MQ_1_fail from "../validations/shst-mq-1/__tests__/data/SHST_MQ_1_fail.json";
 import ALL_MQ_16_success from "../validations/all-mq-16/__tests__/data/ALL_MQ_16_success.json";
 import ALL_MQ_16_fail from "../validations/all-mq-16/__tests__/data/ALL_MQ_16_fail.json";
 import ALL_MQ_19_success from "../validations/all-mq-19/__tests__/data/ALL_MQ_19_success.json";
 import ALL_MQ_19_fail from "../validations/all-mq-19/__tests__/data/ALL_MQ_19_fail.json";
 import ALL_MQ_21_success from "../validations/all-mq-21/__tests__/data/ALL_MQ_21_success.json";
 import ALL_MQ_21_fail_by_missing from "../validations/all-mq-21/__tests__/data/ALL_MQ_21_fail_by_missing.json";
-import PR_ST_3_success from "../validations/pr_st_3/__tests__/data/PR_ST_3_success.json";
-import PR_ST_3_fail from "../validations/pr_st_3/__tests__/data/PR_ST_3_fail.json";
+import PR_ST_3_success from "../validations/pr-st-3/__tests__/data/PR_ST_3_success.json";
+import PR_ST_3_fail from "../validations/pr-st-3/__tests__/data/PR_ST_3_fail.json";
 
 describe("Package contents validator", () => {
     describe("validate O-MQ-2", () => {

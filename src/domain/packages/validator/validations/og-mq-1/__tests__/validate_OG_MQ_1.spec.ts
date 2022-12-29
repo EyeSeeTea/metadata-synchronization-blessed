@@ -1,4 +1,4 @@
-import { validate_OG_MQ_1 } from "../validate_OG_MQ_1";
+import { validate_OG_MQ_1 } from "../validate-OG-MQ-1";
 import OG_MQ_1_success from "./data/OG_MQ_1_success.json";
 import OG_MQ_1_fail from "./data/OG_MQ_1_fail.json";
 
