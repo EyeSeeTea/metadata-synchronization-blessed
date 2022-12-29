@@ -21,6 +21,8 @@ import PR_ST_4_success from "../validations/PR-ST-4/__tests__/data/PR-ST-4_succe
 import PR_ST_4_fail from "../validations/PR-ST-4/__tests__/data/PR-ST-4_fail.json";
 import PR_ST_5_success from "../validations/PR-ST-5/__tests__/data/PR-ST-5_success.json";
 import PR_ST_5_fail from "../validations/PR-ST-5/__tests__/data/PR-ST-5_fail.json";
+import ALL_MQ_17_success from "../validations/ALL-MQ-17/__tests__/data/ALL-MQ-17_success.json";
+import ALL_MQ_17_fail from "../validations/ALL-MQ-17/__tests__/data/ALL-MQ-17_fail.json";
 
 describe("Package contents validator", () => {
     describe("validate O-MQ-2", () => {
@@ -47,7 +49,7 @@ describe("Package contents validator", () => {
             expect(result.isSuccess()).toBe(false);
         });
     });
-    describe("validate ALL-MQ-16", () => {
+    describe("validate SHST-MQ-1", () => {
         it("should return a success for valid package", () => {
             const result = validatePackageContents(SHST_MQ_1_success);
 
@@ -71,6 +73,7 @@ describe("Package contents validator", () => {
             expect(result.isSuccess()).toBe(false);
         });
     });
+
     describe("validate ALL-MQ-19", () => {
         it("should return a success for valid package", () => {
             const result = validatePackageContents(ALL_MQ_19_success);
@@ -151,6 +154,18 @@ describe("Package contents validator", () => {
         });
         it("should return failed for invalid package", () => {
             const result = validatePackageContents(PR_ST_5_fail);
+
+            expect(result.isSuccess()).toBe(false);
+        });
+    });
+    describe("validate ALL-MQ-17", () => {
+        it("should return a success for valid package", () => {
+            const result = validatePackageContents(ALL_MQ_17_success);
+
+            expect(result.isSuccess()).toBe(true);
+        });
+        it("should return failed for invalid package", () => {
+            const result = validatePackageContents(ALL_MQ_17_fail);
 
             expect(result.isSuccess()).toBe(false);
         });

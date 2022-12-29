@@ -3,7 +3,6 @@
         {
             "lastUpdated": "2022-12-28T08:23:02.976",
             "id": "oarhBUuQMop",
-            "code": "oarhBUuQMop",
             "href": "http://172.16.0.99:8083/api/29/dashboards/oarhBUuQMop",
             "created": "2019-08-07T10:21:04.280",
             "name": "0. Aggregate Metrics Across Facilities",
@@ -42,7 +41,7 @@
                 "id": "wUd8NBL7fn2",
                 "username": "rose.mabelle"
             },
-            "favorites": ["wUd8NBL7fn2", "smGarTiKDdV"],
+            "favorites": [],
             "translations": [],
             "userGroupAccesses": [],
             "attributeValues": [],
