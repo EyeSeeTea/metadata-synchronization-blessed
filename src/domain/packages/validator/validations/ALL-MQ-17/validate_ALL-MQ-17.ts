@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { MetadataEntities } from "../../../../metadata/entities/MetadataEntities";
 import { MetadataPackageToValidate } from "../../packageContentValidator";
 
