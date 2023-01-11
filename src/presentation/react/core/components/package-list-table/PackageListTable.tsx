@@ -40,6 +40,7 @@ import {
     PackageModuleItem,
 } from "./PackageModuleItem";
 import { PackagesExtendCompatibilityDialog } from "../packages-extend_compatibility/PackagesExtendCompatibilityDialog";
+import PackageValidationSummary from "../package-validation-summary/PackageValidationSummary";
 
 interface PackagesListTableProps extends ModulePackageListPageProps {
     isImportDialog?: boolean;
@@ -87,6 +88,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
 
     const [toImportWizard, setToImportWizard] = useState<string[]>([]);
+    const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
     const [packagesToExtendCompatibility, setPackagesToExtendCompatibility] = useState<PackageItem[] | undefined>(
         undefined
@@ -318,6 +320,22 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
         setToImportWizard(ids);
         setOpenImportPackageDialog(true);
     }, []);
+
+    const validatePackageContents = useCallback(
+        (ids: string[]) => {
+            loading.show(true, i18n.t("Validating package"));
+
+            compositionRoot.packages.validate(ids[0]).then(result => {
+                loading.reset();
+
+                result.match({
+                    error: errors => setValidationErrors(errors),
+                    success: () => snackbar.success(i18n.t("Package is valid")),
+                });
+            });
+        },
+        [compositionRoot.packages, loading, snackbar]
+    );
 
     const generateModule = useCallback(
         async (ids: string[]) => {
@@ -621,6 +639,18 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     );
                 },
             },
+            {
+                name: "validate",
+                text: i18n.t("Validate package"),
+                multiple: false,
+                onClick: validatePackageContents,
+                icon: <Icon>done</Icon>,
+                isActive: (rows: PackageModuleItem[]) =>
+                    _.every(rows, row => isPackageItem(row)) &&
+                    !isImportDialog &&
+                    presentation === "app" &&
+                    appConfigurator,
+            },
         ],
         [
             appConfigurator,
@@ -639,6 +669,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
             generateModule,
             modules,
             openExtendPackageCompatibilityDialog,
+            validatePackageContents,
         ]
     );
 
@@ -739,6 +770,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const handleCloseImportWizard = () => {
         setOpenImportPackageDialog(false);
         setToImportWizard([]);
+    };
+
+    const handleCloseValidationSummary = () => {
+        setValidationErrors([]);
     };
 
     const showImportFromWizardButton = !isImportDialog && presentation === "app" && appConfigurator;
@@ -869,6 +904,10 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                     packages={packagesToExtendCompatibility}
                     onSave={extendsPackagesFromPackageUseCase}
                 />
+            )}
+
+            {validationErrors.length > 0 && (
+                <PackageValidationSummary errors={validationErrors} onClose={handleCloseValidationSummary} />
             )}
         </React.Fragment>
     );
