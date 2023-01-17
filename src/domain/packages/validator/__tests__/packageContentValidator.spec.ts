@@ -25,6 +25,8 @@ import ALL_MQ_17_success from "../validations/ALL-MQ-17/__tests__/data/ALL-MQ-17
 import ALL_MQ_17_fail from "../validations/ALL-MQ-17/__tests__/data/ALL-MQ-17_fail.json";
 import ALL_MQ_18_success from "../validations/ALL-MQ-18/__tests__/data/ALL-MQ-18_success.json";
 import ALL_MQ_18_fail_by_option from "../validations/ALL-MQ-18/__tests__/data/ALL-MQ-18_fail_by_option.json";
+import DE_MQ_2_success from "../validations/DE-MQ-2/__tests__/data/DE-MQ-2_success.json";
+import DE_MQ_2_fail from "../validations/DE-MQ-2/__tests__/data/DE-MQ-2_fail.json";
 
 describe("Package contents validator", () => {
     describe("validate O-MQ-2", () => {
@@ -180,6 +182,18 @@ describe("Package contents validator", () => {
         });
         it("should return failed for invalid package", () => {
             const result = validatePackageContents(ALL_MQ_18_fail_by_option);
+
+            expect(result.isSuccess()).toBe(false);
+        });
+    });
+    describe("validate DE-MQ-2", () => {
+        it("should return a success for valid package", () => {
+            const result = validatePackageContents(DE_MQ_2_success);
+
+            expect(result.isSuccess()).toBe(true);
+        });
+        it("should return failed for invalid package", () => {
+            const result = validatePackageContents(DE_MQ_2_fail);
 
             expect(result.isSuccess()).toBe(false);
         });
