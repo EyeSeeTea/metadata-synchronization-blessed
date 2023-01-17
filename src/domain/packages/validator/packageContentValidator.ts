@@ -12,6 +12,7 @@ import { validate_PRV_MQ_2 } from "./validations/PRV-MQ-2/validate_PRV-MQ-2";
 import { validate_PR_ST_4 } from "./validations/PR-ST-4/validate_PR-ST-4";
 import { validate_PR_ST_5 } from "./validations/PR-ST-5/validate_PR-ST-5";
 import { validate_ALL_MQ_17 } from "./validations/ALL-MQ-17/validate_ALL-MQ-17";
+import { validate_ALL_MQ_18 } from "./validations/ALL-MQ-18/validate_ALL-MQ-18";
 
 export type MetadataPackageToValidate<T = MetadataEntity> = Partial<Record<keyof MetadataEntities, Partial<T>[]>>;
 
@@ -28,6 +29,7 @@ export function validatePackageContents(contents: MetadataPackageToValidate): Ei
     const pr_st_4_errors = validate_PR_ST_4(contents);
     const pr_st_5_errors = validate_PR_ST_5(contents);
     const all_mq_17_errors = validate_ALL_MQ_17(contents);
+    const all_mq_18_errors = validate_ALL_MQ_18(contents);
 
     const errors = [
         ...o_mq_2_errors,
@@ -42,6 +44,7 @@ export function validatePackageContents(contents: MetadataPackageToValidate): Ei
         ...pr_st_4_errors,
         ...pr_st_5_errors,
         ...all_mq_17_errors,
+        ...all_mq_18_errors,
     ];
 
     return errors.length === 0 ? Either.success(undefined) : Either.error(errors);

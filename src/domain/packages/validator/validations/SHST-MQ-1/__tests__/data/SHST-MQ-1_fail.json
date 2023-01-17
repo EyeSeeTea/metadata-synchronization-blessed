@@ -6,7 +6,7 @@
             "id": "FQN0uEwJN8C",
             "href": "http://172.16.0.99:8083/api/options/FQN0uEwJN8C",
             "created": "2016-05-12T17:37:27.000",
-            "name": "Lambda-cyhalothrin",
+            "name": "L-C",
             "displayName": "Lambda-cyhalothrin",
             "externalAccess": true,
             "displayFormName": "Lambda-cyhalothrin",
@@ -28,7 +28,7 @@
             "userAccesses": []
         },
         {
-            "code": "Malathion",
+            "code": "MAL",
             "lastUpdated": "2022-02-27T16:19:28.131",
             "id": "Yz9Z14TqC9T",
             "href": "http://172.16.0.99:8083/api/options/Yz9Z14TqC9T",
@@ -60,7 +60,7 @@
             "id": "YtsjrR6MoXK",
             "href": "http://172.16.0.99:8083/api/options/YtsjrR6MoXK",
             "created": "2022-02-23T18:24:34.873",
-            "name": "Pirimiphos-methyl",
+            "name": "P-M",
             "displayName": "Pirimiphos-methyl",
             "externalAccess": false,
             "displayFormName": "Pirimiphos-methyl",
@@ -82,7 +82,7 @@
             "userAccesses": []
         },
         {
-            "code": "Propoxur",
+            "code": "PRO",
             "lastUpdated": "2022-02-27T16:19:28.131",
             "id": "u7bXEmmiZd0",
             "href": "http://172.16.0.99:8083/api/options/u7bXEmmiZd0",

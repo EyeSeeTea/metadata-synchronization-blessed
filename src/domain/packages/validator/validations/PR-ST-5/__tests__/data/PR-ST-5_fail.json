@@ -76,7 +76,7 @@
             "created": "2019-04-15T09:30:01.130",
             "name": "BU02 - Register - with clinical score",
             "shortName": "BU02 - with score",
-            "code": "PRE_NTD_BU02_Score",
+            "code": "PRE_NTD_BU02_SCORE",
             "publicAccess": "--------",
             "ignoreOverdueEvents": false,
             "skipOffline": false,
