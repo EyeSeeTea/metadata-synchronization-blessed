@@ -3,7 +3,7 @@ import { resourcesWithCode } from "../../utils";
 
 // # ALL-MQ-18: Codes MUST be upper case ASCII (alphabetic A-Z), and the symbols '_' (underscore),'-' (hyphen),'.' (dot),'|' (Bar o Pipe)
 export function validate_ALL_MQ_18(packageContents: MetadataPackageToValidate): string[] {
-    const PATTERN_OPTION_CODE = /^([0-9A-Z_\|\-\.]+)+$/;
+    const PATTERN_OPTION_CODE = /^([0-9A-Z_|\-.]+)+$/;
     const PATTERN_CODE = /^([0-9A-Z_]+)+$/;
 
     const optionErrors =

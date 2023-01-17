@@ -1,4 +1,3 @@
-import { MetadataEntities } from "../../../../metadata/entities/MetadataEntities";
 import { MetadataPackageToValidate } from "../../packageContentValidator";
 import { resourcesWithCode } from "../../utils";
 
