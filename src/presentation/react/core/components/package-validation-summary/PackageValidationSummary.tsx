@@ -1,17 +1,24 @@
 import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
-import { DialogContent, List, ListItem } from "@material-ui/core";
+import { DialogContent, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import i18n from "../../../../../locales";
+import ErrorIcon from "@material-ui/icons/Error";
+import WarningIcon from "@material-ui/icons/Warning";
+
+export type ValidationPackageSummary = {
+    warnings: string[];
+    errors: string[];
+};
 
 interface PackageValidationSummaryProps {
-    errors: string[];
+    summary: ValidationPackageSummary;
     onClose: () => void;
 }
 
-const PackageValidationSummary = ({ errors, onClose }: PackageValidationSummaryProps) => {
+const PackageValidationSummary = ({ summary, onClose }: PackageValidationSummaryProps) => {
     return (
         <ConfirmationDialog
             isOpen={true}
-            title={i18n.t("Validation Errors")}
+            title={i18n.t("Validation Summary")}
             onCancel={onClose}
             cancelText={i18n.t("Ok")}
             maxWidth={"lg"}
@@ -19,8 +26,25 @@ const PackageValidationSummary = ({ errors, onClose }: PackageValidationSummaryP
         >
             <DialogContent>
                 <List>
-                    {errors.map((error, index) => {
-                        return <ListItem key={index}>{error}</ListItem>;
+                    {summary.warnings.map((warning, index) => {
+                        return (
+                            <ListItem key={index}>
+                                <ListItemIcon>
+                                    <WarningIcon htmlColor="#ffcc00" />
+                                </ListItemIcon>
+                                <ListItemText primary={warning} />
+                            </ListItem>
+                        );
+                    })}
+                    {summary.errors.map((error, index) => {
+                        return (
+                            <ListItem key={index}>
+                                <ListItemIcon>
+                                    <ErrorIcon color="error" />
+                                </ListItemIcon>
+                                <ListItemText primary={error} />
+                            </ListItem>
+                        );
                     })}
                 </List>
             </DialogContent>

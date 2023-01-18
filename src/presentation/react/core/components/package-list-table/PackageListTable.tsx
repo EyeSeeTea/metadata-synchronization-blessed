@@ -40,7 +40,9 @@ import {
     PackageModuleItem,
 } from "./PackageModuleItem";
 import { PackagesExtendCompatibilityDialog } from "../packages-extend_compatibility/PackagesExtendCompatibilityDialog";
-import PackageValidationSummary from "../package-validation-summary/PackageValidationSummary";
+import PackageValidationSummary, {
+    ValidationPackageSummary,
+} from "../package-validation-summary/PackageValidationSummary";
 
 interface PackagesListTableProps extends ModulePackageListPageProps {
     isImportDialog?: boolean;
@@ -88,7 +90,9 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     const [openImportPackageDialog, setOpenImportPackageDialog] = useState(false);
 
     const [toImportWizard, setToImportWizard] = useState<string[]>([]);
-    const [validationErrors, setValidationErrors] = useState<string[]>([]);
+    const [validationPackageSummary, setValidationPackageSummary] = useState<ValidationPackageSummary | undefined>(
+        undefined
+    );
 
     const [packagesToExtendCompatibility, setPackagesToExtendCompatibility] = useState<PackageItem[] | undefined>(
         undefined
@@ -329,8 +333,14 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 loading.reset();
 
                 result.match({
-                    error: errors => setValidationErrors(errors),
-                    success: () => snackbar.success(i18n.t("Package is valid")),
+                    error: error => setValidationPackageSummary(error),
+                    success: success => {
+                        if (success.warnings.length > 0) {
+                            setValidationPackageSummary({ errors: [], warnings: success.warnings });
+                        } else {
+                            snackbar.success(i18n.t("Package is valid"));
+                        }
+                    },
                 });
             });
         },
@@ -773,7 +783,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
     };
 
     const handleCloseValidationSummary = () => {
-        setValidationErrors([]);
+        setValidationPackageSummary(undefined);
     };
 
     const showImportFromWizardButton = !isImportDialog && presentation === "app" && appConfigurator;
@@ -906,8 +916,8 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 />
             )}
 
-            {validationErrors.length > 0 && (
-                <PackageValidationSummary errors={validationErrors} onClose={handleCloseValidationSummary} />
+            {validationPackageSummary && (
+                <PackageValidationSummary summary={validationPackageSummary} onClose={handleCloseValidationSummary} />
             )}
         </React.Fragment>
     );

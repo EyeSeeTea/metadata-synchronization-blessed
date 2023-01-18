@@ -3,7 +3,7 @@ import { MetadataPackageToValidate } from "../../packageContentValidator";
 
 const numberOf = "NUMBER OF";
 
-// DE-MQ-2. Missed code field in a resource
+// DE-MQ-2. DataElement contains the words 'number of'
 export function validate_DE_MQ_2(packageContents: MetadataPackageToValidate): string[] {
     const dataElements = (packageContents.dataElements || []) as DataElement[];
 

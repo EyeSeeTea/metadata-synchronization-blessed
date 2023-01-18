@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2023-01-10T13:17:28.036Z\n"
+"POT-Creation-Date: 2023-01-18T06:13:52.733Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -895,7 +895,7 @@ msgstr ""
 msgid "An error has ocurred retrieving imported packages"
 msgstr ""
 
-msgid "Validation Errors"
+msgid "Validation Summary"
 msgstr ""
 
 msgid "Cannot get data from remote instance"
