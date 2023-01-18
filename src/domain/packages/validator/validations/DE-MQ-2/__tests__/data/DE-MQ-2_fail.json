@@ -6,7 +6,7 @@
             "href": "https://dev.eyeseetea.com/who-dev-236/api/dataElements/T4sd77FTesI",
             "created": "2018-02-26T12:55:28.179",
             "name": " Basic science - Research studies initiated number of",
-            "shortName": "  Basic science - Clinical - Research studies ",
+            "shortName": "  Basic science - Clinical - Research studies number of",
             "aggregationType": "SUM",
             "domainType": "AGGREGATE",
             "displayName": " Basic science - Research studies initiated during year 2017",

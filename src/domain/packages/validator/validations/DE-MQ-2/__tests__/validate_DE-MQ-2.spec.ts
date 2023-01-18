@@ -20,6 +20,9 @@ describe("validate DE_MQ_2", () => {
         expect(errors[0]).toBe(
             "DE-MQ-2 - DataElement contains the words 'number of' (T4sd77FTesI) name=' Basic science - Research studies initiated number of'"
         );
+        expect(errors[0]).toBe(
+            "DE-MQ-2 - DataElement contains the words 'number of' (T4sd77FTesI) shortName=' Basic science - Research studies initiated number of'"
+        );
         expect(errors[1]).toBe(
             "DE-MQ-2 - DataElement contains the words 'number of' (LLf2TlSczM5) name=' Capsules number-Adult ENL1 Number of'"
         );
