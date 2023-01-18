@@ -29,6 +29,8 @@ import DE_MQ_2_success from "../validations/DE-MQ-2/__tests__/data/DE-MQ-2_succe
 import DE_MQ_2_fail from "../validations/DE-MQ-2/__tests__/data/DE-MQ-2_fail.json";
 import I_MQ_3_success from "../validations/I-MQ-3/__tests__/data/I-MQ-3_success.json";
 import I_MQ_3_fail from "../validations/I-MQ-3/__tests__/data/I-MQ-3_fail_by_proportion.json";
+import PI_MQ_3_success from "../validations/PI-MQ-3/__tests__/data/PI-MQ-3_success.json";
+import PI_MQ_3_fail from "../validations/PI-MQ-3/__tests__/data/PI-MQ-3_fail_by_proportion.json";
 
 describe("Package contents validator", () => {
     describe("validate O-MQ-2", () => {
@@ -218,6 +220,23 @@ describe("Package contents validator", () => {
         });
         it("should return success with warnings for valid package with warnings", () => {
             const result = validatePackageContents(I_MQ_3_fail);
+
+            expect(result.isSuccess()).toBe(true);
+
+            result.match({
+                error: () => fail("Should be success"),
+                success: data => expect(data.warnings.length > 0).toBe(true),
+            });
+        });
+    });
+    describe("validate PI-MQ-3", () => {
+        it("should return a success for valid package", () => {
+            const result = validatePackageContents(PI_MQ_3_success);
+
+            expect(result.isSuccess()).toBe(true);
+        });
+        it("should return success with warnings for valid package with warnings", () => {
+            const result = validatePackageContents(PI_MQ_3_fail);
 
             expect(result.isSuccess()).toBe(true);
 

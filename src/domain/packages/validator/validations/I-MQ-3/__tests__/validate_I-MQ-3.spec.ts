@@ -19,10 +19,10 @@ describe("validate I_MQ_3", () => {
 
         expect(errors.length).toBe(2);
         expect(errors[0]).toBe(
-            "PI-MQ-3 - Indicator contains the word 'proportion' or 'percentage' (EvWlGCjCqhl) name=' HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs Proportion'"
+            "I-MQ-3 - Indicator contains the word 'proportion' or 'percentage' (EvWlGCjCqhl) name=' HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs Proportion'"
         );
         expect(errors[1]).toBe(
-            "PI-MQ-3 - Indicator contains the word 'proportion' or 'percentage' (EvWlGCjCqhl) shortName=' HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs Proportion'"
+            "I-MQ-3 - Indicator contains the word 'proportion' or 'percentage' (EvWlGCjCqhl) shortName=' HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs Proportion'"
         );
     });
     it("should return errors if package is invalid by percentage", () => {
@@ -30,10 +30,10 @@ describe("validate I_MQ_3", () => {
 
         expect(errors.length).toBe(2);
         expect(errors[0]).toBe(
-            "PI-MQ-3 - Indicator contains the word 'proportion' or 'percentage' (EvWlGCjCqhl) name=' HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs percentage'"
+            "I-MQ-3 - Indicator contains the word 'proportion' or 'percentage' (EvWlGCjCqhl) name=' HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs percentage'"
         );
         expect(errors[1]).toBe(
-            "PI-MQ-3 - Indicator contains the word 'proportion' or 'percentage' (EvWlGCjCqhl) shortName=' HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs percentage'"
+            "I-MQ-3 - Indicator contains the word 'proportion' or 'percentage' (EvWlGCjCqhl) shortName=' HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs percentage'"
         );
     });
 });

@@ -15,6 +15,7 @@ import { validate_ALL_MQ_17 } from "./validations/ALL-MQ-17/validate_ALL-MQ-17";
 import { validate_ALL_MQ_18 } from "./validations/ALL-MQ-18/validate_ALL-MQ-18";
 import { validate_DE_MQ_2 } from "./validations/DE-MQ-2/validate_DE-MQ-2";
 import { validate_I_MQ_3 } from "./validations/I-MQ-3/validate_I-MQ-3";
+import { validate_PI_MQ_3 } from "./validations/PI-MQ-3/validate_PI-MQ-3";
 
 type PackageValidationSuccess = {
     warnings: string[];
@@ -30,6 +31,23 @@ export type ValidationPackageResult = Either<PackageValidationError, PackageVali
 export type MetadataPackageToValidate<T = MetadataEntity> = Partial<Record<keyof MetadataEntities, Partial<T>[]>>;
 
 export function validatePackageContents(contents: MetadataPackageToValidate): ValidationPackageResult {
+    const errors = validateErrors(contents);
+
+    const warnings = validateWarnings(contents);
+
+    return errors.length === 0 ? Either.success({ warnings }) : Either.error({ errors, warnings });
+}
+
+function validateWarnings(contents: Partial<Record<keyof MetadataEntities, Partial<MetadataEntity>[]>>) {
+    const all_mq_17_warnings = validate_ALL_MQ_17(contents);
+    const de_mq_2_warnings = validate_DE_MQ_2(contents);
+    const i_mq_3_warnings = validate_I_MQ_3(contents);
+    const Pi_mq_3_warnings = validate_PI_MQ_3(contents);
+
+    return [...all_mq_17_warnings, ...de_mq_2_warnings, ...i_mq_3_warnings, ...Pi_mq_3_warnings];
+}
+
+function validateErrors(contents: Partial<Record<keyof MetadataEntities, Partial<MetadataEntity>[]>>) {
     const o_mq_2_errors = validate_O_MQ_2(contents);
     const og_mq_1_errors = validate_OG_MQ_1(contents);
     const shst_mq_1_errors = validate_SHST_MQ_1(contents);
@@ -43,7 +61,7 @@ export function validatePackageContents(contents: MetadataPackageToValidate): Va
     const pr_st_5_errors = validate_PR_ST_5(contents);
     const all_mq_18_errors = validate_ALL_MQ_18(contents);
 
-    const errors = [
+    return [
         ...o_mq_2_errors,
         ...og_mq_1_errors,
         ...shst_mq_1_errors,
@@ -57,12 +75,4 @@ export function validatePackageContents(contents: MetadataPackageToValidate): Va
         ...pr_st_5_errors,
         ...all_mq_18_errors,
     ];
-
-    const all_mq_17_warnings = validate_ALL_MQ_17(contents);
-    const de_mq_2_warnings = validate_DE_MQ_2(contents);
-    const i_mq_3_warnings = validate_I_MQ_3(contents);
-
-    const warnings = [...all_mq_17_warnings, ...de_mq_2_warnings, ...i_mq_3_warnings];
-
-    return errors.length === 0 ? Either.success({ warnings }) : Either.error({ errors, warnings });
 }
