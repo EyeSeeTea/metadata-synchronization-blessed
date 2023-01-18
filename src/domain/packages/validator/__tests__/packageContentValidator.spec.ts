@@ -27,6 +27,8 @@ import ALL_MQ_18_success from "../validations/ALL-MQ-18/__tests__/data/ALL-MQ-18
 import ALL_MQ_18_fail_by_option from "../validations/ALL-MQ-18/__tests__/data/ALL-MQ-18_fail_by_option.json";
 import DE_MQ_2_success from "../validations/DE-MQ-2/__tests__/data/DE-MQ-2_success.json";
 import DE_MQ_2_fail from "../validations/DE-MQ-2/__tests__/data/DE-MQ-2_fail.json";
+import I_MQ_3_success from "../validations/I-MQ-3/__tests__/data/I-MQ-3_success.json";
+import I_MQ_3_fail from "../validations/I-MQ-3/__tests__/data/I-MQ-3_fail_by_proportion.json";
 
 describe("Package contents validator", () => {
     describe("validate O-MQ-2", () => {
@@ -168,10 +170,15 @@ describe("Package contents validator", () => {
 
             expect(result.isSuccess()).toBe(true);
         });
-        it("should return failed for invalid package", () => {
+        it("should return success with warnings for valid package with warnings", () => {
             const result = validatePackageContents(ALL_MQ_17_fail);
 
-            expect(result.isSuccess()).toBe(false);
+            expect(result.isSuccess()).toBe(true);
+
+            result.match({
+                error: () => fail("Should be success"),
+                success: data => expect(data.warnings.length > 0).toBe(true),
+            });
         });
     });
     describe("validate ALL-MQ-18", () => {
@@ -192,10 +199,32 @@ describe("Package contents validator", () => {
 
             expect(result.isSuccess()).toBe(true);
         });
-        it("should return failed for invalid package", () => {
+        it("should return success with warnings for valid package with warnings", () => {
             const result = validatePackageContents(DE_MQ_2_fail);
 
-            expect(result.isSuccess()).toBe(false);
+            expect(result.isSuccess()).toBe(true);
+
+            result.match({
+                error: () => fail("Should be success"),
+                success: data => expect(data.warnings.length > 0).toBe(true),
+            });
+        });
+    });
+    describe("validate I-MQ-3", () => {
+        it("should return a success for valid package", () => {
+            const result = validatePackageContents(I_MQ_3_success);
+
+            expect(result.isSuccess()).toBe(true);
+        });
+        it("should return success with warnings for valid package with warnings", () => {
+            const result = validatePackageContents(I_MQ_3_fail);
+
+            expect(result.isSuccess()).toBe(true);
+
+            result.match({
+                error: () => fail("Should be success"),
+                success: data => expect(data.warnings.length > 0).toBe(true),
+            });
         });
     });
 });

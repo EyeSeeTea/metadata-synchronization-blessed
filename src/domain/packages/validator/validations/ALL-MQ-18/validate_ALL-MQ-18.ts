@@ -8,7 +8,7 @@ export function validate_ALL_MQ_18(packageContents: MetadataPackageToValidate): 
 
     const optionErrors =
         packageContents.options
-            ?.filter(item => !PATTERN_OPTION_CODE.test(item.code || "") || item.code?.includes("\n"))
+            ?.filter(item => item.code && (!PATTERN_OPTION_CODE.test(item.code || "") || item.code?.includes("\n")))
             .map(
                 item =>
                     `ALL-MQ-18- Invalid code='${item.code}' (resource type='options' (name='${item.name}' uid=${item.id})`
@@ -19,7 +19,7 @@ export function validate_ALL_MQ_18(packageContents: MetadataPackageToValidate): 
         .map(key => {
             return (
                 packageContents[key]
-                    ?.filter(item => !PATTERN_CODE.test(item.code || "") || item.code?.includes("\n"))
+                    ?.filter(item => item.code && (!PATTERN_CODE.test(item.code || "") || item.code?.includes("\n")))
                     .map(
                         item =>
                             `ALL-MQ-18- Invalid code='${item.code}' (resource type='${key}' (name='${item.name}' uid=${item.id})`
