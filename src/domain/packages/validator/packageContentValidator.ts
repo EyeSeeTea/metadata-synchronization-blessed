@@ -16,6 +16,7 @@ import { validate_ALL_MQ_18 } from "./validations/ALL-MQ-18/validate_ALL-MQ-18";
 import { validate_DE_MQ_2 } from "./validations/DE-MQ-2/validate_DE-MQ-2";
 import { validate_I_MQ_3 } from "./validations/I-MQ-3/validate_I-MQ-3";
 import { validate_PI_MQ_3 } from "./validations/PI-MQ-3/validate_PI-MQ-3";
+import { validate_ALL_MQ_20 } from "./validations/ALL-MQ-20/validate_ALL-MQ-20";
 
 type PackageValidationSuccess = {
     warnings: string[];
@@ -60,6 +61,7 @@ function validateErrors(contents: Partial<Record<keyof MetadataEntities, Partial
     const pr_st_4_errors = validate_PR_ST_4(contents);
     const pr_st_5_errors = validate_PR_ST_5(contents);
     const all_mq_18_errors = validate_ALL_MQ_18(contents);
+    const all_mq_20_errors = validate_ALL_MQ_20(contents);
 
     return [
         ...o_mq_2_errors,
@@ -74,5 +76,6 @@ function validateErrors(contents: Partial<Record<keyof MetadataEntities, Partial
         ...pr_st_4_errors,
         ...pr_st_5_errors,
         ...all_mq_18_errors,
+        ...all_mq_20_errors,
     ];
 }

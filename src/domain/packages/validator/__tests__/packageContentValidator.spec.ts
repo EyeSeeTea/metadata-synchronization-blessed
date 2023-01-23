@@ -31,6 +31,8 @@ import I_MQ_3_success from "../validations/I-MQ-3/__tests__/data/I-MQ-3_success.
 import I_MQ_3_fail from "../validations/I-MQ-3/__tests__/data/I-MQ-3_fail_by_proportion.json";
 import PI_MQ_3_success from "../validations/PI-MQ-3/__tests__/data/PI-MQ-3_success.json";
 import PI_MQ_3_fail from "../validations/PI-MQ-3/__tests__/data/PI-MQ-3_fail_by_proportion.json";
+import ALL_MQ_20_success from "../validations/ALL-MQ-20/__tests__/data/ALL-MQ-20_success.json";
+import ALL_MQ_20_fail from "../validations/ALL-MQ-20/__tests__/data/ALL-MQ-20_fail_by_program_indicator.json";
 
 describe("Package contents validator", () => {
     describe("validate O-MQ-2", () => {
@@ -244,6 +246,18 @@ describe("Package contents validator", () => {
                 error: () => fail("Should be success"),
                 success: data => expect(data.warnings.length > 0).toBe(true),
             });
+        });
+    });
+    describe("validate ALL-MQ-20", () => {
+        it("should return a success for valid package", () => {
+            const result = validatePackageContents(ALL_MQ_20_success);
+
+            expect(result.isSuccess()).toBe(true);
+        });
+        it("should return failed for invalid package", () => {
+            const result = validatePackageContents(ALL_MQ_20_fail);
+
+            expect(result.isSuccess()).toBe(false);
         });
     });
 });
