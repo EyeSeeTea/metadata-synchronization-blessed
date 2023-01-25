@@ -3,6 +3,7 @@ import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
+import { BaseModule } from "../../modules/entities/Module";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ListPackagesUseCase implements UseCase {
@@ -15,17 +16,25 @@ export class ListPackagesUseCase implements UseCase {
         const { id: userId } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
 
         const items = await storageClient.listObjectsInCollection<BasePackage>(Namespace.PACKAGES);
+        const modulesSource = (await storageClient.listObjectsInCollection<BaseModule>(Namespace.MODULES)).map(module =>
+            MetadataModule.build(module)
+        );
 
         const isRemoteInstance = instance !== this.localInstance;
 
-        return items
+        const result = items
             .filter(({ deleted }) => !deleted)
             .map(data => Package.build(data))
-            .filter(
-                ({ module }) =>
+            .filter(({ module }) => {
+                const moduleSource = modulesSource.find(source => source.id === module.id);
+
+                return (
                     bypassSharingSettings ||
                     isRemoteInstance ||
-                    MetadataModule.build(module).hasPermissions("read", userId, userGroups)
-            );
+                    moduleSource?.hasPermissions("read", userId, userGroups)
+                );
+            });
+
+        return result;
     }
 }

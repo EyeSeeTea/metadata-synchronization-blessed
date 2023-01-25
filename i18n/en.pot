@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-07-01T10:41:01.913Z\n"
-"PO-Revision-Date: 2022-07-01T10:41:01.913Z\n"
+"POT-Creation-Date: 2022-11-14T13:32:52.987Z\n"
+"PO-Revision-Date: 2022-11-14T13:32:52.987Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -24,6 +24,9 @@ msgid "Field {{field}} needs to be a valid url"
 msgstr ""
 
 msgid "Field {{field}} is not valid"
+msgstr ""
+
+msgid "EFH program not found"
 msgstr ""
 
 msgid "An instance with this name already exists"
@@ -1062,6 +1065,9 @@ msgstr ""
 msgid "Ignore data with same value on destination"
 msgstr ""
 
+msgid "Async mode"
+msgstr ""
+
 msgid "Sync rule {{idx}}: {{name}} ({{id}})"
 msgstr ""
 
@@ -1352,6 +1358,9 @@ msgid "Run Analytics before sync"
 msgstr ""
 
 msgid "Run Analytics after sync"
+msgstr ""
+
+msgid "{{async}}"
 msgstr ""
 
 msgid "Frequency"
@@ -2075,6 +2084,27 @@ msgid ""
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"
+msgstr ""
+
+msgid "Output: "
+msgstr ""
+
+msgid "Sync finished - {{dateEnd}}"
+msgstr ""
+
+msgid "Status: {{status}}"
+msgstr ""
+
+msgid "Synchronizing rule {{name}} - {{dateStart}}"
+msgstr ""
+
+msgid "Error: {{code}}"
+msgstr ""
+
+msgid "Consultations and Surgery (Events)"
+msgstr ""
+
+msgid "Patients (Tracked Entity Instances)"
 msgstr ""
 
 msgid "Running analytics for instance {{name}}"

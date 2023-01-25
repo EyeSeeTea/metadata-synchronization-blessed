@@ -465,6 +465,14 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                             value={syncRule.dataParams.runAnalyticsAfter ? i18n.t("Yes") : i18n.t("No")}
                         />
                     </ul>
+                    <ul>
+                        <LiEntry
+                            label={i18n.t("Async mode")}
+                            value={i18n.t("{{async}}", {
+                                async: syncRule.dataParams.async !== false ? i18n.t("Yes") : i18n.t("No"),
+                            })}
+                        />
+                    </ul>
                 </LiEntry>
             )}
 

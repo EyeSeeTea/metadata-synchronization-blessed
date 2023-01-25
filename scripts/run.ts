@@ -40,6 +40,12 @@ const variants = [
         title: "MetaData Synchronization Package Exporter Widget",
         file: "metadata-synchronization-widget-package-exporter",
     },
+    {
+        type: "app",
+        name: "efh-sync",
+        title: "MetaData Synchronization EFH Sync",
+        file: "metadata-synchronization-efh-sync",
+    },
 ] as const;
 
 function getYargs(): Argv {
