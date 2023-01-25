@@ -9,6 +9,7 @@ export interface TEIRepositoryConstructor {
 }
 
 export interface TEIRepository {
+    getAllTEIs(params: DataSynchronizationParams, programs: string[]): Promise<TrackedEntityInstance[]>;
     getTEIs(params: DataSynchronizationParams, program: string, page: number, pageSize: number): Promise<TEIsResponse>;
     getTEIsById(params: DataSynchronizationParams, ids: string[]): Promise<TrackedEntityInstance[]>;
 
@@ -18,6 +19,7 @@ export interface TEIRepository {
 export interface TEIsResponse {
     trackedEntityInstances: TrackedEntityInstance[];
     pager: {
+        pageCount: number;
         pageSize: number;
         total: number;
         page: number;

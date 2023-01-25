@@ -321,9 +321,13 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
             {syncRule.type === "events" && (
                 <LiEntry
                     label={i18n.t("TEIs")}
-                    value={i18n.t("{{total}} selected TEIs", {
-                        total: syncRule.dataSyncTeis.length,
-                    })}
+                    value={
+                        syncRule.dataSyncAllTEIs
+                            ? i18n.t("All TEIs")
+                            : i18n.t("{{total}} selected TEIs", {
+                                  total: syncRule.dataSyncTeis.length,
+                              })
+                    }
                 />
             )}
 
