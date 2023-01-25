@@ -12,6 +12,7 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
         [7, import("./07.instances-user-password")],
         [8, import("./08.remove-coc-inner-mappings")],
         [9, import("./09.mapping-instances")],
+        [10, import("./10.rename-run-analytics")],
     ];
 }
 
