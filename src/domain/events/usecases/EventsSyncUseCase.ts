@@ -58,9 +58,16 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
             ? retrievedEvents.map(event => ({ ...event, geometry: undefined }))
             : retrievedEvents;
 
-        const trackedEntityInstances = dataParams.teis
-            ? await teisRepository.getTEIsById(dataParams, dataParams.teis)
-            : [];
+        const trackerProgramIds = programs
+            .filter(({ programType }) => programType === "WITH_REGISTRATION")
+            .map(({ id }) => id);
+
+        const trackedEntityInstances =
+            dataParams.allTEIs && trackerProgramIds.length > 0
+                ? await teisRepository.getAllTEIs(dataParams, trackerProgramIds)
+                : dataParams.teis
+                ? await teisRepository.getTEIsById(dataParams, dataParams.teis)
+                : [];
 
         const directIndicators = programIndicators.map(({ id }) => id);
         const indicatorsByProgram = _.flatten(

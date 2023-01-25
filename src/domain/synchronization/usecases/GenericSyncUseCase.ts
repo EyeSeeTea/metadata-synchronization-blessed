@@ -186,7 +186,7 @@ export abstract class GenericSyncUseCase {
 
         const origin = await this.getOriginInstance();
 
-        if (dataParams?.enableAggregation && dataParams?.runAnalytics) {
+        if (dataParams?.enableAggregation && dataParams?.runAnalyticsBefore) {
             for await (const message of executeAnalytics(origin)) {
                 yield { message };
             }
@@ -227,6 +227,14 @@ export abstract class GenericSyncUseCase {
                 syncReport.addSyncResult(...syncResults);
 
                 debug("Finished import on instance", instance.toPublicObject());
+
+                if (dataParams?.enableAggregation && dataParams?.runAnalyticsAfter) {
+                    for await (const message of executeAnalytics(origin)) {
+                        yield { message };
+                    }
+
+                    yield { message: i18n.t("Analytics execution finished on {{name}}", origin) };
+                }
             } catch (error: any) {
                 syncReport.addSyncResult({
                     status: "ERROR",
