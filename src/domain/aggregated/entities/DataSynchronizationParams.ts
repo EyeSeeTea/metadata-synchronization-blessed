@@ -29,7 +29,8 @@ export interface DataSynchronizationParams extends DataImportParams {
     generateNewUid?: boolean;
     enableAggregation?: boolean;
     aggregationType?: DataSyncAggregation;
-    runAnalytics?: boolean;
+    runAnalyticsBefore?: boolean;
+    runAnalyticsAfter?: boolean;
     includeAnalyticsZeroValues?: boolean;
     analyticsYears?: number;
     ignoreDuplicateExistingValues?: boolean;

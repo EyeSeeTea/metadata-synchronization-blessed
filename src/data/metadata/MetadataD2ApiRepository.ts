@@ -504,6 +504,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             errors: messages,
             date: new Date(),
             type,
+            response: importResult,
         };
     }
 

@@ -460,7 +460,13 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                     <ul>
                         <LiEntry
                             label={i18n.t("Run Analytics before sync")}
-                            value={syncRule.dataParams.runAnalytics ? i18n.t("Yes") : i18n.t("No")}
+                            value={syncRule.dataParams.runAnalyticsBefore ? i18n.t("Yes") : i18n.t("No")}
+                        />
+                    </ul>
+                    <ul>
+                        <LiEntry
+                            label={i18n.t("Run Analytics after sync")}
+                            value={syncRule.dataParams.runAnalyticsAfter ? i18n.t("Yes") : i18n.t("No")}
                         />
                     </ul>
                     <ul>
