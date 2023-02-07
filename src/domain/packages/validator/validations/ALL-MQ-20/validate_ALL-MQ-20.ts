@@ -6,7 +6,7 @@ const piProperties: (keyof ProgramIndicator)[] = ["filter", "expression"];
 const prProperties: (keyof ProgramRule)[] = ["condition"];
 const praProperties: (keyof ProgramRuleAction)[] = ["data"];
 
-// PI-MQ-3. Program Indicator contains the word 'proportion' or 'percentage'
+// ALL-MQ-20. A resource (programIndicators, programRules, programRuleActions) contains a 'program_stage_name'
 export function validate_ALL_MQ_20(packageContents: MetadataPackageToValidate): string[] {
     const programIndicators = (packageContents.programIndicators || []) as ProgramIndicator[];
     const programRules = (packageContents.programRules || []) as ProgramRule[];
