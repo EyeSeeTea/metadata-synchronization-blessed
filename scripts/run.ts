@@ -42,9 +42,9 @@ const variants = [
     },
     {
         type: "app",
-        name: "efh-sync",
-        title: "MetaData Synchronization EFH Sync",
-        file: "metadata-synchronization-efh-sync",
+        name: "sp-emergency-responses",
+        title: "Emergency Responses Sync",
+        file: "emergency-responses-sync",
     },
 ] as const;
 

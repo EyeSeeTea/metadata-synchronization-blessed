@@ -2,24 +2,30 @@ import _ from "lodash";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import { Box, LinearProgress, List, makeStyles, Paper, Typography } from "@material-ui/core";
 import React from "react";
-import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../../locales";
-import { useAppContext } from "../../../react/core/contexts/AppContext";
-import { CompositionRoot } from "../../../CompositionRoot";
-import { formatDateLong } from "../../../../utils/date";
+import { SynchronizationRule } from "../../../domain/rules/entities/SynchronizationRule";
+import i18n from "../../../locales";
+import { useAppContext } from "../../react/core/contexts/AppContext";
+import { CompositionRoot } from "../../CompositionRoot";
+import { formatDateLong } from "../../../utils/date";
 import { SyncRuleButtonProps, SyncRuleButton } from "./SyncRuleButton";
-import { downloadFile } from "../../../utils/download";
-import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
-import { SummaryTable } from "../../../react/core/components/sync-summary/SummaryTable";
-import { SynchronizationResult, SynchronizationStats } from "../../../../domain/reports/entities/SynchronizationResult";
+import { downloadFile } from "../../utils/download";
+import { SynchronizationReport } from "../../../domain/reports/entities/SynchronizationReport";
+import { SummaryTable } from "../../react/core/components/sync-summary/SummaryTable";
+import { SynchronizationResult, SynchronizationStats } from "../../../domain/reports/entities/SynchronizationResult";
 import moment from "moment";
+import { EmergencyType, getEmergencyResponseConfig } from "../../../domain/entities/EmergencyResponses";
 
-export const EFHSyncHomePage: React.FC = React.memo(() => {
+interface EmergencyResponsesSyncHomePageProps {
+    emergencyType: EmergencyType;
+}
+
+export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHomePageProps> = React.memo(props => {
+    const { emergencyType } = props;
     const classes = useStyles();
 
     const logs = useLogs();
-    const rules = useSyncRulesList();
-    const [isRunning, runSyncRule] = useSyncRulesExecuter({ logs });
+    const rules = useSyncRulesList(emergencyType);
+    const [isRunning, runSyncRule] = useSyncRulesExecuter({ emergencyType, logs });
 
     return (
         <Paper className={classes.root}>
@@ -49,7 +55,7 @@ const LinkDownloadOutput: React.FC<{ syncReport: SynchronizationReport }> = prop
         (ev: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
             ev.preventDefault();
             downloadFile({
-                filename: "efh-sync-response" + moment().toISOString() + ".json",
+                filename: "sync-response" + moment().toISOString() + ".json",
                 buffer: JSON.stringify(syncReport),
             });
         },
@@ -67,7 +73,12 @@ const LinkDownloadOutput: React.FC<{ syncReport: SynchronizationReport }> = prop
     );
 };
 
-const executeRule = async (compositionRoot: CompositionRoot, id: string, log: (msg: Message) => void) => {
+const executeRule = async (
+    compositionRoot: CompositionRoot,
+    emergencyType: EmergencyType,
+    id: string,
+    log: (msg: Message) => void
+) => {
     const synchronize = async () => {
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) log(message);
@@ -93,7 +104,9 @@ const executeRule = async (compositionRoot: CompositionRoot, id: string, log: (m
 
     /* Select org units and TEIs in persisted rule */
     const rule =
-        persistedRule.type === "events" ? await compositionRoot.efh.updateSyncRule(persistedRule) : persistedRule;
+        persistedRule.type === "events"
+            ? await compositionRoot.emergencyResponses.updateSyncRule(persistedRule, emergencyType)
+            : persistedRule;
 
     const { builder, id: syncRule, type } = rule;
     const dateStart = formatDateLong(new Date());
@@ -123,40 +136,41 @@ function useLogs(): Logs {
     return { messages, log, clear };
 }
 
-function useSyncRulesList() {
+function useSyncRulesList(emergencyType: EmergencyType) {
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const [rules, setRules] = React.useState<SynchronizationRule[]>([]);
 
     React.useEffect(() => {
         async function run() {
+            const { syncRules } = getEmergencyResponseConfig(emergencyType);
+
             try {
                 const { rows: rules } = await compositionRoot.rules.list({
                     paging: false,
                     sorting: { field: "name", order: "asc" },
-                    filters: { search: "EFH_" },
                 });
 
-                const efhRules = _(rules)
+                const emergencyResponsesRules = _(rules)
                     .keyBy(rule => rule.code || "")
-                    .at(["EFH_METADATA", "EFH_DATA"])
+                    .at([syncRules.metadata, syncRules.data])
                     .compact()
                     .value();
 
-                setRules(efhRules);
+                setRules(emergencyResponsesRules);
             } catch (err: any) {
                 snackbar.error(err.message);
             }
         }
 
         run();
-    }, [compositionRoot, snackbar]);
+    }, [compositionRoot, snackbar, emergencyType]);
 
     return rules;
 }
 
-function useSyncRulesExecuter(options: { logs: Logs }) {
-    const { logs } = options;
+function useSyncRulesExecuter(options: { logs: Logs; emergencyType: EmergencyType }) {
+    const { emergencyType, logs } = options;
 
     const [isRunning, setRunning] = React.useState(false);
     const { compositionRoot } = useAppContext();
@@ -168,7 +182,7 @@ function useSyncRulesExecuter(options: { logs: Logs }) {
 
             try {
                 logs.clear();
-                await executeRule(compositionRoot, rule.id, logs.log);
+                await executeRule(compositionRoot, emergencyType, rule.id, logs.log);
             } catch (err: any) {
                 logs.log(`Error: ${err.message}`);
                 snackbar.error(err.message);
@@ -176,7 +190,7 @@ function useSyncRulesExecuter(options: { logs: Logs }) {
                 setRunning(false);
             }
         },
-        [compositionRoot, snackbar, logs]
+        [compositionRoot, snackbar, logs, emergencyType]
     );
 
     return [isRunning, execute] as const;
