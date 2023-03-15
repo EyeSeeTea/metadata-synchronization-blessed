@@ -15,6 +15,7 @@ import { TEIsPackage } from "../../domain/tracked-entity-instances/entities/TEIs
 import { TrackedEntityInstance } from "../../domain/tracked-entity-instances/entities/TrackedEntityInstance";
 import { TEIRepository, TEIsResponse } from "../../domain/tracked-entity-instances/repositories/TEIRepository";
 import { D2Api } from "../../types/d2-api";
+import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 
 export class TEID2ApiRepository implements TEIRepository {
@@ -28,6 +29,22 @@ export class TEID2ApiRepository implements TEIRepository {
     constructor(private instance: Instance) {
         this.api = getD2APiFromInstance(instance);
     }
+
+    async getAllTEIs(params: DataSynchronizationParams, programs: string[]): Promise<TrackedEntityInstance[]> {
+        const result = await promiseMap(programs, async program => {
+            const { trackedEntityInstances, pager } = await this.getTEIs(params, program, 1, 250);
+
+            const paginatedTEIs = await promiseMap(_.range(2, pager.pageCount + 1), async page => {
+                const { trackedEntityInstances } = await this.getTEIs(params, program, page, 250);
+                return trackedEntityInstances;
+            });
+
+            return [...trackedEntityInstances, ..._.flatten(paginatedTEIs)];
+        });
+
+        return result.flat();
+    }
+
     async getTEIs(
         params: DataSynchronizationParams,
         program: string,
@@ -43,6 +60,7 @@ export class TEID2ApiRepository implements TEIRepository {
             return {
                 trackedEntityInstances: [],
                 pager: {
+                    pageCount: 1,
                     pageSize,
                     total: 0,
                     page,

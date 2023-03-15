@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-12-21T14:40:47.095Z\n"
-"PO-Revision-Date: 2022-12-21T14:40:47.095Z\n"
+"POT-Creation-Date: 2023-01-25T18:35:19.588Z\n"
+"PO-Revision-Date: 2023-01-25T18:35:19.588Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1324,6 +1324,9 @@ msgstr ""
 msgid "Exclude rules"
 msgstr ""
 
+msgid "All TEIs"
+msgstr ""
+
 msgid "{{total}} selected TEIs"
 msgstr ""
 
@@ -1355,6 +1358,9 @@ msgid "Updates"
 msgstr ""
 
 msgid "Run Analytics before sync"
+msgstr ""
+
+msgid "Run Analytics after sync"
 msgstr ""
 
 msgid "{{async}}"
@@ -1428,6 +1434,9 @@ msgstr ""
 msgid "Enrollment Date"
 msgstr ""
 
+msgid "Sync all TEIs"
+msgstr ""
+
 msgid "Exclude relationships"
 msgstr ""
 
@@ -1449,7 +1458,10 @@ msgstr ""
 msgid "Analytics"
 msgstr ""
 
-msgid "Run Analytics"
+msgid "Run Analytics Before"
+msgstr ""
+
+msgid "Run Analytics After"
 msgstr ""
 
 msgid "Number of years to include"
@@ -2036,13 +2048,16 @@ msgstr ""
 msgid "Synchronizing aggregated data..."
 msgstr ""
 
-msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
+msgid "Run analytics after is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
 msgid "Finished aggregated data synchronization with errors"
 msgstr ""
 
 msgid "Finished aggregated data synchronization successfully"
+msgstr ""
+
+msgid "An error has ocurred retrieving the instance {{name}}"
 msgstr ""
 
 msgid "Checking data values in previous periods ...."
