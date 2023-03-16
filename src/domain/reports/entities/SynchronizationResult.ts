@@ -33,4 +33,5 @@ export interface SynchronizationResult {
     typeStats?: SynchronizationStats[];
     errors?: ErrorMessage[];
     payload?: SynchronizationPayload;
+    response?: object;
 }

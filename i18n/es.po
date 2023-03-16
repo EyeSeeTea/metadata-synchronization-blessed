@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2022-08-22T10:48:03.128Z\n"
+"POT-Creation-Date: 2022-12-21T14:14:01.441Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Field {{field}} is not valid"
 msgstr ""
 
-msgid "EFH program not found"
+msgid "Program not found"
 msgstr ""
 
 msgid "An instance with this name already exists"
@@ -1327,6 +1327,9 @@ msgstr ""
 msgid "Exclude rules"
 msgstr ""
 
+msgid "All TEIs"
+msgstr ""
+
 msgid "{{total}} selected TEIs"
 msgstr ""
 
@@ -1358,6 +1361,9 @@ msgid "Updates"
 msgstr ""
 
 msgid "Run Analytics before sync"
+msgstr ""
+
+msgid "Run Analytics after sync"
 msgstr ""
 
 msgid "{{async}}"
@@ -1426,10 +1432,16 @@ msgstr ""
 msgid "Sync all events"
 msgstr ""
 
+msgid "Exclude coordinates"
+msgstr ""
+
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
 msgid "Enrollment Date"
+msgstr ""
+
+msgid "Sync all TEIs"
 msgstr ""
 
 msgid "Exclude relationships"
@@ -1453,7 +1465,10 @@ msgstr ""
 msgid "Analytics"
 msgstr ""
 
-msgid "Run Analytics"
+msgid "Run Analytics Before"
+msgstr ""
+
+msgid "Run Analytics After"
 msgstr ""
 
 msgid "Number of years to include"
@@ -2040,13 +2055,17 @@ msgstr ""
 msgid "Synchronizing aggregated data..."
 msgstr ""
 
-msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
+msgid ""
+"Run analytics after is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
 msgid "Finished aggregated data synchronization with errors"
 msgstr ""
 
 msgid "Finished aggregated data synchronization successfully"
+msgstr ""
+
+msgid "An error has ocurred retrieving the instance {{name}}"
 msgstr ""
 
 msgid "Checking data values in previous periods ...."
@@ -2078,13 +2097,10 @@ msgid ""
 "{{period}}..."
 msgstr ""
 
-msgid "Widget cannot be used until an administrator opens the application"
+msgid "Output: "
 msgstr ""
 
 msgid "Sync finished - {{dateEnd}}"
-msgstr ""
-
-msgid "Stats: {{-stats}}"
 msgstr ""
 
 msgid "Status: {{status}}"
@@ -2094,6 +2110,15 @@ msgid "Synchronizing rule {{name}} - {{dateStart}}"
 msgstr ""
 
 msgid "Error: {{code}}"
+msgstr ""
+
+msgid "Consultations and Surgery (Events)"
+msgstr ""
+
+msgid "Patients (Tracked Entity Instances)"
+msgstr ""
+
+msgid "Widget cannot be used until an administrator opens the application"
 msgstr ""
 
 msgid "Running analytics for instance {{name}}"

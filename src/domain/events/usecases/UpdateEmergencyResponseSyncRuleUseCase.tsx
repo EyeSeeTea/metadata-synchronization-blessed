@@ -1,12 +1,12 @@
 import i18n from "../../../types/i18n";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { EmergencyType, getEmergencyResponseConfig } from "../../entities/EmergencyResponses";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataRepository } from "../../metadata/repositories/MetadataRepository";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { TEIRepository } from "../../tracked-entity-instances/repositories/TEIRepository";
 
-export class UpdateEFHSyncRuleUseCase {
-    formCode = "EFH_GENERAL_INTAKE_FORM";
+export class UpdateEmergencyResponseSyncRuleUseCase {
     metadataRepository: MetadataRepository;
     teiRepository: TEIRepository;
 
@@ -15,9 +15,9 @@ export class UpdateEFHSyncRuleUseCase {
         this.teiRepository = repositoryFactory.teisRepository(instance);
     }
 
-    async execute(rule: SynchronizationRule): Promise<SynchronizationRule> {
-        const program = await this.getEfhProgram();
-        if (!program) throw new Error(i18n.t("EFH program not found"));
+    async execute(rule: SynchronizationRule, emergencyType: EmergencyType): Promise<SynchronizationRule> {
+        const program = await this.getProgram(emergencyType);
+        if (!program) throw new Error(i18n.t("Program not found"));
 
         const orgUnitPaths = program.organisationUnits.map(ou => ou.path);
         const teiIds: string[] = await this.getTeis(program, orgUnitPaths);
@@ -25,11 +25,12 @@ export class UpdateEFHSyncRuleUseCase {
         return rule.updateDataSyncOrgUnitPaths(orgUnitPaths).updateDataSyncTEIs(teiIds);
     }
 
-    private async getEfhProgram() {
+    private async getProgram(emergencyType: EmergencyType) {
+        const programCode = getEmergencyResponseConfig(emergencyType).program;
         const res = await this.metadataRepository.listMetadata({
             type: "programs",
             fields: { id: true, organisationUnits: { path: true } },
-            search: { field: "code", operator: "eq", value: this.formCode },
+            search: { field: "code", operator: "eq", value: programCode },
         });
         const form = res.objects[0] as unknown as Program | undefined;
         return form;

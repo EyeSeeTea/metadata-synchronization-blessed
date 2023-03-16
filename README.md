@@ -22,7 +22,7 @@ $ yarn migrate 'http://admin:PASSWORD@localhost:8080'
 
 The app provides a server-side scheduler script that runs synchronization rules in the background. The script requires Node v10+.
 
-* Unzip metadata-synchronization-server.zip and can be executed like this:
+-   Unzip metadata-synchronization-server.zip and can be executed like this:
 
 ```
 $ cd metadata-synchronization-server
@@ -76,7 +76,7 @@ This will open the development server for the given front-end at port 8082 and w
 REACT_APP_DHIS2_BASE_URL=http://localhost:8080
 ```
 
-To use a different DHIS2 instance url set this environment variable before running a ``start`` command.
+To use a different DHIS2 instance url set this environment variable before running a `start` command.
 
 ## Tests
 
@@ -115,7 +115,7 @@ $ yarn build
 To build a given front-end:
 
 ```
-$ yarn build [all|core-app|data-metadata-app|module-package-app|modules-list|package-exporter|msf-aggregate-data-app]
+$ yarn build [all|core-app|data-metadata-app|module-package-app|modules-list|package-exporter|msf-aggregate-data-app|sp-emergency-responses]
 ```
 
 To build the scheduler:
