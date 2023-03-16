@@ -96,6 +96,13 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         [onChange, syncRule]
     );
 
+    const excludeEventCoordinates = useCallback(
+        (value: boolean) => {
+            onChange(syncRule.updateExcludeEventCoordinates(value));
+        },
+        [onChange, syncRule]
+    );
+
     const columns: TableColumn<ProgramEvent>[] = useMemo(
         () => [
             { name: "id" as const, text: i18n.t("UID"), sortable: true },
@@ -225,6 +232,16 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                     filterComponents={filterComponents}
                 />
             )}
+
+            <Typography style={{ fontWeight: 500 }} variant={"subtitle1"} gutterBottom>
+                {i18n.t("Advanced options")}
+            </Typography>
+
+            <Toggle
+                label={i18n.t("Exclude coordinates")}
+                value={syncRule.excludeEventCoordinates}
+                onValueChange={excludeEventCoordinates}
+            />
         </React.Fragment>
     );
 }

@@ -26,6 +26,7 @@ export interface DataSynchronizationParams extends DataImportParams {
     allEvents?: boolean;
     allTEIs?: boolean;
     excludeTeiRelationships?: boolean;
+    excludeEventCoordinates?: boolean;
     generateNewUid?: boolean;
     enableAggregation?: boolean;
     aggregationType?: DataSyncAggregation;

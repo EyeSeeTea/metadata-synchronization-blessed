@@ -1428,6 +1428,9 @@ msgstr ""
 msgid "Sync all events"
 msgstr ""
 
+msgid "Exclude coordinates"
+msgstr ""
+
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
