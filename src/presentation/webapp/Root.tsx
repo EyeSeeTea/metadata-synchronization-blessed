@@ -5,6 +5,7 @@ import * as permissions from "../../utils/permissions";
 import RouteWithSession from "../react/core/components/auth/RouteWithSession";
 import RouteWithSessionAndAuth from "../react/core/components/auth/RouteWithSessionAndAuth";
 import { useAppContext } from "../react/core/contexts/AppContext";
+import { EmergencyResponsesSyncHomePage } from "./sp-emergency-responses/EmergencyResponsesSyncHomePage";
 import { HistoryPage } from "./core/pages/history/HistoryPage";
 import HomePage from "./core/pages/home/HomePage";
 import InstanceCreationPage from "./core/pages/instance-creation/InstanceCreationPage";
@@ -106,6 +107,24 @@ const VariantRoutes: React.FC<{ variant: AppVariant }> = ({ variant }) => {
                     <Redirect to="/msf" />
                 </Switch>
             );
+        case "sp-emergency-responses":
+            return (
+                <Switch>
+                    <RouteWithSession
+                        path="/efh"
+                        exact
+                        render={() => <EmergencyResponsesSyncHomePage emergencyType="efh" />}
+                    />
+
+                    <RouteWithSession
+                        path="/ebola"
+                        exact
+                        render={() => <EmergencyResponsesSyncHomePage emergencyType="ebola" />}
+                    />
+
+                    <Redirect to="/efh" />
+                </Switch>
+            );
         default:
             return (
                 <Switch>
@@ -125,10 +144,22 @@ const getAppVariant = (): AppVariant => {
 
 const isAppVariant = (variant?: string): variant is AppVariant => {
     return (
-        !!variant && ["core-app", "data-metadata-app", "module-package-app", "msf-aggregate-data-app"].includes(variant)
+        !!variant &&
+        [
+            "core-app",
+            "data-metadata-app",
+            "module-package-app",
+            "msf-aggregate-data-app",
+            "sp-emergency-responses",
+        ].includes(variant)
     );
 };
 
-export type AppVariant = "core-app" | "data-metadata-app" | "module-package-app" | "msf-aggregate-data-app";
+export type AppVariant =
+    | "core-app"
+    | "data-metadata-app"
+    | "module-package-app"
+    | "msf-aggregate-data-app"
+    | "sp-emergency-responses";
 
 export default Root;

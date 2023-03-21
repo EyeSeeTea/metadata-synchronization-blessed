@@ -28,10 +28,6 @@ const loadWidget = async (widget: string): Promise<Function> => {
             const { PackageExporterWidget } = await import("./package-exporter-widget/PackageExporterWidget");
             return PackageExporterWidget;
         }
-        case "efh-sync": {
-            const { EFHSyncWidget } = await import("./efh-sync-widget/EFHSyncWidget");
-            return EFHSyncWidget;
-        }
         default: {
             return () => {
                 const { dashboardItemId } = useWidget();

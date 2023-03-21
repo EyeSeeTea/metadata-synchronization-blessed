@@ -28,6 +28,21 @@ export class EventsD2ApiRepository implements EventsRepository {
         programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
+        const events = await this.getEventsByStrategy(params, programStageIds, defaults);
+
+        // Temporal fix for notes:
+        // If a note already exist and sync again the event the sync fail
+        // Remove notes until the bug is fixed by dhis2
+        const eventsWithoutNotes = events.map(event => ({ ...event, notes: [] }));
+
+        return eventsWithoutNotes;
+    }
+
+    private async getEventsByStrategy(
+        params: DataSynchronizationParams,
+        programStageIds: string[] = [],
+        defaults: string[] = []
+    ): Promise<ProgramEvent[]> {
         const { allEvents = false, orgUnitPaths = [] } = params;
 
         if (!allEvents) {
@@ -240,6 +255,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             errors,
             date: new Date(),
             type: "events",
+            response: importResult,
         };
     }
 

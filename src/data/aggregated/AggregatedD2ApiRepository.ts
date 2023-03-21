@@ -381,6 +381,7 @@ export class AggregatedD2ApiRepository implements AggregatedRepository {
             errors,
             date: new Date(),
             type: "aggregated",
+            response: importResult,
         };
     }
 

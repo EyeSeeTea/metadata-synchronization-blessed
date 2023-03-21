@@ -1,6 +1,6 @@
 import { Button, makeStyles } from "@material-ui/core";
 import React from "react";
-import { SynchronizationRule } from "../../../../domain/rules/entities/SynchronizationRule";
+import { SynchronizationRule } from "../../../domain/rules/entities/SynchronizationRule";
 
 export interface SyncRuleButtonProps {
     rule: SynchronizationRule;
