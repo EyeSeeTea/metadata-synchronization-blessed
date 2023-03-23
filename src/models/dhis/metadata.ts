@@ -132,6 +132,7 @@ export class VisualizationsModel extends D2Model {
         "categoryOptionGroups",
         "dataElementGroupSets",
         "dataElementGroups",
+        "legendSets",
     ];
 }
 
