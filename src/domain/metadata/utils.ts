@@ -26,7 +26,8 @@ export function cleanObject(
     element: any,
     excludeRules: string[][] = [],
     includeSharingSettings: boolean,
-    removeOrgUnitReferences: boolean
+    removeOrgUnitReferences: boolean,
+    removeUserObjectsAndReferences: boolean
 ): any {
     const leafRules: string[] = _(excludeRules)
         .filter(path => path.length === 1)
@@ -44,7 +45,8 @@ export function cleanObject(
 
     const sharingSettingsFilter = includeSharingSettings ? [] : userProperties;
     const organisationUnitFilter = removeOrgUnitReferences ? ["organisationUnits"] : [];
-    const propsToRemove = [...sharingSettingsFilter, ...organisationUnitFilter];
+    const userFilter = removeUserObjectsAndReferences ? ["createdBy", "lastUpdatedBy", "user"] : [];
+    const propsToRemove = [...sharingSettingsFilter, ...organisationUnitFilter, ...userFilter];
 
     return _.pick(element, _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove));
 }
