@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-03-23T06:19:23.743Z\n"
-"PO-Revision-Date: 2023-03-23T06:19:23.743Z\n"
+"POT-Creation-Date: 2023-03-23T10:37:45.277Z\n"
+"PO-Revision-Date: 2023-03-23T10:37:45.277Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1042,6 +1042,9 @@ msgid "Remove organisation units and references (UID)"
 msgstr ""
 
 msgid "Remove organisation units and keep organisation units references (UID)"
+msgstr ""
+
+msgid "Remove users and references (UID)"
 msgstr ""
 
 msgid "Remove users and keep user references (UID)"
