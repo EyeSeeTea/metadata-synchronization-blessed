@@ -128,7 +128,7 @@ describe("Sync metadata", () => {
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
-            version: "2.30",
+            version: "2.36",
         });
 
         const builder: SynchronizationBuilder = {
@@ -156,7 +156,7 @@ describe("Sync metadata", () => {
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
-            version: "2.30",
+            version: "2.36",
         });
 
         const builder: SynchronizationBuilder = {

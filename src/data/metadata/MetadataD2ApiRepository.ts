@@ -1,4 +1,4 @@
-import { FilterBase, FilterValueBase } from "@eyeseetea/d2-api/api/common";
+import { FilterBase, FilterValue } from "@eyeseetea/d2-api/api/common";
 import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
@@ -304,7 +304,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         domainType,
         childrenPropInList,
     }: Partial<ListMetadataParams>) {
-        const filter: Dictionary<FilterValueBase> = {};
+        const filter: Dictionary<FilterValue> = {};
 
         if (lastUpdated) filter["lastUpdated"] = { ge: moment(lastUpdated).format("YYYY-MM-DD") };
         if (group) filter[`${group.type}.id`] = { eq: group.value };
@@ -558,7 +558,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         return results;
     }
 
-    private getApiModel(type: keyof MetadataEntities): InstanceType<typeof Model> {
+    private getApiModel(type: keyof MetadataEntities): Model<any, any> {
         return this.api.models[type];
     }
 }
@@ -575,7 +575,7 @@ const defaultOrder = { field: "id", order: "asc" } as const;
 interface GetListAllOptions {
     type: ListMetadataParams["type"];
     fields: object;
-    filter: Dictionary<FilterValueBase | FilterValueBase[]>;
+    filter: Dictionary<FilterValue | FilterValue[]>;
     order?: ListMetadataParams["order"];
     rootJunction?: "AND" | "OR";
 }

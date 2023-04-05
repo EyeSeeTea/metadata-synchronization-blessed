@@ -11,21 +11,21 @@ import { D2Api } from "../../types/d2-api";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
+import { InmemoryCache } from "../common/InmemoryCache";
 import { Namespace } from "../storage/Namespaces";
 
 type ObjectSharingError = "authority-error" | "unexpected-error";
 
 export class InstanceD2ApiRepository implements InstanceRepository {
     private api: D2Api;
+    private cache = new InmemoryCache();
 
     constructor(private configRepository: ConfigRepository, private instance: Instance, private encryptionKey: string) {
         this.api = getD2APiFromInstance(instance);
     }
 
     async getAll({ search, ids }: InstancesFilter): Promise<Instance[]> {
-        const storageClient = await this.getStorageClient();
-
-        const objects = await storageClient.listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
+        const objects = await this.getInstances();
 
         const filteredDataBySearch = search
             ? _.filter(objects, o =>
@@ -40,8 +40,9 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         const filteredDataByIds = filteredDataBySearch.filter(instanceData => !ids || ids.includes(instanceData.id));
 
         const instances = await promiseMap(filteredDataByIds, async data => {
-            const sharingResult = await this.getObjectSharing(storageClient, data);
-            const object = await storageClient.getObjectInCollection<InstanceData>(Namespace.INSTANCES, data.id);
+            const sharingResult = await this.getObjectSharingOrError(data.id);
+
+            const object = await this.getInstanceDataInColletion(data.id);
 
             return sharingResult.match({
                 success: sharing => this.mapToInstance(object ?? data, sharing),
@@ -64,29 +65,29 @@ export class InstanceD2ApiRepository implements InstanceRepository {
 
     async getById(id: string): Promise<Instance | undefined> {
         const instanceData = await this.getInstanceDataInColletion(id);
+
         if (!instanceData) return undefined;
 
-        const storageClient = await this.getStorageClient();
-        const sharing = await storageClient.getObjectSharing(`${Namespace.INSTANCES}-${instanceData.id}`);
+        const sharing = await this.getObjectSharing(instanceData.id);
 
         return this.mapToInstance(instanceData, sharing);
     }
 
     async getByName(name: string): Promise<Instance | undefined> {
-        const storageClient = await this.getStorageClient();
-
-        const existingInstances = await storageClient.getObject<InstanceData[]>(Namespace.INSTANCES);
+        const existingInstances = await this.getInstances();
 
         const instanceData = existingInstances?.find(instance => instance.name === name);
 
         if (!instanceData) return undefined;
 
-        const sharing = await storageClient.getObjectSharing(`${Namespace.INSTANCES}-${instanceData.id}`);
+        const sharing = await this.getObjectSharing(instanceData.id);
 
         return this.mapToInstance(instanceData, sharing);
     }
 
     async save(instance: Instance): Promise<void> {
+        this.cache.clear();
+
         const storageClient = await this.getStorageClient();
 
         const instanceData = {
@@ -126,20 +127,27 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         return password ? new Cryptr(this.encryptionKey).encrypt(password) : "";
     }
 
+    private async getInstances() {
+        const storageClient = await this.getStorageClient();
+
+        return await this.cache.getOrPromise(Namespace.INSTANCES, () =>
+            storageClient.listObjectsInCollection<InstanceData>(Namespace.INSTANCES)
+        );
+    }
+
     private async getInstanceDataInColletion(id: string): Promise<InstanceData | undefined> {
         const storageClient = await this.getStorageClient();
 
-        const instanceData = await storageClient.getObjectInCollection<InstanceData>(Namespace.INSTANCES, id);
+        const instanceData = await this.cache.getOrPromise(`${Namespace.INSTANCES}-${id}`, () =>
+            storageClient.getObjectInCollection<InstanceData>(Namespace.INSTANCES, id)
+        );
 
         return instanceData;
     }
 
-    private async getObjectSharing(
-        storageClient: StorageClient,
-        data: InstanceData
-    ): Promise<Either<ObjectSharingError, ObjectSharing>> {
+    private async getObjectSharingOrError(id: string): Promise<Either<ObjectSharingError, ObjectSharing>> {
         try {
-            const objectSharing = await storageClient.getObjectSharing(`${Namespace.INSTANCES}-${data.id}`);
+            const objectSharing = await this.getObjectSharing(id);
 
             return objectSharing ? Either.success(objectSharing) : Either.error("unexpected-error");
         } catch (error: any) {
@@ -149,6 +157,16 @@ export class InstanceD2ApiRepository implements InstanceRepository {
                 return Either.error("unexpected-error");
             }
         }
+    }
+
+    private async getObjectSharing(id: string) {
+        const storageClient = await this.getStorageClient();
+
+        const key = `${Namespace.INSTANCES}-${id}`;
+
+        const sharing = await this.cache.getOrPromise(`sharing-${key}`, () => storageClient.getObjectSharing(key));
+
+        return sharing;
     }
 
     public getApi(): D2Api {

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import memoize from "nano-memoize";
-import { modelFactory } from "../../../models/dhis/factory";
+import { defaultName, modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
@@ -18,7 +18,15 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
-            const { type, ids, excludeRules, includeRules, includeSharingSettings, removeOrgUnitReferences } = builder;
+            const {
+                type,
+                ids,
+                excludeRules,
+                includeRules,
+                includeSharingSettings,
+                removeOrgUnitReferences,
+                removeUserObjectsAndReferences,
+            } = builder;
 
             //TODO: when metadata entities schema exists on domain, move this factory to domain
             const collectionName = modelFactory(type).getCollectionName();
@@ -47,7 +55,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     fixedElement,
                     excludeRules,
                     includeSharingSettings,
-                    removeOrgUnitReferences
+                    removeOrgUnitReferences,
+                    removeUserObjectsAndReferences
                 );
 
                 result[collectionName] = result[collectionName] || [];
@@ -57,16 +66,17 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 const references = getAllReferences(this.api, object, schema.name);
                 const includedReferences = cleanReferences(references, includeRules);
 
-                const partialResults = await promiseMap(includedReferences, type =>
-                    recursiveExport({
+                const partialResults = await promiseMap(includedReferences, type => {
+                    return recursiveExport({
                         type: type as keyof MetadataEntities,
                         ids: references[type],
                         excludeRules: nestedExcludeRules[type],
                         includeRules: nestedIncludeRules[type],
                         includeSharingSettings,
                         removeOrgUnitReferences,
-                    })
-                );
+                        removeUserObjectsAndReferences,
+                    });
+                });
 
                 _.deepMerge(result, ...partialResults);
             }
@@ -82,6 +92,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const {
             includeSharingSettings = true,
             removeOrgUnitReferences = false,
+            removeUserObjectsAndReferences = false,
             metadataIncludeExcludeRules = {},
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
@@ -96,6 +107,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const metadataType = myClass.getMetadataType();
             const collectionName = myClass.getCollectionName();
 
+            if (metadataType === defaultName) return Promise.resolve({});
+
             return this.exportMetadata({
                 type: collectionName,
                 ids: metadata[collectionName]?.map(e => e.id) || [],
@@ -107,6 +120,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
                 includeSharingSettings,
                 removeOrgUnitReferences,
+                removeUserObjectsAndReferences,
             });
         });
 
@@ -119,7 +133,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         const finalMetadataPackage = {
             organisationUnits: !syncParams?.removeOrgUnitObjects ? organisationUnits : undefined,
-            users: !syncParams?.removeUserObjects ? users : undefined,
+            users: !syncParams?.removeUserObjects && !syncParams?.removeUserObjectsAndReferences ? users : undefined,
             ...rest,
         };
 

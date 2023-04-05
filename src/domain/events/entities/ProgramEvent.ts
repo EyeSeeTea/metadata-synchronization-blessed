@@ -9,7 +9,7 @@ export interface ProgramEvent {
     created: string;
     deleted: boolean;
     lastUpdated: string;
-    status: string;
+    status: EventStatus;
     storedBy: string;
     dueDate: string;
     eventDate: string;
@@ -17,3 +17,5 @@ export interface ProgramEvent {
     attributeOptionCombo?: string;
     dataValues: ProgramEventDataValue[];
 }
+
+export type EventStatus = "ACTIVE" | "COMPLETED" | "VISITED" | "SCHEDULED" | "OVERDUE" | "SKIPPED";

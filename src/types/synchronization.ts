@@ -8,6 +8,7 @@ export interface ExportBuilder {
     includeRules: string[][];
     includeSharingSettings: boolean;
     removeOrgUnitReferences: boolean;
+    removeUserObjectsAndReferences: boolean;
 }
 
 export interface SynchronizationState {

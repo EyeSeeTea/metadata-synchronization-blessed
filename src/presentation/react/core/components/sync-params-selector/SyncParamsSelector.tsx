@@ -124,6 +124,10 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
         );
     };
 
+    const changeRemoveUserObjectsAndReferences = (removeUserObjectsAndReferences: boolean) => {
+        onChange(syncRule.updateSyncParams({ ...syncParams, removeUserObjectsAndReferences }));
+    };
+
     const changeRemoveOrgUnitObjects = (removeOrgUnitObjects: boolean) => {
         onChange(
             syncRule.updateSyncParams({
@@ -178,6 +182,16 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                         label={i18n.t("Remove organisation units and keep organisation units references (UID)")}
                         onValueChange={changeRemoveOrgUnitObjects}
                         value={syncParams.removeOrgUnitObjects || false}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove users and references (UID)")}
+                        onValueChange={changeRemoveUserObjectsAndReferences}
+                        value={syncParams.removeUserObjectsAndReferences || false}
                     />
                 </div>
             )}

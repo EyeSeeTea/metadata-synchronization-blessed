@@ -231,6 +231,7 @@ export class SynchronizationRule {
             includeSharingSettings: true,
             removeOrgUnitReferences: false,
             removeUserObjects: false,
+            removeUserObjectsAndReferences: false,
             removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             ...params,
