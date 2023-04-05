@@ -18,7 +18,15 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
-            const { type, ids, excludeRules, includeRules, includeSharingSettings, removeOrgUnitReferences } = builder;
+            const {
+                type,
+                ids,
+                excludeRules,
+                includeRules,
+                includeSharingSettings,
+                removeOrgUnitReferences,
+                removeUserObjectsAndReferences,
+            } = builder;
 
             //TODO: when metadata entities schema exists on domain, move this factory to domain
             const collectionName = modelFactory(type).getCollectionName();
@@ -47,7 +55,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     fixedElement,
                     excludeRules,
                     includeSharingSettings,
-                    removeOrgUnitReferences
+                    removeOrgUnitReferences,
+                    removeUserObjectsAndReferences
                 );
 
                 result[collectionName] = result[collectionName] || [];
@@ -65,6 +74,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                         includeRules: nestedIncludeRules[type],
                         includeSharingSettings,
                         removeOrgUnitReferences,
+                        removeUserObjectsAndReferences,
                     });
                 });
 
@@ -82,6 +92,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const {
             includeSharingSettings = true,
             removeOrgUnitReferences = false,
+            removeUserObjectsAndReferences = false,
             metadataIncludeExcludeRules = {},
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
@@ -109,6 +120,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
                 includeSharingSettings,
                 removeOrgUnitReferences,
+                removeUserObjectsAndReferences,
             });
         });
 
@@ -121,7 +133,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         const finalMetadataPackage = {
             organisationUnits: !syncParams?.removeOrgUnitObjects ? organisationUnits : undefined,
-            users: !syncParams?.removeUserObjects ? users : undefined,
+            users: !syncParams?.removeUserObjects && !syncParams?.removeUserObjectsAndReferences ? users : undefined,
             ...rest,
         };
 
