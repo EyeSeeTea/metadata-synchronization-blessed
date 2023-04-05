@@ -1,0 +1,37 @@
+{
+    "programRules": [
+        {
+            "lastUpdated": "2020-07-23T13:14:25.599",
+            "id": "Is56icDYrFf",
+            "href": "http://172.16.0.99:8083/api/programRules/Is56icDYrFf",
+            "created": "2020-07-23T12:37:05.725",
+            "name": "AB treatment started/completed",
+            "displayName": "AB treatment started/completed",
+            "description": "If AB treatment started = yes, then show completion question",
+            "externalAccess": false,
+            "condition": "#{BU_Tx_AB_YNU_T} != 1",
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "program": { "id": "AODL0NZqmGx" },
+            "lastUpdatedBy": {
+                "displayName": "Lise GROUT",
+                "name": "Lise GROUT",
+                "id": "ilJDyuqlwDC",
+                "username": "lise.grout"
+            },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "programRuleActions": [{ "id": "kQLfqqoc5ZB" }],
+            "userAccesses": []
+        }
+    ]
+}

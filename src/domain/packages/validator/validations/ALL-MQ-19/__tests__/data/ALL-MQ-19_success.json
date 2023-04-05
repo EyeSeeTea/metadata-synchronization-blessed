@@ -1,0 +1,116 @@
+{
+    "options": [
+        {
+            "code": "L-C",
+            "lastUpdated": "2022-02-27T16:19:28.131",
+            "id": "FQN0uEwJN8C",
+            "href": "http://172.16.0.99:8083/api/options/FQN0uEwJN8C",
+            "created": "2016-05-12T17:37:27.000",
+            "name": "Lambda-cyhalothrin",
+            "displayName": "Lambda-cyhalothrin",
+            "externalAccess": false,
+            "displayFormName": "Lambda-cyhalothrin",
+            "sortOrder": 1,
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "optionSet": { "id": "Bro7ItXHy5W" },
+            "favorites": [],
+            "translations": [
+                { "property": "DESCRIPTION", "locale": "es", "value": "LAMBDA-CYHALOTHRIN" },
+                { "property": "NAME", "locale": "es", "value": "LAMBDA-CYHALOTHRIN" },
+                { "property": "FORM_NAME", "locale": "es", "value": "LAMBDA-CYHALOTHRIN" }
+            ],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        },
+        {
+            "code": "MAL",
+            "lastUpdated": "2022-02-27T16:19:28.131",
+            "id": "Yz9Z14TqC9T",
+            "href": "http://172.16.0.99:8083/api/options/Yz9Z14TqC9T",
+            "created": "2016-05-12T17:37:37.000",
+            "name": "Malathion",
+            "displayName": "Malathion",
+            "externalAccess": false,
+            "displayFormName": "Malathion",
+            "sortOrder": 4,
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "optionSet": { "id": "Bro7ItXHy5W" },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        },
+        {
+            "code": "P-M",
+            "lastUpdated": "2022-02-27T16:19:28.113",
+            "id": "YtsjrR6MoXK",
+            "href": "http://172.16.0.99:8083/api/options/YtsjrR6MoXK",
+            "created": "2022-02-23T18:24:34.873",
+            "name": "Pirimiphos-methyl",
+            "displayName": "Pirimiphos-methyl",
+            "externalAccess": false,
+            "displayFormName": "Pirimiphos-methyl",
+            "sortOrder": 2,
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "optionSet": { "id": "Bro7ItXHy5W" },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        },
+        {
+            "code": "PRO",
+            "lastUpdated": "2022-02-27T16:19:28.131",
+            "id": "u7bXEmmiZd0",
+            "href": "http://172.16.0.99:8083/api/options/u7bXEmmiZd0",
+            "created": "2016-05-12T17:37:51.000",
+            "name": "Propoxur",
+            "displayName": "Propoxur",
+            "externalAccess": false,
+            "displayFormName": "Propoxur",
+            "sortOrder": 3,
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "optionSet": { "id": "Bro7ItXHy5W" },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        }
+    ]
+}

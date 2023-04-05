@@ -819,6 +819,12 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Validating package"
+msgstr ""
+
+msgid "Package is valid"
+msgstr ""
+
 msgid "Generating module"
 msgstr ""
 
@@ -876,6 +882,9 @@ msgstr ""
 msgid "Generate Module"
 msgstr ""
 
+msgid "Validate package"
+msgstr ""
+
 msgid "Not recommended"
 msgstr ""
 
@@ -883,6 +892,9 @@ msgid "Dhis2 version"
 msgstr ""
 
 msgid "An error has ocurred retrieving imported packages"
+msgstr ""
+
+msgid "Validation Summary"
 msgstr ""
 
 msgid "Cannot get data from remote instance"

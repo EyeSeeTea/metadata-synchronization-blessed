@@ -1,0 +1,136 @@
+{
+    "programRuleVariables": [
+        {
+            "lastUpdated": "2020-11-23T10:50:51.905",
+            "id": "HDBv55QSK1k",
+            "href": "http://172.16.0.99:8083/api/programRuleVariables/HDBv55QSK1k",
+            "created": "2019-07-15T17:22:25.816",
+            "name": "ETA_EUMedicationsanFluids_EVENT",
+            "displayName": "ETA_EUMedicationsandFluids_EVENT",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "externalAccess": false,
+            "useCodeForOptionSet": true,
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "program": { "id": "auqdJ66DqAT" },
+            "lastUpdatedBy": {
+                "displayName": "Bot Automated-Tasks",
+                "name": "Bot Automated-Tasks",
+                "id": "bI1uY3KuAKV",
+                "username": "widp.admin"
+            },
+            "dataElement": { "id": "maG304b7FAw" },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        },
+        {
+            "lastUpdated": "2020-11-23T10:50:51.905",
+            "id": "tJd01JcSgPH",
+            "href": "http://172.16.0.99:8083/api/programRuleVariables/tJd01JcSgPH",
+            "created": "2019-07-03T13:19:42.552",
+            "name": "ETA_PrioFacilityInterventionsPerfomed_EVENT",
+            "displayName": "ETA_PriorFacilityInterventionsPerformed_EVENT",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "externalAccess": false,
+            "useCodeForOptionSet": false,
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "program": { "id": "auqdJ66DqAT" },
+            "lastUpdatedBy": {
+                "displayName": "Bot Automated-Tasks",
+                "name": "Bot Automated-Tasks",
+                "id": "bI1uY3KuAKV",
+                "username": "widp.admin"
+            },
+            "dataElement": { "id": "IMTQqUuesz9" },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        },
+        {
+            "lastUpdated": "2020-11-23T10:50:51.905",
+            "id": "KQzORWkVYc6",
+            "href": "http://172.16.0.99:8083/api/programRuleVariables/KQzORWkVYc6",
+            "created": "2019-09-30T10:03:47.336",
+            "name": " ETA_EU Procedures_Diagnostic peritoneal lavage_EVENT",
+            "displayName": " ETA_EU Procedures_Diagnostic peritoneal lavage_EVENT",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "externalAccess": false,
+            "useCodeForOptionSet": true,
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "program": { "id": "auqdJ66DqAT" },
+            "lastUpdatedBy": {
+                "displayName": "Bot Automated-Tasks",
+                "name": "Bot Automated-Tasks",
+                "id": "bI1uY3KuAKV",
+                "username": "widp.admin"
+            },
+            "dataElement": { "id": "o0qk0H383zF" },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        },
+        {
+            "lastUpdated": "2020-11-23T10:50:51.905",
+            "id": "hgW5s8M9vl1",
+            "href": "http://172.16.0.99:8083/api/programRuleVariables/hgW5s8M9vl1",
+            "created": "2019-06-28T18:05:46.504",
+            "name": "ETA_CoExtended_EVENT",
+            "displayName": "ETA_CoreExtended_EVENT",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "externalAccess": false,
+            "useCodeForOptionSet": true,
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "program": { "id": "auqdJ66DqAT" },
+            "lastUpdatedBy": {
+                "displayName": "Bot Automated-Tasks",
+                "name": "Bot Automated-Tasks",
+                "id": "bI1uY3KuAKV",
+                "username": "widp.admin"
+            },
+            "dataElement": { "id": "R2SLwXZnlEY" },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        }
+    ]
+}

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-04-05T06:35:57.619Z\n"
-"PO-Revision-Date: 2023-04-05T06:35:57.619Z\n"
+"POT-Creation-Date: 2023-04-05T10:15:32.000Z\n"
+"PO-Revision-Date: 2023-04-05T10:15:32.000Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -818,6 +818,12 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Validating package"
+msgstr ""
+
+msgid "Package is valid"
+msgstr ""
+
 msgid "Generating module"
 msgstr ""
 
@@ -875,6 +881,9 @@ msgstr ""
 msgid "Generate Module"
 msgstr ""
 
+msgid "Validate package"
+msgstr ""
+
 msgid "Not recommended"
 msgstr ""
 
@@ -882,6 +891,9 @@ msgid "Dhis2 version"
 msgstr ""
 
 msgid "An error has ocurred retrieving imported packages"
+msgstr ""
+
+msgid "Validation Summary"
 msgstr ""
 
 msgid "Cannot get data from remote instance"

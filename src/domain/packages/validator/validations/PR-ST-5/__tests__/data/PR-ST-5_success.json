@@ -1,0 +1,192 @@
+{
+    "programRules": [
+        {
+            "lastUpdated": "2020-07-23T13:14:25.599",
+            "id": "Is56icDYrFf",
+            "href": "http://172.16.0.99:8083/api/programRules/Is56icDYrFf",
+            "created": "2020-07-23T12:37:05.725",
+            "name": "AB treatment started/completed",
+            "displayName": "AB treatment started/completed",
+            "description": "If AB treatment started = yes, then show completion question",
+            "externalAccess": false,
+            "condition": "#{BU_Tx_AB_YNU_T} != 1",
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "program": { "id": "AODL0NZqmGx" },
+            "lastUpdatedBy": {
+                "displayName": "Lise GROUT",
+                "name": "Lise GROUT",
+                "id": "ilJDyuqlwDC",
+                "username": "lise.grout"
+            },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "programRuleActions": [{ "id": "kQLfqqoc5ZB" }],
+            "userAccesses": []
+        }
+    ],
+    "programRuleActions": [
+        {
+            "lastUpdated": "2020-07-23T13:14:25.501",
+            "id": "kQLfqqoc5ZB",
+            "href": "http://172.16.0.99:8083/api/programRuleActions/kQLfqqoc5ZB",
+            "created": "2020-07-23T12:37:05.678",
+            "externalAccess": false,
+            "programRuleActionType": "HIDEFIELD",
+            "evaluationTime": "ALWAYS",
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "programRule": { "id": "Is56icDYrFf" },
+            "lastUpdatedBy": {
+                "displayName": "Lise GROUT",
+                "name": "Lise GROUT",
+                "id": "ilJDyuqlwDC",
+                "username": "lise.grout"
+            },
+            "trackedEntityAttribute": { "id": "wiZbIU6sFG5" },
+            "favorites": [],
+            "evaluationEnvironments": ["ANDROID", "WEB"],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": []
+        }
+    ],
+    "programs": [
+        {
+            "lastUpdated": "2021-09-21T11:31:43.177",
+            "id": "AODL0NZqmGx",
+            "href": "http://172.16.0.99:8083/api/programs/AODL0NZqmGx",
+            "created": "2019-04-15T09:30:01.130",
+            "name": "BU02 - Register - with clinical score",
+            "shortName": "BU02 - with score",
+            "code": "PRE_NTD_BU02_SCORE",
+            "publicAccess": "--------",
+            "ignoreOverdueEvents": false,
+            "skipOffline": false,
+            "displayDescription": "This program enables to capture individual data for all suspected Buruli ulcer (BU) cases. It also enables to calculate the clinical score in order to guide the clinical diagnosis of BU.",
+            "onlyEnrollOnce": false,
+            "displayFormName": "BU02 - Register - with clinical score",
+            "version": 24,
+            "maxTeiCountToReturn": 0,
+            "selectIncidentDatesInFuture": false,
+            "selectEnrollmentDatesInFuture": false,
+            "registration": false,
+            "favorite": false,
+            "useFirstStageDuringRegistration": false,
+            "displayName": "BU02 - Register - with clinical score",
+            "completeEventsExpiryDays": 0,
+            "description": "This program enables to capture individual data for all suspected Buruli ulcer (BU) cases. It also enables to calculate the clinical score in order to guide the clinical diagnosis of BU.",
+            "displayShortName": "BU02 - with score",
+            "externalAccess": false,
+            "withoutRegistration": true,
+            "featureType": "NONE",
+            "minAttributesRequiredToSearch": 1,
+            "displayFrontPageList": false,
+            "programType": "WITHOUT_REGISTRATION",
+            "accessLevel": "OPEN",
+            "displayIncidentDate": true,
+            "expiryDays": 0,
+            "categoryCombo": { "id": "JzvGfLYkX17" },
+            "lastUpdatedBy": {
+                "displayName": "Ramon Jose JIMENEZ POMARETA",
+                "name": "Ramon Jose JIMENEZ POMARETA",
+                "id": "eK26I7dRbC4",
+                "username": "ramon.pomareta"
+            },
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true,
+                "data": { "read": true, "write": true }
+            },
+            "createdBy": {
+                "displayName": "Lise GROUT",
+                "name": "Lise GROUT",
+                "id": "ilJDyuqlwDC",
+                "username": "lise.grout"
+            },
+            "user": {
+                "displayName": "Lise GROUT",
+                "name": "Lise GROUT",
+                "id": "ilJDyuqlwDC",
+                "username": "lise.grout"
+            },
+            "programIndicators": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userRoles": [],
+            "userAccesses": [],
+            "favorites": [],
+            "programRuleVariables": [],
+            "programTrackedEntityAttributes": [
+                {
+                    "lastUpdated": "2020-06-04T17:17:12.802",
+                    "id": "OT1TfVwhsBO",
+                    "created": "2019-09-11T12:37:56.247",
+                    "name": "ADMIN_Analytics_Check(Tracker) First name",
+                    "displayName": "ADMIN_Analytics_Check(Tracker) First name",
+                    "mandatory": false,
+                    "displayShortName": "ADMIN_Analytics_Check(Tracker) First Name",
+                    "externalAccess": false,
+                    "renderOptionsAsRadio": false,
+                    "valueType": "TEXT",
+                    "allowFutureDate": false,
+                    "sharing": {
+                        "external": false,
+                        "users": {},
+                        "userGroups": {}
+                    },
+                    "searchable": true,
+                    "displayInList": true,
+                    "sortOrder": 1,
+                    "favorite": false,
+                    "access": {
+                        "read": true,
+                        "update": true,
+                        "externalize": true,
+                        "delete": true,
+                        "write": true,
+                        "manage": true
+                    },
+                    "program": {
+                        "id": "AODL0NZqmGx"
+                    },
+                    "trackedEntityAttribute": {
+                        "id": "wiZbIU6sFG5"
+                    },
+                    "favorites": [],
+                    "programTrackedEntityAttributeGroups": [],
+                    "translations": [],
+                    "userGroupAccesses": [],
+                    "attributeValues": [],
+                    "userAccesses": []
+                }
+            ],
+            "notificationTemplates": [],
+            "organisationUnits": [],
+            "programSections": [],
+            "programStages": [{ "id": "Uf4sCdN2ZKo" }]
+        }
+    ]
+}
