@@ -40,6 +40,12 @@ const variants = [
         title: "MetaData Synchronization Package Exporter Widget",
         file: "metadata-synchronization-widget-package-exporter",
     },
+    {
+        type: "app",
+        name: "sp-emergency-responses",
+        title: "Emergency Responses Sync",
+        file: "emergency-responses-sync",
+    },
 ] as const;
 
 function getYargs(): Argv {

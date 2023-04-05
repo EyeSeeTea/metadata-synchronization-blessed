@@ -1,4 +1,4 @@
-import { EventsPostResponse } from "@eyeseetea/d2-api/api/events";
+import { EventsPostParams, EventsPostResponse } from "@eyeseetea/d2-api/api/events";
 import _ from "lodash";
 import moment from "moment";
 import {
@@ -24,6 +24,21 @@ export class EventsD2ApiRepository implements EventsRepository {
     }
 
     public async getEvents(
+        params: DataSynchronizationParams,
+        programStageIds: string[] = [],
+        defaults: string[] = []
+    ): Promise<ProgramEvent[]> {
+        const events = await this.getEventsByStrategy(params, programStageIds, defaults);
+
+        // Temporal fix for notes:
+        // If a note already exist and sync again the event the sync fail
+        // Remove notes until the bug is fixed by dhis2
+        const eventsWithoutNotes = events.map(event => ({ ...event, notes: [] }));
+
+        return eventsWithoutNotes;
+    }
+
+    private async getEventsByStrategy(
         params: DataSynchronizationParams,
         programStageIds: string[] = [],
         defaults: string[] = []
@@ -73,8 +88,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
                     lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
-                    // @ts-ignore FIXME: Add property in d2-api
-                    fields: ":all",
+                    fields: { $all: true },
                 })
                 .getData();
         };
@@ -121,8 +135,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
                     endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
                     lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
-                    // @ts-ignore FIXME: Add property in d2-api
-                    fields: ":all",
+                    fields: { $all: true },
                 })
                 .getData();
         };
@@ -166,8 +179,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     .getAll({
                         programStage,
                         event: ids.join(";"),
-                        // @ts-ignore FIXME: Add property in d2-api
-                        fields: ":all",
+                        fields: { $all: true },
                     })
                     .getData();
                 result.push(...events);
@@ -198,32 +210,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     type: "events",
                 };
             } else {
-                const { response } = await this.api.events
-                    .postAsync(
-                        {
-                            idScheme: params.idScheme ?? "UID",
-                            dataElementIdScheme: params.dataElementIdScheme ?? "UID",
-                            orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
-                            dryRun: params.dryRun ?? false,
-                            preheatCache: params.preheatCache ?? false,
-                            skipExistingCheck: params.skipExistingCheck ?? false,
-                        },
-                        data
-                    )
-                    .getData();
-
-                const result = await this.api.system.waitFor(response.jobType, response.id).getData();
-
-                if (!result) {
-                    return {
-                        status: "ERROR",
-                        instance: this.instance.toPublicObject(),
-                        date: new Date(),
-                        type: "events",
-                    };
-                }
-
-                return this.cleanEventsImportResponse(result);
+                return this.push(params, data);
             }
         } catch (error: any) {
             if (error?.response?.data) {
@@ -268,6 +255,39 @@ export class EventsD2ApiRepository implements EventsRepository {
             errors,
             date: new Date(),
             type: "events",
+            response: importResult,
         };
+    }
+
+    private async push(params: DataImportParams, data: EventsPackage): Promise<SynchronizationResult> {
+        const eventsPostParams: EventsPostParams = {
+            idScheme: params.idScheme ?? "UID",
+            dataElementIdScheme: params.dataElementIdScheme ?? "UID",
+            orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
+            dryRun: params.dryRun ?? false,
+            preheatCache: params.preheatCache ?? false,
+            skipExistingCheck: params.skipExistingCheck ?? false,
+        };
+
+        if (params.async || params.async === undefined) {
+            const { response } = await this.api.events.postAsync(eventsPostParams, data).getData();
+
+            const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+
+            if (!result) {
+                return {
+                    status: "ERROR",
+                    instance: this.instance.toPublicObject(),
+                    date: new Date(),
+                    type: "events",
+                };
+            }
+
+            return this.cleanEventsImportResponse(result);
+        } else {
+            const { response } = await this.api.events.post(eventsPostParams, data).getData();
+
+            return this.cleanEventsImportResponse(response);
+        }
     }
 }

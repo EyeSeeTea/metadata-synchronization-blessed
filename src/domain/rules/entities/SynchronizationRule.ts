@@ -140,8 +140,16 @@ export class SynchronizationRule {
         return this.syncRule.builder?.dataParams?.allEvents ?? true;
     }
 
+    public get dataSyncAllTEIs(): boolean {
+        return this.syncRule.builder?.dataParams?.allTEIs ?? true;
+    }
+
     public get excludeTeiRelationships(): boolean {
         return this.syncRule.builder?.dataParams?.excludeTeiRelationships ?? false;
+    }
+
+    public get excludeEventCoordinates(): boolean {
+        return this.syncRule.builder?.dataParams?.excludeEventCoordinates ?? false;
     }
 
     public get dataSyncEnableAggregation(): boolean | undefined {
@@ -223,6 +231,7 @@ export class SynchronizationRule {
             includeSharingSettings: true,
             removeOrgUnitReferences: false,
             removeUserObjects: false,
+            removeUserObjectsAndReferences: false,
             removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             ...params,
@@ -491,8 +500,16 @@ export class SynchronizationRule {
         return this.updateBuilderDataParams({ allEvents });
     }
 
+    public updateDataSyncAllTEIs(allTEIs?: boolean): SynchronizationRule {
+        return this.updateBuilderDataParams({ allTEIs });
+    }
+
     public updateExcludeTeiRelationships(excludeTeiRelationships?: boolean): SynchronizationRule {
         return this.updateBuilderDataParams({ excludeTeiRelationships });
+    }
+
+    public updateExcludeEventCoordinates(excludeEventCoordinates?: boolean): SynchronizationRule {
+        return this.updateBuilderDataParams({ excludeEventCoordinates });
     }
 
     public updateDataSyncEnableAggregation(enableAggregation?: boolean): SynchronizationRule {
@@ -639,6 +656,7 @@ export class SynchronizationRule {
             dataSyncEventsTeisOrAggregation: _.compact([
                 this.type === "events" &&
                 !this.dataSyncAllEvents &&
+                !this.dataSyncAllTEIs &&
                 this.dataSyncEvents.length === 0 &&
                 this.dataSyncTeis.length === 0 &&
                 !this.dataSyncEnableAggregation

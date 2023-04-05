@@ -1,0 +1,64 @@
+{
+    "programIndicators": [
+        {
+            "code": "I_ACL_cases_by_provenance",
+            "lastUpdated": "2021-09-08T15:36:25.347",
+            "id": "sUIOivMvDwS",
+            "href": "https://dev.eyeseetea.com/who-dev-236/api/programIndicators/sUIOivMvDwS",
+            "created": "2020-09-15T19:00:41.764",
+            "name": "ACL_cases_by_provenance",
+            "shortName": "ACL_cases_by_provenance",
+            "aggregationType": "SUM",
+            "displayName": "ACL_cases_by_provenance",
+            "displayInForm": false,
+            "publicAccess": "--------",
+            "description": "Adds ACL cases only if there are data. This PI is needed due to a DHIS2 bug. (count function does not work correctly in the Indicator part)",
+            "displayShortName": "ACL_cases_by_provenance",
+            "externalAccess": false,
+            "periodOffset": 0,
+            "displayDescription": "Adds ACL cases only if there are data. This PI is needed due to a DHIS2 bug. (count function does not work correctly in the Indicator part)",
+            "expression": "#{PfiJXTo3shK.lhxeWB8OiAG}",
+            "dimensionItem": "sUIOivMvDwS",
+            "displayFormName": "ACL_cases_by_provenance",
+            "filter": "d2:hasValue(#{PfiJXTo3shK.lhxeWB8OiAG})",
+            "analyticsType": "EVENT",
+            "favorite": false,
+            "dimensionItemType": "PROGRAM_INDICATOR",
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "program": { "id": "w9hSFsNr3Vh" },
+            "lastUpdatedBy": {
+                "displayName": "Bot Automated-Tasks",
+                "name": "Bot Automated-Tasks",
+                "id": "bI1uY3KuAKV",
+                "username": "widp.admin"
+            },
+            "createdBy": {
+                "displayName": "Ramon Jose JIMENEZ POMARETA",
+                "name": "Ramon Jose JIMENEZ POMARETA",
+                "id": "eK26I7dRbC4",
+                "username": "ramon.pomareta"
+            },
+            "user": {
+                "displayName": "Ramon Jose JIMENEZ POMARETA",
+                "name": "Ramon Jose JIMENEZ POMARETA",
+                "id": "eK26I7dRbC4",
+                "username": "ramon.pomareta"
+            },
+            "favorites": [],
+            "translations": [],
+            "programIndicatorGroups": [],
+            "analyticsPeriodBoundaries": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "userAccesses": [],
+            "legendSets": []
+        }
+    ]
+}

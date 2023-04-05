@@ -1,13 +1,13 @@
-import { FilterSingleOperatorBase } from "@eyeseetea/d2-api/api/common";
+import { FilterValueOperator } from "@eyeseetea/d2-api/api/common";
 import { ObjectsTableDetailField, TableColumn } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
-import { D2Api, D2ApiDefinition, Model } from "../../types/d2-api";
+import { D2Api, Model } from "../../types/d2-api";
 import { d2BaseModelColumns, d2BaseModelDetails, d2BaseModelFields, MetadataType } from "../../utils/d2";
 
 export interface SearchFilter {
     field: string;
-    operator: FilterSingleOperatorBase;
+    operator: FilterValueOperator;
 }
 
 // TODO: This concepts are our entity definition
@@ -37,14 +37,8 @@ export abstract class D2Model {
     protected static isGlobalMapping = false;
     protected static isSelectable = true;
 
-    public static getApiModel(api: D2Api): InstanceType<typeof Model> {
-        const modelCollection = api.models as {
-            [ModelKey in keyof D2ApiDefinition["schemas"]]: Model<
-                D2ApiDefinition,
-                D2ApiDefinition["schemas"][ModelKey]
-            >;
-        };
-        return modelCollection[this.collectionName];
+    public static getApiModel(api: D2Api): Model<any, any> {
+        return api.models[this.collectionName];
     }
 
     public static getModelName(): string {

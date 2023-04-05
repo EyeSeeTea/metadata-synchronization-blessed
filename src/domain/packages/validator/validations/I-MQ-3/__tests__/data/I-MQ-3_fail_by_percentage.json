@@ -1,0 +1,65 @@
+{
+    "indicators": [
+        {
+            "lastUpdated": "2021-05-12T19:17:49.296",
+            "id": "EvWlGCjCqhl",
+            "href": "https://dev.eyeseetea.com/who-dev-236/api/indicators/EvWlGCjCqhl",
+            "created": "2018-05-31T19:52:33.689",
+            "name": " HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs percentage",
+            "shortName": "Proportion of PWIDs percentage",
+            "publicAccess": "--------",
+            "displayName": "HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs",
+            "description": "Proportion of PWIDs",
+            "displayShortName": "Proportion of PWIDs",
+            "externalAccess": false,
+            "displayNumeratorDescription": "PWIDs initiating treatment",
+            "denominatorDescription": "Unity",
+            "periodOffset": 0,
+            "displayDenominatorDescription": "Unity",
+            "numeratorDescription": "PWIDs initiating treatment",
+            "displayDescription": "Proportion of PWIDs",
+            "dimensionItem": "EvWlGCjCqhl",
+            "displayFormName": "HEP_CASCADE_NewlyStartedTreatmentAmongPersonsWhoInjectedDrugs",
+            "numerator": "#{T3mpmqHzUJL.GtH71WPaNR4}",
+            "denominator": "1",
+            "annualized": false,
+            "favorite": false,
+            "dimensionItemType": "INDICATOR",
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "indicatorType": { "id": "Ea2tEoMmulV" },
+            "lastUpdatedBy": {
+                "displayName": "Ignacio del Cano Costa",
+                "name": "Ignacio del Cano Costa",
+                "id": "kD52FGwJgDF",
+                "username": "idelcano"
+            },
+            "createdBy": {
+                "displayName": "Foche Ignacio",
+                "name": "Foche Ignacio",
+                "id": "H4atNsEuKxP",
+                "username": "ignacio.foche"
+            },
+            "user": {
+                "displayName": "Foche Ignacio",
+                "name": "Foche Ignacio",
+                "id": "H4atNsEuKxP",
+                "username": "ignacio.foche"
+            },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "indicatorGroups": [{ "id": "HMIUQkJIY0G" }],
+            "userAccesses": [],
+            "dataSets": [],
+            "legendSets": []
+        }
+    ]
+}

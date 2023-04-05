@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2022-04-21T07:57:05.960Z\n"
-"PO-Revision-Date: 2022-04-21T07:57:05.960Z\n"
+"POT-Creation-Date: 2023-04-05T10:15:32.000Z\n"
+"PO-Revision-Date: 2023-04-05T10:15:32.000Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -24,6 +24,9 @@ msgid "Field {{field}} needs to be a valid url"
 msgstr ""
 
 msgid "Field {{field}} is not valid"
+msgstr ""
+
+msgid "Program not found"
 msgstr ""
 
 msgid "An instance with this name already exists"
@@ -815,6 +818,12 @@ msgstr ""
 msgid "Couldn't create new branch on store"
 msgstr ""
 
+msgid "Validating package"
+msgstr ""
+
+msgid "Package is valid"
+msgstr ""
+
 msgid "Generating module"
 msgstr ""
 
@@ -872,6 +881,9 @@ msgstr ""
 msgid "Generate Module"
 msgstr ""
 
+msgid "Validate package"
+msgstr ""
+
 msgid "Not recommended"
 msgstr ""
 
@@ -879,6 +891,9 @@ msgid "Dhis2 version"
 msgstr ""
 
 msgid "An error has ocurred retrieving imported packages"
+msgstr ""
+
+msgid "Validation Summary"
 msgstr ""
 
 msgid "Cannot get data from remote instance"
@@ -1041,6 +1056,9 @@ msgstr ""
 msgid "Remove organisation units and keep organisation units references (UID)"
 msgstr ""
 
+msgid "Remove users and references (UID)"
+msgstr ""
+
 msgid "Remove users and keep user references (UID)"
 msgstr ""
 
@@ -1060,6 +1078,9 @@ msgid "Ignore data with same value on destination (only for program indicators)"
 msgstr ""
 
 msgid "Ignore data with same value on destination"
+msgstr ""
+
+msgid "Async mode"
 msgstr ""
 
 msgid "Sync rule {{idx}}: {{name}} ({{id}})"
@@ -1318,6 +1339,9 @@ msgstr ""
 msgid "Exclude rules"
 msgstr ""
 
+msgid "All TEIs"
+msgstr ""
+
 msgid "{{total}} selected TEIs"
 msgstr ""
 
@@ -1349,6 +1373,12 @@ msgid "Updates"
 msgstr ""
 
 msgid "Run Analytics before sync"
+msgstr ""
+
+msgid "Run Analytics after sync"
+msgstr ""
+
+msgid "{{async}}"
 msgstr ""
 
 msgid "Frequency"
@@ -1413,10 +1443,16 @@ msgstr ""
 msgid "Sync all events"
 msgstr ""
 
+msgid "Exclude coordinates"
+msgstr ""
+
 msgid "You do not have assigned any organisation unit"
 msgstr ""
 
 msgid "Enrollment Date"
+msgstr ""
+
+msgid "Sync all TEIs"
 msgstr ""
 
 msgid "Exclude relationships"
@@ -1440,7 +1476,10 @@ msgstr ""
 msgid "Analytics"
 msgstr ""
 
-msgid "Run Analytics"
+msgid "Run Analytics Before"
+msgstr ""
+
+msgid "Run Analytics After"
 msgstr ""
 
 msgid "Number of years to include"
@@ -2027,13 +2066,16 @@ msgstr ""
 msgid "Synchronizing aggregated data..."
 msgstr ""
 
-msgid "Run analytics is disabled, last analytics execution: {{lastExecution}}"
+msgid "Run analytics after is disabled, last analytics execution: {{lastExecution}}"
 msgstr ""
 
 msgid "Finished aggregated data synchronization with errors"
 msgstr ""
 
 msgid "Finished aggregated data synchronization successfully"
+msgstr ""
+
+msgid "An error has ocurred retrieving the instance {{name}}"
 msgstr ""
 
 msgid "Checking data values in previous periods ...."
@@ -2063,6 +2105,27 @@ msgstr ""
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
+msgstr ""
+
+msgid "Output: "
+msgstr ""
+
+msgid "Sync finished - {{dateEnd}}"
+msgstr ""
+
+msgid "Status: {{status}}"
+msgstr ""
+
+msgid "Synchronizing rule {{name}} - {{dateStart}}"
+msgstr ""
+
+msgid "Error: {{code}}"
+msgstr ""
+
+msgid "Consultations and Surgery (Events)"
+msgstr ""
+
+msgid "Patients (Tracked Entity Instances)"
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

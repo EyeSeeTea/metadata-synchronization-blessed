@@ -10,6 +10,7 @@ export interface DataImportParams {
     skipExistingCheck?: boolean;
     skipAudit?: boolean;
     strategy?: "NEW_AND_UPDATES" | "NEW" | "UPDATES" | "DELETES";
+    async?: boolean;
 }
 
 export interface DataSynchronizationParams extends DataImportParams {
@@ -23,11 +24,14 @@ export interface DataSynchronizationParams extends DataImportParams {
     events?: string[];
     teis?: string[];
     allEvents?: boolean;
+    allTEIs?: boolean;
     excludeTeiRelationships?: boolean;
+    excludeEventCoordinates?: boolean;
     generateNewUid?: boolean;
     enableAggregation?: boolean;
     aggregationType?: DataSyncAggregation;
-    runAnalytics?: boolean;
+    runAnalyticsBefore?: boolean;
+    runAnalyticsAfter?: boolean;
     includeAnalyticsZeroValues?: boolean;
     analyticsYears?: number;
     ignoreDuplicateExistingValues?: boolean;

@@ -4,7 +4,8 @@ import { NamedDate } from "../../../react/msf-aggregate-data/components/org-unit
 export type RunAnalyticsSettings = "true" | "false" | "by-sync-rule-settings";
 
 export type MSFSettings = {
-    runAnalytics: RunAnalyticsSettings;
+    runAnalyticsBefore: RunAnalyticsSettings;
+    runAnalyticsAfter: RunAnalyticsSettings;
     analyticsYears: number;
     projectMinimumDates: Record<string, NamedDate>;
     deleteDataValuesBeforeSync?: boolean;
@@ -12,7 +13,7 @@ export type MSFSettings = {
     lastExecutions: Record<string, Date>;
 };
 
-export type PersistedMSFSettings = Omit<MSFSettings, "runAnalytics">;
+export type PersistedMSFSettings = Omit<MSFSettings, "runAnalyticsBefore" | "runAnalyticsAfter">;
 
 export type AdvancedSettings = {
     period?: ObjectWithPeriod;
@@ -21,7 +22,8 @@ export type AdvancedSettings = {
 export const MSFStorageKey = "msf-storage";
 
 export const defaultMSFSettings: MSFSettings = {
-    runAnalytics: "by-sync-rule-settings",
+    runAnalyticsBefore: "by-sync-rule-settings",
+    runAnalyticsAfter: "by-sync-rule-settings",
     analyticsYears: 2,
     projectMinimumDates: {},
     deleteDataValuesBeforeSync: false,

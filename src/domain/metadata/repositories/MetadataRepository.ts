@@ -1,4 +1,4 @@
-import { FilterSingleOperatorBase } from "@eyeseetea/d2-api/api/common";
+import { FilterValueOperator } from "@eyeseetea/d2-api/api/common";
 import { IdentifiableRef, Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { DataSource } from "../../instance/entities/DataSource";
@@ -39,7 +39,7 @@ export interface ListMetadataParams {
     optionSet?: string;
     category?: string;
     includeParents?: boolean;
-    search?: { field: string; operator: FilterSingleOperatorBase; value: string };
+    search?: { field: string; operator: FilterValueOperator; value: string };
     order?: { field: string; order: "asc" | "desc" };
     page?: number;
     pageSize?: number;

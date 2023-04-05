@@ -21,27 +21,27 @@ describe("Events transformations - D2Api", () => {
         it("should no apply any transformation if there are no transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 34,
+                    apiVersion: 38,
                     apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "34Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(37, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "31Value"),
                 },
             ];
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(
                 _.every(
@@ -53,14 +53,14 @@ describe("Events transformations - D2Api", () => {
         it("should apply transformation if there are one version transformation equal to the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "33Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(
                 _.every(
@@ -72,18 +72,18 @@ describe("Events transformations - D2Api", () => {
         it("should apply all transformations if there are two transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 32,
+                    apiVersion: 37,
                     apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "32Value"),
                 },
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "32Value", "33Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(
                 _.every(
@@ -95,18 +95,18 @@ describe("Events transformations - D2Api", () => {
         it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "32Value", "33Value"),
                 },
                 {
-                    apiVersion: 32,
+                    apiVersion: 37,
                     apply: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "value", "32Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             expect(
                 _.every(
@@ -128,27 +128,27 @@ describe("Events transformations - D2Api", () => {
         it("should no apply any transformation if there are no transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 34,
+                    apiVersion: 38,
                     undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "34Value", "33Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage();
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(37, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
             const payload = givenAnEventsPackage("31Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             expect(
                 _.every(
@@ -160,14 +160,14 @@ describe("Events transformations - D2Api", () => {
         it("should apply transformation if there are one version transformation equal to the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 38,
                     undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
 
             const payload = givenAnEventsPackage("31Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(31, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             expect(
                 _.every(
@@ -179,18 +179,18 @@ describe("Events transformations - D2Api", () => {
         it("should apply all transformations if there are two transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 32,
+                    apiVersion: 38,
                     undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "32Value", "31Value"),
                 },
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "31Value", "value"),
                 },
             ];
 
             const payload = givenAnEventsPackage("32Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(32, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             expect(
                 _.every(
@@ -202,18 +202,18 @@ describe("Events transformations - D2Api", () => {
         it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "31Value", "value"),
                 },
                 {
-                    apiVersion: 32,
+                    apiVersion: 38,
                     undo: (payload: D2EventsPackage) => renamePropInEventsPackage(payload, "32Value", "31Value"),
                 },
             ];
 
             const payload = givenAnEventsPackage("32Value");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(32, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             expect(
                 _.every(

@@ -13,7 +13,6 @@ export const metadataModels = [
     metadataClasses.CategoryOptionComboModel,
     metadataClasses.CategoryOptionGroupModel,
     metadataClasses.CategoryOptionGroupSetModel,
-    metadataClasses.ChartModel,
     metadataClasses.DashboardModel,
     metadataClasses.DataElementModel,
     metadataClasses.DataElementGroupModel,
@@ -49,7 +48,6 @@ export const metadataModels = [
     metadataClasses.ProgramStageSectionModel,
     metadataClasses.RelationshipTypeModel,
     metadataClasses.ReportModel,
-    metadataClasses.ReportTableModel,
     metadataClasses.SectionModel,
     metadataClasses.SqlView,
     metadataClasses.UserModel,
@@ -57,11 +55,14 @@ export const metadataModels = [
     metadataClasses.UserRoleModel,
     metadataClasses.TrackedEntityAttributeModel,
     metadataClasses.TrackedEntityTypeModel,
+    metadataClasses.VisualizationsModel,
 ];
 
 const findClasses = (key: string, value: string) => {
     return _.find(metadataClasses, [key, value]) ?? _.find(mappingClasses, [key, value]);
 };
+
+export const defaultName = "default";
 
 /**
  * D2ModelProxy allows to create on-demand d2Model classes
@@ -73,7 +74,7 @@ export function modelFactory(d2ModelName?: string): typeof D2Model {
 
     // TODO: Improvement, use schemas to find properties
     const api = new D2Api();
-    const { modelName = "default" } = api.models[d2ModelName as keyof MetadataEntities] ?? {};
+    const { modelName = defaultName } = api.models[d2ModelName as keyof MetadataEntities] ?? {};
 
     const directClass = findClasses("metadataType", d2ModelName);
     const modelClass = findClasses("collectionName", modelName);

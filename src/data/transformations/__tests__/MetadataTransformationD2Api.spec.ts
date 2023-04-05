@@ -22,7 +22,7 @@ describe("Metadata transformations - D2Api", () => {
         it("should no apply any transformation if there are no transformations in the version range", () => {
             const transformations = [
                 {
-                    apiVersion: 34,
+                    apiVersion: 38,
                     apply: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "name", "34Name"),
                 },
@@ -30,7 +30,7 @@ describe("Metadata transformations - D2Api", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(37, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -38,14 +38,14 @@ describe("Metadata transformations - D2Api", () => {
         it("should apply transformation if there are one lower version transformation than the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     apply: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "name", "31Name"),
                 },
             ];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["31Name"])).toEqual(true);
@@ -54,14 +54,14 @@ describe("Metadata transformations - D2Api", () => {
         it("should apply transformation if there is at least one version in the range", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     apply: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "name", "31Name"),
                 },
             ];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["31Name"])).toEqual(true);
@@ -70,12 +70,12 @@ describe("Metadata transformations - D2Api", () => {
         it("should apply all transformations if there are two transformations in the range", () => {
             const transformations = [
                 {
-                    apiVersion: 32,
+                    apiVersion: 37,
                     apply: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "name", "32Name"),
                 },
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     apply: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "32Name", "33Name"),
                 },
@@ -83,7 +83,7 @@ describe("Metadata transformations - D2Api", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["33Name"])).toEqual(true);
@@ -92,12 +92,12 @@ describe("Metadata transformations - D2Api", () => {
         it("should apply all transformations in correct even if transformations are out of order", () => {
             const transformations = [
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     apply: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "32Name", "33Name"),
                 },
                 {
-                    apiVersion: 32,
+                    apiVersion: 37,
                     apply: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "name", "32Name"),
                 },
@@ -105,7 +105,7 @@ describe("Metadata transformations - D2Api", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = transformationRepository.mapPackageTo(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageTo(38, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["33Name"])).toEqual(true);
@@ -117,7 +117,7 @@ describe("Metadata transformations - D2Api", () => {
             const transformations: Transformation<MetadataPackage, D2MetadataPackage>[] = [];
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -125,7 +125,7 @@ describe("Metadata transformations - D2Api", () => {
         it("should no apply any transformation if there are no transformations in the version range", () => {
             const transformations = [
                 {
-                    apiVersion: 34,
+                    apiVersion: 38,
                     undo: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "34Name", "33Name"),
                 },
@@ -133,7 +133,7 @@ describe("Metadata transformations - D2Api", () => {
 
             const payload = givenAMetadataPackage();
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(37, payload, transformations);
 
             expect(transformedPayload).toEqual(payload);
         });
@@ -141,14 +141,14 @@ describe("Metadata transformations - D2Api", () => {
         it("should apply transformation if there is at least one version in the range", () => {
             const transformations = [
                 {
-                    apiVersion: 32,
+                    apiVersion: 37,
                     undo: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "32Name", "name"),
                 },
             ];
             const payload = givenAMetadataPackage("32Name");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -157,7 +157,7 @@ describe("Metadata transformations - D2Api", () => {
         it("should apply transformation if there is one transformation equal to the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 33,
+                    apiVersion: 38,
                     undo: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "33Name", "name"),
                 },
@@ -165,7 +165,7 @@ describe("Metadata transformations - D2Api", () => {
 
             const payload = givenAMetadataPackage("33Name");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(38, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -174,12 +174,12 @@ describe("Metadata transformations - D2Api", () => {
         it("should apply all transformations if there are two transformations in the range", () => {
             const transformations = [
                 {
-                    apiVersion: 32,
+                    apiVersion: 38,
                     undo: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "32Name", "31Name"),
                 },
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     undo: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "31Name", "name"),
                 },
@@ -187,7 +187,7 @@ describe("Metadata transformations - D2Api", () => {
 
             const payload = givenAMetadataPackage("32Name");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(33, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(39, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
             expect(_.every(userRoles, ur => ur["name"])).toEqual(true);
@@ -196,12 +196,12 @@ describe("Metadata transformations - D2Api", () => {
         it("should apply all transformations in correct even if there are disordered transformations for the version argument", () => {
             const transformations = [
                 {
-                    apiVersion: 31,
+                    apiVersion: 37,
                     undo: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "31Name", "name"),
                 },
                 {
-                    apiVersion: 32,
+                    apiVersion: 38,
                     undo: (payload: D2MetadataPackage) =>
                         renamePropInMetadataPackage(payload, "userRoles", "32Name", "31Name"),
                 },
@@ -209,7 +209,7 @@ describe("Metadata transformations - D2Api", () => {
 
             const payload = givenAMetadataPackage("32Name");
 
-            const transformedPayload = transformationRepository.mapPackageFrom(35, payload, transformations);
+            const transformedPayload = transformationRepository.mapPackageFrom(39, payload, transformations);
 
             const userRoles = transformedPayload["userRoles"];
 

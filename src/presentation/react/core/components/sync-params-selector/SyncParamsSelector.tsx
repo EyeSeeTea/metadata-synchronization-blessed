@@ -21,7 +21,6 @@ const useStyles = makeStyles({
 const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onChange, generateNewUidDisabled }) => {
     const classes = useStyles();
     const { syncParams, dataParams } = syncRule;
-
     const changeSharingSettings = (includeSharingSettings: boolean) => {
         onChange(
             syncRule.updateSyncParams({
@@ -107,6 +106,15 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
         );
     };
 
+    const changeAsyncMode = (async: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...dataParams,
+                async,
+            })
+        );
+    };
+
     const changeRemoveUserObjects = (removeUserObjects: boolean) => {
         onChange(
             syncRule.updateSyncParams({
@@ -114,6 +122,10 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                 removeUserObjects,
             })
         );
+    };
+
+    const changeRemoveUserObjectsAndReferences = (removeUserObjectsAndReferences: boolean) => {
+        onChange(syncRule.updateSyncParams({ ...syncParams, removeUserObjectsAndReferences }));
     };
 
     const changeRemoveOrgUnitObjects = (removeOrgUnitObjects: boolean) => {
@@ -170,6 +182,16 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                         label={i18n.t("Remove organisation units and keep organisation units references (UID)")}
                         onValueChange={changeRemoveOrgUnitObjects}
                         value={syncParams.removeOrgUnitObjects || false}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove users and references (UID)")}
+                        onValueChange={changeRemoveUserObjectsAndReferences}
+                        value={syncParams.removeUserObjectsAndReferences || false}
                     />
                 </div>
             )}
@@ -249,6 +271,16 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                         }
                         onValueChange={changeIgnoreDuplicateExistingValues}
                         value={dataParams.ignoreDuplicateExistingValues ?? false}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "events" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Async mode")}
+                        onValueChange={changeAsyncMode}
+                        value={dataParams.async ?? true}
                     />
                 </div>
             )}

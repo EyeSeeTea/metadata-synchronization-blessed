@@ -1,0 +1,37 @@
+{
+    "programRules": [
+        {
+            "lastUpdated": "2020-07-23T13:14:25.599",
+            "id": "Is56icDYrFf",
+            "href": "https://dev.eyeseetea.com/who-dev-236/api/programRules/Is56icDYrFf",
+            "created": "2020-07-23T12:37:05.725",
+            "name": "AB treatment started/completed",
+            "displayName": "AB treatment started/completed",
+            "description": "If AB treatment started = yes, then show completion question",
+            "externalAccess": false,
+            "condition": "V{program_stage_name} != 1",
+            "favorite": false,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "program": { "id": "AODL0NZqmGx" },
+            "lastUpdatedBy": {
+                "displayName": "Lise GROUT",
+                "name": "Lise GROUT",
+                "id": "ilJDyuqlwDC",
+                "username": "lise.grout"
+            },
+            "favorites": [],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "programRuleActions": [{ "id": "kQLfqqoc5ZB" }],
+            "userAccesses": []
+        }
+    ]
+}

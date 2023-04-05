@@ -1,5 +1,6 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
+import { API_VERSION } from "../../../types/d2-api";
 import { PartialBy } from "../../../types/utils";
 import { NamedRef, SharedRef } from "../../common/entities/Ref";
 import { ShareableEntity } from "../../common/entities/ShareableEntity";
@@ -66,7 +67,7 @@ export class Instance extends ShareableEntity<InstanceData> {
         // TODO: Review implications of having a default value here
         // Not having this set means no connection possible on save
         // For example, we should error during sync instead
-        return apiVersion ? Number(apiVersion) : 30;
+        return apiVersion ? Number(apiVersion) : API_VERSION;
     }
 
     public get created(): Date {

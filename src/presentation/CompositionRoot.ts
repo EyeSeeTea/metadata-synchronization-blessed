@@ -32,6 +32,7 @@ import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDa
 import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
+import { UpdateEmergencyResponseSyncRuleUseCase } from "../domain/events/usecases/UpdateEmergencyResponseSyncRuleUseCase";
 import { Instance } from "../domain/instance/entities/Instance";
 import { DeleteInstanceUseCase } from "../domain/instance/usecases/DeleteInstanceUseCase";
 import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
@@ -83,6 +84,7 @@ import { ImportPackageUseCase } from "../domain/packages/usecases/ImportPackageU
 import { ListPackagesUseCase } from "../domain/packages/usecases/ListPackagesUseCase";
 import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStorePackagesUseCase";
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
+import { ValidatePackageContentsUseCase } from "../domain/packages/usecases/ValidatePackageContentsUseCase";
 import { CleanSyncReportsUseCase } from "../domain/reports/usecases/CleanSyncReporstUseCase";
 import { DeleteSyncReportUseCase } from "../domain/reports/usecases/DeleteSyncReportUseCase";
 import { DownloadPayloadUseCase } from "../domain/reports/usecases/DownloadPayloadUseCase";
@@ -241,6 +243,7 @@ export class CompositionRoot {
             diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
             import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
             extend: new ExtendsPackagesFromPackageUseCase(this.repositoryFactory, this.localInstance),
+            validate: new ValidatePackageContentsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -375,6 +378,13 @@ export class CompositionRoot {
         return getExecute({
             getLastExecution: new GetLastSchedulerExecutionUseCase(this.repositoryFactory, this.localInstance),
             updateLastExecution: new UpdateLastSchedulerExecutionUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get emergencyResponses() {
+        return getExecute({
+            updateSyncRule: new UpdateEmergencyResponseSyncRuleUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 }

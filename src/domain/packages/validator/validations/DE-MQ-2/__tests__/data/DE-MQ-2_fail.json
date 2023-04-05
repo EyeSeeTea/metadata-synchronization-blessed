@@ -1,0 +1,120 @@
+{
+    "dataElements": [
+        {
+            "lastUpdated": "2021-03-10T17:45:08.160",
+            "id": "T4sd77FTesI",
+            "href": "https://dev.eyeseetea.com/who-dev-236/api/dataElements/T4sd77FTesI",
+            "created": "2018-02-26T12:55:28.179",
+            "name": " Basic science - Research studies initiated number of",
+            "shortName": "  Basic science - Clinical - Research studies number of",
+            "aggregationType": "SUM",
+            "domainType": "AGGREGATE",
+            "displayName": " Basic science - Research studies initiated during year 2017",
+            "publicAccess": "--------",
+            "displayShortName": "  Basic science - Clinical - Research studies ",
+            "externalAccess": false,
+            "periodOffset": 0,
+            "valueType": "NUMBER",
+            "dimensionItem": "T4sd77FTesI",
+            "displayFormName": " Basic science - Research studies initiated during year 2017",
+            "zeroIsSignificant": true,
+            "favorite": false,
+            "optionSetValue": false,
+            "dimensionItemType": "DATA_ELEMENT",
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "categoryCombo": { "id": "JzvGfLYkX17" },
+            "lastUpdatedBy": {
+                "displayName": "Bot Automated-Tasks",
+                "name": "Bot Automated-Tasks",
+                "id": "bI1uY3KuAKV",
+                "username": "widp.admin"
+            },
+            "createdBy": {
+                "displayName": "Bot Automated-Tasks",
+                "name": "Bot Automated-Tasks",
+                "id": "bI1uY3KuAKV",
+                "username": "widp.admin"
+            },
+            "user": {
+                "displayName": "Bot Automated-Tasks",
+                "name": "Bot Automated-Tasks",
+                "id": "bI1uY3KuAKV",
+                "username": "widp.admin"
+            },
+            "favorites": [],
+            "dataSetElements": [{ "dataElement": { "id": "T4sd77FTesI" }, "dataSet": { "id": "KaaRzuDwB2X" } }],
+            "translations": [],
+            "userGroupAccesses": [],
+            "dataElementGroups": [],
+            "attributeValues": [],
+            "userAccesses": [],
+            "legendSets": [],
+            "aggregationLevels": []
+        },
+        {
+            "lastUpdated": "2021-03-10T17:45:48.569",
+            "id": "LLf2TlSczM5",
+            "href": "https://dev.eyeseetea.com/who-dev-236/api/dataElements/LLf2TlSczM5",
+            "created": "2020-06-15T10:58:44.555",
+            "name": " Capsules number-Adult ENL1 Number of",
+            "shortName": " Capsules number-Adult ENL1 Case_MDT",
+            "aggregationType": "SUM",
+            "domainType": "AGGREGATE",
+            "displayName": " Capsules number-Adult ENL1 Case_MDT",
+            "publicAccess": "--------",
+            "displayShortName": " Capsules number-Adult ENL1 Case_MDT",
+            "externalAccess": false,
+            "periodOffset": 0,
+            "valueType": "NUMBER",
+            "dimensionItem": "LLf2TlSczM5",
+            "displayFormName": " Capsules number-Adult ENL1 Case_MDT",
+            "zeroIsSignificant": false,
+            "favorite": false,
+            "optionSetValue": false,
+            "dimensionItemType": "DATA_ELEMENT",
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "categoryCombo": { "id": "JzvGfLYkX17" },
+            "lastUpdatedBy": {
+                "displayName": "Ramon Jose JIMENEZ POMARETA",
+                "name": "Ramon Jose JIMENEZ POMARETA",
+                "id": "eK26I7dRbC4",
+                "username": "ramon.pomareta"
+            },
+            "createdBy": {
+                "displayName": "Ramon Jose JIMENEZ POMARETA",
+                "name": "Ramon Jose JIMENEZ POMARETA",
+                "id": "eK26I7dRbC4",
+                "username": "ramon.pomareta"
+            },
+            "user": {
+                "displayName": "Ramon Jose JIMENEZ POMARETA",
+                "name": "Ramon Jose JIMENEZ POMARETA",
+                "id": "eK26I7dRbC4",
+                "username": "ramon.pomareta"
+            },
+            "favorites": [],
+            "dataSetElements": [{ "dataElement": { "id": "LLf2TlSczM5" }, "dataSet": { "id": "FXUtbpATKSD" } }],
+            "translations": [],
+            "userGroupAccesses": [],
+            "dataElementGroups": [],
+            "attributeValues": [],
+            "userAccesses": [],
+            "legendSets": [],
+            "aggregationLevels": []
+        }
+    ]
+}

@@ -26,7 +26,8 @@ export function cleanObject(
     element: any,
     excludeRules: string[][] = [],
     includeSharingSettings: boolean,
-    removeOrgUnitReferences: boolean
+    removeOrgUnitReferences: boolean,
+    removeUserObjectsAndReferences: boolean
 ): any {
     const leafRules: string[] = _(excludeRules)
         .filter(path => path.length === 1)
@@ -44,7 +45,8 @@ export function cleanObject(
 
     const sharingSettingsFilter = includeSharingSettings ? [] : userProperties;
     const organisationUnitFilter = removeOrgUnitReferences ? ["organisationUnits"] : [];
-    const propsToRemove = [...sharingSettingsFilter, ...organisationUnitFilter];
+    const userFilter = removeUserObjectsAndReferences ? ["createdBy", "lastUpdatedBy", "user"] : [];
+    const propsToRemove = [...sharingSettingsFilter, ...organisationUnitFilter, ...userFilter];
 
     return _.pick(element, _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove));
 }
@@ -62,10 +64,8 @@ export function getAllReferences(api: D2Api, obj: any, type: string, parents: st
             const recursive = getAllReferences(api, value, type, [...parents, key]);
             result = _.deepMerge(result, recursive);
         } else if (isValidUid(value)) {
-            const metadataType = _(parents)
-                .map(parent => cleanToModelName(api, parent, type))
-                .compact()
-                .first();
+            const metadataType = getMetadataType(api, type, parents);
+
             if (metadataType) {
                 result[metadataType] = result[metadataType] || [];
                 result[metadataType].push(value);
@@ -73,6 +73,17 @@ export function getAllReferences(api: D2Api, obj: any, type: string, parents: st
         }
     });
     return result;
+}
+
+function getMetadataType(api: D2Api, type: string, parents: string[] = []) {
+    if (parents.join(".") === "legend.set") {
+        return "legendSets";
+    } else {
+        return _(parents)
+            .map(parent => cleanToModelName(api, parent, type))
+            .compact()
+            .first();
+    }
 }
 
 export function getSchemaByName(api: D2Api, modelName: string): D2SchemaProperties | undefined {

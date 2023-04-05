@@ -321,9 +321,13 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
             {syncRule.type === "events" && (
                 <LiEntry
                     label={i18n.t("TEIs")}
-                    value={i18n.t("{{total}} selected TEIs", {
-                        total: syncRule.dataSyncTeis.length,
-                    })}
+                    value={
+                        syncRule.dataSyncAllTEIs
+                            ? i18n.t("All TEIs")
+                            : i18n.t("{{total}} selected TEIs", {
+                                  total: syncRule.dataSyncTeis.length,
+                              })
+                    }
                 />
             )}
 
@@ -456,7 +460,21 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                     <ul>
                         <LiEntry
                             label={i18n.t("Run Analytics before sync")}
-                            value={syncRule.dataParams.runAnalytics ? i18n.t("Yes") : i18n.t("No")}
+                            value={syncRule.dataParams.runAnalyticsBefore ? i18n.t("Yes") : i18n.t("No")}
+                        />
+                    </ul>
+                    <ul>
+                        <LiEntry
+                            label={i18n.t("Run Analytics after sync")}
+                            value={syncRule.dataParams.runAnalyticsAfter ? i18n.t("Yes") : i18n.t("No")}
+                        />
+                    </ul>
+                    <ul>
+                        <LiEntry
+                            label={i18n.t("Async mode")}
+                            value={i18n.t("{{async}}", {
+                                async: syncRule.dataParams.async !== false ? i18n.t("Yes") : i18n.t("No"),
+                            })}
                         />
                     </ul>
                 </LiEntry>

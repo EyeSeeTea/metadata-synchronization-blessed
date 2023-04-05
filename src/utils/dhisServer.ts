@@ -7,7 +7,7 @@ export interface DhisOptions {
 }
 
 export function startDhis(mirageOptions: ServerConfig<AnyModels, AnyFactories> = {}, options: DhisOptions = {}) {
-    const { version = "2.30" } = options;
+    const { version = "2.36" } = options;
 
     const server = new Server({
         namespace: "/api",

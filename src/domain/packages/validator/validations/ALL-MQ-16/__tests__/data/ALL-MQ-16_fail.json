@@ -1,0 +1,91 @@
+{
+    "dashboards": [
+        {
+            "lastUpdated": "2022-12-28T08:23:02.976",
+            "id": "oarhBUuQMop",
+            "code": "OARTH",
+            "href": "http://172.16.0.99:8083/api/29/dashboards/oarhBUuQMop",
+            "created": "2019-08-07T10:21:04.280",
+            "name": "0. Aggregate Metrics Across Facilities",
+            "displayName": "0. Aggregate Metrics Across Facilities",
+            "publicAccess": "--------",
+            "description": "This dashboard shows aggregate trends in injury epidemiology and emergency care service delivery across facilities or sub-national regions.",
+            "restrictFilters": false,
+            "externalAccess": false,
+            "displayDescription": "This dashboard shows aggregate trends in injury epidemiology and emergency care service delivery across facilities or sub-national regions.",
+            "displayFormName": "0. Aggregate Metrics Across Facilities",
+            "itemCount": 13,
+            "favorite": true,
+            "access": {
+                "read": true,
+                "update": true,
+                "externalize": true,
+                "delete": true,
+                "write": true,
+                "manage": true
+            },
+            "lastUpdatedBy": {
+                "displayName": "user dev",
+                "name": "user dev",
+                "id": "smGarTiKDdV",
+                "username": "dev.user"
+            },
+            "createdBy": {
+                "displayName": "Rose Buhain",
+                "name": "Rose Buhain",
+                "id": "wUd8NBL7fn2",
+                "username": "rose.mabelle"
+            },
+            "user": {
+                "displayName": "Rose Buhain",
+                "name": "Rose Buhain",
+                "id": "wUd8NBL7fn2",
+                "username": "rose.mabelle"
+            },
+            "favorites": ["wUd8NBL7fn2", "smGarTiKDdV"],
+            "translations": [],
+            "userGroupAccesses": [],
+            "attributeValues": [],
+            "dashboardItems": [
+                {
+                    "lastUpdated": "2022-12-21T10:16:22.987",
+                    "id": "HvVzQ45EQ2c",
+                    "href": "http://172.16.0.99:8083/api/29/dashboardItems/HvVzQ45EQ2c",
+                    "created": "2021-07-30T01:40:47.153",
+                    "type": "CHART",
+                    "externalAccess": false,
+                    "contentCount": 2,
+                    "height": 21,
+                    "shape": "NORMAL",
+                    "interpretationCount": 0,
+                    "sharing": { "external": false, "users": {}, "userGroups": {} },
+                    "width": 29,
+                    "x": 0,
+                    "interpretationLikeCount": 0,
+                    "y": 27,
+                    "favorite": false,
+                    "visualization": { "id": "WaznCszwnj7" },
+                    "access": {
+                        "read": true,
+                        "update": true,
+                        "externalize": true,
+                        "delete": true,
+                        "write": true,
+                        "manage": true
+                    },
+                    "chart": { "id": "WaznCszwnj7" },
+                    "favorites": [],
+                    "reports": [],
+                    "translations": [],
+                    "userGroupAccesses": [],
+                    "attributeValues": [],
+                    "resources": [],
+                    "users": [],
+                    "userAccesses": []
+                }
+            ],
+            "userAccesses": [],
+            "allowedFilters": []
+        }
+    ]
+}
