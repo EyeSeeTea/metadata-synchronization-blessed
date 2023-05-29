@@ -2,11 +2,12 @@ import { generateUid } from "d2/uid";
 import _ from "lodash";
 import memoize from "nano-memoize";
 import { D2Program } from "../../../types/d2-api";
+import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
-import { Program } from "../../metadata/entities/MetadataEntities";
+import { DataElement, Program } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
@@ -129,7 +130,9 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const payloadByTEIs = (await mapper.map({ trackedEntityInstances: teis })) as EventsPackage;
 
-        const payloadByEvents = (await this.mapPayload(instance, { events })) as EventsPackage;
+        const finalEvents = await this.manageDataElementWithFileType(events, instance);
+
+        const payloadByEvents = (await this.mapPayload(instance, { events: finalEvents })) as EventsPackage;
 
         const payload = { events: [...payloadByTEIs.events, ...payloadByEvents.events] };
 
@@ -224,5 +227,43 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const eventMapper = createEventsPayloadMapper(metadataRepository, remoteMetadataRepository, mapping);
         return (await eventMapper).map(payload);
+    }
+
+    private async manageDataElementWithFileType(
+        events: ProgramEvent[],
+        remoteInstance: Instance
+    ): Promise<ProgramEvent[]> {
+        const metadataRepository = await this.getMetadataRepository();
+
+        const dataElementIds = _.uniq(events.map(event => event.dataValues.map(dv => dv.dataElement).flat()).flat());
+
+        const { dataElements = [] } = await metadataRepository.getMetadataByIds<DataElement>(
+            dataElementIds,
+            "id,valueType"
+        );
+
+        const dataElementFileTypes = dataElements.filter(de => de.valueType === "FILE_RESOURCE").map(de => de.id);
+
+        const eventsRepository = await this.getEventsRepository();
+        const fileRemoteRepository = await this.getInstanceFileRepository(remoteInstance);
+
+        const finalEvents = await promiseMap(events, async event => {
+            const dataValues = await promiseMap(event.dataValues, async dataValue => {
+                const isFileType = dataElementFileTypes.includes(dataValue.dataElement);
+
+                if (isFileType) {
+                    const file = await eventsRepository.getEventFile(event.id, dataValue.dataElement, dataValue.value);
+
+                    const destinationFileId = await fileRemoteRepository.save(file, "DATA_VALUE");
+                    return { ...dataValue, value: destinationFileId };
+                } else {
+                    return dataValue;
+                }
+            });
+
+            return { ...event, dataValues };
+        });
+
+        return finalEvents;
     }
 }
