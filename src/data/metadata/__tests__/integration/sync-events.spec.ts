@@ -14,6 +14,7 @@ import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiReposito
 import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 import { MappingD2ApiRepository } from "../../../mapping/MappingD2ApiRepository";
+import { InstanceFileD2Repository } from "../../../instance/InstanceFileD2Repository";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -55,7 +56,7 @@ describe("Sync events", () => {
         }));
 
         local.get("/metadata", async (_schema, request) => {
-            if (request.queryParams.filter === "id:in:[program1]")
+            if (request.queryParams.filter === "id:in:[program1]") {
                 return {
                     programs: [
                         {
@@ -78,16 +79,20 @@ describe("Sync events", () => {
                         },
                     ],
                 };
-
-            if (request.queryParams.filter === "identifiable:eq:default")
+            } else if (request.queryParams.filter === "identifiable:eq:default") {
                 return {
                     categoryOptions: [{ id: "default1" }],
                     categories: [{ id: "default2" }],
                     categoryCombos: [{ id: "default3" }],
                     categoryOptionCombos: [{ id: "default4" }],
                 };
-
-            console.error("Unknown metadata request", request.queryParams);
+            } else if (request.queryParams.filter === "id:in:[id1]") {
+                return {
+                    dataElements: [{ id: "id1", valueType: "TEXT" }],
+                };
+            } else {
+                console.error("Unknown metadata request", request.queryParams);
+            }
         });
 
         local.get("/dataValueSets", async () => ({ dataValues: [] }));
@@ -331,6 +336,7 @@ function buildRepositoryFactory() {
     repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
     repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
     repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
+    repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
     return repositoryFactory;
 }
 
