@@ -15,6 +15,7 @@ import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronizat
 import { D2Api } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
+import mime from "mime-types";
 
 export class EventsD2ApiRepository implements EventsRepository {
     private api: D2Api;
@@ -289,5 +290,29 @@ export class EventsD2ApiRepository implements EventsRepository {
 
             return this.cleanEventsImportResponse(response);
         }
+    }
+
+    async getEventFile(eventUid: string, dataElementUid: string, fileResourceId: string): Promise<File> {
+        const blob = await this.api
+            .request<Blob>({
+                method: "get",
+                url: `/events/files`,
+                responseDataType: "raw",
+                params: {
+                    eventUid,
+                    dataElementUid,
+                },
+            })
+            .getData();
+
+        if (!blob) throw Error("An error has ocurred retrieving the file resource of data value");
+
+        const fileResource = await this.api
+            .get<{ name: string; contentType: string }>(`/fileResources/${fileResourceId}`)
+            .getData();
+
+        const fileName = fileResource?.name || `File.${mime.extension(fileResource.contentType)}`;
+
+        return new File([blob], fileName, { type: fileResource.contentType });
     }
 }
