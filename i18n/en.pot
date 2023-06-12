@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2023-05-29T09:27:41.588Z\n"
-"PO-Revision-Date: 2023-05-29T09:27:41.588Z\n"
+"POT-Creation-Date: 2023-06-12T20:49:22.870Z\n"
+"PO-Revision-Date: 2023-06-12T20:49:22.870Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1498,6 +1498,56 @@ msgid "Project minimum dates"
 msgstr ""
 
 msgid "Minimum date"
+msgstr ""
+
+msgid "Distributed under GNU GLPv3"
+msgstr ""
+
+msgid ""
+"MetadataSync (MDSync) is the metadata & data synchronization solution for "
+"DHIS2. It allows easy metadata mapping, distribution and the automatization "
+"of synchronization of data and metadata. MDSync is also a versatile "
+"solution for DHIS2 metadata packages generation, validation and "
+"distribution, providing graphical interfaces for such time-consuming "
+"operations."
+msgstr ""
+
+msgid ""
+"This application has been funded by the WHO Global Malaria Programme, "
+"Medecins Sans Frontières (MSF), Samaritan’s Purse, Health Information "
+"Systems Program South Africa and and the U.S. President’s Malaria "
+"Initiative (PMI)  to support countries in strengthening the collection and "
+"use of health data by using DHIS2. The application has been developed by "
+"[EyeSeeTea SL](http://eyeseetea.com). Source code, documentation and "
+"release notes can be found at the [EyeSeetea GitHub Project "
+"Page](https://eyeseetea.github.io/metadata-synchronization-blessed/"
+"metadatasync/)"
+msgstr ""
+
+msgid ""
+"If you wish to contribute to the development of MetadataSync with new "
+"features, please contact [EyeSeeTea](mailto:hello@eyeseetea.com)."
+msgstr ""
+
+msgid "About MetaData Synchronization App"
+msgstr ""
+
+msgid "World Health Organization"
+msgstr ""
+
+msgid "EyeSeeTea"
+msgstr ""
+
+msgid "Samaritan's Purse"
+msgstr ""
+
+msgid "Médicos Sin Fronteras"
+msgstr ""
+
+msgid "Health Information Systems Program - South Africa"
+msgstr ""
+
+msgid "U.S. President's Malaria Initiative"
 msgstr ""
 
 msgid "Metadata Synchronization History"

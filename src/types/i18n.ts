@@ -4,13 +4,21 @@ export function t<Str extends string>(s: Str, namespace?: GetNamespace<Str>): st
     return i18n.t(s, namespace);
 }
 
-type GetNamespace<Str extends string> = UndefinedIfEmpty<Record<ExtractVars<Str>, string | number>>;
+interface Options {
+    nsSeparator: string | boolean;
+}
 
-type UndefinedIfEmpty<T> = {} extends T ? undefined : T;
+type GetNamespace<Str extends string> = Record<ExtractVars<Str>, string | number> & Partial<Options>;
 
 type ExtractVars<Str extends string> = Str extends `${string}{{${infer Var}}}${infer StrRest}`
     ? Var | ExtractVars<StrRest>
     : never;
+
+export function translationsFor<K extends string | undefined>(
+    obj: Record<Extract<K, string>, string>
+): Record<Extract<K, string> | "", string> {
+    return { ...obj, "": "" } as Record<Extract<K, string> | "", string>;
+}
 
 /* Tests */
 
