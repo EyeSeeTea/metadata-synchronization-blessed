@@ -14,7 +14,7 @@ export const AboutPage: React.FC = React.memo(() => {
             "MetadataSync (MDSync) is the metadata & data synchronization solution for DHIS2. It allows easy metadata mapping, distribution and the automatization of synchronization of data and metadata. MDSync is also a versatile solution for DHIS2 metadata packages generation, validation and distribution, providing graphical interfaces for such time-consuming operations."
         ),
         i18n.t(
-            "This application has been funded by the WHO Global Malaria Programme, Medecins Sans Frontières (MSF), Samaritan’s Purse, Health Information Systems Program South Africa and and the U.S. President’s Malaria Initiative (PMI)  to support countries in strengthening the collection and use of health data by using DHIS2. The application has been developed by [EyeSeeTea SL](http://eyeseetea.com). Source code, documentation and release notes can be found at the [EyeSeetea GitHub Project Page](https://eyeseetea.github.io/metadata-synchronization-blessed/metadatasync/)",
+            "This application has been funded by the WHO Global Malaria Programme, Medecins Sans Frontières (MSF), Samaritan’s Purse, Health Information Systems Program South Africa and the U.S. President’s Malaria Initiative (PMI)  to support countries in strengthening the collection and use of health data by using DHIS2. The application has been developed by [EyeSeeTea SL](http://eyeseetea.com). Source code, documentation and release notes can be found at the [EyeSeetea GitHub Project Page](https://eyeseetea.github.io/metadata-synchronization-blessed/metadatasync/)",
             { nsSeparator: false }
         ),
         i18n.t(
@@ -40,19 +40,20 @@ export const AboutPage: React.FC = React.memo(() => {
                         <Logo alt={i18n.t("EyeSeeTea")} src="img/logo-eyeseetea.png" />
                     </div>
                     <div>
-                        <Logo alt={i18n.t("Samaritan's Purse")} src="img/logo-samaritans.svg" />
+                        <Logo size="large" alt={i18n.t("Samaritan's Purse")} src="img/logo-samaritans.svg" />
                     </div>
                     <div>
-                        <Logo alt={i18n.t("Médicos Sin Fronteras")} src="img/logo-msf.svg" />
+                        <Logo size="small" alt={i18n.t("Médicos Sin Fronteras")} src="img/logo-msf.svg" />
                     </div>
                     <div>
                         <Logo
+                            size="small"
                             alt={i18n.t("Health Information Systems Program - South Africa")}
                             src="img/logo-hisp.png"
                         />
                     </div>
                     <div>
-                        <Logo alt={i18n.t("U.S. President's Malaria Initiative")} src="img/logo-pmi.png" />
+                        <Logo size="large" alt={i18n.t("U.S. President's Malaria Initiative")} src="img/logo-pmi.png" />
                     </div>
                 </LogoWrapper>
             </div>
@@ -89,7 +90,11 @@ const LogoWrapper = styled.div`
     }
 `;
 
-const Logo = styled.img`
-    width: 200px;
+interface LogoProps {
+    size?: "small" | "default" | "large";
+}
+
+const Logo = styled.img<LogoProps>`
+    width: ${({ size }) => (size === "large" ? "250px" : size === "small" ? "150px" : "200px")};
     margin: 0 50px;
 `;
