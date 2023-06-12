@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2023-03-23T10:37:45.277Z\n"
+"POT-Creation-Date: 2023-06-12T22:53:44.873Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1503,6 +1503,54 @@ msgid "Project minimum dates"
 msgstr ""
 
 msgid "Minimum date"
+msgstr ""
+
+msgid "Distributed under GNU GLPv3"
+msgstr ""
+
+msgid ""
+"MetadataSync (MDSync) is the metadata & data synchronization solution for "
+"DHIS2. It allows easy metadata mapping, distribution and the automatization "
+"of synchronization of data and metadata. MDSync is also a versatile solution "
+"for DHIS2 metadata packages generation, validation and distribution, "
+"providing graphical interfaces for such time-consuming operations."
+msgstr ""
+
+msgid ""
+"This application has been funded by the WHO Global Malaria Programme, "
+"Medecins Sans Frontières (MSF), Samaritan’s Purse, Health Information "
+"Systems Program South Africa and the U.S. President’s Malaria Initiative "
+"(PMI)  to support countries in strengthening the collection and use of "
+"health data by using DHIS2. The application has been developed by [EyeSeeTea "
+"SL](http://eyeseetea.com). Source code, documentation and release notes can "
+"be found at the [EyeSeetea GitHub Project Page](https://eyeseetea.github.io/"
+"metadata-synchronization-blessed/metadatasync/)"
+msgstr ""
+
+msgid ""
+"If you wish to contribute to the development of MetadataSync with new "
+"features, please contact [EyeSeeTea](mailto:hello@eyeseetea.com)."
+msgstr ""
+
+msgid "About MetaData Synchronization App"
+msgstr ""
+
+msgid "World Health Organization"
+msgstr ""
+
+msgid "EyeSeeTea"
+msgstr ""
+
+msgid "Samaritan's Purse"
+msgstr ""
+
+msgid "Médicos Sin Fronteras"
+msgstr ""
+
+msgid "Health Information Systems Program - South Africa"
+msgstr ""
+
+msgid "U.S. President's Malaria Initiative"
 msgstr ""
 
 msgid "Metadata Synchronization History"

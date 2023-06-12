@@ -24,6 +24,8 @@ import SyncRulesCreationPage, { SyncRulesCreationParams } from "./core/pages/syn
 import { SyncRulesListPage } from "./core/pages/sync-rules-list/SyncRulesListPage";
 import { MSFHistoryPage } from "./msf-aggregate-data/pages/MSFHistoryPage";
 import { MSFHomePage } from "./msf-aggregate-data/pages/MSFHomePage";
+import { AboutPage } from "./core/pages/about/AboutPage";
+import { About } from "../react/core/components/about/About";
 
 const Root: React.FC = () => {
     const { api, compositionRoot } = useAppContext();
@@ -32,6 +34,8 @@ const Root: React.FC = () => {
     return (
         <HashRouter>
             <Switch>
+                <RouteWithSession path={"/about"} render={() => <AboutPage />} />
+
                 <RouteWithSession
                     path={"/instances/mapping/:id/:section(aggregated|tracker|orgUnit|global)"}
                     render={() => <InstanceMappingPage />}
@@ -89,6 +93,7 @@ const Root: React.FC = () => {
 
                 <VariantRoutes variant={appVariant} />
             </Switch>
+            <About visible={true} />
         </HashRouter>
     );
 };
