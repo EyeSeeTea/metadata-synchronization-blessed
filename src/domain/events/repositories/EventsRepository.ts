@@ -15,4 +15,6 @@ export interface EventsRepository {
     ): Promise<ProgramEvent[]>;
 
     save(data: object, additionalParams: DataImportParams | undefined): Promise<SynchronizationResult>;
+
+    getEventFile(eventId: string, dataElement: string, fileResourceId: string): Promise<File>;
 }
