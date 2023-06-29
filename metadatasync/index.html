@@ -16,7 +16,7 @@
     <nav class="navbar is-white" role="navigation" aria-label="main navigation">
       <div class="navbar-brand is-justify-content-space-between" style="width: 100%" >
         <div class="navbar-item">
-          <img src="img/logo.png" width="auto" height="64" alt="MD Sync. Meta Data Sync">
+          <img src="img/logo.png" class="logo" alt="MD Sync. Meta Data Sync">
         </div>
         <div class="navbar-item" >
           <div class=" is-size-7 is-flex is-justify-content-flex-end pt-1">
@@ -218,17 +218,25 @@
 
   <footer class="footer has-text-centered is-primary">
     <div class="container is-max-widescreen">
-      <div class="level">
-        <div class="level-left">
-          <figure class="image">
-            <img src="img/who.png" style="height:100px; width:auto">
-          </figure>
-        </div>
-        <div class="level-right">
-          <figure class="image">
-            <img src="img/est.png " style="height:100px; width:auto">
-          </figure>
-        </div>
+      <div class="grid">
+        <figure class="image grid-element">
+          <img src="img/who.png" alt="Funded by World Health Organization">
+        </figure>
+        <figure class="image grid-element">
+          <div style="position: relative">
+            <div style="position: absolute; top: 0%; left: 62%; color:white; font-size: 15px; white-space: nowrap;">Funded by</div>
+            <img src="img/logo-msf.svg"  alt="MSF">
+          </div>
+        </figure>
+       <figure class="image grid-element">
+          <div style="position: relative">
+            <div style="position: absolute; top: -45%; left: 18%; color:white; font-size: 15px;">Funded by</div>
+            <img src="img/logo-samaritans.svg"  alt="Samaritan's Purse">
+          </div>
+        </figure>
+        <figure class="image grid-element">
+          <img src="img/est.png" alt="Developed by EyeSeeTea">
+        </figure>
       </div>
 
       <p>

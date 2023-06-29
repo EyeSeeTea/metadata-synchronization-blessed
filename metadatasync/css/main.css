@@ -7705,3 +7705,42 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   background-color: #276696;
   padding: 3rem 1.5rem 6rem;
   color: #ffffff; }
+
+
+.logo {
+  width: auto;
+  height: 64px; 
+}
+@media (max-width: 425px) {
+    .logo {
+      width: auto;
+      height: 32px; 
+    }
+}
+
+@media (min-width: 426px) { 
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 2rem;
+    margin: 2rem 0;
+  }
+  
+  .grid-element {
+    display: flex;
+    align-items: center;
+    justify-items: center; 
+  }
+}
+
+@media (max-width: 425px) { 
+  .grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .grid-element {
+    max-width: 200px;
+    margin: 1.5rem 0;
+  }
+}
