@@ -6,7 +6,7 @@
 
 -
 
-### :art: Screenshots
+### :video_camera: Screenshots/Screen capture
 
 ### :fire: Is there anything the reviewer should know to test it?
 
