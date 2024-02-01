@@ -1,5 +1,6 @@
 import { ConfirmationDialog, ConfirmationDialogProps, useLoading } from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { StorageType } from "../../../../../../domain/config/entities/Config";
 import i18n from "../../../../../../locales";
 import Dropdown from "../../../../../react/core/components/dropdown/Dropdown";
 import { useAppContext } from "../../../../../react/core/contexts/AppContext";
@@ -20,7 +21,7 @@ export const StorageSettingDropdown: React.FC = () => {
     );
 
     const changeStorage = useCallback(
-        async (storage: "constant" | "dataStore") => {
+        async (storage: StorageType) => {
             loading.show(true, i18n.t("Updating storage location, please wait..."));
             await compositionRoot.config.setStorage(storage);
 
@@ -32,7 +33,7 @@ export const StorageSettingDropdown: React.FC = () => {
     );
 
     const showConfirmationDialog = useCallback(
-        (storage: "constant" | "dataStore") => {
+        (storage: StorageType) => {
             updateDialog({
                 title: i18n.t("Change storage"),
                 description: i18n.t(
@@ -60,7 +61,7 @@ export const StorageSettingDropdown: React.FC = () => {
         <React.Fragment>
             {dialogProps && <ConfirmationDialog isOpen={true} maxWidth={"xl"} {...dialogProps} />}
 
-            <Dropdown<"constant" | "dataStore">
+            <Dropdown<StorageType>
                 items={options}
                 value={selectedOption}
                 onValueChange={showConfirmationDialog}
