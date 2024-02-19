@@ -1,5 +1,5 @@
-import { ConfirmationDialog, useLoading } from "@eyeseetea/d2-ui-components";
-import { Button, FormGroup, makeStyles, Paper } from "@material-ui/core";
+import { ConfirmationDialog, useLoading, useSnackbar } from "@eyeseetea/d2-ui-components";
+import { Button, FormGroup, makeStyles, Paper, TextField } from "@material-ui/core";
 import React, { useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -11,10 +11,22 @@ import { useSettings } from "./useSettings";
 export const SettingsPage: React.FC = () => {
     const history = useHistory();
     const classes = useStyles();
+    const snackbar = useSnackbar();
 
     const loading = useLoading();
 
-    const { storageType, onChangeStorageType, onCancel, onSave, dialogProps, loadingMessage, goHome } = useSettings();
+    const {
+        storageType,
+        settingsForm,
+        onChangeStorageType,
+        onChangeSettings,
+        onCancel,
+        onSave,
+        dialogProps,
+        loadingMessage,
+        goHome,
+        error,
+    } = useSettings();
 
     const backHome = useCallback(() => history.push("/dashboard"), [history]);
 
@@ -32,16 +44,40 @@ export const SettingsPage: React.FC = () => {
         }
     }, [backHome, goHome]);
 
+    useEffect(() => {
+        if (error) {
+            snackbar.error(error);
+        }
+    }, [error, snackbar]);
+
+    const onChangeRetentionDays = useCallback(
+        (event: React.ChangeEvent<{ value: string }>) => {
+            onChangeSettings({ ...settingsForm, historyRetentionDays: event.target.value });
+        },
+        [onChangeSettings, settingsForm]
+    );
+
     return (
         <React.Fragment>
             <PageHeader title={i18n.t("Settings")} onBackClick={backHome} />
 
             <Paper className={classes.container}>
-                <h3 className={classes.title}>{i18n.t("Application storage")}</h3>
+                <h4 className={classes.title}>{i18n.t("Application storage")}</h4>
 
                 <FormGroup className={classes.content} row={true}>
                     <StorageSettingDropdown selectedOption={storageType} onChangeStorage={onChangeStorageType} />
                 </FormGroup>
+
+                <h4 className={classes.title}>{i18n.t("History")}</h4>
+
+                <TextField
+                    fullWidth={true}
+                    label={i18n.t("Retention days")}
+                    value={settingsForm.historyRetentionDays.value}
+                    error={settingsForm.historyRetentionDays.hasError}
+                    helperText={settingsForm.historyRetentionDays.message || i18n.t("Leave empty to keep all history")}
+                    onChange={onChangeRetentionDays}
+                />
 
                 <ButtonsContainer>
                     <Button key={"cancel"} autoFocus onClick={onCancel}>

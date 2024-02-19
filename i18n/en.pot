@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-02-01T05:41:15.493Z\n"
-"PO-Revision-Date: 2024-02-01T05:41:15.493Z\n"
+"POT-Creation-Date: 2024-02-19T09:05:53.643Z\n"
+"PO-Revision-Date: 2024-02-19T09:05:53.643Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -24,6 +24,9 @@ msgid "Field {{field}} needs to be a valid url"
 msgstr ""
 
 msgid "Field {{field}} is not valid"
+msgstr ""
+
+msgid "Field {{field}} is not a number"
 msgstr ""
 
 msgid "Program not found"
@@ -1925,6 +1928,12 @@ msgid "Refresh"
 msgstr ""
 
 msgid "Application storage"
+msgstr ""
+
+msgid "Retention days"
+msgstr ""
+
+msgid "Leave empty to keep all history"
 msgstr ""
 
 msgid "Data Store"
