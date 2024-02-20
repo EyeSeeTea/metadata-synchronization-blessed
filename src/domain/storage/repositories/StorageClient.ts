@@ -101,4 +101,20 @@ export abstract class StorageClient {
             await this.removeObject(`${key}-${id}`);
         }
     }
+
+    public async removeObjectsInCollection(key: string, ids: string[]): Promise<void> {
+        const oldData: Ref[] = (await this.getObject(key)) ?? [];
+
+        const newData = oldData.filter(obj => !ids.includes(obj.id));
+
+        await this.saveObject(key, newData);
+
+        const advancedProperties = NamespaceProperties[key];
+
+        if (advancedProperties.length > 0) {
+            for (const id of ids) {
+                await this.removeObject(`${key}-${id}`);
+            }
+        }
+    }
 }

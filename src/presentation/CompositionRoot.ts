@@ -87,6 +87,7 @@ import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStoreP
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { ValidatePackageContentsUseCase } from "../domain/packages/usecases/ValidatePackageContentsUseCase";
 import { CleanSyncReportsUseCase } from "../domain/reports/usecases/CleanSyncReporstUseCase";
+import { DeleteOldSyncReportUseCase } from "../domain/reports/usecases/DeleteOldSyncReportUseCase";
 import { DeleteSyncReportUseCase } from "../domain/reports/usecases/DeleteSyncReportUseCase";
 import { DownloadPayloadUseCase } from "../domain/reports/usecases/DownloadPayloadUseCase";
 import { GetSyncReportUseCase } from "../domain/reports/usecases/GetSyncReportUseCase";
@@ -327,6 +328,10 @@ export class CompositionRoot {
             save: new SaveSyncReportUseCase(this.repositoryFactory, this.localInstance),
             clean: new CleanSyncReportsUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
+            deleteOld: new DeleteOldSyncReportUseCase(
+                this.repositoryFactory.reportsRepository(this.localInstance),
+                this.repositoryFactory.settingsRepository(this.localInstance)
+            ),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
             downloadPayloads: new DownloadPayloadUseCase(this.repositoryFactory, this.localInstance),

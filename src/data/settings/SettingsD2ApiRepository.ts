@@ -11,8 +11,6 @@ export class SettingsD2ApiRepository implements SettingsRepository {
         const storageClient = await this.getStorageClient();
         const settingsData = await storageClient.getObject<SettingsData>(Namespace.SETTINGS);
 
-        debugger;
-
         return settingsData
             ? Settings.create({ historyRetentionDays: settingsData.historyRetentionDays?.toString() }).getOrThrow()
             : Settings.create({ historyRetentionDays: undefined }).getOrThrow();

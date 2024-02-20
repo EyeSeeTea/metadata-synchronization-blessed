@@ -75,6 +75,20 @@ export class ReportsD2ApiRepository implements ReportsRepository {
         }
     }
 
+    public async deleteByIds(ids: string[]): Promise<void> {
+        try {
+            const storageClient = await this.getStorageClient();
+            await storageClient.removeObjectsInCollection(Namespace.HISTORY, ids);
+
+            for (const id of ids) {
+                debugger;
+                await storageClient.removeObject(`${Namespace.HISTORY}-${id}`);
+            }
+        } catch (error: any) {
+            console.error(error);
+        }
+    }
+
     private getStorageClient(): Promise<StorageClient> {
         return this.configRepository.getStorageClient();
     }
