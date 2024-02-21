@@ -81,7 +81,6 @@ export class ReportsD2ApiRepository implements ReportsRepository {
             await storageClient.removeObjectsInCollection(Namespace.HISTORY, ids);
 
             for (const id of ids) {
-                debugger;
                 await storageClient.removeObject(`${Namespace.HISTORY}-${id}`);
             }
         } catch (error: any) {
