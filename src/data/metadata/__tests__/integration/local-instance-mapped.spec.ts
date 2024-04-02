@@ -147,6 +147,21 @@ describe("Sync local instance mapped", () => {
             id: "Db5532sXKXT",
         }));
 
+        local.get("/sharing", async () => ({
+            meta: {
+                allowPublicAccess: true,
+                allowExternalAccess: false,
+            },
+            object: {
+                id: "Db5532sXKXT",
+                publicAccess: "rw------",
+                user: { id: "H4atNsEuKxP" },
+                userGroupAccesses: [],
+                userAccesses: [],
+                externalAccess: false,
+            },
+        }));
+
         const addAggregatedToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.dataValueSets.insert(JSON.parse(request.requestBody));
 
