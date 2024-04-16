@@ -243,6 +243,11 @@ export class DataEntryFormModel extends D2Model {
     protected static collectionName = "dataEntryForms" as const;
 }
 
+export class ConstantsModel extends D2Model {
+    protected static metadataType = "constants";
+    protected static collectionName = "constants" as const;
+}
+
 export class DataSetModel extends D2Model {
     protected static metadataType = "dataSet";
     protected static collectionName = "dataSets" as const;
