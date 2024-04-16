@@ -134,6 +134,7 @@ export class StorageConstantClient extends StorageClient {
                         id,
                         code: formatKey(key),
                         name: formatName(key),
+                        shortName: formatName(key),
                         description: JSON.stringify(value, null, 2),
                         value: 1,
                         ...sharing,
@@ -184,6 +185,7 @@ type Constant = ObjectSharing & {
     id: string;
     code: string;
     name: string;
+    shortName: string;
     description: string;
     lastUpdated: Date;
 };
@@ -192,6 +194,7 @@ const apiFields = {
     id: true,
     code: true,
     name: true,
+    shortName: true,
     description: true,
     user: { id: true, name: true },
     created: true,
