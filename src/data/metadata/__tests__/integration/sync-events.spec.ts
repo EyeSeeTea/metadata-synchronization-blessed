@@ -227,6 +227,36 @@ describe("Sync events", () => {
             id: "Db5532sXKX1",
         }));
 
+        local.get("/sharing", async () => ({
+            meta: {
+                allowPublicAccess: true,
+                allowExternalAccess: false,
+            },
+            object: {
+                id: "Db5532sXKXT",
+                publicAccess: "rw------",
+                user: { id: "H4atNsEuKxP" },
+                userGroupAccesses: [],
+                userAccesses: [],
+                externalAccess: false,
+            },
+        }));
+
+        local.get("/sharing", async () => ({
+            meta: {
+                allowPublicAccess: true,
+                allowExternalAccess: false,
+            },
+            object: {
+                id: "Db5532sXKX1",
+                externalAccess: false,
+                publicAccess: "rw------",
+                user: { id: "H4atNsEuKxP" },
+                userGroupAccesses: [],
+                userAccesses: [],
+            },
+        }));
+
         // local.get("/trackedEntityInstances", async () => ({
         //     trackedEntityInstances: [],
         // }));
