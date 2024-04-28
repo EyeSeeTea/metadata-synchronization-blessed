@@ -33,7 +33,7 @@ import { D2Api, D2Model, Id, MetadataResponse, Model, Stats } from "../../types/
 import { Dictionary, isNotEmpty, Maybe } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
-import { getD2APiFromInstance } from "../../utils/d2-utils";
+import { getD2APiFromInstance, getInChunks } from "../../utils/d2-utils";
 import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
 import { metadataTransformations } from "../transformations/PackageTransformations";
@@ -555,7 +555,47 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const response = await Promise.all(promises);
         const results = _.deepMerge({}, ...response);
         if (results.system) delete results.system;
-        return results;
+
+        const metadata = await this.validateEventVisualizationsByIds(results, elements);
+        return metadata;
+    }
+
+    private async validateEventVisualizationsByIds(metadata: any, ids: Id[]) {
+        if (!metadata.eventCharts || !metadata.eventReports) return metadata;
+        const result = await getInChunks<D2EventVisualization>(ids, async idsInChunk => {
+            const d2Charts = await this.api.models.eventCharts
+                .get({ filter: { id: { in: idsInChunk } }, fields: { id: true }, paging: true })
+                .getData();
+
+            const d2EventReports = await this.api.models.eventReports
+                .get({ filter: { id: { in: idsInChunk } }, fields: { id: true }, paging: true })
+                .getData();
+
+            return [{ eventCharts: d2Charts.objects, eventReports: d2EventReports.objects }];
+        });
+
+        const allCharts = _(result)
+            .flatMap(visualization => visualization.eventCharts)
+            .value();
+        const allEvents = _(result)
+            .flatMap(visualization => visualization.eventReports)
+            .value();
+
+        const chartsMetadata = _(metadata.eventCharts)
+            .map(eventChart => {
+                return allCharts.find(d2Chart => d2Chart.id === eventChart.id) ? eventChart : undefined;
+            })
+            .compact()
+            .value();
+
+        const eventReportsMetadata = _(metadata.eventReports)
+            .map(eventReport => {
+                return allEvents.find(d2Chart => d2Chart.id === eventReport.id) ? eventReport : undefined;
+            })
+            .compact()
+            .value();
+
+        return { ...metadata, eventReports: eventReportsMetadata, eventCharts: chartsMetadata };
     }
 
     private getApiModel(type: keyof MetadataEntities): Model<any, any> {
@@ -660,3 +700,5 @@ function getFilterAsString(filter: FilterBase): string[] {
         )
     );
 }
+
+type D2EventVisualization = { eventCharts: Array<{ id: Id }>; eventReports: Array<{ id: Id }> };
