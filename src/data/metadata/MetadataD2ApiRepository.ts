@@ -555,7 +555,33 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const response = await Promise.all(promises);
         const results = _.deepMerge({}, ...response);
         if (results.system) delete results.system;
-        return results;
+
+        const metadata = await this.validateEventVisualizationsByIds(results);
+        return metadata;
+    }
+
+    private async validateEventVisualizationsByIds(metadata: any) {
+        if (!metadata.eventCharts || !metadata.eventReports) return metadata;
+
+        const chartsMetadata = _(metadata.eventCharts)
+            .map(eventChart => {
+                return this.isEventReport(eventChart.type) ? undefined : eventChart;
+            })
+            .compact()
+            .value();
+
+        const eventReportsMetadata = _(metadata.eventReports)
+            .map(eventReport => {
+                return this.isEventReport(eventReport.type) ? eventReport : undefined;
+            })
+            .compact()
+            .value();
+
+        return { ...metadata, eventReports: eventReportsMetadata, eventCharts: chartsMetadata };
+    }
+
+    private isEventReport(visualizationType: D2VisualizationType): boolean {
+        return visualizationType === "PIVOT_TABLE" || visualizationType === "LINE_LIST";
     }
 
     private getApiModel(type: keyof MetadataEntities): Model<any, any> {
@@ -660,3 +686,5 @@ function getFilterAsString(filter: FilterBase): string[] {
         )
     );
 }
+
+type D2VisualizationType = "LINE_LIST" | "PIVOT_TABLE";
