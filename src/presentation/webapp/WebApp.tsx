@@ -26,45 +26,6 @@ const generateClassName = createGenerateClassName({
     productionPrefix: "c",
 });
 
-interface AppConfig {
-    appKey: string;
-    appearance: {
-        showShareButton: boolean;
-    };
-    feedback: {
-        token: string[];
-        createIssue: boolean;
-        sendToDhis2UserGroups: string[];
-        issues: {
-            repository: string;
-            title: string;
-            body: string;
-        };
-        snapshots: {
-            repository: string;
-            branch: string;
-        };
-        feedbackOptions: {};
-    };
-}
-
-interface AppWindow extends Window {
-    $: {
-        feedbackDhis2: (d2: unknown, appKey: string, appConfig: AppConfig["feedback"]["feedbackOptions"]) => void;
-    };
-}
-
-function initFeedbackTool(d2: unknown, appConfig: AppConfig): void {
-    const appKey = _(appConfig).get("appKey");
-    if (appConfig && appConfig.feedback) {
-        const feedbackOptions = {
-            ...appConfig.feedback,
-            i18nPath: "feedback-tool/i18n",
-        };
-        (window as unknown as AppWindow).$.feedbackDhis2(d2, appKey, feedbackOptions);
-    }
-}
-
 const App = () => {
     const { baseUrl } = useConfig();
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
@@ -99,7 +60,6 @@ const App = () => {
 
             Object.assign(window, { d2, api });
             setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
-            initFeedbackTool(d2, appConfig);
 
             await initializeAppRoles(baseUrl);
         };
