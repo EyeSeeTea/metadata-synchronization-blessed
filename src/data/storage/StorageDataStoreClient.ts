@@ -82,10 +82,14 @@ export class StorageDataStoreClient extends StorageClient {
         const metadata = await this.getMetadataByKey(key);
         if (!metadata) return undefined;
 
+        const { object } = await this.api.sharing.get({ type: "dataStore", id: metadata.id }).getData();
+
+        if (!object) return undefined;
+
         return {
             user: { name: "", ...metadata.user },
-            userAccesses: metadata.userAccesses,
-            userGroupAccesses: metadata.userGroupAccesses,
+            userAccesses: object.userAccesses || [],
+            userGroupAccesses: object.userGroupAccesses || [],
             publicAccess: metadata.publicAccess,
             externalAccess: metadata.externalAccess,
         };

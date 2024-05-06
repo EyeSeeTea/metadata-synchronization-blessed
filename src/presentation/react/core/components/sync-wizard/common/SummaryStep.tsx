@@ -217,6 +217,12 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
             </LiEntry>
 
             {_.keys(metadata).map(metadataType => {
+                //@ts-ignore
+                const modelByMetadataType = api.models[metadataType];
+                if (!modelByMetadataType) {
+                    console.warn(`Metadata type "${metadataType}" not supported in d2-api`);
+                    return null;
+                }
                 const itemsByType = metadata[metadataType as keyof MetadataEntities] || [];
 
                 const items = itemsByType.filter(({ id }) => !syncRule.excludedIds.includes(id));
@@ -225,8 +231,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                     items.length > 0 && (
                         <LiEntry
                             key={metadataType}
-                            //@ts-ignore
-                            label={`${api.models[metadataType].schema.displayName} [${items.length}]`}
+                            label={`${modelByMetadataType.schema.displayName} [${items.length}]`}
                         >
                             <ul>
                                 {items.map(({ id, name }) => (
