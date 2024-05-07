@@ -21,6 +21,8 @@ import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
 import Root from "./Root";
 import "./WebApp.css";
+import { Feedback } from "@eyeseetea/feedback-component";
+import { appConfig } from "../../app-config";
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -29,6 +31,7 @@ const generateClassName = createGenerateClassName({
 const App = () => {
     const { baseUrl } = useConfig();
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
+    const [username, setUsername] = useState("");
     const [showShareButton, setShowShareButton] = useState(false);
     const migrations = useMigrations(appContext);
 
@@ -36,13 +39,8 @@ const App = () => {
 
     useEffect(() => {
         const run = async () => {
-            const appConfig = await fetch("app-config.json", {
-                credentials: "same-origin",
-            }).then(res => res.json());
-
-            const encryptionKey = appConfig?.encryptionKey;
+            const encryptionKey = appConfig?.appKey;
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
-
             const d2 = await init({ baseUrl: `${baseUrl}/api` });
             const api = new D2Api({ baseUrl, backend: "fetch" });
             const version = await api.getVersion();
@@ -55,12 +53,14 @@ const App = () => {
 
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
             await compositionRoot.app.initialize();
+            const currentUser = await compositionRoot.user.current();
+            if (!currentUser) throw new Error("User not logged in");
 
             setAppContext({ d2: d2 as object, api, compositionRoot });
 
             Object.assign(window, { d2, api });
             setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
-
+            setUsername(currentUser.username);
             await initializeAppRoles(baseUrl);
         };
 
@@ -91,6 +91,7 @@ const App = () => {
                                 </div>
 
                                 <Share visible={showShareButton} />
+                                <Feedback options={appConfig?.feedback} username={username} />
                             </SnackbarProvider>
                         </LoadingProvider>
                     </OldMuiThemeProvider>
