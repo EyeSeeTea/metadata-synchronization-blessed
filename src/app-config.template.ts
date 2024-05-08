@@ -5,8 +5,5 @@ export interface AppConfig {
     appearance: {
         showShareButton: boolean;
     };
-    app: {
-        notifyEmailOnProjectSave: string[];
-    };
     feedback: FeedbackOptions;
 }

@@ -5,9 +5,6 @@ export const appConfig: AppConfig = {
     appearance: {
         showShareButton: false,
     },
-    app: {
-        notifyEmailOnProjectSave: [""],
-    },
     feedback: {
         repositories: {
             clickUp: {
