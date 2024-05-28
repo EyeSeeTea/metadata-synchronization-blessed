@@ -14,6 +14,19 @@ You can download Metadata Sync from the [DHIS2 App Hub](https://apps.dhis2.org/u
 
 For more links, see the [Metadata Sync App website](https://eyeseetea.github.io/metadata-synchronization-blessed/metadatasync/)
 
+
+### About & Sponsorships
+
+Metadata Sync development is sustainable thanks to the partners for which we build customized DHIS2 solutions. This application has been funded by the WHO Global Malaria Programme, Medecins Sans Frontières (MSF), Samaritan’s Purse, Health Information Systems Program South Africa and the U.S. President’s Malaria Initiative (PMI)  to support countries in strengthening the collection and use of health data by using DHIS2.
+
+It has also been funded by WHO and the WHO Integrated Data Platform (WIDP), where several WHO departments and units share a dedicated hosting and maintenance provided by EyeSeeTea, back some specific new features. The Long Term Agreement EyeSeeTea holds with WHO for this maintenance includes maintenance of this application, ensuring that it will always work at least with the last version of WIDP. We are passionate about both DHIS2 and open source, so giving back to the community through dedicated open-source development is and will always be part of EyeSeeTea’s commitment.
+You can also [support our work through a one-time contribution or becoming a regular github sponsor](https://github.com/sponsors/EyeSeeTea)
+
+## Feedback
+
+We’d like to hear your thoughts on the app in general, improvements, new features or any of the technologies being used. Just drop as a line at community@eyeseetea.com and let us know! If you prefer, you can also [create a new issue](https://github.com/EyeSeeTea/metadata-synchronization-blessed/issues) on our GitHub repository. Note that you will have to register and be logged in to GitHub to create a new issue.
+
+
 ## Setup
 
 ```
