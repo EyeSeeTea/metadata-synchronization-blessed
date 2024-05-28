@@ -12,7 +12,7 @@ You can find a user guide [at the wiki](https://github.com/EyeSeeTea/metadata-sy
 
 You can download Metadata Sync from the [DHIS2 App Hub](https://apps.dhis2.org/user/app/4045330c-5e97-4abb-ae0a-84d14d1a39b5)
 
-For more links, see the [Metadata Sync App website](https://eyeseetea.github.io/metadata-synchronization-blessed/metadatasync/
+For more links, see the [Metadata Sync App website](https://eyeseetea.github.io/metadata-synchronization-blessed/metadatasync/)
 
 ## Setup
 
