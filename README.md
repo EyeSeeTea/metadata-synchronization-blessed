@@ -1,9 +1,11 @@
 
 <img width="892" alt="logo_metadatasync" src="https://github.com/EyeSeeTea/metadata-synchronization-blessed/assets/108925044/5bfe0941-080c-42d4-9bdb-4ae5316afd93">
 
-Metadata Sync is a DHIS2 Web Application part of [EyeSeeTea's DHIS2 Suite](https://eyeseetea.com/dhis2-apps/) that simplifies and automates the process of sending data and metadata from one DHIS2 instance to one or several other DHIS2 implementations, however different they might be.
+Metadata Sync is a DHIS2 Web Application part of [EyeSeeTea's DHIS2 Suite](https://eyeseetea.com/dhis2-apps/) that simplifies and automates the process of sending data and metadata from one DHIS2 instance to one or several other DHIS2 implementations, however different they might be. You can watch a [presentation video of the app](https://www.youtube.com/watch?v=xrrNfi66dI4)
 
-[![banner_metadatasync](https://github.com/EyeSeeTea/metadata-synchronization-blessed/assets/108925044/2b18028b-841a-48c2-98b3-bf49fff19bbf)](https://eyeseetea.github.io/metadata-synchronization-blessed/metadatasync/)
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=2XYclHVLKrI&t=1931s"><img width="600" src="https://github.com/EyeSeeTea/metadata-synchronization-blessed/assets/108925044/41f19953-2e21-4509-ada9-8f3ecf8aad1e" alt="youtube presentation screenshot"></a>    
+</div>
 
 
 ## Documentation & Downloads
