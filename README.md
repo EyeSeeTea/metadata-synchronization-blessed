@@ -166,3 +166,7 @@ $ yarn update-po
 # ... add/edit translations in po files ...
 $ yarn localize
 ```
+
+<p align="center">
+  <a href="https://eyeseetea.com/dhis2-apps/"><img src="https://github.com/EyeSeeTea/home-page-app/assets/108925044/190b9ba1-a8ba-4a92-83c1-3005096d27c1"></a>
+</p>
