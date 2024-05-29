@@ -139,6 +139,7 @@ function build(args: BuildArgs): void {
         run(`react-scripts build && cp -r i18n icon.png build`);
         run(`d2-manifest package.json build/manifest.webapp -t ${manifestType} -n '${variant.title}'`);
         updateManifestNamespace(`build/manifest.webapp`, variant.file);
+        updateManifestJsonFile(`build/manifest.json`, variant.title);
         run(`rm -f ${fileName}`);
         run(`cd build && zip -r ../${fileName} *`);
         console.info(`Written: ${fileName}`);
@@ -150,6 +151,14 @@ function updateManifestNamespace(manifestPath: string, variantFile: string) {
         const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
         manifest.activities.dhis.namespace = variantFile;
         fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    }
+}
+
+function updateManifestJsonFile(manifestJsonPath: string, variantTitle: string) {
+    if (fs.existsSync(manifestJsonPath)) {
+        const manifestJson = JSON.parse(fs.readFileSync(manifestJsonPath, "utf8"));
+        Object.assign(manifestJson, { name: variantTitle, short_name: variantTitle });
+        fs.writeFileSync(manifestJsonPath, JSON.stringify(manifestJson, null, 2));
     }
 }
 
