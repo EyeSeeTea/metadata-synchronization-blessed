@@ -138,8 +138,10 @@ function build(args: BuildArgs): void {
 
         run(`react-scripts build && cp -r i18n icon.png build`);
         run(`d2-manifest package.json build/manifest.webapp -t ${manifestType} -n '${variant.title}'`);
+        if (variant.file === "metadata-synchronization") {
+            updateManifestJsonFile(`build/manifest.json`, variant.title);
+        }
         updateManifestNamespace(`build/manifest.webapp`, variant.file);
-        updateManifestJsonFile(`build/manifest.json`, variant.title);
         run(`rm -f ${fileName}`);
         run(`cd build && zip -r ../${fileName} *`);
         console.info(`Written: ${fileName}`);
