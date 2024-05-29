@@ -8,7 +8,7 @@ const variants = [
     {
         type: "app",
         name: "core-app",
-        title: "MetaData Sync App",
+        title: "MetaData Synchronization",
         file: "metadata-synchronization",
     },
     {
