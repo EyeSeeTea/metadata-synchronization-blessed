@@ -5,7 +5,6 @@ import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
-import _ from "lodash";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { useEffect, useState } from "react";
@@ -33,7 +32,6 @@ const App = () => {
     const { baseUrl } = useConfig();
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
     const [username, setUsername] = useState("");
-    const [showShareButton, setShowShareButton] = useState(false);
     const [appConfig, setAppConfig] = useState<Maybe<AppConfig>>();
     const migrations = useMigrations(appContext);
 
@@ -63,14 +61,13 @@ const App = () => {
             setAppContext({ d2: d2 as object, api, compositionRoot });
 
             Object.assign(window, { d2, api });
-            setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
             setUsername(currentUser.username);
             setAppConfig(configFromJson);
             await initializeAppRoles(baseUrl);
         };
 
         run();
-    }, [appConfig, baseUrl]);
+    }, [baseUrl]);
 
     if (migrations.state.type === "pending") {
         return (
@@ -95,7 +92,7 @@ const App = () => {
                                     </AppContext.Provider>
                                 </div>
 
-                                <Share visible={showShareButton} />
+                                <Share visible={appConfig?.appearance.showShareButton} />
                                 {appConfig && <Feedback options={appConfig.feedback} username={username} />}
                             </SnackbarProvider>
                         </LoadingProvider>
