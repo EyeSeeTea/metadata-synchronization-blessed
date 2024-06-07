@@ -69,6 +69,8 @@ const App = () => {
         run();
     }, [baseUrl]);
 
+    const showShareButton = appConfig?.appearance.showShareButton || false;
+
     if (migrations.state.type === "pending") {
         return (
             <AppContext.Provider value={appContext}>
@@ -92,7 +94,7 @@ const App = () => {
                                     </AppContext.Provider>
                                 </div>
 
-                                <Share visible={appConfig?.appearance.showShareButton} />
+                                <Share visible={showShareButton} />
                                 {appConfig && <Feedback options={appConfig.feedback} username={username} />}
                             </SnackbarProvider>
                         </LoadingProvider>
