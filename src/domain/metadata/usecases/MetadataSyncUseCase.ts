@@ -5,11 +5,19 @@ import { ExportBuilder } from "../../../types/synchronization";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
+import { Id } from "../../common/entities/Schemas";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
-import { Document, MetadataEntities, MetadataPackage, Program } from "../entities/MetadataEntities";
+import {
+    DataElement,
+    DataSet,
+    Document,
+    MetadataEntities,
+    MetadataPackage,
+    Program,
+} from "../entities/MetadataEntities";
 import { NestedRules } from "../entities/MetadataExcludeIncludeRules";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
@@ -41,6 +49,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const metadataRepository = await this.getMetadataRepository();
             const syncMetadata = await metadataRepository.getMetadataByIds(ids);
             const elements = syncMetadata[collectionName] || [];
+            const defaultIds = await metadataRepository.getDefaultIds();
 
             for (const element of elements) {
                 //ProgramRules is not included in programs items in the response by the dhis2 API
@@ -48,11 +57,19 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 const fixedElement =
                     type === "programs" ? await this.requestAndIncludeProgramRules(element as Program) : element;
 
+                // In DHIS 2.38.5 and above the defaults parameter is not working
+                // /api/metadata.json?fields=id&filter=id:eq:data_element_id&categoryCombo&defaults=INCLUDE/EXCLUDE; this is not working
+                // so manually removing the default categoryCombo
+                const elementWithoutDefaults =
+                    type === "dataElements" || type === "dataSets"
+                        ? this.excludeDefaultsFromElement(fixedElement as DataElement, defaultIds)
+                        : fixedElement;
+
                 // Store metadata object in result
                 const object = cleanObject(
                     this.api,
                     schema.name,
-                    fixedElement,
+                    elementWithoutDefaults,
                     excludeRules,
                     includeSharingSettings,
                     removeOrgUnitReferences,
@@ -85,6 +102,12 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             return _.mapValues(result, objects => _.uniqBy(objects, "id"));
         };
         return recursiveExport(originalBuilder);
+    }
+
+    private excludeDefaultsFromElement(fixedElement: DataElement | DataSet, defaultIds: Id[]): Partial<DataElement> {
+        return fixedElement.categoryCombo && defaultIds.includes(fixedElement.categoryCombo.id)
+            ? _(fixedElement).omit("categoryCombo").value()
+            : fixedElement;
     }
 
     public buildPayload = memoize(async () => {
