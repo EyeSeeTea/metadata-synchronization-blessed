@@ -45,7 +45,7 @@
         "moment": "2.29.4",
         "monaco-editor": "0.29.1",
         "nano-memoize": "1.2.1",
-        "node-schedule": "2.0.0",
+        "node-schedule": "2.1.1",
         "purify-ts": "1.1.0",
         "purify-ts-extra-codec": "0.6.0",
         "qs": "^6.12.1",
@@ -61,7 +61,7 @@
         "rehype-raw": "^6.1.1",
         "rehype-sanitize": "^5.0.1",
         "semver": "7.5.2",
-        "styled-components": "5.3.1",
+        "styled-components": "6.1.11",
         "styled-jsx": "5.0.0"
     },
     "scripts": {
