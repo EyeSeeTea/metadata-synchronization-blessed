@@ -9,6 +9,7 @@ import { MAPPED_BY_VALUE_KEY } from "../presentation/react/core/components/mappi
 import { D2Api } from "../types/d2-api";
 import { buildObject } from "../types/utils";
 import "../utils/lodash-mixins";
+import { D2MetadataUtils } from "./d2-utils";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
 // this function should be removed
@@ -29,7 +30,9 @@ export async function getMetadata(api: D2Api, elements: string[], fields = ":all
     const response = await Promise.all(promises);
     const results = _.deepMerge({}, ...response);
     if (results.system) delete results.system;
-    return results;
+    const defaultIds = await D2MetadataUtils.getDefaultIds(api);
+    const metadataExcludeDefaults = await D2MetadataUtils.excludeDefaults(results, defaultIds);
+    return metadataExcludeDefaults;
 }
 
 export const availablePeriods = buildObject<{
