@@ -24,7 +24,7 @@ async function getBaseUrl() {
     if (isDev) {
         return "/dhis2"; // See src/setupProxy.js
     } else {
-        const { data: manifest } = await axios.get<any>("manifest.webapp");
+        const { data: manifest } = await axios.get<AppManifest>("manifest.webapp");
         return getUrlForCurrentDomain(manifest.activities.dhis.href);
     }
 }
@@ -42,6 +42,14 @@ const configI18n = ({ keyUiLocale }: { keyUiLocale: string }) => {
 
 function getUrlForCurrentDomain(path: string) {
     return new URL(path, window.location.href).href;
+}
+
+interface AppManifest {
+    activities: {
+        dhis: {
+            href: string;
+        };
+    };
 }
 
 async function main() {
