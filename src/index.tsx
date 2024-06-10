@@ -25,7 +25,7 @@ async function getBaseUrl() {
         return "/dhis2"; // See src/setupProxy.js
     } else {
         const { data: manifest } = await axios.get<any>("manifest.webapp");
-        return manifest.activities.dhis.href;
+        return getUrlForCurrentDomain(manifest.activities.dhis.href);
     }
 }
 
@@ -39,6 +39,10 @@ const configI18n = ({ keyUiLocale }: { keyUiLocale: string }) => {
     i18n.changeLanguage(keyUiLocale);
     document.documentElement.setAttribute("dir", isLangRTL(keyUiLocale) ? "rtl" : "ltr");
 };
+
+function getUrlForCurrentDomain(path: string) {
+    return new URL(path, window.location.href).href;
+}
 
 async function main() {
     const baseUrl = await getBaseUrl();
@@ -67,9 +71,7 @@ async function main() {
         console.error(err);
         const feedback = err.toString().match("Unable to get schemas") ? (
             <h3 style={{ margin: 20 }}>
-                <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
-                    Login
-                </a>
+                Login to {baseUrl}
                 {` ${baseUrl}`}
             </h3>
         ) : (
