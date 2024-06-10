@@ -7709,7 +7709,6 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 
 .logo {
   width: auto;
-  height: 64px; 
 }
 @media (max-width: 425px) {
     .logo {
