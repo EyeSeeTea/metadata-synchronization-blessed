@@ -33,10 +33,11 @@ import { D2Api, D2Model, Id, MetadataResponse, Model, Stats } from "../../types/
 import { Dictionary, isNotEmpty, Maybe } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
-import { D2MetadataUtils, getD2APiFromInstance } from "../../utils/d2-utils";
+import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
 import { metadataTransformations } from "../transformations/PackageTransformations";
+import { D2MetadataUtils } from "./D2MetadataUtils";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;

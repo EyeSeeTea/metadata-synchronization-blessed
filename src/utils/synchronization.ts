@@ -1,6 +1,7 @@
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment, { unitOfTime } from "moment";
+import { D2MetadataUtils } from "../data/metadata/D2MetadataUtils";
 import { MetadataMapping, MetadataMappingDictionary } from "../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
@@ -9,7 +10,6 @@ import { MAPPED_BY_VALUE_KEY } from "../presentation/react/core/components/mappi
 import { D2Api } from "../types/d2-api";
 import { buildObject } from "../types/utils";
 import "../utils/lodash-mixins";
-import { D2MetadataUtils } from "./d2-utils";
 
 //TODO: when all request to metadata using metadataRepository.getMetadataByIds
 // this function should be removed
