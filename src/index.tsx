@@ -64,9 +64,17 @@ async function main() {
         const userSettings = await api.get<{ keyUiLocale: string }>("/userSettings").getData();
         configI18n(userSettings);
 
+        const providerProps: Omit<React.ComponentProps<typeof Provider>, "children"> = {
+            config: { baseUrl: baseUrl, apiVersion: 30 },
+            offlineInterface: null,
+            plugin: false,
+            parentAlertsAdd: null,
+            showAlertsInPlugin: false,
+        };
+
         ReactDOM.render(
             <React.StrictMode>
-                <Provider config={{ baseUrl, apiVersion: 30 }}>
+                <Provider {...providerProps}>
                     <PresentationLoader />
                 </Provider>
             </React.StrictMode>,
