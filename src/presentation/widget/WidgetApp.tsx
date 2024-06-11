@@ -2,7 +2,6 @@ import { useConfig } from "@dhis2/app-runtime";
 import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
-import { init } from "d2";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { useEffect, useState } from "react";
@@ -14,6 +13,7 @@ import { useMigrations } from "../react/core/components/migrations/hooks";
 import { AppContext, AppContextState } from "../react/core/contexts/AppContext";
 import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
+import { d2 } from "../webapp/WebApp";
 import Root from "./pages/Root";
 import "./WidgetApp.css";
 
@@ -35,7 +35,6 @@ const App = () => {
             const encryptionKey = appConfig?.encryptionKey;
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
 
-            const d2 = await init({ baseUrl: `${baseUrl}/api` });
             const api = new D2Api({ baseUrl, backend: "fetch" });
             const version = await api.getVersion();
             const instance = Instance.build({
@@ -48,7 +47,7 @@ const App = () => {
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
             await compositionRoot.app.initialize();
 
-            setAppContext({ d2: d2 as object, api, compositionRoot });
+            setAppContext({ d2: d2, api, compositionRoot });
         };
 
         run();

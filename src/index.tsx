@@ -1,7 +1,6 @@
 import { Provider } from "@dhis2/app-runtime";
 import i18n from "@dhis2/d2-i18n";
 import axios from "axios";
-import { init } from "d2";
 import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -56,12 +55,10 @@ async function main() {
     const baseUrl = await getBaseUrl();
 
     try {
-        const d2 = await init({ baseUrl: baseUrl + "/api", schemas: [] });
         const instance = Instance.build({ name: "Default", url: baseUrl });
         const api = getD2APiFromInstance(instance);
         if (isDev) {
             window.api = api;
-            window.d2 = d2;
         }
 
         const userSettings = await api.get<{ keyUiLocale: string }>("/userSettings").getData();
