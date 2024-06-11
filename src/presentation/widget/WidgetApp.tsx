@@ -3,7 +3,6 @@ import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 //@ts-ignore
-import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
 import i18n from "../../locales";
@@ -11,7 +10,6 @@ import { D2Api } from "../../types/d2-api";
 import { CompositionRoot } from "../CompositionRoot";
 import { useMigrations } from "../react/core/components/migrations/hooks";
 import { AppContext, AppContextState } from "../react/core/contexts/AppContext";
-import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
 import { d2 } from "../webapp/WebApp";
 import Root from "./pages/Root";
@@ -60,19 +58,17 @@ const App = () => {
     return (
         <StylesProvider generateClassName={generateClassName}>
             <MuiThemeProvider theme={muiTheme}>
-                <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
-                    <LoadingProvider>
-                        <SnackbarProvider>
-                            {!!appContext && (
-                                <div id="app" className="content">
-                                    <AppContext.Provider value={appContext}>
-                                        <Root />
-                                    </AppContext.Provider>
-                                </div>
-                            )}
-                        </SnackbarProvider>
-                    </LoadingProvider>
-                </OldMuiThemeProvider>
+                <LoadingProvider>
+                    <SnackbarProvider>
+                        {!!appContext && (
+                            <div id="app" className="content">
+                                <AppContext.Provider value={appContext}>
+                                    <Root />
+                                </AppContext.Provider>
+                            </div>
+                        )}
+                    </SnackbarProvider>
+                </LoadingProvider>
             </MuiThemeProvider>
         </StylesProvider>
     );

@@ -5,7 +5,6 @@ import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 //@ts-ignore
-import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { D2Api } from "../../types/d2-api";
@@ -15,7 +14,6 @@ import { useMigrations } from "../react/core/components/migrations/hooks";
 import Migrations from "../react/core/components/migrations/Migrations";
 import Share from "../react/core/components/share/Share";
 import { AppContext, AppContextState } from "../react/core/contexts/AppContext";
-import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
 import Root from "./Root";
 import "./WebApp.css";
@@ -81,22 +79,20 @@ const App = () => {
         return (
             <StylesProvider generateClassName={generateClassName}>
                 <MuiThemeProvider theme={muiTheme}>
-                    <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
-                        <LoadingProvider>
-                            <SnackbarProvider>
-                                <HeaderBar appName={appTitle} />
+                    <LoadingProvider>
+                        <SnackbarProvider>
+                            <HeaderBar appName={appTitle} />
 
-                                <div id="app" className="content">
-                                    <AppContext.Provider value={appContext}>
-                                        <Root />
-                                    </AppContext.Provider>
-                                </div>
+                            <div id="app" className="content">
+                                <AppContext.Provider value={appContext}>
+                                    <Root />
+                                </AppContext.Provider>
+                            </div>
 
-                                <Share visible={showShareButton} />
-                                {appConfig && <Feedback options={appConfig.feedback} username={username} />}
-                            </SnackbarProvider>
-                        </LoadingProvider>
-                    </OldMuiThemeProvider>
+                            <Share visible={showShareButton} />
+                            {appConfig && <Feedback options={appConfig.feedback} username={username} />}
+                        </SnackbarProvider>
+                    </LoadingProvider>
                 </MuiThemeProvider>
             </StylesProvider>
         );
