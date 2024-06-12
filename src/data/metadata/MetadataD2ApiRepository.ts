@@ -37,6 +37,7 @@ import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
 import { metadataTransformations } from "../transformations/PackageTransformations";
+import { D2MetadataUtils } from "./D2MetadataUtils";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -158,23 +159,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     @cache()
     public async getDefaultIds(filter?: string): Promise<string[]> {
-        const response = (await this.api
-            .get("/metadata", {
-                filter: "identifiable:eq:default",
-                fields: "id",
-            })
-            .getData()) as {
-            [key: string]: { id: string }[];
-        };
-
-        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
-
-        return _(metadata)
-            .omit(["system"])
-            .values()
-            .flatten()
-            .map(({ id }) => id)
-            .value();
+        const metadata = D2MetadataUtils.getDefaultIds(this.api, filter);
+        return metadata;
     }
 
     @cache()
@@ -557,7 +543,11 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (results.system) delete results.system;
 
         const metadata = await this.validateEventVisualizationsByIds(results);
-        return metadata;
+        const defaultIds = await this.getDefaultIds();
+        const metadataExcludeDefaults = includeDefaults
+            ? metadata
+            : await D2MetadataUtils.excludeDefaults(metadata, defaultIds);
+        return metadataExcludeDefaults;
     }
 
     private async validateEventVisualizationsByIds(metadata: any) {
