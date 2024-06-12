@@ -1388,7 +1388,7 @@ a.box:active {
   margin-left: 2em; }
 
 .margin_vertical {
-  margin-bottom: 20px 0; }
+  margin-bottom: 20px 0; !important }
 
 .content figure {
   margin-left: 2em;
