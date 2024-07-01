@@ -44,7 +44,13 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     compositionRoot.metadata
                         .getByIds(syncRule.metadataIds, instance, "id,name,type") //type is required to transform visualizations to charts and report tables
                         .then((metadata: MetadataPackage<MetadataEntity>) => {
-                            const models = _.keys(metadata).map((type: string) => modelFactory(type));
+                            const models = _(metadata)
+                                .keys()
+                                .concat(syncRule.metadataSyncAll)
+                                .sort()
+                                .uniq()
+                                .value()
+                                .map((type: string) => modelFactory(type));
 
                             const options = models
                                 .filter((model: typeof D2Model) => model.getMetadataType() !== defaultName)
