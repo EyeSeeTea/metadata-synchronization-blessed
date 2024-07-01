@@ -151,6 +151,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
 
                         setIdsToIgnore(idsFromSyncAllMetadataTypes);
                     });
+                else setIdsToIgnore([]);
 
                 return updatedTypes;
             });
