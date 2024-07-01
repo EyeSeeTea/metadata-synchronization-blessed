@@ -36,6 +36,7 @@ export const defaultSynchronizationBuilder: SynchronizationBuilder = {
         includeSharingSettings: true,
         removeOrgUnitReferences: false,
         useDefaultIncludeExclude: true,
+        metadataSyncAll: [],
         atomicMode: "ALL",
         mergeMode: "MERGE",
         importMode: "COMMIT",

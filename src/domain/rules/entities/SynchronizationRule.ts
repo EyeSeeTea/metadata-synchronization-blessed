@@ -168,6 +168,10 @@ export class SynchronizationRule {
         return this.syncRule.builder?.syncParams?.metadataIncludeExcludeRules ?? {};
     }
 
+    public get metadataSyncAll(): string[] {
+        return this.syncRule.builder?.syncParams?.metadataSyncAll ?? [];
+    }
+
     public get targetInstances(): string[] {
         return this.syncRule.targetInstances;
     }
@@ -234,6 +238,7 @@ export class SynchronizationRule {
             removeUserObjectsAndReferences: false,
             removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
+            metadataSyncAll: [],
             ...params,
         };
     }
@@ -542,13 +547,29 @@ export class SynchronizationRule {
         return this.update({ targetInstances }).updateBuilder({ targetInstances });
     }
 
-    public updateSyncParams(syncParams: MetadataSynchronizationParams): SynchronizationRule {
+    public updateSyncParams(syncParams: Partial<MetadataSynchronizationParams>): SynchronizationRule {
+        const params = this.syncRule.builder?.syncParams ?? {
+            enableMapping: false,
+            includeSharingSettings: true,
+            removeOrgUnitReferences: false,
+            removeUserObjects: false,
+            removeUserObjectsAndReferences: false,
+            removeOrgUnitObjects: false,
+            useDefaultIncludeExclude: true,
+            metadataSyncAll: [],
+        };
+
         return this.updateBuilder({
             syncParams: {
+                ...params,
                 ...syncParams,
                 removeOrgUnitObjects: syncParams.removeOrgUnitReferences ? true : syncParams.removeOrgUnitObjects,
             },
         });
+    }
+
+    public updateMetadataSyncAll(metadataSyncAll: string[]): SynchronizationRule {
+        return this.updateSyncParams({ metadataSyncAll });
     }
 
     public updateDataParams(dataParams: DataSynchronizationParams): SynchronizationRule {
@@ -613,7 +634,10 @@ export class SynchronizationRule {
                     : null,
             ]),
             metadata: _.compact([
-                this.usesFilterRules && this.metadataIds.length === 0 && this.filterRules.length === 0
+                this.usesFilterRules &&
+                this.metadataIds.length === 0 &&
+                this.filterRules.length === 0 &&
+                this.builder.syncParams?.metadataSyncAll.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element or create a filter rule" },

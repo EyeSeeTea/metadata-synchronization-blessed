@@ -24,4 +24,5 @@ export interface MetadataSynchronizationParams extends MetadataImportParams {
     removeOrgUnitObjects?: boolean;
     useDefaultIncludeExclude: boolean;
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
+    metadataSyncAll: string[];
 }
