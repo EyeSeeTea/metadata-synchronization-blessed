@@ -5,7 +5,6 @@ import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
-import _ from "lodash";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { useEffect, useState } from "react";
@@ -22,7 +21,8 @@ import { muiTheme } from "../react/core/themes/dhis2.theme";
 import Root from "./Root";
 import "./WebApp.css";
 import { Feedback } from "@eyeseetea/feedback-component";
-import { appConfig } from "../../app-config";
+import { AppConfig } from "../../app-config.template";
+import { Maybe } from "../../types/utils";
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -32,14 +32,17 @@ const App = () => {
     const { baseUrl } = useConfig();
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
     const [username, setUsername] = useState("");
-    const [showShareButton, setShowShareButton] = useState(false);
+    const [appConfig, setAppConfig] = useState<Maybe<AppConfig>>();
     const migrations = useMigrations(appContext);
 
     const appTitle = process.env.REACT_APP_PRESENTATION_TITLE;
 
     useEffect(() => {
         const run = async () => {
-            const encryptionKey = appConfig?.appKey;
+            const configFromJson = (await fetch("app-config.json", {
+                credentials: "same-origin",
+            }).then(res => res.json())) as AppConfig;
+            const encryptionKey = configFromJson.encryptionKey;
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
             const d2 = await init({ baseUrl: `${baseUrl}/api` });
             const api = new D2Api({ baseUrl, backend: "fetch" });
@@ -50,7 +53,6 @@ const App = () => {
                 url: baseUrl,
                 version,
             });
-
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
             await compositionRoot.app.initialize();
             const currentUser = await compositionRoot.user.current();
@@ -59,13 +61,15 @@ const App = () => {
             setAppContext({ d2: d2 as object, api, compositionRoot });
 
             Object.assign(window, { d2, api });
-            setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
             setUsername(currentUser.username);
+            setAppConfig(configFromJson);
             await initializeAppRoles(baseUrl);
         };
 
         run();
     }, [baseUrl]);
+
+    const showShareButton = appConfig?.appearance.showShareButton || false;
 
     if (migrations.state.type === "pending") {
         return (
@@ -91,7 +95,7 @@ const App = () => {
                                 </div>
 
                                 <Share visible={showShareButton} />
-                                <Feedback options={appConfig?.feedback} username={username} />
+                                {appConfig && <Feedback options={appConfig.feedback} username={username} />}
                             </SnackbarProvider>
                         </LoadingProvider>
                     </OldMuiThemeProvider>

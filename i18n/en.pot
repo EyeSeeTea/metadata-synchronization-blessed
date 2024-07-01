@@ -529,7 +529,7 @@ msgstr ""
 msgid "Custodian"
 msgstr ""
 
-msgid "Search by "
+msgid "Search by name, code or id"
 msgstr ""
 
 msgid ""
