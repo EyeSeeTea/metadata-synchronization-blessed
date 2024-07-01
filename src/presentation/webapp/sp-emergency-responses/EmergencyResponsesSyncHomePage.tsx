@@ -1,19 +1,18 @@
 import _ from "lodash";
+import moment from "moment";
+import React from "react";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import { Box, Button, LinearProgress, List, makeStyles, Paper, Typography } from "@material-ui/core";
-import React from "react";
 import { SynchronizationRule } from "../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../locales";
 import { useAppContext } from "../../react/core/contexts/AppContext";
 import { CompositionRoot } from "../../CompositionRoot";
 import { formatDateLong } from "../../../utils/date";
-import { SyncRuleButtonProps, SyncRuleButton } from "./SyncRuleButton";
 import { downloadFile } from "../../utils/download";
 import { SynchronizationReport } from "../../../domain/reports/entities/SynchronizationReport";
 import { SummaryTable } from "../../react/core/components/sync-summary/SummaryTable";
 import { SynchronizationResult, SynchronizationStats } from "../../../domain/reports/entities/SynchronizationResult";
-import moment from "moment";
 import { EmergencyType, getEmergencyResponseConfig } from "../../../domain/entities/EmergencyResponses";
+import i18n from "../../../locales";
 
 interface EmergencyResponsesSyncHomePageProps {
     emergencyType: EmergencyType;
@@ -29,7 +28,7 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
 
     const executeRules = React.useCallback(
         (rules: SynchronizationRule[]) =>
-            rules.forEach(rule => {
+            _.orderBy(rules, "name", "asc").forEach(rule => {
                 console.debug("Running: " + rule.name);
                 runSyncRule(rule);
             }),
@@ -65,7 +64,7 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
                     disabled={isRunning}
                     className={classes.runButton}
                 >
-                    {i18n.t("Run Metadata Sync")}
+                    {i18n.t("Push data to HQ server")}
                 </Button>
             </Box>
 
@@ -187,7 +186,7 @@ function useSyncRulesList(emergencyType: EmergencyType) {
 
                 const emergencyResponsesRules = _(rules)
                     .keyBy(rule => rule.code || "")
-                    .at([syncRules.metadata, syncRules.data])
+                    .at([...syncRules.metadata, ...syncRules.data])
                     .compact()
                     .value();
 
@@ -206,13 +205,13 @@ function useSyncRulesList(emergencyType: EmergencyType) {
 function useSyncRulesExecuter(options: { logs: Logs; emergencyType: EmergencyType }) {
     const { emergencyType, logs } = options;
 
-    const [isRunning, setRunning] = React.useState(false);
+    const [running, setRunning] = React.useState<Record<string, boolean>>();
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
 
-    const execute = React.useCallback<SyncRuleButtonProps["onClick"]>(
+    const execute = React.useCallback(
         async rule => {
-            setRunning(true);
+            setRunning(running => (running ? { ...running, [rule.id]: true } : { [rule.id]: true }));
 
             try {
                 logs.clear();
@@ -221,11 +220,13 @@ function useSyncRulesExecuter(options: { logs: Logs; emergencyType: EmergencyTyp
                 logs.log(`Error: ${err.message}`);
                 snackbar.error(err.message);
             } finally {
-                setRunning(false);
+                setRunning(running => (running ? { ...running, [rule.id]: false } : { [rule.id]: false }));
             }
         },
         [compositionRoot, snackbar, logs, emergencyType]
     );
+
+    const isRunning = React.useMemo(() => Boolean(running && Object.values(running).some(Boolean)), [running]);
 
     return [isRunning, execute] as const;
 }
