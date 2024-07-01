@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, Icon, makeStyles } from "@material-ui/core";
+import { Box, Checkbox, FormControlLabel, Icon, Paper, Tooltip, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import { isCancel } from "@eyeseetea/d2-api";
 import {
@@ -16,7 +16,7 @@ import {
     useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
-import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { DataSource, isDhisInstance, isJSONDataSource } from "../../../../../domain/instance/entities/DataSource";
 import { MetadataResponsible } from "../../../../../domain/metadata/entities/MetadataResponsible";
@@ -29,6 +29,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
+import { Toggle } from "../toggle/Toggle";
 
 export type MetadataTableFilters =
     | "group"
@@ -58,6 +59,9 @@ export interface MetadataTableProps extends Omit<ObjectsTableProps<MetadataType>
     notifyNewSelection?(selectedIds: string[], excludedIds: string[]): void;
     notifyNewModel?(model: typeof D2Model): void;
     notifyRowsChange?(rows: MetadataType[]): void;
+    notifyModelSyncAllChange?(value: boolean): void;
+    modelIsSyncAll?: boolean;
+    ignoreIds?: string[];
     allowChangingResponsible?: boolean;
     showResponsible?: boolean;
     externalFilterComponents?: ReactNode;
@@ -110,11 +114,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     filterRows,
     transformRows = rows => rows,
     models,
+    modelIsSyncAll,
     selectedIds: externalSelection,
     excludedIds = [],
+    ignoreIds = [],
     notifyNewSelection = _.noop,
     notifyNewModel = _.noop,
     notifyRowsChange = _.noop,
+    notifyModelSyncAllChange = _.noop,
     childrenKeys = [],
     additionalColumns = [],
     additionalActions = [],
@@ -249,6 +256,10 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const changeFilterRowsFilter = (event: ChangeEvent<HTMLInputElement>) => {
         const disableFilterRows = event.target?.checked;
         updateFilters({ disableFilterRows });
+    };
+
+    const changeOrgUnitsSyncAll = (value: boolean) => {
+        notifyModelSyncAllChange(value);
     };
 
     const changeParentOrgUnitFilter = useCallback(
@@ -406,21 +417,39 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const orgUnitTreeFilter = viewFilters.includes("orgUnit") && model.getCollectionName() === "organisationUnits" && (
         <div key={"org-unit-selector-filter"} className={classes.orgUnitFilter}>
-            <OrgUnitsSelector
-                api={api}
-                withElevation={true}
-                controls={{}}
-                hideCheckboxes={true}
-                hideMemberCount={true}
-                fullWidth={false}
-                height={500}
-                square={true}
-                onChange={changeParentOrgUnitFilter}
-                selected={filters.parents ?? []}
-                singleSelection={true}
-                selectOnClick={true}
-                initiallyExpanded={expandOrgUnits}
-            />
+            <Paper elevation={1} square={true}>
+                {modelIsSyncAll !== undefined && (
+                    <Box pt={1} px={2} pb={modelIsSyncAll ? 1 : 0}>
+                        <Toggle
+                            label={
+                                <Tooltip title={i18n.t("Dynamic auto update")}>
+                                    <span>{i18n.t("Sync all Organisation Units")}</span>
+                                </Tooltip>
+                            }
+                            value={Boolean(modelIsSyncAll)}
+                            onValueChange={changeOrgUnitsSyncAll}
+                        />
+                    </Box>
+                )}
+
+                {!modelIsSyncAll && (
+                    <OrgUnitsSelector
+                        api={api}
+                        withElevation={false}
+                        controls={{}}
+                        hideCheckboxes={true}
+                        hideMemberCount={true}
+                        fullWidth={false}
+                        height={500}
+                        square={true}
+                        onChange={changeParentOrgUnitFilter}
+                        selected={filters.parents ?? []}
+                        singleSelection={true}
+                        selectOnClick={true}
+                        initiallyExpanded={expandOrgUnits}
+                    />
+                )}
+            </Paper>
         </div>
     );
 
@@ -606,22 +635,26 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         indeterminate: false,
     }));
 
-    const childrenSelection: TableSelection[] = showIndeterminateSelection
-        ? _(rows)
-              .intersectionBy(selection, "id")
-              .map(row => _.values(_.pick(row, childrenKeys)) as unknown as MetadataType[])
-              .flattenDeep()
-              .differenceBy(selection, "id")
-              .differenceBy(exclusion, "id")
-              .map(({ id }) => {
-                  return {
-                      id,
-                      checked: true,
-                      indeterminate: !_.find(selection, { id }),
-                  };
-              })
-              .value()
-        : [];
+    const childrenSelection: TableSelection[] = useMemo(
+        () =>
+            showIndeterminateSelection
+                ? _(rows)
+                      .intersectionBy(selection, "id")
+                      .map(row => _.values(_.pick(row, childrenKeys)) as unknown as MetadataType[])
+                      .flattenDeep()
+                      .differenceBy(selection, "id")
+                      .differenceBy(exclusion, "id")
+                      .map(({ id }) => {
+                          return {
+                              id,
+                              checked: true,
+                              indeterminate: !_.find(selection, { id }),
+                          };
+                      })
+                      .value()
+                : [],
+        [childrenKeys, exclusion, rows, selection, showIndeterminateSelection]
+    );
 
     const responsibleField = showResponsibles
         ? {
@@ -648,6 +681,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const actions: TableAction<MetadataType>[] = uniqCombine([...tableActions, ...additionalActions]);
 
+    const uiSelection = useMemo(
+        () => [...selection, ...childrenSelection].filter(({ id }) => !ignoreIds.includes(id)),
+        [childrenSelection, ignoreIds, selection]
+    );
+
     return (
         <React.Fragment>
             <ResponsibleDialog
@@ -659,7 +697,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             />
 
             <ObjectsTable<MetadataType>
-                rows={transformRows(rows)}
+                rows={modelIsSyncAll ? [] : transformRows(rows)}
                 columns={columns}
                 details={details}
                 onChangeSearch={changeSearchFilter}
@@ -669,7 +707,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 onChange={handleTableChange}
                 ids={ids}
                 loading={providedLoading || loading}
-                selection={[...selection, ...childrenSelection]}
+                selection={uiSelection}
                 childrenKeys={childrenKeys}
                 filterComponents={filterComponents}
                 forceSelectionColumn={true}

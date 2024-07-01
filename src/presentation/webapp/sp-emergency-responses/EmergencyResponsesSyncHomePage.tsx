@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
-import { Box, LinearProgress, List, makeStyles, Paper, Typography } from "@material-ui/core";
+import { Box, Button, LinearProgress, List, makeStyles, Paper, Typography } from "@material-ui/core";
 import React from "react";
 import { SynchronizationRule } from "../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../locales";
@@ -27,12 +27,46 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
     const rules = useSyncRulesList(emergencyType);
     const [isRunning, runSyncRule] = useSyncRulesExecuter({ emergencyType, logs });
 
+    const executeRules = React.useCallback(
+        (rules: SynchronizationRule[]) =>
+            rules.forEach(rule => {
+                console.debug("Running: " + rule.name);
+                runSyncRule(rule);
+            }),
+        [runSyncRule]
+    );
+
+    const metadataRules = React.useMemo(() => {
+        const metadataRules = rules.filter(rule => rule.type === "metadata");
+        return { rules: rules, execute: () => executeRules(metadataRules) };
+    }, [rules, executeRules]);
+
+    const eventsRules = React.useMemo(() => {
+        const eventsRules = rules.filter(rule => rule.type === "events");
+        return { rules: rules, execute: () => executeRules(eventsRules) };
+    }, [rules, executeRules]);
+
     return (
         <Paper className={classes.root}>
             <Box m={1} display="flex" justifyContent="space-between" alignItems="center">
-                {rules.map(rule => (
-                    <SyncRuleButton key={rule.id} rule={rule} onClick={runSyncRule} disabled={isRunning} />
-                ))}
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={metadataRules.execute}
+                    disabled={isRunning}
+                    className={classes.runButton}
+                >
+                    {i18n.t("Get configuration from HQ server")}
+                </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={eventsRules.execute}
+                    disabled={isRunning}
+                    className={classes.runButton}
+                >
+                    {i18n.t("Run Metadata Sync")}
+                </Button>
             </Box>
 
             <Paper className={classes.log}>
@@ -210,6 +244,9 @@ export const useStyles = makeStyles(theme => ({
         minHeight: 275,
         overflow: "auto",
         padding: 10,
+    },
+    runButton: {
+        margin: "0 auto",
     },
 }));
 

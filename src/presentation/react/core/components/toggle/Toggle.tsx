@@ -3,7 +3,7 @@ import _ from "lodash";
 
 interface InputParameters {
     disabled?: boolean;
-    label: string;
+    label: string | React.ReactNode;
     onChange?: Function;
     onValueChange?: Function;
     value: boolean;

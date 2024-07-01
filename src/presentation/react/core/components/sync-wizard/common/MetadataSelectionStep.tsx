@@ -20,7 +20,6 @@ import {
     IndicatorModel,
 } from "../../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../../utils/d2";
-import { getMetadata } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";
 import { getChildrenRows } from "../../mapping-table/utils";
 import MetadataTable from "../../metadata-table/MetadataTable";
@@ -57,7 +56,7 @@ const config = {
 };
 
 export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
-    const { api, compositionRoot } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
 
     const [metadataIds, updateMetadataIds] = useState<string[]>([]);
@@ -68,6 +67,8 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? {});
     const [rows, setRows] = useState<MetadataType[]>([]);
+    const [idsToIgnore, setIdsToIgnore] = useState<string[]>([]);
+    const [metadataSyncAll, setMetadataSyncAll] = useState(syncRule.metadataSyncAll);
 
     const changeSelection = useCallback(
         (newMetadataIds: string[], newExclusionIds: string[]) => {
@@ -88,8 +89,9 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
                 );
             }
 
-            getMetadata(api, newMetadataIds, "id").then(metadata => {
-                const types = _.keys(metadata);
+            compositionRoot.metadata.getByIds(newMetadataIds, remoteInstance, "id").then(metadata => {
+                const types = _(metadata).keys().concat(metadataSyncAll).uniq().value();
+
                 onChange(
                     syncRule
                         .updateMetadataIds(newMetadataIds)
@@ -103,7 +105,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
 
             updateMetadataIds(newMetadataIds);
         },
-        [api, metadataIds, onChange, snackbar, syncRule]
+        [compositionRoot.metadata, metadataIds, metadataSyncAll, onChange, remoteInstance, snackbar, syncRule]
     );
 
     useEffect(() => {
@@ -125,6 +127,38 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
     const notifyNewModel = useCallback(model => {
         setModel(() => model);
     }, []);
+
+    const notifyModelSyncAllChange = useCallback(
+        (value: boolean) => {
+            setMetadataSyncAll(types => {
+                const modelName = model.getCollectionName();
+
+                const updatedTypes = value ? _.uniq(types.concat(modelName)) : _.without(types, modelName);
+                const ruleTypes = _.uniq(syncRule.metadataTypes.concat(updatedTypes));
+
+                onChange(syncRule.updateMetadataTypes(ruleTypes).updateMetadataSyncAll(updatedTypes));
+
+                if (!_.isEmpty(updatedTypes))
+                    compositionRoot.metadata.getByIds(metadataIds, remoteInstance, "id").then(metadata => {
+                        const idsFromSyncAllMetadataTypes = _.compact(
+                            _(metadata)
+                                .pick(updatedTypes)
+                                .values()
+                                .value()
+                                .flat()
+                                .map(entity => entity?.id)
+                        );
+
+                        setIdsToIgnore(idsFromSyncAllMetadataTypes);
+                    });
+
+                return updatedTypes;
+            });
+        },
+        [compositionRoot.metadata, metadataIds, model, onChange, remoteInstance, syncRule]
+    );
+
+    const modelIsSyncAll = useMemo(() => metadataSyncAll.includes(model.getCollectionName()), [metadataSyncAll, model]);
 
     const updateRows = useCallback(
         (rows: MetadataType[]) => {
@@ -182,6 +216,9 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
             remoteInstance={remoteInstance}
             notifyNewModel={notifyNewModel}
             notifyRowsChange={updateRows}
+            notifyModelSyncAllChange={notifyModelSyncAllChange}
+            modelIsSyncAll={modelIsSyncAll}
+            ignoreIds={idsToIgnore}
         />
     );
 }
