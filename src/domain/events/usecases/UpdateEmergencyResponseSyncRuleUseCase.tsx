@@ -20,9 +20,8 @@ export class UpdateEmergencyResponseSyncRuleUseCase {
         if (!program) throw new Error(i18n.t("Program not found"));
 
         const orgUnitPaths = program.organisationUnits.map(ou => ou.path);
-        const teiIds: string[] = await this.getTeis(program, orgUnitPaths);
 
-        return rule.updateDataSyncOrgUnitPaths(orgUnitPaths).updateDataSyncTEIs(teiIds);
+        return rule.updateDataSyncOrgUnitPaths(orgUnitPaths);
     }
 
     private async getProgram(emergencyType: EmergencyType) {
@@ -34,23 +33,6 @@ export class UpdateEmergencyResponseSyncRuleUseCase {
         });
         const form = res.objects[0] as unknown as Program | undefined;
         return form;
-    }
-
-    private async getTeis(form: Program, orgUnitPaths: string[]) {
-        const teiIds: string[] = [];
-        let page = 1;
-        let done = false;
-
-        while (!done) {
-            const { trackedEntityInstances } = await this.teiRepository.getTEIs({ orgUnitPaths }, form.id, page, 1000);
-            const teiIdsInPage = trackedEntityInstances.map(tei => tei.trackedEntityInstance);
-            teiIds.push(...teiIdsInPage);
-
-            page++;
-            done = trackedEntityInstances.length === 0;
-        }
-
-        return teiIds;
     }
 }
 
