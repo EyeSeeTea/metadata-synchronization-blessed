@@ -27,7 +27,7 @@ export abstract class D2Model {
     protected static columns = d2BaseModelColumns;
     protected static details = d2BaseModelDetails;
     protected static fields = d2BaseModelFields;
-    protected static searchFilter: SearchFilter = { field: "name", operator: "token" };
+    protected static searchFilter: SearchFilter = { field: "identifiable", operator: "token" };
     protected static initialSorting = ["name", "asc"];
     protected static modelTransform: Function = (objects: object[]) => objects;
     protected static modelFilters: any = {};
