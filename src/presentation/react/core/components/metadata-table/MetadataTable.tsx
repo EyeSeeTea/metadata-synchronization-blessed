@@ -155,8 +155,14 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [responsibles, updateResponsibles] = useState<MetadataResponsible[]>([]);
     const [sharingSettingsElement, setSharingSettingsElement] = useState<NamedRef>();
 
-    const [stateSelection, setStateSelection] = useState<string[]>(externalSelection ?? []);
-    const selectedIds = externalSelection ?? stateSelection;
+    const selectionWithoutExcluded = useMemo(() => {
+        if (externalSelection === undefined) return undefined;
+
+        return _.isEqual(externalSelection, ignoreIds) ? [] : _.difference(externalSelection, ignoreIds);
+    }, [externalSelection, ignoreIds]);
+
+    const [stateSelection, setStateSelection] = useState<string[]>(selectionWithoutExcluded ?? []);
+    const selectedIds = selectionWithoutExcluded ?? stateSelection;
     const [filters, setFilters] = useState<ListMetadataParams>({
         type: model.getCollectionName(),
         showOnlySelected: initialShowOnlySelected,
@@ -681,10 +687,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
     const actions: TableAction<MetadataType>[] = uniqCombine([...tableActions, ...additionalActions]);
 
-    const uiSelection = useMemo(
-        () => [...selection, ...childrenSelection].filter(({ id }) => !ignoreIds.includes(id)),
-        [childrenSelection, ignoreIds, selection]
-    );
+    const uiSelection = useMemo(() => {
+        return [...selection, ...childrenSelection];
+    }, [childrenSelection, selection]);
+
+    const shownRows = useMemo(() => (modelIsSyncAll ? [] : transformRows(rows)), [modelIsSyncAll, rows, transformRows]);
 
     return (
         <React.Fragment>
@@ -697,7 +704,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             />
 
             <ObjectsTable<MetadataType>
-                rows={modelIsSyncAll ? [] : transformRows(rows)}
+                rows={shownRows}
                 columns={columns}
                 details={details}
                 onChangeSearch={changeSearchFilter}

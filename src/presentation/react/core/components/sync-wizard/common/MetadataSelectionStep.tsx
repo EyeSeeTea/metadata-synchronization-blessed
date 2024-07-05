@@ -124,6 +124,25 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
         });
     }, [compositionRoot, snackbar, syncRule.originInstance]);
 
+    useEffect(() => {
+        if (!_.isEmpty(metadataSyncAll)) {
+            compositionRoot.metadata.getByIds(syncRule.metadataIds, remoteInstance, "id").then(metadata => {
+                const idsFromSyncAllMetadataTypes = _.compact(
+                    _(metadata)
+                        .pick(metadataSyncAll)
+                        .values()
+                        .value()
+                        .flat()
+                        .map(entity => entity?.id)
+                );
+
+                setIdsToIgnore(idsFromSyncAllMetadataTypes);
+            });
+        } else {
+            setIdsToIgnore([]);
+        }
+    }, [compositionRoot.metadata, metadataSyncAll, remoteInstance, syncRule.metadataIds]);
+
     const notifyNewModel = useCallback(model => {
         setModel(() => model);
     }, []);
@@ -132,31 +151,15 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
         (value: boolean) => {
             setMetadataSyncAll(types => {
                 const modelName = model.getCollectionName();
+                const syncAllTypes = value ? _.uniq(types.concat(modelName)) : _.without(types, modelName);
+                const ruleTypes = _.uniq(syncRule.metadataTypes.concat(syncAllTypes));
 
-                const updatedTypes = value ? _.uniq(types.concat(modelName)) : _.without(types, modelName);
-                const ruleTypes = _.uniq(syncRule.metadataTypes.concat(updatedTypes));
+                onChange(syncRule.updateMetadataTypes(ruleTypes).updateMetadataSyncAll(syncAllTypes));
 
-                onChange(syncRule.updateMetadataTypes(ruleTypes).updateMetadataSyncAll(updatedTypes));
-
-                if (!_.isEmpty(updatedTypes))
-                    compositionRoot.metadata.getByIds(metadataIds, remoteInstance, "id").then(metadata => {
-                        const idsFromSyncAllMetadataTypes = _.compact(
-                            _(metadata)
-                                .pick(updatedTypes)
-                                .values()
-                                .value()
-                                .flat()
-                                .map(entity => entity?.id)
-                        );
-
-                        setIdsToIgnore(idsFromSyncAllMetadataTypes);
-                    });
-                else setIdsToIgnore([]);
-
-                return updatedTypes;
+                return syncAllTypes;
             });
         },
-        [compositionRoot.metadata, metadataIds, model, onChange, remoteInstance, syncRule]
+        [model, syncRule, onChange]
     );
 
     const modelIsSyncAll = useMemo(() => metadataSyncAll.includes(model.getCollectionName()), [metadataSyncAll, model]);
