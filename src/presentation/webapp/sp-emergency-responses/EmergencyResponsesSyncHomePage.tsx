@@ -28,7 +28,7 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
 
     const executeRules = React.useCallback(
         (rules: SynchronizationRule[]) =>
-            _.orderBy(rules, "name", "asc").forEach(rule => {
+            _.orderBy(rules, rule => rule.code === "EFH_METADATA_ORGUNITS", "desc").forEach(rule => {
                 console.debug("Running: " + rule.name);
                 runSyncRule(rule);
             }),
