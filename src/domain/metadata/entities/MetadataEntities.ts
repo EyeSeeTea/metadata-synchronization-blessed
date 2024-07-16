@@ -5065,6 +5065,7 @@ export type MetadataEntities = {
     categoryOptionCombos: CategoryOptionCombo[];
     categoryOptionGroups: CategoryOptionGroup[];
     categoryOptionGroupSets: CategoryOptionGroupSet[];
+    constants: Constant[];
     charts: Chart[];
     dashboards: Dashboard[];
     dataApprovalLevels: DataApprovalLevel[];

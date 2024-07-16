@@ -5,7 +5,6 @@ import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { init } from "d2";
-import _ from "lodash";
 //@ts-ignore
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { useEffect, useState } from "react";
@@ -23,54 +22,19 @@ import { muiTheme } from "../react/core/themes/dhis2.theme";
 import Root from "./Root";
 import "./WebApp.css";
 import { DeletingHistory } from "../react/core/components/deleting-history/DeletingHistory";
+import { Feedback } from "@eyeseetea/feedback-component";
+import { AppConfig } from "../../app-config.template";
+import { Maybe } from "../../types/utils";
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
 });
 
-interface AppConfig {
-    appKey: string;
-    appearance: {
-        showShareButton: boolean;
-    };
-    feedback: {
-        token: string[];
-        createIssue: boolean;
-        sendToDhis2UserGroups: string[];
-        issues: {
-            repository: string;
-            title: string;
-            body: string;
-        };
-        snapshots: {
-            repository: string;
-            branch: string;
-        };
-        feedbackOptions: {};
-    };
-}
-
-interface AppWindow extends Window {
-    $: {
-        feedbackDhis2: (d2: unknown, appKey: string, appConfig: AppConfig["feedback"]["feedbackOptions"]) => void;
-    };
-}
-
-function initFeedbackTool(d2: unknown, appConfig: AppConfig): void {
-    const appKey = _(appConfig).get("appKey");
-    if (appConfig && appConfig.feedback) {
-        const feedbackOptions = {
-            ...appConfig.feedback,
-            i18nPath: "feedback-tool/i18n",
-        };
-        (window as unknown as AppWindow).$.feedbackDhis2(d2, appKey, feedbackOptions);
-    }
-}
-
 const App = () => {
     const { baseUrl } = useConfig();
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
-    const [showShareButton, setShowShareButton] = useState(false);
+    const [username, setUsername] = useState("");
+    const [appConfig, setAppConfig] = useState<Maybe<AppConfig>>();
     const migrations = useMigrations(appContext);
     const { deletingHistory } = useDeleteHistory(appContext);
 
@@ -78,13 +42,11 @@ const App = () => {
 
     useEffect(() => {
         const run = async () => {
-            const appConfig = await fetch("app-config.json", {
+            const configFromJson = (await fetch("app-config.json", {
                 credentials: "same-origin",
-            }).then(res => res.json());
-
-            const encryptionKey = appConfig?.encryptionKey;
+            }).then(res => res.json())) as AppConfig;
+            const encryptionKey = configFromJson.encryptionKey;
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
-
             const d2 = await init({ baseUrl: `${baseUrl}/api` });
             const api = new D2Api({ baseUrl, backend: "fetch" });
             const version = await api.getVersion();
@@ -94,16 +56,16 @@ const App = () => {
                 url: baseUrl,
                 version,
             });
-
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
             await compositionRoot.app.initialize();
+            const currentUser = await compositionRoot.user.current();
+            if (!currentUser) throw new Error("User not logged in");
 
             setAppContext({ d2: d2 as object, api, compositionRoot });
 
             Object.assign(window, { d2, api });
-            setShowShareButton(_(appConfig).get("appearance.showShareButton") || false);
-            initFeedbackTool(d2, appConfig);
-
+            setUsername(currentUser.username);
+            setAppConfig(configFromJson);
             await initializeAppRoles(baseUrl);
         };
 
@@ -119,6 +81,7 @@ const App = () => {
             </LoadingProvider>
         );
     }
+    const showShareButton = appConfig?.appearance.showShareButton || false;
 
     if (migrations.state.type === "pending") {
         return (
@@ -144,6 +107,7 @@ const App = () => {
                                 </div>
 
                                 <Share visible={showShareButton} />
+                                {appConfig && <Feedback options={appConfig.feedback} username={username} />}
                             </SnackbarProvider>
                         </LoadingProvider>
                     </OldMuiThemeProvider>

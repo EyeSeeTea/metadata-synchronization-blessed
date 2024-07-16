@@ -37,6 +37,7 @@ import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
 import { metadataTransformations } from "../transformations/PackageTransformations";
+import { D2MetadataUtils } from "./D2MetadataUtils";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -158,23 +159,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
     @cache()
     public async getDefaultIds(filter?: string): Promise<string[]> {
-        const response = (await this.api
-            .get("/metadata", {
-                filter: "identifiable:eq:default",
-                fields: "id",
-            })
-            .getData()) as {
-            [key: string]: { id: string }[];
-        };
-
-        const metadata = _.pickBy(response, (_value, type) => !filter || type === filter);
-
-        return _(metadata)
-            .omit(["system"])
-            .values()
-            .flatten()
-            .map(({ id }) => id)
-            .value();
+        const metadata = D2MetadataUtils.getDefaultIds(this.api, filter);
+        return metadata;
     }
 
     @cache()
@@ -555,7 +541,37 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const response = await Promise.all(promises);
         const results = _.deepMerge({}, ...response);
         if (results.system) delete results.system;
-        return results;
+
+        const metadata = await this.validateEventVisualizationsByIds(results);
+        const defaultIds = await this.getDefaultIds();
+        const metadataExcludeDefaults = includeDefaults
+            ? metadata
+            : await D2MetadataUtils.excludeDefaults(metadata, defaultIds);
+        return metadataExcludeDefaults;
+    }
+
+    private async validateEventVisualizationsByIds(metadata: any) {
+        if (!metadata.eventCharts || !metadata.eventReports) return metadata;
+
+        const chartsMetadata = _(metadata.eventCharts)
+            .map(eventChart => {
+                return this.isEventReport(eventChart.type) ? undefined : eventChart;
+            })
+            .compact()
+            .value();
+
+        const eventReportsMetadata = _(metadata.eventReports)
+            .map(eventReport => {
+                return this.isEventReport(eventReport.type) ? eventReport : undefined;
+            })
+            .compact()
+            .value();
+
+        return { ...metadata, eventReports: eventReportsMetadata, eventCharts: chartsMetadata };
+    }
+
+    private isEventReport(visualizationType: D2VisualizationType): boolean {
+        return visualizationType === "PIVOT_TABLE" || visualizationType === "LINE_LIST";
     }
 
     private getApiModel(type: keyof MetadataEntities): Model<any, any> {
@@ -660,3 +676,5 @@ function getFilterAsString(filter: FilterBase): string[] {
         )
     );
 }
+
+type D2VisualizationType = "LINE_LIST" | "PIVOT_TABLE";

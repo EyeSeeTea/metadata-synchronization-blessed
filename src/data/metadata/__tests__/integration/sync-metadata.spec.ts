@@ -90,6 +90,36 @@ describe("Sync metadata", () => {
             id: "Db5532sXKX1",
         }));
 
+        local.get("/sharing", async () => ({
+            meta: {
+                allowPublicAccess: true,
+                allowExternalAccess: false,
+            },
+            object: {
+                id: "Db5532sXKXT",
+                publicAccess: "rw------",
+                user: { id: "H4atNsEuKxP" },
+                userGroupAccesses: [],
+                userAccesses: [],
+                externalAccess: false,
+            },
+        }));
+
+        local.get("/sharing", async () => ({
+            meta: {
+                allowPublicAccess: true,
+                allowExternalAccess: false,
+            },
+            object: {
+                id: "Db5532sXKX1",
+                externalAccess: false,
+                publicAccess: "rw------",
+                user: { id: "H4atNsEuKxP" },
+                userGroupAccesses: [],
+                userAccesses: [],
+            },
+        }));
+
         const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
             schema.db.metadata.insert(JSON.parse(request.requestBody));
 

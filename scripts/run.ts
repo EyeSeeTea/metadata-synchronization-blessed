@@ -1,6 +1,7 @@
 import { execSync } from "child_process";
 import yargs, { Argv } from "yargs";
 import { ArrayElementType } from "../src/types/utils";
+import fs from "fs";
 
 const defaultVariant = "core-app";
 const variants = [
@@ -137,9 +138,29 @@ function build(args: BuildArgs): void {
 
         run(`react-scripts build && cp -r i18n icon.png build`);
         run(`d2-manifest package.json build/manifest.webapp -t ${manifestType} -n '${variant.title}'`);
+        if (variant.file === "metadata-synchronization") {
+            updateManifestJsonFile(`build/manifest.json`, variant.title);
+        }
+        updateManifestNamespace(`build/manifest.webapp`, variant.file);
         run(`rm -f ${fileName}`);
         run(`cd build && zip -r ../${fileName} *`);
         console.info(`Written: ${fileName}`);
+    }
+}
+
+function updateManifestNamespace(manifestPath: string, variantFile: string) {
+    if (fs.existsSync(manifestPath)) {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+        manifest.activities.dhis.namespace = variantFile;
+        fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    }
+}
+
+function updateManifestJsonFile(manifestJsonPath: string, variantTitle: string) {
+    if (fs.existsSync(manifestJsonPath)) {
+        const manifestJson = JSON.parse(fs.readFileSync(manifestJsonPath, "utf8"));
+        Object.assign(manifestJson, { name: variantTitle, short_name: variantTitle });
+        fs.writeFileSync(manifestJsonPath, JSON.stringify(manifestJson, null, 2));
     }
 }
 
