@@ -14,6 +14,7 @@ import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
 import { FileRulesDefaultRepository } from "../data/rules/FileRulesDefaultRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
 import { SchedulerD2ApiRepository } from "../data/scheduler/SchedulerD2ApiRepository";
+import { SettingsD2ApiRepository } from "../data/settings/SettingsD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
 import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRepository";
@@ -86,6 +87,7 @@ import { ListStorePackagesUseCase } from "../domain/packages/usecases/ListStoreP
 import { PublishStorePackageUseCase } from "../domain/packages/usecases/PublishStorePackageUseCase";
 import { ValidatePackageContentsUseCase } from "../domain/packages/usecases/ValidatePackageContentsUseCase";
 import { CleanSyncReportsUseCase } from "../domain/reports/usecases/CleanSyncReporstUseCase";
+import { DeleteOldSyncReportUseCase } from "../domain/reports/usecases/DeleteOldSyncReportUseCase";
 import { DeleteSyncReportUseCase } from "../domain/reports/usecases/DeleteSyncReportUseCase";
 import { DownloadPayloadUseCase } from "../domain/reports/usecases/DownloadPayloadUseCase";
 import { GetSyncReportUseCase } from "../domain/reports/usecases/GetSyncReportUseCase";
@@ -100,6 +102,8 @@ import { ReadSyncRuleFilesUseCase } from "../domain/rules/usecases/ReadSyncRuleF
 import { SaveSyncRuleUseCase } from "../domain/rules/usecases/SaveSyncRuleUseCase";
 import { GetLastSchedulerExecutionUseCase } from "../domain/scheduler/usecases/GetLastSchedulerExecutionUseCase";
 import { UpdateLastSchedulerExecutionUseCase } from "../domain/scheduler/usecases/UpdateLastSchedulerExecutionUseCase";
+import { GetSettingsUseCase } from "../domain/settings/GetSettingsUseCase";
+import { SaveSettingsUseCase } from "../domain/settings/SaveSettingsUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
 import { GetStoreUseCase } from "../domain/stores/usecases/GetStoreUseCase";
@@ -143,6 +147,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SchedulerRepository, SchedulerD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
     }
 
     @cache()
@@ -323,6 +328,10 @@ export class CompositionRoot {
             save: new SaveSyncReportUseCase(this.repositoryFactory, this.localInstance),
             clean: new CleanSyncReportsUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
+            deleteOld: new DeleteOldSyncReportUseCase(
+                this.repositoryFactory.reportsRepository(this.localInstance),
+                this.repositoryFactory.settingsRepository(this.localInstance)
+            ),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
             downloadPayloads: new DownloadPayloadUseCase(this.repositoryFactory, this.localInstance),
@@ -385,6 +394,14 @@ export class CompositionRoot {
     public get emergencyResponses() {
         return getExecute({
             updateSyncRule: new UpdateEmergencyResponseSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get settings() {
+        return getExecute({
+            get: new GetSettingsUseCase(this.repositoryFactory.settingsRepository(this.localInstance)),
+            save: new SaveSettingsUseCase(this.repositoryFactory.settingsRepository(this.localInstance)),
         });
     }
 }

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2024-06-26T16:20:27.188Z\n"
+"POT-Creation-Date: 2024-02-20T05:48:46.170Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,6 +24,9 @@ msgid "Field {{field}} needs to be a valid url"
 msgstr ""
 
 msgid "Field {{field}} is not valid"
+msgstr ""
+
+msgid "Field {{field}} is not a number"
 msgstr ""
 
 msgid "Program not found"
@@ -214,6 +217,9 @@ msgid "Details"
 msgstr ""
 
 msgid "Search deleted objects"
+msgstr ""
+
+msgid "Deleting history"
 msgstr ""
 
 msgid "<No value>"
@@ -524,7 +530,7 @@ msgstr ""
 msgid "Custodian"
 msgstr ""
 
-msgid "Search by name, code or id"
+msgid "Search by "
 msgstr ""
 
 msgid ""
@@ -1930,6 +1936,12 @@ msgstr ""
 msgid "Application storage"
 msgstr ""
 
+msgid "Retention days"
+msgstr ""
+
+msgid "Leave empty to keep all history"
+msgstr ""
+
 msgid "Data Store"
 msgstr ""
 
@@ -1937,6 +1949,9 @@ msgid "Metadata constant"
 msgstr ""
 
 msgid "Updating storage location, please wait..."
+msgstr ""
+
+msgid "An error has occurred saving settings"
 msgstr ""
 
 msgid "Change storage"

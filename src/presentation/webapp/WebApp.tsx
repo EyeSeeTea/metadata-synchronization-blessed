@@ -16,10 +16,12 @@ import { useMigrations } from "../react/core/components/migrations/hooks";
 import Migrations from "../react/core/components/migrations/Migrations";
 import Share from "../react/core/components/share/Share";
 import { AppContext, AppContextState } from "../react/core/contexts/AppContext";
+import { useDeleteHistory } from "../react/core/components/deleting-history/useDeleteHistory";
 import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
 import Root from "./Root";
 import "./WebApp.css";
+import { DeletingHistory } from "../react/core/components/deleting-history/DeletingHistory";
 import { Feedback } from "@eyeseetea/feedback-component";
 import { AppConfig } from "../../app-config.template";
 import { Maybe } from "../../types/utils";
@@ -34,6 +36,7 @@ const App = () => {
     const [username, setUsername] = useState("");
     const [appConfig, setAppConfig] = useState<Maybe<AppConfig>>();
     const migrations = useMigrations(appContext);
+    const { deletingHistory } = useDeleteHistory(appContext);
 
     const appTitle = process.env.REACT_APP_PRESENTATION_TITLE;
 
@@ -69,6 +72,15 @@ const App = () => {
         run();
     }, [baseUrl]);
 
+    if (deletingHistory) {
+        return (
+            <LoadingProvider>
+                <AppContext.Provider value={appContext}>
+                    <DeletingHistory deleting={true} />
+                </AppContext.Provider>
+            </LoadingProvider>
+        );
+    }
     const showShareButton = appConfig?.appearance.showShareButton || false;
 
     if (migrations.state.type === "pending") {
