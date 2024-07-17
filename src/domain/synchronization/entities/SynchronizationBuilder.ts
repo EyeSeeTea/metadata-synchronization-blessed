@@ -27,6 +27,7 @@ export const defaultSynchronizationBuilder: SynchronizationBuilder = {
         allAttributeCategoryOptions: true,
         dryRun: false,
         allEvents: true,
+        allTEIs: true,
         enableAggregation: false,
         aggregationType: undefined,
     },
