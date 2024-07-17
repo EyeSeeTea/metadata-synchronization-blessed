@@ -13,4 +13,5 @@ export interface ReportsRepository {
     save(report: SynchronizationReport): Promise<void>;
     clean(): Promise<void>;
     delete(id: string): Promise<void>;
+    deleteByIds(ids: string[]): Promise<void>;
 }

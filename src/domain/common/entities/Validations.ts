@@ -44,6 +44,11 @@ const availableValidations = {
         getDescription: (field: string) => i18n.t("Field {{field}} is not valid", { field }),
         check: (value?: Ref) => !value?.id,
     },
+    isNumeric: {
+        error: "invalid_number",
+        getDescription: (field: string) => i18n.t("Field {{field}} is not a number", { field }),
+        check: (value?: unknown) => Number.isNaN(Number(value)),
+    },
 };
 
 export function validateModel<T>(item: T, validations: ModelValidation[]): ValidationError[] {
