@@ -20,14 +20,13 @@ export class SaveSyncRuleUseCase implements UseCase {
         if (!instance) throw Error("Instance not found");
         const metadataRepository = this.repositoryFactory.metadataRepository(instance);
         const metadata = await metadataRepository.getMetadataByIds<MetadataEntity>(rule.metadataIds, "id");
-        const idsFromSyncAllMetadataTypes = _.compact(
-            _(metadata)
-                .pick(rule.metadataModelsSyncAll)
-                .values()
-                .value()
-                .flat()
-                .map(entity => entity?.id)
-        );
+        const idsFromSyncAllMetadataTypes = _(metadata)
+            .pick(rule.metadataModelsSyncAll)
+            .values()
+            .compact()
+            .flatten()
+            .map(entity => entity.id)
+            .value();
 
         const remainingMetadataIds = _.difference(rule.metadataIds, idsFromSyncAllMetadataTypes);
 
