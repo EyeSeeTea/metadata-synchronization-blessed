@@ -68,7 +68,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? {});
     const [rows, setRows] = useState<MetadataType[]>([]);
     const [idsToIgnore, setIdsToIgnore] = useState<string[]>([]);
-    const [metadataSyncAll, setMetadataSyncAll] = useState(syncRule.metadataSyncAll);
+    const [metadataModelsSyncAll, setMetadataModelsSyncAll] = useState(syncRule.metadataModelsSyncAll);
 
     const changeSelection = useCallback(
         (newMetadataIds: string[], newExclusionIds: string[]) => {
@@ -90,7 +90,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
             }
 
             compositionRoot.metadata.getByIds(newMetadataIds, remoteInstance, "id").then(metadata => {
-                const types = _(metadata).keys().concat(metadataSyncAll).uniq().value();
+                const types = _(metadata).keys().concat(metadataModelsSyncAll).uniq().value();
 
                 onChange(
                     syncRule
@@ -105,7 +105,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
 
             updateMetadataIds(newMetadataIds);
         },
-        [compositionRoot.metadata, metadataIds, metadataSyncAll, onChange, remoteInstance, snackbar, syncRule]
+        [compositionRoot.metadata, metadataIds, metadataModelsSyncAll, onChange, remoteInstance, snackbar, syncRule]
     );
 
     useEffect(() => {
@@ -125,11 +125,11 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
     }, [compositionRoot, snackbar, syncRule.originInstance]);
 
     useEffect(() => {
-        if (!_.isEmpty(metadataSyncAll)) {
+        if (!_.isEmpty(metadataModelsSyncAll)) {
             compositionRoot.metadata.getByIds(syncRule.metadataIds, remoteInstance, "id").then(metadata => {
                 const idsFromSyncAllMetadataTypes = _.compact(
                     _(metadata)
-                        .pick(metadataSyncAll)
+                        .pick(metadataModelsSyncAll)
                         .values()
                         .value()
                         .flat()
@@ -141,7 +141,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
         } else {
             setIdsToIgnore([]);
         }
-    }, [compositionRoot.metadata, metadataSyncAll, remoteInstance, syncRule.metadataIds]);
+    }, [compositionRoot.metadata, metadataModelsSyncAll, remoteInstance, syncRule.metadataIds]);
 
     const notifyNewModel = useCallback(model => {
         setModel(() => model);
@@ -149,12 +149,12 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
 
     const notifyModelSyncAllChange = useCallback(
         (value: boolean) => {
-            setMetadataSyncAll(types => {
+            setMetadataModelsSyncAll(types => {
                 const modelName = model.getCollectionName();
                 const syncAllTypes = value ? _.uniq(types.concat(modelName)) : _.without(types, modelName);
                 const ruleTypes = _.uniq(syncRule.metadataTypes.concat(syncAllTypes));
 
-                onChange(syncRule.updateMetadataTypes(ruleTypes).updateMetadataSyncAll(syncAllTypes));
+                onChange(syncRule.updateMetadataTypes(ruleTypes).updateMetadataModelsSyncAll(syncAllTypes));
 
                 return syncAllTypes;
             });
@@ -162,7 +162,10 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
         [model, syncRule, onChange]
     );
 
-    const modelIsSyncAll = useMemo(() => metadataSyncAll.includes(model.getCollectionName()), [metadataSyncAll, model]);
+    const modelIsSyncAll = useMemo(
+        () => metadataModelsSyncAll.includes(model.getCollectionName()),
+        [metadataModelsSyncAll, model]
+    );
 
     const updateRows = useCallback(
         (rows: MetadataType[]) => {

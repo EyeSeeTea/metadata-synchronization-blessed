@@ -168,8 +168,8 @@ export class SynchronizationRule {
         return this.syncRule.builder?.syncParams?.metadataIncludeExcludeRules ?? {};
     }
 
-    public get metadataSyncAll(): string[] {
-        return this.syncRule.builder?.syncParams?.metadataSyncAll ?? [];
+    public get metadataModelsSyncAll(): string[] {
+        return this.syncRule.builder?.syncParams?.metadataModelsSyncAll ?? [];
     }
 
     public get targetInstances(): string[] {
@@ -238,7 +238,7 @@ export class SynchronizationRule {
             removeUserObjectsAndReferences: false,
             removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
-            metadataSyncAll: [],
+            metadataModelsSyncAll: [],
             ...params,
         };
     }
@@ -556,7 +556,7 @@ export class SynchronizationRule {
             removeUserObjectsAndReferences: false,
             removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
-            metadataSyncAll: [],
+            metadataModelsSyncAll: [],
         };
 
         return this.updateBuilder({
@@ -568,8 +568,8 @@ export class SynchronizationRule {
         });
     }
 
-    public updateMetadataSyncAll(metadataSyncAll: string[]): SynchronizationRule {
-        return this.updateSyncParams({ metadataSyncAll });
+    public updateMetadataModelsSyncAll(metadataModelsSyncAll: string[]): SynchronizationRule {
+        return this.updateSyncParams({ metadataModelsSyncAll });
     }
 
     public updateDataParams(dataParams: DataSynchronizationParams): SynchronizationRule {
@@ -637,7 +637,7 @@ export class SynchronizationRule {
                 this.usesFilterRules &&
                 this.metadataIds.length === 0 &&
                 this.filterRules.length === 0 &&
-                this.builder.syncParams?.metadataSyncAll.length === 0
+                this.builder.syncParams?.metadataModelsSyncAll.length === 0
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element or create a filter rule" },

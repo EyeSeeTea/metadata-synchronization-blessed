@@ -46,7 +46,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                         .then((metadata: MetadataPackage<MetadataEntity>) => {
                             const models = _(metadata)
                                 .keys()
-                                .concat(syncRule.metadataSyncAll)
+                                .concat(syncRule.metadataModelsSyncAll)
                                 .sort()
                                 .uniq()
                                 .value()

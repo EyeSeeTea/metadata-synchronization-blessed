@@ -22,7 +22,7 @@ export class SaveSyncRuleUseCase implements UseCase {
         const metadata = await metadataRepository.getMetadataByIds<MetadataEntity>(rule.metadataIds, "id");
         const idsFromSyncAllMetadataTypes = _.compact(
             _(metadata)
-                .pick(rule.metadataSyncAll)
+                .pick(rule.metadataModelsSyncAll)
                 .values()
                 .value()
                 .flat()

@@ -185,7 +185,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                 error: () => snackbar.error(i18n.t("Invalid origin instance")),
                 success: instance => {
                     Promise.all(
-                        syncRule.metadataSyncAll.map(
+                        syncRule.metadataModelsSyncAll.map(
                             async type =>
                                 await compositionRoot.metadata
                                     .listAll({ type: type as keyof MetadataEntities, fields: { id: true } }, instance)
@@ -230,7 +230,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
 
             {_(metadata)
                 .keys()
-                .concat(syncRule.metadataSyncAll)
+                .concat(syncRule.metadataModelsSyncAll)
                 .uniq()
                 .sort()
                 .value()
@@ -242,7 +242,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                         return null;
                     }
 
-                    if (syncRule.metadataSyncAll.includes(metadataType)) {
+                    if (syncRule.metadataModelsSyncAll.includes(metadataType)) {
                         const length = syncAllTypesLength[metadataType];
 
                         return (

@@ -103,7 +103,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id,type"); //type is required to transform visualizations to charts and report tables
 
         const metadataWithSyncAll: Partial<Record<keyof MetadataEntities, Ref[]>> = await Promise.all(
-            (syncParams?.metadataSyncAll ?? []).map(
+            (syncParams?.metadataModelsSyncAll ?? []).map(
                 async type =>
                     await metadataRepository
                         .listAllMetadata({ type: type as keyof MetadataEntities, fields: { id: true, type: true } })
