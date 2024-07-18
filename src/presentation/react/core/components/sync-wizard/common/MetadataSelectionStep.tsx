@@ -161,6 +161,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
         [model, syncRule, onChange]
     );
 
+    //TODO: Go in direction of useHooks 963#discussion_r1682397641
     const modelIsSyncAll = useMemo(
         () => metadataModelsSyncAll.includes(model.getCollectionName()),
         [metadataModelsSyncAll, model]

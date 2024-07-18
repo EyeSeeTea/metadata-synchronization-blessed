@@ -184,6 +184,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
             result.match({
                 error: () => snackbar.error(i18n.t("Invalid origin instance")),
                 success: instance => {
+                    //TODO: UseCase should have all these Promise.all + map + ... 963#discussion_r1682399046
                     Promise.all(
                         syncRule.metadataModelsSyncAll.map(
                             async type =>
@@ -237,7 +238,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                 .map(metadataType => {
                     const modelByMetadataType = api.models[metadataType as keyof MetadataEntities]; //TODO: remove "as"
                     if (!modelByMetadataType) {
-                        console.warn(`Metadata type "${metadataType}" not supported in d2-api`);
+                        console.warn(`Metadata type "${metadataType}" not supported in d2-api`); //TODO: Remove d2-api reference (data layer) - here (presentation layer) 963#discussion_r1682402091
                         return null;
                     }
 

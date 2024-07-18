@@ -111,7 +111,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                             [type]: metadata,
                         }))
             )
-        ).then(syncAllMetadata => _.deepMerge(metadata, ...syncAllMetadata));
+        ).then(syncAllMetadata => _.deepMerge(metadata, ...syncAllMetadata)); //TODO: don't mix async/.then 963#discussion_r1682376524
 
         const exportResults = await promiseMap(_.keys(metadataWithSyncAll), type => {
             const myClass = modelFactory(type);

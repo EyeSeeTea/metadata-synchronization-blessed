@@ -169,7 +169,7 @@ export class SynchronizationRule {
     }
 
     public get metadataModelsSyncAll(): string[] {
-        return this.syncRule.builder?.syncParams?.metadataModelsSyncAll ?? [];
+        return this.syncRule.builder?.syncParams?.metadataModelsSyncAll ?? []; //TODO: might check if builder is really undefined, no need of "?", trust TS 963#discussion_r1682380337
     }
 
     public get targetInstances(): string[] {
