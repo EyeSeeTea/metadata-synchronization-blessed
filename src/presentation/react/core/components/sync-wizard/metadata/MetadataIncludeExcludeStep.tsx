@@ -1,5 +1,4 @@
 import { makeStyles } from "@material-ui/core";
-import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
 import { MultiSelector, useSnackbar, withSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
