@@ -1,6 +1,6 @@
 import cronstrue from "cronstrue";
 import { generateUid } from "d2/uid";
-import _ from "lodash";
+import _, { isEmpty } from "lodash";
 import moment from "moment";
 import { D2Model } from "../../../models/dhis/default";
 import { extractChildrenFromRules, extractParentsFromRule } from "../../../utils/metadataIncludeExclude";
@@ -626,7 +626,7 @@ export class SynchronizationRule {
                     : null,
             ]),
             metadataIds: _.compact([
-                !this.usesFilterRules && this.metadataIds.length === 0
+                !this.usesFilterRules && isEmpty(this.metadataIds)
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element" },
@@ -635,9 +635,9 @@ export class SynchronizationRule {
             ]),
             metadata: _.compact([
                 this.usesFilterRules &&
-                this.metadataIds.length === 0 &&
-                this.filterRules.length === 0 &&
-                this.builder.syncParams?.metadataModelsSyncAll.length === 0
+                isEmpty(this.metadataIds) &&
+                isEmpty(this.filterRules) &&
+                isEmpty(this.builder.syncParams?.metadataModelsSyncAll)
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element or create a filter rule" },
@@ -645,7 +645,7 @@ export class SynchronizationRule {
                     : null,
             ]),
             dataSyncOrganisationUnits: _.compact([
-                this.type !== "metadata" && this.type !== "deleted" && this.dataSyncOrgUnitPaths.length === 0
+                this.type !== "metadata" && this.type !== "deleted" && isEmpty(this.dataSyncOrgUnitPaths)
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "organisation unit" },
@@ -681,8 +681,8 @@ export class SynchronizationRule {
                 this.type === "events" &&
                 !this.dataSyncAllEvents &&
                 !this.dataSyncAllTEIs &&
-                this.dataSyncEvents.length === 0 &&
-                this.dataSyncTeis.length === 0 &&
+                isEmpty(this.dataSyncEvents) &&
+                isEmpty(this.dataSyncTeis) &&
                 !this.dataSyncEnableAggregation
                     ? {
                           key: "cannot_be_empty",
@@ -703,7 +703,7 @@ export class SynchronizationRule {
             ]),
             metadataIncludeExclude: [],
             targetInstances: _.compact([
-                this.originInstance === "LOCAL" && this.targetInstances.length === 0
+                this.originInstance === "LOCAL" && isEmpty(this.targetInstances)
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "instance" },
@@ -731,7 +731,7 @@ export class SynchronizationRule {
 
     public async isValid(): Promise<boolean> {
         const validation = this.validate();
-        return _.flatten(Object.values(validation)).length === 0;
+        return _(Object.values(validation)).flatten().isEmpty();
     }
 }
 
