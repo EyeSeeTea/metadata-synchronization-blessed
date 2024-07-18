@@ -39,15 +39,15 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
         [runSyncRule]
     );
 
-    const metadataRules = React.useMemo(() => {
-        const metadataRules = rules.filter(rule => rule.type === "metadata");
-        return { rules: rules, execute: () => executeRules(metadataRules) };
-    }, [rules, executeRules]);
+    const executeMetadataRules = React.useCallback(
+        () => executeRules(rules.filter(rule => rule.type === "metadata")),
+        [rules, executeRules]
+    );
 
-    const eventsRules = React.useMemo(() => {
-        const eventsRules = rules.filter(rule => rule.type === "events");
-        return { rules: rules, execute: () => executeRules(eventsRules) };
-    }, [rules, executeRules]);
+    const executeEventsRules = React.useCallback(
+        () => executeRules(rules.filter(rule => rule.type === "events")),
+        [rules, executeRules]
+    );
 
     return (
         <Paper className={classes.root}>
@@ -55,7 +55,7 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={metadataRules.execute}
+                    onClick={executeMetadataRules}
                     disabled={isRunning}
                     className={classes.runButton}
                 >
@@ -64,7 +64,7 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={eventsRules.execute}
+                    onClick={executeEventsRules}
                     disabled={isRunning}
                     className={classes.runButton}
                 >
