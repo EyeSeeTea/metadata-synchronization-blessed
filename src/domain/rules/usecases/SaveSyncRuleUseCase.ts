@@ -29,6 +29,8 @@ export class SaveSyncRuleUseCase implements UseCase {
                 .map(entity => entity?.id)
         );
 
-        return rule.updateMetadataIds(_.difference(rule.metadataIds, idsFromSyncAllMetadataTypes));
+        const remainingMetadataIds = _.difference(rule.metadataIds, idsFromSyncAllMetadataTypes);
+
+        return rule.updateMetadataIds(remainingMetadataIds);
     }
 }
