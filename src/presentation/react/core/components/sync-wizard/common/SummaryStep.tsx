@@ -196,7 +196,7 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                     ).then(typeLength => setSyncAllTypesLength(Object.assign({}, ...typeLength)));
 
                     //type is required to transform visualizations to charts and report tables
-                    compositionRoot.metadata.getByIds(ids, instance, "id,name,type").then(updateMetadata).then();
+                    compositionRoot.metadata.getByIds(ids, instance, "id,name,type").then(updateMetadata);
                 },
             });
         });
