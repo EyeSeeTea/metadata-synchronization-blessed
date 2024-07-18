@@ -229,14 +229,13 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
             </LiEntry>
 
             {_(metadata)
-                .keys()
+                .keys() //TODO: use keys() typed function and change both metadataType and metadataModelsSyncAll to keyof MetadataEntities
                 .concat(syncRule.metadataModelsSyncAll)
                 .uniq()
                 .sort()
                 .value()
                 .map(metadataType => {
-                    //@ts-ignore
-                    const modelByMetadataType = api.models[metadataType];
+                    const modelByMetadataType = api.models[metadataType as keyof MetadataEntities]; //TODO: remove "as"
                     if (!modelByMetadataType) {
                         console.warn(`Metadata type "${metadataType}" not supported in d2-api`);
                         return null;
