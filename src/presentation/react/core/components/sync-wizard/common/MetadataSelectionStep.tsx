@@ -127,14 +127,13 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
     useEffect(() => {
         if (!_.isEmpty(metadataModelsSyncAll)) {
             compositionRoot.metadata.getByIds(syncRule.metadataIds, remoteInstance, "id").then(metadata => {
-                const idsFromSyncAllMetadataTypes = _.compact(
-                    _(metadata)
-                        .pick(metadataModelsSyncAll)
-                        .values()
-                        .value()
-                        .flat()
-                        .map(entity => entity?.id)
-                );
+                const idsFromSyncAllMetadataTypes = _(metadata)
+                    .pick(metadataModelsSyncAll)
+                    .values()
+                    .compact()
+                    .flatten()
+                    .map(entity => entity.id)
+                    .value();
 
                 setIdsToIgnore(idsFromSyncAllMetadataTypes);
             });
