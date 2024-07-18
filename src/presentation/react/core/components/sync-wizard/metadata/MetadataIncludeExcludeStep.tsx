@@ -50,15 +50,15 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                                 .sort()
                                 .uniq()
                                 .value()
-                                .map((type: string) => modelFactory(type));
+                                .map(type => modelFactory(type));
 
                             const options = models
-                                .filter((model: typeof D2Model) => model.getMetadataType() !== defaultName)
-                                .map((model: typeof D2Model) => {
+                                .filter(model => model.getMetadataType() !== defaultName)
+                                .map(model => {
                                     const apiModel = api.models[model.getCollectionName()];
                                     return apiModel.schema;
                                 })
-                                .map((schema: D2SchemaProperties) => ({
+                                .map(schema => ({
                                     name: schema.displayName,
                                     id: schema.name,
                                 }));
