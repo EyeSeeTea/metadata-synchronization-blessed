@@ -265,6 +265,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     };
 
     const changeOrgUnitsSyncAll = (value: boolean) => {
+        // TODO: Sync All Types Feature: use this function and refactor in order to allow all types to be syncAll
         notifyModelSyncAllChange(value);
     };
 
