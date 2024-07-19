@@ -218,7 +218,6 @@ function useSyncRulesExecuter(options: { logs: Logs; emergencyType: EmergencyTyp
             setRunning(running => (running ? { ...running, [rule.id]: true } : { [rule.id]: true }));
 
             try {
-                logs.clear();
                 await executeRule(compositionRoot, emergencyType, rule.id, logs.log);
             } catch (err: any) {
                 logs.log(`Error: ${err.message}`);
