@@ -16,7 +16,7 @@ import {
     useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
-import React, { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { DataSource, isDhisInstance, isJSONDataSource } from "../../../../../domain/instance/entities/DataSource";
 import { MetadataResponsible } from "../../../../../domain/metadata/entities/MetadataResponsible";
@@ -155,14 +155,28 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     const [responsibles, updateResponsibles] = useState<MetadataResponsible[]>([]);
     const [sharingSettingsElement, setSharingSettingsElement] = useState<NamedRef>();
 
-    const selectionWithoutExcluded = useMemo(() => {
-        if (externalSelection === undefined) return undefined;
+    const selectionWithoutExcludedRef = useRef<string[] | undefined>();
 
-        return _.isEqual(externalSelection, ignoreIds) ? [] : _.difference(externalSelection, ignoreIds);
+    useEffect(() => {
+        const updatedSelection = !externalSelection
+            ? undefined
+            : _.isEqual(externalSelection, ignoreIds)
+            ? []
+            : _.difference(externalSelection, ignoreIds);
+
+        if (!_.isEqual(updatedSelection, selectionWithoutExcludedRef.current)) {
+            selectionWithoutExcludedRef.current = updatedSelection;
+        }
     }, [externalSelection, ignoreIds]);
 
+    const selectionWithoutExcluded = selectionWithoutExcludedRef.current;
+
     const [stateSelection, setStateSelection] = useState<string[]>(selectionWithoutExcluded ?? []);
-    const selectedIds = selectionWithoutExcluded ?? stateSelection;
+    const selectedIds = useMemo(
+        () => selectionWithoutExcluded ?? stateSelection,
+        [selectionWithoutExcluded, stateSelection]
+    );
+
     const [filters, setFilters] = useState<ListMetadataParams>({
         type: model.getCollectionName(),
         showOnlySelected: initialShowOnlySelected,
