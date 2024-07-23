@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-02-21T11:09:33.513Z\n"
-"PO-Revision-Date: 2024-02-21T11:09:33.513Z\n"
+"POT-Creation-Date: 2024-07-18T21:33:28.930Z\n"
+"PO-Revision-Date: 2024-07-18T21:33:28.930Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -243,7 +243,7 @@ msgstr ""
 msgid "Condition"
 msgstr ""
 
-msgid "String to match (*)"
+msgid "String to match"
 msgstr ""
 
 msgid "Edit"
@@ -517,6 +517,12 @@ msgstr ""
 msgid "Show all entries"
 msgstr ""
 
+msgid "Dynamic auto update"
+msgstr ""
+
+msgid "Sync all Organisation Units"
+msgstr ""
+
 msgid "Select with children subtree"
 msgstr ""
 
@@ -529,7 +535,7 @@ msgstr ""
 msgid "Custodian"
 msgstr ""
 
-msgid "Search by "
+msgid "Search by name, code or id"
 msgstr ""
 
 msgid ""
@@ -2170,6 +2176,12 @@ msgstr ""
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
+msgstr ""
+
+msgid "Get configuration from HQ server"
+msgstr ""
+
+msgid "Push data to HQ server"
 msgstr ""
 
 msgid "Output: "

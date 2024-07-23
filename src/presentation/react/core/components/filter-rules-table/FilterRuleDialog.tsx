@@ -104,7 +104,7 @@ export const FilterRuleDialog: React.FC<NewFilterRuleDialogProps> = props => {
                             className={classes.dropdown}
                             fullWidth={true}
                             onChange={value => setFilterRule(filterRule => updateStringMatch(filterRule, { value }))}
-                            label={i18n.t("String to match (*)")}
+                            label={i18n.t("String to match")}
                             value={filterRule.stringMatch?.value || ""}
                         />
                     </div>

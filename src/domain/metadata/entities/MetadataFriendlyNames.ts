@@ -223,6 +223,8 @@ export const includeExcludeRulesFriendlyNames: Dictionary<string> = {
     "trackedEntityAttributes.legendSets": "Legends of tracked entity attributes",
     "users.userRoles": "User roles of users",
     "users.userGroups": "User groups of users",
+    "users.avatar": "Avatar of users",
+    avatar: "Avatar",
     options: "Options",
     "options.attributes": "Attributes of options",
     "optionSets.attributes": "Attributes of option sets",

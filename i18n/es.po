@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2024-02-20T05:48:46.170Z\n"
+"POT-Creation-Date: 2024-07-17T07:09:52.268Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -243,7 +243,7 @@ msgstr ""
 msgid "Condition"
 msgstr ""
 
-msgid "String to match (*)"
+msgid "String to match"
 msgstr ""
 
 msgid "Edit"
@@ -518,6 +518,12 @@ msgstr ""
 msgid "Show all entries"
 msgstr ""
 
+msgid "Dynamic auto update"
+msgstr ""
+
+msgid "Sync all Organisation Units"
+msgstr ""
+
 msgid "Select with children subtree"
 msgstr ""
 
@@ -530,7 +536,7 @@ msgstr ""
 msgid "Custodian"
 msgstr ""
 
-msgid "Search by "
+msgid "Search by name, code or id"
 msgstr ""
 
 msgid ""
@@ -2174,6 +2180,12 @@ msgstr ""
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
+msgstr ""
+
+msgid "Get configuration from HQ server"
+msgstr ""
+
+msgid "Push data to HQ server"
 msgstr ""
 
 msgid "Output: "

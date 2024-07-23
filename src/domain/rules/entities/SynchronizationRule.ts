@@ -1,6 +1,6 @@
 import cronstrue from "cronstrue";
 import { generateUid } from "d2/uid";
-import _ from "lodash";
+import _, { isEmpty } from "lodash";
 import moment from "moment";
 import { D2Model } from "../../../models/dhis/default";
 import { extractChildrenFromRules, extractParentsFromRule } from "../../../utils/metadataIncludeExclude";
@@ -168,6 +168,10 @@ export class SynchronizationRule {
         return this.syncRule.builder?.syncParams?.metadataIncludeExcludeRules ?? {};
     }
 
+    public get metadataModelsSyncAll(): string[] {
+        return this.syncRule.builder?.syncParams?.metadataModelsSyncAll ?? []; //TODO: might check if builder is really undefined, no need of "?", trust TS 963#discussion_r1682380337
+    }
+
     public get targetInstances(): string[] {
         return this.syncRule.targetInstances;
     }
@@ -234,6 +238,7 @@ export class SynchronizationRule {
             removeUserObjectsAndReferences: false,
             removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
+            metadataModelsSyncAll: [],
             ...params,
         };
     }
@@ -542,13 +547,29 @@ export class SynchronizationRule {
         return this.update({ targetInstances }).updateBuilder({ targetInstances });
     }
 
-    public updateSyncParams(syncParams: MetadataSynchronizationParams): SynchronizationRule {
+    public updateSyncParams(syncParams: Partial<MetadataSynchronizationParams>): SynchronizationRule {
+        const params = this.syncRule.builder?.syncParams ?? {
+            enableMapping: false,
+            includeSharingSettings: true,
+            removeOrgUnitReferences: false,
+            removeUserObjects: false,
+            removeUserObjectsAndReferences: false,
+            removeOrgUnitObjects: false,
+            useDefaultIncludeExclude: true,
+            metadataModelsSyncAll: [],
+        };
+
         return this.updateBuilder({
             syncParams: {
+                ...params,
                 ...syncParams,
                 removeOrgUnitObjects: syncParams.removeOrgUnitReferences ? true : syncParams.removeOrgUnitObjects,
             },
         });
+    }
+
+    public updateMetadataModelsSyncAll(metadataModelsSyncAll: string[]): SynchronizationRule {
+        return this.updateSyncParams({ metadataModelsSyncAll });
     }
 
     public updateDataParams(dataParams: DataSynchronizationParams): SynchronizationRule {
@@ -605,7 +626,7 @@ export class SynchronizationRule {
                     : null,
             ]),
             metadataIds: _.compact([
-                !this.usesFilterRules && this.metadataIds.length === 0
+                !this.usesFilterRules && isEmpty(this.metadataIds)
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element" },
@@ -613,7 +634,10 @@ export class SynchronizationRule {
                     : null,
             ]),
             metadata: _.compact([
-                this.usesFilterRules && this.metadataIds.length === 0 && this.filterRules.length === 0
+                this.usesFilterRules &&
+                isEmpty(this.metadataIds) &&
+                isEmpty(this.filterRules) &&
+                isEmpty(this.builder.syncParams?.metadataModelsSyncAll)
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "metadata element or create a filter rule" },
@@ -621,7 +645,7 @@ export class SynchronizationRule {
                     : null,
             ]),
             dataSyncOrganisationUnits: _.compact([
-                this.type !== "metadata" && this.type !== "deleted" && this.dataSyncOrgUnitPaths.length === 0
+                this.type !== "metadata" && this.type !== "deleted" && isEmpty(this.dataSyncOrgUnitPaths)
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "organisation unit" },
@@ -657,8 +681,8 @@ export class SynchronizationRule {
                 this.type === "events" &&
                 !this.dataSyncAllEvents &&
                 !this.dataSyncAllTEIs &&
-                this.dataSyncEvents.length === 0 &&
-                this.dataSyncTeis.length === 0 &&
+                isEmpty(this.dataSyncEvents) &&
+                isEmpty(this.dataSyncTeis) &&
                 !this.dataSyncEnableAggregation
                     ? {
                           key: "cannot_be_empty",
@@ -679,7 +703,7 @@ export class SynchronizationRule {
             ]),
             metadataIncludeExclude: [],
             targetInstances: _.compact([
-                this.originInstance === "LOCAL" && this.targetInstances.length === 0
+                this.originInstance === "LOCAL" && isEmpty(this.targetInstances)
                     ? {
                           key: "cannot_be_empty",
                           namespace: { element: "instance" },
@@ -707,7 +731,7 @@ export class SynchronizationRule {
 
     public async isValid(): Promise<boolean> {
         const validation = this.validate();
-        return _.flatten(Object.values(validation)).length === 0;
+        return _(Object.values(validation)).flatten().isEmpty();
     }
 }
 
