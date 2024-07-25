@@ -721,7 +721,7 @@ export class UserGroupModel extends D2Model {
     protected static metadataType = "userGroup";
     protected static collectionName = "userGroups" as const;
 
-    protected static excludeRules = [];
+    protected static excludeRules = ["users.avatar"];
     protected static includeRules = ["attributes", "users", "users.userRoles"];
 }
 

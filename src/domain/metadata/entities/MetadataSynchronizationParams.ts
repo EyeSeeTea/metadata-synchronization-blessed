@@ -24,4 +24,5 @@ export interface MetadataSynchronizationParams extends MetadataImportParams {
     removeOrgUnitObjects?: boolean;
     useDefaultIncludeExclude: boolean;
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
+    metadataModelsSyncAll: string[]; //TODO: keyof MetadataEntities 963#discussion_r1682370900
 }

@@ -53,6 +53,15 @@ export class Either<Error, Data> {
         });
     }
 
+    getOrThrow(): Data {
+        return this.match({
+            success: () => (this.value as EitherValueSuccess<Data>).data,
+            error: () => {
+                throw Error("Return Either value is not possible because is left");
+            },
+        });
+    }
+
     static error<Error>(error: Error) {
         return new Either<Error, never>({ type: "error", error });
     }

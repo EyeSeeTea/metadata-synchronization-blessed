@@ -1,5 +1,4 @@
 import { makeStyles } from "@material-ui/core";
-import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
 import { MultiSelector, useSnackbar, withSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -44,15 +43,21 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     compositionRoot.metadata
                         .getByIds(syncRule.metadataIds, instance, "id,name,type") //type is required to transform visualizations to charts and report tables
                         .then((metadata: MetadataPackage<MetadataEntity>) => {
-                            const models = _.keys(metadata).map((type: string) => modelFactory(type));
+                            const models = _(metadata)
+                                .keys()
+                                .concat(syncRule.metadataModelsSyncAll)
+                                .sort()
+                                .uniq()
+                                .value()
+                                .map(type => modelFactory(type));
 
                             const options = models
-                                .filter((model: typeof D2Model) => model.getMetadataType() !== defaultName)
-                                .map((model: typeof D2Model) => {
+                                .filter(model => model.getMetadataType() !== defaultName)
+                                .map(model => {
                                     const apiModel = api.models[model.getCollectionName()];
                                     return apiModel.schema;
                                 })
-                                .map((schema: D2SchemaProperties) => ({
+                                .map(schema => ({
                                     name: schema.displayName,
                                     id: schema.name,
                                 }));
