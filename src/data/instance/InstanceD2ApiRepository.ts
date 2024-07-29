@@ -25,7 +25,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     }
 
     async getAll({ search, ids }: InstancesFilter): Promise<Instance[]> {
-        const objects = await this.getInstances();
+        const objects = await this.getInstances(false);
 
         const filteredDataBySearch = search
             ? _.filter(objects, o =>
@@ -127,12 +127,16 @@ export class InstanceD2ApiRepository implements InstanceRepository {
         return password ? new Cryptr(this.encryptionKey).encrypt(password) : "";
     }
 
-    private async getInstances() {
+    private async getInstances(useCache = true) {
         const storageClient = await this.getStorageClient();
 
-        return await this.cache.getOrPromise(Namespace.INSTANCES, () =>
-            storageClient.listObjectsInCollection<InstanceData>(Namespace.INSTANCES)
-        );
+        if (useCache) {
+            return await this.cache.getOrPromise(Namespace.INSTANCES, () =>
+                storageClient.listObjectsInCollection<InstanceData>(Namespace.INSTANCES)
+            );
+        } else {
+            return await storageClient.listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
+        }
     }
 
     private async getInstanceDataInColletion(id: string): Promise<InstanceData | undefined> {
