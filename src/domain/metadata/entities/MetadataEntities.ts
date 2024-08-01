@@ -4992,6 +4992,19 @@ export type Visualization = {
     yearlySeries: string[];
 };
 
+export type DataStore = {
+    externalAccess: boolean;
+    id: Id;
+    code: string;
+    name: string;
+    displayName: string;
+    favorites: string[];
+    translations: Translation[];
+    keys: DataStoreKey[];
+};
+
+export type DataStoreKey = { id: Id; displayName: string };
+
 export type MetadataEntity =
     | UserAuthorityGroup
     | Attribute
@@ -5025,6 +5038,7 @@ export type MetadataEntity =
     | Section
     | DataApprovalLevel
     | DataApprovalWorkflow
+    | DataStore
     | ValidationRule
     | ValidationRuleGroup
     | ValidationNotificationTemplate
@@ -5076,6 +5090,7 @@ export type MetadataEntities = {
     dataEntryForms: DataEntryForm[];
     dataSets: DataSet[];
     dataSetNotificationTemplates: DataSetNotificationTemplate[];
+    dataStores: DataStore[];
     documents: Document[];
     eventCharts: EventChart[];
     eventReports: EventReport[];

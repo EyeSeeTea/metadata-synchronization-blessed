@@ -38,6 +38,7 @@ import { debug } from "../../utils/debug";
 import { paginate } from "../../utils/pagination";
 import { metadataTransformations } from "../transformations/PackageTransformations";
 import { D2MetadataUtils } from "./D2MetadataUtils";
+import { D2ApiDataStore } from "../common/D2ApiDataStore";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
@@ -101,17 +102,24 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const filter = this.buildListFilters(params);
         const { apiVersion } = this.instance;
         const options = { type, fields, filter, order, page, pageSize, rootJunction };
-        const { objects: baseObjects, pager } = await this.getListPaginated(options);
-        // Prepend parent objects (if option enabled) as virtual rows, keep pagination unmodified.
-        const objects = _.concat(await this.getParentObjects(listParams), baseObjects);
+        if (type === "dataStores") {
+            const d2ApiDataStore = new D2ApiDataStore(this.instance);
+            const response = await d2ApiDataStore.getDataStore();
+            // Hardcoded pagination since DHIS2 does not support pagination for namespaces
+            return { objects: response, pager: { page: 1, total: response.length, pageSize: 100 } };
+        } else {
+            const { objects: baseObjects, pager } = await this.getListPaginated(options);
+            // Prepend parent objects (if option enabled) as virtual rows, keep pagination unmodified.
+            const objects = _.concat(await this.getParentObjects(listParams), baseObjects);
 
-        const metadataPackage = this.transformationRepository.mapPackageFrom(
-            apiVersion,
-            { [type]: objects },
-            metadataTransformations
-        );
+            const metadataPackage = this.transformationRepository.mapPackageFrom(
+                apiVersion,
+                { [type]: objects },
+                metadataTransformations
+            );
 
-        return { objects: metadataPackage[type as keyof MetadataEntities] ?? [], pager };
+            return { objects: metadataPackage[type as keyof MetadataEntities] ?? [], pager };
+        }
     }
 
     @cache()

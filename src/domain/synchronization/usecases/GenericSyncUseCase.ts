@@ -95,6 +95,12 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
+    protected async getDataStoreMetadataRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.dataStoreMetadataRepository(remoteInstance ?? defaultInstance);
+    }
+
+    @cache()
     protected async getTeisRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
         return this.repositoryFactory.teisRepository(remoteInstance ?? defaultInstance);

@@ -119,6 +119,7 @@ import { GetSystemInfoUseCase } from "../domain/system-info/usecases/GetSystemIn
 import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/ListTEIsUseCase";
 import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { cache } from "../utils/cache";
+import { DataStoreMetadataD2Repository } from "../data/data-store/DataStoreMetadataD2Repository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -148,6 +149,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SchedulerRepository, SchedulerD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
     }
 
     @cache()
