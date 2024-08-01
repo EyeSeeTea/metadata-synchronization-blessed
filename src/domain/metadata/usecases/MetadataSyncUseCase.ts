@@ -102,7 +102,18 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const allMetadataIds = _.union(metadataIds, filterRulesIds);
         const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id,type"); //type is required to transform visualizations to charts and report tables
 
-        const exportResults = await promiseMap(_.keys(metadata), type => {
+        const metadataWithSyncAll: Partial<Record<keyof MetadataEntities, Ref[]>> = await Promise.all(
+            (syncParams?.metadataModelsSyncAll ?? []).map(
+                async type =>
+                    await metadataRepository
+                        .listAllMetadata({ type: type as keyof MetadataEntities, fields: { id: true, type: true } })
+                        .then(metadata => ({
+                            [type]: metadata,
+                        }))
+            )
+        ).then(syncAllMetadata => _.deepMerge(metadata, ...syncAllMetadata)); //TODO: don't mix async/.then 963#discussion_r1682376524
+
+        const exportResults = await promiseMap(_.keys(metadataWithSyncAll), type => {
             const myClass = modelFactory(type);
             const metadataType = myClass.getMetadataType();
             const collectionName = myClass.getCollectionName();
@@ -111,7 +122,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
             return this.exportMetadata({
                 type: collectionName,
-                ids: metadata[collectionName]?.map(e => e.id) || [],
+                ids: metadataWithSyncAll[collectionName]?.map(e => e.id) || [],
                 excludeRules: useDefaultIncludeExclude
                     ? myClass.getExcludeRules()
                     : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),

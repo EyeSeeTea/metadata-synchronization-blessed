@@ -1,6 +1,7 @@
 import FileSaver from "file-saver";
 import _ from "lodash";
 import moment, { unitOfTime } from "moment";
+import { D2MetadataUtils } from "../data/metadata/D2MetadataUtils";
 import { MetadataMapping, MetadataMappingDictionary } from "../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
@@ -29,7 +30,9 @@ export async function getMetadata(api: D2Api, elements: string[], fields = ":all
     const response = await Promise.all(promises);
     const results = _.deepMerge({}, ...response);
     if (results.system) delete results.system;
-    return results;
+    const defaultIds = await D2MetadataUtils.getDefaultIds(api);
+    const metadataExcludeDefaults = await D2MetadataUtils.excludeDefaults(results, defaultIds);
+    return metadataExcludeDefaults;
 }
 
 export const availablePeriods = buildObject<{

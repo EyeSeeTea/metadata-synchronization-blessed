@@ -10,6 +10,7 @@ export const Namespace = {
     STORES: "stores",
     RESPONSIBLES: "responsibles",
     MAPPINGS: "mappings",
+    SETTINGS: "settings",
     SCHEDULER_EXECUTIONS: "scheduler-executions",
 };
 

@@ -3,6 +3,7 @@ import { NamespaceProperties } from "../../../data/storage/Namespaces";
 import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
+import { StorageType } from "../../config/entities/Config";
 import { Instance } from "../../instance/entities/Instance";
 
 export interface StorageClientConstructor {
@@ -21,7 +22,7 @@ export interface ObjectSharing {
 }
 
 export abstract class StorageClient {
-    public abstract type: "constant" | "dataStore";
+    public abstract type: StorageType;
 
     // Object operations
     public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
@@ -98,6 +99,22 @@ export abstract class StorageClient {
         const advancedProperties = NamespaceProperties[key];
         if (advancedProperties.length > 0) {
             await this.removeObject(`${key}-${id}`);
+        }
+    }
+
+    public async removeObjectsInCollection(key: string, ids: string[]): Promise<void> {
+        const oldData: Ref[] = (await this.getObject(key)) ?? [];
+
+        const newData = oldData.filter(obj => !ids.includes(obj.id));
+
+        await this.saveObject(key, newData);
+
+        const advancedProperties = NamespaceProperties[key];
+
+        if (advancedProperties.length > 0) {
+            for (const id of ids) {
+                await this.removeObject(`${key}-${id}`);
+            }
         }
     }
 }
