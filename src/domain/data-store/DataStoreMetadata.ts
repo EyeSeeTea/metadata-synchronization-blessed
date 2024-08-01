@@ -22,7 +22,7 @@ export class DataStoreMetadata {
     }
 
     static buildFromKeys(keysWithNamespaces: string[]): DataStoreMetadata[] {
-        const dataStoreIds = keysWithNamespaces.filter(id => id.includes(DataStoreMetadata.NS_SEPARATOR));
+        const dataStoreIds = this.getDataStoreIds(keysWithNamespaces);
 
         const namespaceAndKey = dataStoreIds.map(dataStoreId => {
             const match = dataStoreId.split(DataStoreMetadata.NS_SEPARATOR);
@@ -41,7 +41,6 @@ export class DataStoreMetadata {
             .map((keys, namespace) => {
                 return new DataStoreMetadata({
                     namespace,
-
                     keys: _(keys)
                         .map(key => {
                             if (!key.key) return undefined;
@@ -94,5 +93,9 @@ export class DataStoreMetadata {
                 sharing: undefined,
             });
         });
+    }
+
+    static getDataStoreIds(keys: string[]): string[] {
+        return keys.filter(id => id.includes(DataStoreMetadata.NS_SEPARATOR));
     }
 }
