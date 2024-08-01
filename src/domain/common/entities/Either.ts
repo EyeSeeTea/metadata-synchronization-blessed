@@ -19,6 +19,10 @@ export class Either<Error, Data> {
         }
     }
 
+    matchWith<Res>(matchObj: MatchObject<Error, Data, Res>): Res {
+        return this.match(matchObj);
+    }
+
     isError(): this is this & { value: EitherValueError<Error> } {
         return this.value.type === "error";
     }

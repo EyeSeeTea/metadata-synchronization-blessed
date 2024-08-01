@@ -1,6 +1,7 @@
 import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@material-ui/core";
 import { createTheme } from "@material-ui/core/styles";
 import _ from "lodash";
+import React from "react";
 import i18n from "../../../../../locales";
 import { muiTheme } from "../../themes/dhis2.theme";
 
@@ -21,6 +22,7 @@ interface DropdownProps<T extends string = string> {
     emptyLabel?: string;
     view?: DropdownViewOption;
     disabled?: boolean;
+    style?: React.CSSProperties;
 }
 
 const getTheme = (view: DropdownViewOption) => {
@@ -73,6 +75,7 @@ const getTheme = (view: DropdownViewOption) => {
 export function Dropdown<T extends string = string>({
     items,
     value,
+    style,
     onChange = _.noop,
     onValueChange = _.noop,
     label,
@@ -86,7 +89,7 @@ export function Dropdown<T extends string = string>({
 
     return (
         <MuiThemeProvider theme={getTheme(view)}>
-            <FormControl fullWidth={view === "full-width"}>
+            <FormControl fullWidth={view === "full-width"} style={style}>
                 {view !== "inline" && label && <InputLabel>{label}</InputLabel>}
                 <Select
                     key={`dropdown-select-${label}`}

@@ -4,9 +4,7 @@ import { HeaderBar } from "@dhis2/ui";
 import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
-import { init } from "d2";
 //@ts-ignore
-import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { D2Api } from "../../types/d2-api";
@@ -17,7 +15,6 @@ import Migrations from "../react/core/components/migrations/Migrations";
 import Share from "../react/core/components/share/Share";
 import { AppContext, AppContextState } from "../react/core/contexts/AppContext";
 import { useDeleteHistory } from "../react/core/components/deleting-history/useDeleteHistory";
-import muiThemeLegacy from "../react/core/themes/dhis2-legacy.theme";
 import { muiTheme } from "../react/core/themes/dhis2.theme";
 import Root from "./Root";
 import "./WebApp.css";
@@ -47,7 +44,6 @@ const App = () => {
             }).then(res => res.json())) as AppConfig;
             const encryptionKey = configFromJson.encryptionKey;
             if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
-            const d2 = await init({ baseUrl: `${baseUrl}/api` });
             const api = new D2Api({ baseUrl, backend: "fetch" });
             const version = await api.getVersion();
             const instance = Instance.build({
@@ -61,9 +57,9 @@ const App = () => {
             const currentUser = await compositionRoot.user.current();
             if (!currentUser) throw new Error("User not logged in");
 
-            setAppContext({ d2: d2 as object, api, compositionRoot });
+            setAppContext({ d2: d2, api, compositionRoot });
 
-            Object.assign(window, { d2, api });
+            Object.assign(window, { api });
             setUsername(currentUser.username);
             setAppConfig(configFromJson);
             await initializeAppRoles(baseUrl);
@@ -95,22 +91,20 @@ const App = () => {
         return (
             <StylesProvider generateClassName={generateClassName}>
                 <MuiThemeProvider theme={muiTheme}>
-                    <OldMuiThemeProvider muiTheme={muiThemeLegacy}>
-                        <LoadingProvider>
-                            <SnackbarProvider>
-                                <HeaderBar appName={appTitle} />
+                    <LoadingProvider>
+                        <SnackbarProvider>
+                            <HeaderBar appName={appTitle} />
 
-                                <div id="app" className="content">
-                                    <AppContext.Provider value={appContext}>
-                                        <Root />
-                                    </AppContext.Provider>
-                                </div>
+                            <div id="app" className="content">
+                                <AppContext.Provider value={appContext}>
+                                    <Root />
+                                </AppContext.Provider>
+                            </div>
 
-                                <Share visible={showShareButton} />
-                                {appConfig && <Feedback options={appConfig.feedback} username={username} />}
-                            </SnackbarProvider>
-                        </LoadingProvider>
-                    </OldMuiThemeProvider>
+                            <Share visible={showShareButton} />
+                            {appConfig && <Feedback options={appConfig.feedback} username={username} />}
+                        </SnackbarProvider>
+                    </LoadingProvider>
                 </MuiThemeProvider>
             </StylesProvider>
         );
@@ -118,5 +112,9 @@ const App = () => {
 
     return null;
 };
+
+// Use empty object as d2 for now (so we can remove the "d2" dependency). In this app is only
+// used as prop for d2-ui-components:MultiSelect (internally used for translations).
+export const d2 = {};
 
 export default App;

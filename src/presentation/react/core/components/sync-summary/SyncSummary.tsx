@@ -16,7 +16,7 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import _ from "lodash";
 import { useEffect, useState } from "react";
-import ReactJson from "react-json-view";
+import { JsonView, Props, defaultStyles } from "react-json-view-lite";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { ErrorMessage, SynchronizationResult } from "../../../../../domain/reports/entities/SynchronizationResult";
 import { Store } from "../../../../../domain/stores/entities/Store";
@@ -28,6 +28,8 @@ import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { SummaryTable } from "./SummaryTable";
+
+import "react-json-view-lite/dist/index.css";
 
 const useStyles = makeStyles(theme => ({
     accordionHeading1: {
@@ -259,12 +261,18 @@ const SyncSummary = ({ report, onClose }: SyncSummaryProps) => {
                     </AccordionSummary>
 
                     <AccordionDetails>
-                        <ReactJson src={{ ...report, results }} collapsed={2} enableClipboard={false} />
+                        <JsonView
+                            data={{ ...report, results }}
+                            shouldExpandNode={expandToLevel2}
+                            style={defaultStyles}
+                        />
                     </AccordionDetails>
                 </Accordion>
             </DialogContent>
         </ConfirmationDialog>
     );
 };
+
+const expandToLevel2: NonNullable<Props["shouldExpandNode"]> = level => level < 2;
 
 export default SyncSummary;
