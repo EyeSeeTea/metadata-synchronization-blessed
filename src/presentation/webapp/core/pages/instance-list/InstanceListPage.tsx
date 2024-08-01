@@ -28,6 +28,7 @@ import PageHeader from "../../../../react/core/components/page-header/PageHeader
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
+import { StorageType } from "../../../../../domain/config/entities/Config";
 
 const InstanceListPage = () => {
     const { api, compositionRoot } = useAppContext();
@@ -42,7 +43,7 @@ const InstanceListPage = () => {
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [user, setUser] = useState<User>();
-    const [appStorage, setAppStorage] = useState<"dataStore" | "constant">();
+    const [appStorage, setAppStorage] = useState<StorageType>();
     const [localInstance, setLocalInstance] = useState<Instance>();
 
     useEffect(() => {

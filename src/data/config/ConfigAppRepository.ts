@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { StorageType } from "../../domain/config/entities/Config";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
@@ -11,7 +12,7 @@ export class ConfigAppRepository implements ConfigRepository {
     constructor(private instance: Instance) {}
 
     @cache()
-    public async detectStorageClients(): Promise<Array<"dataStore" | "constant">> {
+    public async detectStorageClients(): Promise<Array<StorageType>> {
         const dataStoreClient = new StorageDataStoreClient(this.instance);
         const constantClient = new StorageConstantClient(this.instance);
 
@@ -30,7 +31,7 @@ export class ConfigAppRepository implements ConfigRepository {
         return constantConfig ? constantClient : dataStoreClient;
     }
 
-    public async changeStorageClient(client: "dataStore" | "constant"): Promise<void> {
+    public async changeStorageClient(client: StorageType): Promise<void> {
         const dataStoreClient = new StorageDataStoreClient(this.instance);
         const constantClient = new StorageConstantClient(this.instance);
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2023-06-12T22:53:44.873Z\n"
+"POT-Creation-Date: 2024-07-17T07:09:52.268Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,6 +24,9 @@ msgid "Field {{field}} needs to be a valid url"
 msgstr ""
 
 msgid "Field {{field}} is not valid"
+msgstr ""
+
+msgid "Field {{field}} is not a number"
 msgstr ""
 
 msgid "Program not found"
@@ -216,6 +219,9 @@ msgstr ""
 msgid "Search deleted objects"
 msgstr ""
 
+msgid "Deleting history"
+msgstr ""
+
 msgid "<No value>"
 msgstr ""
 
@@ -237,7 +243,7 @@ msgstr ""
 msgid "Condition"
 msgstr ""
 
-msgid "String to match (*)"
+msgid "String to match"
 msgstr ""
 
 msgid "Edit"
@@ -512,6 +518,12 @@ msgstr ""
 msgid "Show all entries"
 msgstr ""
 
+msgid "Dynamic auto update"
+msgstr ""
+
+msgid "Sync all Organisation Units"
+msgstr ""
+
 msgid "Select with children subtree"
 msgstr ""
 
@@ -524,7 +536,7 @@ msgstr ""
 msgid "Custodian"
 msgstr ""
 
-msgid "Search by "
+msgid "Search by name, code or id"
 msgstr ""
 
 msgid ""
@@ -1930,6 +1942,12 @@ msgstr ""
 msgid "Application storage"
 msgstr ""
 
+msgid "Retention days"
+msgstr ""
+
+msgid "Leave empty to keep all history"
+msgstr ""
+
 msgid "Data Store"
 msgstr ""
 
@@ -1937,6 +1955,9 @@ msgid "Metadata constant"
 msgstr ""
 
 msgid "Updating storage location, please wait..."
+msgstr ""
+
+msgid "An error has occurred saving settings"
 msgstr ""
 
 msgid "Change storage"
@@ -2159,6 +2180,12 @@ msgstr ""
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
+msgstr ""
+
+msgid "Get configuration from HQ server"
+msgstr ""
+
+msgid "Push data to HQ server"
 msgstr ""
 
 msgid "Output: "

@@ -14,6 +14,7 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
         [9, import("./09.mapping-instances")],
         [10, import("./10.sync-all-teis")],
         [11, import("./11.rename-run-analytics")],
+        [12, import("./12.metadata-models-sync-all")],
     ];
 }
 

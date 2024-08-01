@@ -19,6 +19,10 @@ export class Either<Error, Data> {
         }
     }
 
+    matchWith<Res>(matchObj: MatchObject<Error, Data, Res>): Res {
+        return this.match(matchObj);
+    }
+
     isError(): this is this & { value: EitherValueError<Error> } {
         return this.value.type === "error";
     }
@@ -46,6 +50,15 @@ export class Either<Error, Data> {
         return this.match({
             success: () => this as Either<any, Data>,
             error: error => fn(error),
+        });
+    }
+
+    getOrThrow(): Data {
+        return this.match({
+            success: () => (this.value as EitherValueSuccess<Data>).data,
+            error: () => {
+                throw Error("Return Either value is not possible because is left");
+            },
         });
     }
 

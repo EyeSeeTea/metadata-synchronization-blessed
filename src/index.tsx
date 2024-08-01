@@ -1,7 +1,6 @@
 import { Provider } from "@dhis2/app-runtime";
 import i18n from "@dhis2/d2-i18n";
 import axios from "axios";
-import { init } from "d2";
 import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -24,8 +23,8 @@ async function getBaseUrl() {
     if (isDev) {
         return "/dhis2"; // See src/setupProxy.js
     } else {
-        const { data: manifest } = await axios.get<any>("manifest.webapp");
-        return manifest.activities.dhis.href;
+        const { data: manifest } = await axios.get<AppManifest>("manifest.webapp");
+        return getUrlForCurrentDomain(manifest.activities.dhis.href);
     }
 }
 
@@ -40,24 +39,42 @@ const configI18n = ({ keyUiLocale }: { keyUiLocale: string }) => {
     document.documentElement.setAttribute("dir", isLangRTL(keyUiLocale) ? "rtl" : "ltr");
 };
 
+function getUrlForCurrentDomain(path: string) {
+    return new URL(path, window.location.href).href;
+}
+
+interface AppManifest {
+    activities: {
+        dhis: {
+            href: string;
+        };
+    };
+}
+
 async function main() {
     const baseUrl = await getBaseUrl();
 
     try {
-        const d2 = await init({ baseUrl: baseUrl + "/api", schemas: [] });
         const instance = Instance.build({ name: "Default", url: baseUrl });
         const api = getD2APiFromInstance(instance);
         if (isDev) {
             window.api = api;
-            window.d2 = d2;
         }
 
         const userSettings = await api.get<{ keyUiLocale: string }>("/userSettings").getData();
         configI18n(userSettings);
 
+        const providerProps: Omit<React.ComponentProps<typeof Provider>, "children"> = {
+            config: { baseUrl: baseUrl, apiVersion: 30 },
+            offlineInterface: null,
+            plugin: false,
+            parentAlertsAdd: null,
+            showAlertsInPlugin: false,
+        };
+
         ReactDOM.render(
             <React.StrictMode>
-                <Provider config={{ baseUrl, apiVersion: 30 }}>
+                <Provider {...providerProps}>
                     <PresentationLoader />
                 </Provider>
             </React.StrictMode>,
@@ -67,9 +84,7 @@ async function main() {
         console.error(err);
         const feedback = err.toString().match("Unable to get schemas") ? (
             <h3 style={{ margin: 20 }}>
-                <a rel="noopener noreferrer" target="_blank" href={baseUrl}>
-                    Login
-                </a>
+                Login to {baseUrl}
                 {` ${baseUrl}`}
             </h3>
         ) : (

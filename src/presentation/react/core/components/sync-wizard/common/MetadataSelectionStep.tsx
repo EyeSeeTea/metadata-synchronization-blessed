@@ -20,7 +20,6 @@ import {
     IndicatorModel,
 } from "../../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../../utils/d2";
-import { getMetadata } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";
 import { getChildrenRows } from "../../mapping-table/utils";
 import MetadataTable from "../../metadata-table/MetadataTable";
@@ -57,7 +56,7 @@ const config = {
 };
 
 export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizardStepProps) {
-    const { api, compositionRoot } = useAppContext();
+    const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
 
     const [metadataIds, updateMetadataIds] = useState<string[]>([]);
@@ -68,6 +67,8 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? {});
     const [rows, setRows] = useState<MetadataType[]>([]);
+    const [idsToIgnore, setIdsToIgnore] = useState<string[]>([]);
+    const [metadataModelsSyncAll, setMetadataModelsSyncAll] = useState(syncRule.metadataModelsSyncAll);
 
     const changeSelection = useCallback(
         (newMetadataIds: string[], newExclusionIds: string[]) => {
@@ -88,8 +89,9 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
                 );
             }
 
-            getMetadata(api, newMetadataIds, "id").then(metadata => {
-                const types = _.keys(metadata);
+            compositionRoot.metadata.getByIds(newMetadataIds, remoteInstance, "id").then(metadata => {
+                const types = _(metadata).keys().concat(metadataModelsSyncAll).uniq().value();
+
                 onChange(
                     syncRule
                         .updateMetadataIds(newMetadataIds)
@@ -103,7 +105,7 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
 
             updateMetadataIds(newMetadataIds);
         },
-        [api, metadataIds, onChange, snackbar, syncRule]
+        [compositionRoot.metadata, metadataIds, metadataModelsSyncAll, onChange, remoteInstance, snackbar, syncRule]
     );
 
     useEffect(() => {
@@ -122,9 +124,48 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
         });
     }, [compositionRoot, snackbar, syncRule.originInstance]);
 
+    useEffect(() => {
+        if (!_.isEmpty(metadataModelsSyncAll)) {
+            compositionRoot.metadata.getByIds(syncRule.metadataIds, remoteInstance, "id").then(metadata => {
+                const idsFromSyncAllMetadataTypes = _(metadata)
+                    .pick(metadataModelsSyncAll)
+                    .values()
+                    .compact()
+                    .flatten()
+                    .map(entity => entity.id)
+                    .value();
+
+                setIdsToIgnore(idsFromSyncAllMetadataTypes);
+            });
+        } else {
+            setIdsToIgnore([]);
+        }
+    }, [compositionRoot.metadata, metadataModelsSyncAll, remoteInstance, syncRule.metadataIds]);
+
     const notifyNewModel = useCallback(model => {
         setModel(() => model);
     }, []);
+
+    const notifyModelSyncAllChange = useCallback(
+        (value: boolean) => {
+            setMetadataModelsSyncAll(types => {
+                const modelName = model.getCollectionName();
+                const syncAllTypes = value ? _.uniq(types.concat(modelName)) : _.without(types, modelName);
+                const ruleTypes = _.uniq(syncRule.metadataTypes.concat(syncAllTypes));
+
+                onChange(syncRule.updateMetadataTypes(ruleTypes).updateMetadataModelsSyncAll(syncAllTypes));
+
+                return syncAllTypes;
+            });
+        },
+        [model, syncRule, onChange]
+    );
+
+    //TODO: Go in direction of useHooks 963#discussion_r1682397641
+    const modelIsSyncAll = useMemo(
+        () => metadataModelsSyncAll.includes(model.getCollectionName()),
+        [metadataModelsSyncAll, model]
+    );
 
     const updateRows = useCallback(
         (rows: MetadataType[]) => {
@@ -182,6 +223,9 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
             remoteInstance={remoteInstance}
             notifyNewModel={notifyNewModel}
             notifyRowsChange={updateRows}
+            notifyModelSyncAllChange={notifyModelSyncAllChange}
+            modelIsSyncAll={modelIsSyncAll}
+            ignoreIds={idsToIgnore}
         />
     );
 }

@@ -6,7 +6,7 @@ import { MetadataEntities } from "./entities/MetadataEntities";
 import { NestedRules } from "./entities/MetadataExcludeIncludeRules";
 
 const blacklistedProperties = ["access"];
-const userProperties = ["user", "userAccesses", "userGroupAccesses"];
+const userProperties = ["user", "userAccesses", "userGroupAccesses", "sharing"];
 
 export function buildNestedRules(rules: string[][] = []): NestedRules {
     return _(rules)
