@@ -2,15 +2,18 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { defaultName, modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder } from "../../../types/synchronization";
+import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
+import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { Document, MetadataEntities, MetadataPackage, Program } from "../entities/MetadataEntities";
 import { NestedRules } from "../entities/MetadataExcludeIncludeRules";
+import { MetadataImportParams } from "../entities/MetadataSynchronizationParams";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
@@ -163,11 +166,68 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         debug("Metadata package", { originalPayload, payload });
 
+        const dataStorePayload = await this.buildDataStorePayload(instance);
+        const dataStoreResult =
+            dataStorePayload.length > 0
+                ? await this.saveDataStorePayload(instance, dataStorePayload, syncParams?.mergeMode)
+                : undefined;
+
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
-        const syncResult = await remoteMetadataRepository.save(payload, syncParams);
+        const metadataResult = await remoteMetadataRepository.save(payload, syncParams);
         const origin = await this.getOriginInstance();
 
+        const syncResult = this.generateSyncResults(metadataResult, dataStoreResult);
         return [{ ...syncResult, origin: origin.toPublicObject(), payload }];
+    }
+
+    private generateSyncResults(
+        metadataResult: SynchronizationResult,
+        dataStoreResult: Maybe<SynchronizationResult>
+    ): SynchronizationResult {
+        if (!dataStoreResult) return metadataResult;
+
+        return {
+            ...metadataResult,
+            typeStats: _(metadataResult.typeStats)
+                .concat(dataStoreResult.typeStats || [])
+                .value(),
+            stats: metadataResult.stats
+                ? {
+                      deleted: metadataResult.stats.deleted + (dataStoreResult.stats?.deleted || 0),
+                      ignored: metadataResult.stats.ignored + (dataStoreResult.stats?.ignored || 0),
+                      imported: metadataResult.stats.imported + (dataStoreResult.stats?.imported || 0),
+                      updated: metadataResult.stats.updated + (dataStoreResult.stats?.updated || 0),
+                      total: (metadataResult.stats?.total || 0) + (dataStoreResult.stats?.total || 0),
+                  }
+                : undefined,
+        };
+    }
+
+    private async buildDataStorePayload(instance: Instance): Promise<DataStoreMetadata[]> {
+        const { metadataIds, syncParams } = this.builder;
+        const dataStore = DataStoreMetadata.buildFromKeys(metadataIds);
+        if (dataStore.length === 0) return [];
+
+        const dataStoreRepository = await this.getDataStoreMetadataRepository();
+        const dataStoreRemoteRepository = await this.getDataStoreMetadataRepository(instance);
+
+        const dataStoreLocal = await dataStoreRepository.get(dataStore);
+        const dataStoreRemote = await dataStoreRemoteRepository.get(dataStore);
+
+        const dataStorePayload = DataStoreMetadata.combine(dataStoreLocal, dataStoreRemote, syncParams?.mergeMode);
+        return syncParams?.includeSharingSettings
+            ? dataStorePayload
+            : DataStoreMetadata.removeSharingSettings(dataStorePayload);
+    }
+
+    private async saveDataStorePayload(
+        instance: Instance,
+        dataStores: DataStoreMetadata[],
+        mergeMode: MetadataImportParams["mergeMode"]
+    ): Promise<SynchronizationResult> {
+        const dataStoreRemoteRepository = await this.getDataStoreMetadataRepository(instance);
+        const result = await dataStoreRemoteRepository.save(dataStores, { mergeMode: mergeMode });
+        return result;
     }
 
     public async buildDataStats() {

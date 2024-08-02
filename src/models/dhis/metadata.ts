@@ -1,3 +1,4 @@
+import { DataStore } from "../../domain/metadata/entities/MetadataEntities";
 import {
     categoryOptionColumns,
     categoryOptionFields,
@@ -779,4 +780,22 @@ export class SqlView extends D2Model {
     protected static collectionName = "sqlViews" as const;
 
     protected static includeRules = ["attributes"];
+}
+
+export class DataStoreModel extends D2Model {
+    protected static metadataType = "dataStore";
+    protected static modelName = "Data Store";
+    protected static collectionName = "dataStores" as const;
+    protected static childrenKeys = ["keys"];
+
+    protected static modelTransform = (dataStores: DataStore[]) => {
+        return dataStores.map(({ keys = [], ...rest }) => ({
+            ...rest,
+            keys: keys.map(keyItem => ({ ...keyItem, model: DataStoreKeysModel })),
+        }));
+    };
+}
+
+export class DataStoreKeysModel extends D2Model {
+    protected static modelName = "Keys";
 }

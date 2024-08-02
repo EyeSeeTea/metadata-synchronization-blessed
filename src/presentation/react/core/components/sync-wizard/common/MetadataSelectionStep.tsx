@@ -28,7 +28,7 @@ import { SyncWizardStepProps } from "../Steps";
 const config = {
     metadata: {
         models: metadataModels,
-        childrenKeys: undefined,
+        childrenKeys: ["keys"],
     },
     aggregated: {
         models: [

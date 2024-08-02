@@ -4,6 +4,7 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { DataStoreMetadata } from "../../../../../../domain/data-store/DataStoreMetadata";
 import { filterRuleToString } from "../../../../../../domain/metadata/entities/FilterRule";
 import {
     MetadataEntities,
@@ -272,6 +273,8 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                     );
                 })}
 
+            <DataStoreSectionContent metadataIds={syncRule.metadataIds} />
+
             {syncRule.filterRules.length > 0 && (
                 <LiEntry
                     label={i18n.t("Filter rules [{{total}}]", {
@@ -518,5 +521,34 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
 
             {syncRule.longFrequency && <LiEntry label={i18n.t("Frequency")} value={syncRule.longFrequency} />}
         </ul>
+    );
+};
+
+export const DataStoreSectionContent = (props: { metadataIds: string[] }) => {
+    const { metadataIds } = props;
+
+    const dataStoreInfo = React.useMemo(() => {
+        return _(metadataIds)
+            .map(metadataId => {
+                return metadataId.includes(DataStoreMetadata.NS_SEPARATOR) ? metadataId : undefined;
+            })
+            .compact()
+            .value();
+    }, [metadataIds]);
+
+    if (dataStoreInfo.length === 0) return null;
+
+    return (
+        <>
+            <LiEntry label={`DataStore [${dataStoreInfo.length}]`}>
+                <ul>
+                    {dataStoreInfo.map(dataStore => {
+                        const [namespace, key] = dataStore.split(DataStoreMetadata.NS_SEPARATOR);
+                        const keyName = key ? `${key}` : "All Keys";
+                        return <LiEntry key={`${namespace}-${key}`} label={`${namespace} - ${keyName}`} />;
+                    })}
+                </ul>
+            </LiEntry>
+        </>
     );
 };
