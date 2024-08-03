@@ -98,4 +98,8 @@ export class DataStoreMetadata {
     static getDataStoreIds(keys: string[]): string[] {
         return keys.filter(id => id.includes(DataStoreMetadata.NS_SEPARATOR));
     }
+
+    static isDataStoreId(id: string): boolean {
+        return id.includes(DataStoreMetadata.NS_SEPARATOR);
+    }
 }

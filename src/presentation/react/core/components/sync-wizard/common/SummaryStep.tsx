@@ -243,6 +243,8 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                         return null;
                     }
 
+                    if (modelByMetadataType.schema.displayName === "Key Json Value") return null;
+
                     if (syncRule.metadataModelsSyncAll.includes(metadataType)) {
                         const length = syncAllTypesLength[metadataType];
 

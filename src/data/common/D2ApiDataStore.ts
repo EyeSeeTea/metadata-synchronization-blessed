@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { D2Api } from "../../types/d2-api";
 import { DataSource, isDhisInstance } from "../../domain/instance/entities/DataSource";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
@@ -18,15 +17,15 @@ export class D2ApiDataStore {
 
     async getDataStore(filter: { namespaces: string[] }): Promise<DataStore[]> {
         const response = await this.api.request<string[]>({ method: "get", url: "/dataStore" }).getData();
-        const namespacesWithKeys = await this.getAllKeysFromNamespaces(response);
-        return filter.namespaces.length === 0
-            ? namespacesWithKeys
-            : _(namespacesWithKeys)
-                  .map(namespace => {
-                      return filter.namespaces.includes(namespace.id) ? namespace : undefined;
+        const namespacesWithKeys = await this.getAllKeysFromNamespaces(
+            filter.namespaces.length === 0
+                ? response
+                : DataStoreMetadata.getDataStoreIds(filter.namespaces).map(ns => {
+                      const [namespace] = ns.split(DataStoreMetadata.NS_SEPARATOR);
+                      return namespace;
                   })
-                  .compact()
-                  .value();
+        );
+        return namespacesWithKeys;
     }
 
     private async getAllKeysFromNamespaces(namespaces: string[]): Promise<DataStore[]> {
