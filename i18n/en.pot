@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-07-18T21:33:28.930Z\n"
-"PO-Revision-Date: 2024-07-18T21:33:28.930Z\n"
+"POT-Creation-Date: 2024-08-05T19:23:59.881Z\n"
+"PO-Revision-Date: 2024-08-05T19:23:59.881Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1072,6 +1072,14 @@ msgid "Remove users and references (UID)"
 msgstr ""
 
 msgid "Remove users and keep user references (UID)"
+msgstr ""
+
+msgid ""
+"Remove default categories, categoryOptions, categoryCombos and "
+"categoryOptionCombos"
+msgstr ""
+
+msgid "Remove lastUpdated, lastUpdatedBy, created and createdBys"
 msgstr ""
 
 msgid "Disable atomic verification"

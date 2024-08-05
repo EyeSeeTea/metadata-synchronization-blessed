@@ -39,6 +39,8 @@ export const MetadataSynchronizationParamsModel: Codec<MetadataSynchronizationPa
         removeOrgUnitReferences: Schema.optionalSafe(Schema.boolean, false),
         removeUserObjects: Schema.optional(Schema.boolean),
         removeUserObjectsAndReferences: Schema.optional(Schema.boolean),
+        removeDefaultCategoryObjects: Schema.optional(Schema.boolean),
+        removeUserNonEssentialObjects: Schema.optional(Schema.boolean),
         removeOrgUnitObjects: Schema.optional(Schema.boolean),
         useDefaultIncludeExclude: Schema.optionalSafe(Schema.boolean, true),
         metadataIncludeExcludeRules: Schema.optional(MetadataIncludeExcludeRulesModel),

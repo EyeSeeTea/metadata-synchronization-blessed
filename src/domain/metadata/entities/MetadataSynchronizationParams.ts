@@ -20,6 +20,8 @@ export interface MetadataSynchronizationParams extends MetadataImportParams {
     includeSharingSettings: boolean;
     removeOrgUnitReferences: boolean;
     removeUserObjects?: boolean;
+    removeDefaultCategoryObjects?: boolean;
+    removeUserNonEssentialObjects?: boolean;
     removeUserObjectsAndReferences?: boolean;
     removeOrgUnitObjects?: boolean;
     useDefaultIncludeExclude: boolean;

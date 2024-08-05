@@ -124,6 +124,24 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
         );
     };
 
+    const changeRemoveDefaultCategoryObjects = (removeDefaultCategoryObjects: boolean) => {
+        onChange(
+            syncRule.updateSyncParams({
+                ...syncParams,
+                removeDefaultCategoryObjects,
+            })
+        );
+    };
+
+    const changeRemoveNonEssentialUserObjects = (removeUserNonEssentialObjects: boolean) => {
+        onChange(
+            syncRule.updateSyncParams({
+                ...syncParams,
+                removeUserNonEssentialObjects,
+            })
+        );
+    };
+
     const changeRemoveUserObjectsAndReferences = (removeUserObjectsAndReferences: boolean) => {
         onChange(syncRule.updateSyncParams({ ...syncParams, removeUserObjectsAndReferences }));
     };
@@ -202,6 +220,28 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                         label={i18n.t("Remove users and keep user references (UID)")}
                         onValueChange={changeRemoveUserObjects}
                         value={syncParams.removeUserObjects || false}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t(
+                            "Remove default categories, categoryOptions, categoryCombos and categoryOptionCombos"
+                        )}
+                        onValueChange={changeRemoveDefaultCategoryObjects}
+                        value={syncParams.removeDefaultCategoryObjects || false}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove lastUpdated, lastUpdatedBy, created and createdBys")}
+                        onValueChange={changeRemoveNonEssentialUserObjects}
+                        value={syncParams.removeUserNonEssentialObjects || false}
                     />
                 </div>
             )}
