@@ -27,7 +27,8 @@ export function cleanObject(
     excludeRules: string[][] = [],
     includeSharingSettings: boolean,
     removeOrgUnitReferences: boolean,
-    removeUserObjectsAndReferences: boolean
+    removeUserObjectsAndReferences: boolean,
+    removeNonEssentialObjects: boolean
 ): any {
     const leafRules: string[] = _(excludeRules)
         .filter(path => path.length === 1)
@@ -46,9 +47,31 @@ export function cleanObject(
     const sharingSettingsFilter = includeSharingSettings ? [] : userProperties;
     const organisationUnitFilter = removeOrgUnitReferences ? ["organisationUnits"] : [];
     const userFilter = removeUserObjectsAndReferences ? ["createdBy", "lastUpdatedBy", "user"] : [];
-    const propsToRemove = [...sharingSettingsFilter, ...organisationUnitFilter, ...userFilter];
+    const userNonEssentialObjectsFilter = removeNonEssentialObjects
+        ? ["lastUpdated", "created", "lastUpdatedBy", "createdBy"]
+        : [];
+    const propsToRemove = _.uniq([
+        ...sharingSettingsFilter,
+        ...organisationUnitFilter,
+        ...userFilter,
+        ...userNonEssentialObjectsFilter,
+        ...cleanLeafRules,
+        ...blacklistedProperties,
+    ]);
 
-    return _.pick(element, _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove));
+    const elementWithCleanedChildrenProperties = _(element)
+        .mapValues(children =>
+            _.isArray(children)
+                ? children.map(childElement => cleanPropertiesToSync(childElement, propsToRemove))
+                : children
+        )
+        .value();
+
+    return cleanPropertiesToSync(elementWithCleanedChildrenProperties, propsToRemove);
+}
+
+function cleanPropertiesToSync(element: Record<string, any>, propsToRemove: string[]): Record<string, any> {
+    return _.pick(element, _.difference(_.keys(element), propsToRemove));
 }
 
 export function cleanReferences(references: Record<string, string[]>, includeRules: string[][] = []): string[] {

@@ -9,6 +9,7 @@ export interface ExportBuilder {
     includeSharingSettings: boolean;
     removeOrgUnitReferences: boolean;
     removeUserObjectsAndReferences: boolean;
+    removeUserNonEssentialObjects: boolean;
 }
 
 export interface SynchronizationState {

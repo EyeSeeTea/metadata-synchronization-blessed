@@ -26,6 +26,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 includeSharingSettings,
                 removeOrgUnitReferences,
                 removeUserObjectsAndReferences,
+                removeUserNonEssentialObjects,
             } = builder;
 
             //TODO: when metadata entities schema exists on domain, move this factory to domain
@@ -56,7 +57,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     excludeRules,
                     includeSharingSettings,
                     removeOrgUnitReferences,
-                    removeUserObjectsAndReferences
+                    removeUserObjectsAndReferences,
+                    removeUserNonEssentialObjects
                 );
 
                 result[collectionName] = result[collectionName] || [];
@@ -75,6 +77,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                         includeSharingSettings,
                         removeOrgUnitReferences,
                         removeUserObjectsAndReferences,
+                        removeUserNonEssentialObjects,
                     });
                 });
 
@@ -93,6 +96,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             includeSharingSettings = true,
             removeOrgUnitReferences = false,
             removeUserObjectsAndReferences = false,
+            removeUserNonEssentialObjects = false,
             metadataIncludeExcludeRules = {},
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
@@ -132,6 +136,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 includeSharingSettings,
                 removeOrgUnitReferences,
                 removeUserObjectsAndReferences,
+                removeUserNonEssentialObjects,
             });
         });
 
