@@ -14,9 +14,9 @@ jobs:
         run: sudo apt install gettext -y
     
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: "12.x"
+          node-version: "16.14.0"
           
       - name: Install yarn
         run: npm install -g yarn

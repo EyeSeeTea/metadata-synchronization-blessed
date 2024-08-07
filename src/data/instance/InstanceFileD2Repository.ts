@@ -1,4 +1,3 @@
-import { FileUploadParameters } from "@eyeseetea/d2-api/api/files";
 import mime from "mime-types";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
@@ -51,7 +50,7 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
         }
     }
 
-    saveFileResource(params: Omit<FileUploadParameters, "id">, domain: FileResourceDomain): D2ApiResponse<string> {
+    saveFileResource(params: { name: string; data: Blob }, domain: FileResourceDomain): D2ApiResponse<string> {
         const { name, data } = params;
 
         const formData = new FormData();
