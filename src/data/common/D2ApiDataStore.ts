@@ -63,6 +63,6 @@ export class D2ApiDataStore {
     }
 
     private buildArrayDataStoreKey(keys: string[], namespace: string): DataStoreKey[] {
-        return keys.map(key => ({ id: [namespace, DataStoreMetadata.NS_SEPARATOR, key].join(""), displayName: key }));
+        return keys.map(key => ({ id: DataStoreMetadata.generateKeyId(namespace, key), displayName: key }));
     }
 }

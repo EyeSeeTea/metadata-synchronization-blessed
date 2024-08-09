@@ -133,4 +133,8 @@ export class DataStoreMetadata {
             .compact()
             .value();
     }
+
+    static generateKeyId(namespace: DataStoreNamespace, keyId: string) {
+        return [namespace, DataStoreMetadata.NS_SEPARATOR, keyId].join("");
+    }
 }

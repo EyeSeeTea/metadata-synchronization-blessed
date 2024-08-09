@@ -94,11 +94,11 @@ export class DataStoreMetadataD2Repository implements DataStoreMetadataRepositor
 
             const existingRecords = await this.get([{ ...dataStore, keys: [] }]);
             const existingKeysIds = existingRecords.flatMap(dataStore => {
-                return dataStore.keys.map(key => `${dataStore.namespace}[NS]${key.id}`);
+                return dataStore.keys.map(key => DataStoreMetadata.generateKeyId(dataStore.namespace, key.id));
             });
 
             const keysIdsToSave = dataStores.flatMap(dataStore => {
-                return dataStore.keys.map(key => `${dataStore.namespace}[NS]${key.id}`);
+                return dataStore.keys.map(key => DataStoreMetadata.generateKeyId(dataStore.namespace, key.id));
             });
 
             const keysIdsToDelete = existingKeysIds.filter(id => !keysIdsToSave.includes(id));
