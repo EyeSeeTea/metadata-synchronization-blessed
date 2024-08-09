@@ -86,11 +86,10 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                 metadataTransformations
             );
 
-            if (dataStoreIds.length > 0) {
-                metadataPackage.dataStores = await d2ApiDataStore.getDataStore({ namespaces: ids });
-            }
+            const dataStoresMetadata = await this.getDataStoresMetadata(ids);
+            const responseWithDataStores = { ...metadataPackage, ...dataStoresMetadata } as T;
 
-            return metadataPackage as T;
+            return responseWithDataStores;
         } else {
             const metadataPackage = this.transformationRepository.mapPackageFrom(
                 apiVersion,
@@ -101,9 +100,20 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             if (dataStoreIds.length > 0) {
                 metadataPackage.dataStores = await d2ApiDataStore.getDataStore({ namespaces: ids });
             }
+            const dataStoresMetadata = await this.getDataStoresMetadata(ids);
+            const responseWithDataStores = { ...metadataPackage, ...dataStoresMetadata } as T;
 
-            return metadataPackage as T;
+            return responseWithDataStores;
         }
+    }
+
+    private async getDataStoresMetadata(ids: Id[]) {
+        const d2ApiDataStore = new D2ApiDataStore(this.instance);
+        const dataStoreIds = DataStoreMetadata.getDataStoreIds(ids);
+        if (dataStoreIds.length === 0) return {};
+
+        const result = await d2ApiDataStore.getDataStore({ namespaces: dataStoreIds });
+        return { dataStores: result };
     }
 
     @cache()

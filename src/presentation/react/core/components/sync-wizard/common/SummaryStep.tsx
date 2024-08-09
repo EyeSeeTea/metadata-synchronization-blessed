@@ -530,12 +530,9 @@ export const DataStoreSectionContent = (props: { metadataIds: string[] }) => {
     const { metadataIds } = props;
 
     const dataStoreInfo = React.useMemo(() => {
-        return _(metadataIds)
-            .map(metadataId => {
-                return metadataId.includes(DataStoreMetadata.NS_SEPARATOR) ? metadataId : undefined;
-            })
-            .compact()
-            .value();
+        return metadataIds.filter(metadataId => {
+            return metadataId.includes(DataStoreMetadata.NS_SEPARATOR);
+        });
     }, [metadataIds]);
 
     if (dataStoreInfo.length === 0) return null;

@@ -9,11 +9,11 @@ import { Ref } from "../../common/entities/Ref";
 import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
+import { Stats } from "../../reports/entities/Stats";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { Document, MetadataEntities, MetadataPackage, Program } from "../entities/MetadataEntities";
 import { NestedRules } from "../entities/MetadataExcludeIncludeRules";
-import { MetadataImportParams } from "../entities/MetadataSynchronizationParams";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
@@ -169,9 +169,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         const dataStorePayload = await this.buildDataStorePayload(instance);
         const dataStoreResult =
-            dataStorePayload.length > 0
-                ? await this.saveDataStorePayload(instance, dataStorePayload, syncParams?.mergeMode)
-                : undefined;
+            dataStorePayload.length > 0 ? await this.saveDataStorePayload(instance, dataStorePayload) : undefined;
 
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
         const metadataResult = await remoteMetadataRepository.save(payload, syncParams);
@@ -192,15 +190,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             typeStats: _(metadataResult.typeStats)
                 .concat(dataStoreResult.typeStats || [])
                 .value(),
-            stats: metadataResult.stats
-                ? {
-                      deleted: metadataResult.stats.deleted + (dataStoreResult.stats?.deleted || 0),
-                      ignored: metadataResult.stats.ignored + (dataStoreResult.stats?.ignored || 0),
-                      imported: metadataResult.stats.imported + (dataStoreResult.stats?.imported || 0),
-                      updated: metadataResult.stats.updated + (dataStoreResult.stats?.updated || 0),
-                      total: (metadataResult.stats?.total || 0) + (dataStoreResult.stats?.total || 0),
-                  }
-                : undefined,
+            stats: metadataResult.stats ? Stats.sumStats(metadataResult.stats, dataStoreResult.stats) : undefined,
         };
     }
 
@@ -215,7 +205,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const dataStoreLocal = await dataStoreRepository.get(dataStore);
         const dataStoreRemote = await dataStoreRemoteRepository.get(dataStore);
 
-        const dataStorePayload = DataStoreMetadata.combine(dataStoreLocal, dataStoreRemote, syncParams?.mergeMode);
+        const dataStorePayload = DataStoreMetadata.combine(metadataIds, dataStoreLocal, dataStoreRemote, {
+            action: syncParams?.mergeMode,
+        });
         return syncParams?.includeSharingSettings
             ? dataStorePayload
             : DataStoreMetadata.removeSharingSettings(dataStorePayload);
@@ -223,11 +215,10 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
     private async saveDataStorePayload(
         instance: Instance,
-        dataStores: DataStoreMetadata[],
-        mergeMode: MetadataImportParams["mergeMode"]
+        dataStores: DataStoreMetadata[]
     ): Promise<SynchronizationResult> {
         const dataStoreRemoteRepository = await this.getDataStoreMetadataRepository(instance);
-        const result = await dataStoreRemoteRepository.save(dataStores, { mergeMode: mergeMode });
+        const result = await dataStoreRemoteRepository.save(dataStores);
         return result;
     }
 

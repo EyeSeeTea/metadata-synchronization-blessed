@@ -1,17 +1,26 @@
 import _ from "lodash";
 import { Maybe } from "../../types/utils";
+import { Id } from "../common/entities/Schemas";
 import { MetadataImportParams } from "../metadata/entities/MetadataSynchronizationParams";
 import { ObjectSharing } from "../storage/repositories/StorageClient";
 
 export type DataStoreNamespace = string;
 export type DataStoreKey = { id: string; value: any };
 
-export type DataStoreAttrs = { namespace: DataStoreNamespace; keys: DataStoreKey[]; sharing: Maybe<ObjectSharing> };
+export type DataStoreAttrs = {
+    namespace: DataStoreNamespace;
+    keys: DataStoreKey[];
+    sharing: Maybe<ObjectSharing>;
+    action?: MetadataImportParams["mergeMode"];
+};
+export type DataStoreOptions = { action: MetadataImportParams["mergeMode"] };
+type NamespaceWithAction = { namespace: DataStoreNamespace; options: DataStoreOptions };
 
 export class DataStoreMetadata {
     public readonly namespace: DataStoreNamespace;
     public readonly keys: DataStoreKey[];
     public readonly sharing: Maybe<ObjectSharing>;
+    public readonly action?: MetadataImportParams["mergeMode"];
 
     static NS_SEPARATOR = "[NS]";
 
@@ -19,6 +28,7 @@ export class DataStoreMetadata {
         this.keys = data.keys;
         this.namespace = data.namespace;
         this.sharing = data.sharing;
+        this.action = data.action;
     }
 
     static buildFromKeys(keysWithNamespaces: string[]): DataStoreMetadata[] {
@@ -42,10 +52,7 @@ export class DataStoreMetadata {
                 return new DataStoreMetadata({
                     namespace,
                     keys: _(keys)
-                        .map(key => {
-                            if (!key.key) return undefined;
-                            return { id: key.key, value: "" };
-                        })
+                        .map(key => (key.key ? { id: key.key, value: "" } : undefined))
                         .compact()
                         .value(),
                     sharing: undefined,
@@ -57,20 +64,25 @@ export class DataStoreMetadata {
     }
 
     static combine(
+        ids: Id[],
         origin: DataStoreMetadata[],
         destination: DataStoreMetadata[],
-        action: MetadataImportParams["mergeMode"] = "MERGE"
+        options: DataStoreOptions
     ): DataStoreMetadata[] {
         const destinationDataStore = _.keyBy(destination, "namespace");
+        const namespacesWithAction = this.mergeOrReplaceNameSpace(ids, options);
 
         return _(origin)
             .map(originItem => {
+                const namespaceAction = namespacesWithAction.find(
+                    ({ namespace }) => namespace === originItem.namespace
+                );
                 const destItem = destinationDataStore[originItem.namespace];
 
                 if (!destItem) return originItem;
 
                 const combinedKeys =
-                    action === "MERGE"
+                    namespaceAction?.options.action === "MERGE"
                         ? _(originItem.keys)
                               .unionBy(destItem.keys, record => record.id)
                               .value()
@@ -80,6 +92,7 @@ export class DataStoreMetadata {
                     namespace: originItem.namespace,
                     keys: combinedKeys,
                     sharing: originItem.sharing,
+                    action: namespaceAction?.options.action,
                 });
             })
             .value();
@@ -101,5 +114,23 @@ export class DataStoreMetadata {
 
     static isDataStoreId(id: string): boolean {
         return id.includes(DataStoreMetadata.NS_SEPARATOR);
+    }
+
+    static isNamespaceOnlySelected(id: DataStoreNamespace): boolean {
+        return _(id).split(DataStoreMetadata.NS_SEPARATOR).compact().value().length === 1;
+    }
+
+    static mergeOrReplaceNameSpace(metadataIds: Id[], options: DataStoreOptions): NamespaceWithAction[] {
+        return _(metadataIds)
+            .map((id): Maybe<NamespaceWithAction> => {
+                if (!this.isDataStoreId(id)) return undefined;
+                const [namespace] = id.split(DataStoreMetadata.NS_SEPARATOR);
+                if (!namespace) return undefined;
+
+                const isNamespaceSelected = this.isNamespaceOnlySelected(id);
+                return { namespace: namespace, options: { action: isNamespaceSelected ? options.action : "MERGE" } };
+            })
+            .compact()
+            .value();
     }
 }

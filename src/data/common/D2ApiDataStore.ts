@@ -1,26 +1,23 @@
 import { D2Api } from "../../types/d2-api";
-import { DataSource, isDhisInstance } from "../../domain/instance/entities/DataSource";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { DataStore, DataStoreKey } from "../../domain/metadata/entities/MetadataEntities";
 import { promiseMap } from "../../utils/common";
 import { DataStoreMetadata } from "../../domain/data-store/DataStoreMetadata";
+import { Instance } from "../../domain/instance/entities/Instance";
 
 export class D2ApiDataStore {
     private api: D2Api;
 
-    constructor(instance: DataSource) {
-        if (!isDhisInstance(instance)) {
-            throw new Error("Invalid instance type for MetadataD2ApiRepository");
-        }
+    constructor(instance: Instance) {
         this.api = getD2APiFromInstance(instance);
     }
 
-    async getDataStore(filter: { namespaces: string[] }): Promise<DataStore[]> {
+    async getDataStore(filter: { namespaces?: string[] }): Promise<DataStore[]> {
         const response = await this.api.request<string[]>({ method: "get", url: "/dataStore" }).getData();
         const namespacesWithKeys = await this.getAllKeysFromNamespaces(
-            filter.namespaces.length === 0
+            filter.namespaces
                 ? response
-                : DataStoreMetadata.getDataStoreIds(filter.namespaces).map(ns => {
+                : DataStoreMetadata.getDataStoreIds(filter.namespaces || []).map(ns => {
                       const [namespace] = ns.split(DataStoreMetadata.NS_SEPARATOR);
                       return namespace;
                   })
@@ -36,7 +33,7 @@ export class D2ApiDataStore {
                 displayName: namespace,
                 externalAccess: false,
                 favorites: [],
-                id: `${namespace}${DataStoreMetadata.NS_SEPARATOR}`,
+                id: [namespace, DataStoreMetadata.NS_SEPARATOR].join(""),
                 keys: keys,
                 name: namespace,
                 translations: [],
@@ -47,8 +44,7 @@ export class D2ApiDataStore {
 
     private async getKeysPaginated(keysState: DataStoreKey[], namespace: string): Promise<DataStoreKey[]> {
         const keyResponse = await this.getKeysByNameSpace(namespace);
-        const newKeys = [...keysState, ...keyResponse];
-        return newKeys;
+        return [...keysState, ...keyResponse];
     }
 
     private async getKeysByNameSpace(namespace: string): Promise<DataStoreKey[]> {
@@ -67,6 +63,6 @@ export class D2ApiDataStore {
     }
 
     private buildArrayDataStoreKey(keys: string[], namespace: string): DataStoreKey[] {
-        return keys.map(key => ({ id: `${namespace}${DataStoreMetadata.NS_SEPARATOR}${key}`, displayName: key }));
+        return keys.map(key => ({ id: [namespace, DataStoreMetadata.NS_SEPARATOR, key].join(""), displayName: key }));
     }
 }
