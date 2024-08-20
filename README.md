@@ -12,7 +12,7 @@ Metadata Sync is a DHIS2 Web Application part of [EyeSeeTea's DHIS2 Suite](https
 
 You can find a user guide [at the wiki](https://github.com/EyeSeeTea/metadata-synchronization-blessed/wiki) and there are also several [video tutorials](https://eyeseetea.github.io/metadata-synchronization-blessed/metadatasync/#training-videos) available. 
 
-You can download Metadata Sync from the [DHIS2 App Hub](https://apps.dhis2.org/user/app/4045330c-5e97-4abb-ae0a-84d14d1a39b5)
+You can download Metadata Sync from the [DHIS2 App Hub](https://apps.dhis2.org/app/fd5f3f76-e306-477e-bcb6-3a28cdc784dd)
 
 For more links, see the [Metadata Sync App website](https://eyeseetea.github.io/metadata-synchronization-blessed/metadatasync/)
 
