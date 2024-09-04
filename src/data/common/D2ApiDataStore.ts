@@ -12,15 +12,15 @@ export class D2ApiDataStore {
         this.api = getD2APiFromInstance(instance);
     }
 
-    async getDataStore(filter: { namespaces?: string[] }): Promise<DataStore[]> {
+    async getDataStores(filter: { namespaces?: string[] }): Promise<DataStore[]> {
         const response = await this.api.request<string[]>({ method: "get", url: "/dataStore" }).getData();
         const namespacesWithKeys = await this.getAllKeysFromNamespaces(
             filter.namespaces
-                ? response
-                : DataStoreMetadata.getDataStoreIds(filter.namespaces || []).map(ns => {
+                ? DataStoreMetadata.getDataStoreIds(filter.namespaces || []).map(ns => {
                       const [namespace] = ns.split(DataStoreMetadata.NS_SEPARATOR);
                       return namespace;
                   })
+                : response
         );
         return namespacesWithKeys;
     }
