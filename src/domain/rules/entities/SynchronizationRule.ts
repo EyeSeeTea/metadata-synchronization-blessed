@@ -37,6 +37,7 @@ export class SynchronizationRule {
             "frequency",
             "lastExecuted",
             "lastExecutedBy",
+            "lastSuccessfulSync",
             "lastUpdated",
             "lastUpdatedBy",
             "publicAccess",
@@ -52,7 +53,7 @@ export class SynchronizationRule {
 
     public replicate(): SynchronizationRule {
         return this.updateName(`Copy of ${this.syncRule.name}`)
-            .update({ lastExecuted: undefined })
+            .update({ lastExecuted: undefined, lastSuccessfulSync: undefined })
             .updateId(generateUid());
     }
 
@@ -192,6 +193,10 @@ export class SynchronizationRule {
         return this.syncRule.lastExecutedBy?.name;
     }
 
+    public get lastSuccessfulSync(): Date | undefined {
+        return this.syncRule.lastSuccessfulSync;
+    }
+
     public get created(): Date | undefined {
         return this.syncRule.created ? new Date(this.syncRule.created) : undefined;
     }
@@ -287,18 +292,23 @@ export class SynchronizationRule {
 
     public static build(syncRule: SynchronizationRuleData | undefined): SynchronizationRule {
         if (syncRule) {
-            return syncRule.builder?.dataParams?.period === "SINCE_LAST_EXECUTED_DATE"
-                ? new SynchronizationRule({
-                      ...syncRule,
-                      builder: {
-                          ...syncRule.builder,
-                          dataParams: {
-                              ...syncRule.builder.dataParams,
-                              startDate: syncRule.lastExecuted ?? new Date(),
-                          },
-                      },
-                  })
-                : new SynchronizationRule(syncRule);
+            const period = syncRule.builder?.dataParams?.period;
+
+            return new SynchronizationRule({
+                ...syncRule,
+                builder: {
+                    ...syncRule.builder,
+                    dataParams: {
+                        ...syncRule.builder.dataParams,
+                        startDate:
+                            period === "SINCE_LAST_EXECUTED_DATE"
+                                ? syncRule.lastExecuted
+                                : period === "SINCE_LAST_SUCCESSFUL_SYNC"
+                                ? syncRule.lastSuccessfulSync
+                                : new Date(),
+                    },
+                },
+            });
         } else {
             return this.create();
         }
@@ -588,6 +598,10 @@ export class SynchronizationRule {
         return this.update({ lastExecuted, lastExecutedBy });
     }
 
+    public updateLastSuccessfulSync(lastSuccessfulSync: Date): SynchronizationRule {
+        return this.update({ lastSuccessfulSync });
+    }
+
     public isOnDemand() {
         return this.name === "__MANUAL__";
     }
@@ -744,6 +758,7 @@ export interface SynchronizationRuleData extends SharedRef {
     enabled: boolean;
     lastExecuted?: Date;
     lastExecutedBy?: NamedRef;
+    lastSuccessfulSync?: Date;
     frequency?: string;
     type: SynchronizationType;
     ondemand?: boolean;

@@ -336,7 +336,11 @@ export const SyncRulesListPage: React.FC = () => {
             const synchronize = async () => {
                 for await (const { message, syncReport, done } of sync.execute()) {
                     if (message) loading.show(true, message);
-                    if (syncReport) await compositionRoot.reports.save(syncReport);
+                    if (syncReport) {
+                        await compositionRoot.reports
+                            .save(syncReport)
+                            .then(async () => await compositionRoot.rules.save([rule]));
+                    }
                     if (done && syncReport) setSyncReport(syncReport);
                 }
             };
