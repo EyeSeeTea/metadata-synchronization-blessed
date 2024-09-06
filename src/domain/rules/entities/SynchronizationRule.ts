@@ -292,7 +292,7 @@ export class SynchronizationRule {
 
     public static build(syncRule: SynchronizationRuleData | undefined): SynchronizationRule {
         if (syncRule) {
-            switch (syncRule.builder.dataParams?.period) {
+            switch (syncRule.builder?.dataParams?.period) {
                 case "SINCE_LAST_EXECUTED_DATE":
                     return new SynchronizationRule({
                         ...syncRule,
