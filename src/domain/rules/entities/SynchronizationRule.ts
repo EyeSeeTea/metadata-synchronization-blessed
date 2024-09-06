@@ -292,23 +292,32 @@ export class SynchronizationRule {
 
     public static build(syncRule: SynchronizationRuleData | undefined): SynchronizationRule {
         if (syncRule) {
-            const period = syncRule.builder?.dataParams?.period;
-
-            return new SynchronizationRule({
-                ...syncRule,
-                builder: {
-                    ...syncRule.builder,
-                    dataParams: {
-                        ...syncRule.builder.dataParams,
-                        startDate:
-                            period === "SINCE_LAST_EXECUTED_DATE"
-                                ? syncRule.lastExecuted
-                                : period === "SINCE_LAST_SUCCESSFUL_SYNC"
-                                ? syncRule.lastSuccessfulSync
-                                : new Date(),
-                    },
-                },
-            });
+            switch (syncRule.builder.dataParams?.period) {
+                case "SINCE_LAST_EXECUTED_DATE":
+                    return new SynchronizationRule({
+                        ...syncRule,
+                        builder: {
+                            ...syncRule.builder,
+                            dataParams: {
+                                ...syncRule.builder.dataParams,
+                                startDate: syncRule.lastExecuted ?? new Date(),
+                            },
+                        },
+                    });
+                case "SINCE_LAST_SUCCESSFUL_SYNC":
+                    return new SynchronizationRule({
+                        ...syncRule,
+                        builder: {
+                            ...syncRule.builder,
+                            dataParams: {
+                                ...syncRule.builder.dataParams,
+                                startDate: syncRule.lastSuccessfulSync ?? new Date(),
+                            },
+                        },
+                    });
+                default:
+                    return new SynchronizationRule(syncRule);
+            }
         } else {
             return this.create();
         }
