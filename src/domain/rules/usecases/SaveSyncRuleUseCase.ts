@@ -4,28 +4,14 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
 import { MetadataEntity } from "../../metadata/entities/MetadataEntities";
-import { promiseMap } from "../../../utils/common";
 
 export class SaveSyncRuleUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(rules: SynchronizationRule[]): Promise<void> {
-        const updatedRules = await this.updateWithLastSuccessfullSync(rules);
+        const updatedRules = await Promise.all(rules.map(rule => this.excludeSyncAllIds(rule)));
 
         await this.repositoryFactory.rulesRepository(this.localInstance).save(updatedRules);
-    }
-
-    private async updateWithLastSuccessfullSync(rules: SynchronizationRule[]): Promise<SynchronizationRule[]> {
-        const history = await this.repositoryFactory.reportsRepository(this.localInstance).list();
-
-        return await promiseMap(rules, async rule => {
-            const cleanedRule = await this.excludeSyncAllIds(rule);
-            const lastSuccessfulSync = _(history)
-                .filter(report => report.syncRule === rule.id && report.status === "DONE")
-                .maxBy(report => report.date)?.date;
-
-            return lastSuccessfulSync ? cleanedRule.updateLastSuccessfulSync(lastSuccessfulSync) : cleanedRule;
-        });
     }
 
     private async excludeSyncAllIds(rule: SynchronizationRule): Promise<SynchronizationRule> {

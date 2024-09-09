@@ -267,6 +267,17 @@ export abstract class GenericSyncUseCase {
 
         // Phase 5: Update parent task status
         syncReport.setStatus(syncReport.hasErrors() ? "FAILURE" : "DONE");
+
+        // Phase 6: if sync report is DONE, update sync rule last successful sync date
+        if (syncReport.status === "DONE" && syncRule) {
+            const rule = await this.repositoryFactory.rulesRepository(this.localInstance).getById(syncRule);
+
+            if (rule) {
+                const updatedRule = rule.updateLastSuccessfulSync(new Date());
+                await this.repositoryFactory.rulesRepository(this.localInstance).save([updatedRule]);
+            }
+        }
+        //set last sync date
         yield { syncReport, done: true };
 
         return syncReport;
