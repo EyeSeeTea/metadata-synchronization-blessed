@@ -277,7 +277,7 @@ export abstract class GenericSyncUseCase {
                 await this.repositoryFactory.rulesRepository(this.localInstance).save([updatedRule]);
             }
         }
-        //set last sync date
+
         yield { syncReport, done: true };
 
         return syncReport;
