@@ -58,7 +58,7 @@ export function buildPeriodFromParams(params: Pick<DataSynchronizationParams, "p
             startDate: moment(startDate ?? "1970-01-01"),
             endDate: moment(endDate ?? moment().add(1, "years").endOf("year").format("YYYY-MM-DD")),
         };
-    } else if (period === "SINCE_LAST_EXECUTED_DATE") {
+    } else if (period === "SINCE_LAST_EXECUTED_DATE" || period === "SINCE_LAST_SUCCESSFUL_SYNC") {
         return {
             startDate: moment(startDate ?? "1970-01-01"),
             endDate: moment(),

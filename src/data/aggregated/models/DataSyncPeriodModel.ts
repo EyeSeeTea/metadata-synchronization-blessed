@@ -5,6 +5,7 @@ export const DataSyncPeriodModel: Codec<DataSyncPeriod> = Schema.oneOf([
     Schema.exact("ALL"),
     Schema.exact("FIXED"),
     Schema.exact("SINCE_LAST_EXECUTED_DATE"),
+    Schema.exact("SINCE_LAST_SUCCESSFUL_SYNC"),
     Schema.exact("TODAY"),
     Schema.exact("YESTERDAY"),
     Schema.exact("LAST_7_DAYS"),
