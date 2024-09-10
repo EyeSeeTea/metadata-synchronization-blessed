@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { DataStoreMetadata } from "../../domain/data-store/DataStoreMetadata";
-import { DataStoreMetadataRepository, SaveOptions } from "../../domain/data-store/DataStoreMetadataRepository";
+import { DataStoreMetadataRepository } from "../../domain/data-store/DataStoreMetadataRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { Stats } from "../../domain/reports/entities/Stats";
 import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
@@ -50,11 +50,8 @@ export class DataStoreMetadataD2Repository implements DataStoreMetadataRepositor
         return keys.map(key => ({ id: key, value: "" }));
     }
 
-    async save(
-        dataStores: DataStoreMetadata[],
-        options: SaveOptions = { mergeMode: "MERGE" }
-    ): Promise<SynchronizationResult> {
-        const keysIdsToDelete = await this.getKeysToDelete(dataStores, options);
+    async save(dataStores: DataStoreMetadata[]): Promise<SynchronizationResult> {
+        const keysIdsToDelete = await this.getKeysToDelete(dataStores);
 
         const resultStats = await promiseMap(dataStores, async dataStore => {
             const dataStoreClient = new StorageDataStoreClient(this.instance, dataStore.namespace);
@@ -91,19 +88,23 @@ export class DataStoreMetadataD2Repository implements DataStoreMetadataRepositor
         return result;
     }
 
-    private async getKeysToDelete(dataStores: DataStoreMetadata[], options: SaveOptions) {
-        if (options.mergeMode === "MERGE") return [];
+    private async getKeysToDelete(dataStores: DataStoreMetadata[]): Promise<string[]> {
+        const allKeysToDelete = await promiseMap(dataStores, async dataStore => {
+            if (dataStore.action === "MERGE") return [];
 
-        const existingRecords = await this.get(dataStores.map(x => ({ ...x, keys: [] })));
-        const existingKeysIds = existingRecords.flatMap(dataStore => {
-            return dataStore.keys.map(key => `${dataStore.namespace}[NS]${key.id}`);
+            const existingRecords = await this.get([{ ...dataStore, keys: [] }]);
+            const existingKeysIds = existingRecords.flatMap(dataStore => {
+                return dataStore.keys.map(key => DataStoreMetadata.generateKeyId(dataStore.namespace, key.id));
+            });
+
+            const keysIdsToSave = dataStores.flatMap(dataStore => {
+                return dataStore.keys.map(key => DataStoreMetadata.generateKeyId(dataStore.namespace, key.id));
+            });
+
+            const keysIdsToDelete = existingKeysIds.filter(id => !keysIdsToSave.includes(id));
+            return keysIdsToDelete;
         });
 
-        const keysIdsToSave = dataStores.flatMap(dataStore => {
-            return dataStore.keys.map(key => `${dataStore.namespace}[NS]${key.id}`);
-        });
-
-        const keysIdsToDelete = existingKeysIds.filter(id => !keysIdsToSave.includes(id));
-        return keysIdsToDelete;
+        return allKeysToDelete.flat();
     }
 }

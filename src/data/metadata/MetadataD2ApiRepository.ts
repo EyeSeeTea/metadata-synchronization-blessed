@@ -86,11 +86,10 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                 metadataTransformations
             );
 
-            if (dataStoreIds.length > 0) {
-                metadataPackage.dataStores = await d2ApiDataStore.getDataStore({ namespaces: ids });
-            }
+            const dataStoresMetadata = await this.getDataStoresMetadata(ids);
+            const responseWithDataStores = { ...metadataPackage, ...dataStoresMetadata } as T;
 
-            return metadataPackage as T;
+            return responseWithDataStores;
         } else {
             const metadataPackage = this.transformationRepository.mapPackageFrom(
                 apiVersion,
@@ -99,11 +98,22 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             );
 
             if (dataStoreIds.length > 0) {
-                metadataPackage.dataStores = await d2ApiDataStore.getDataStore({ namespaces: ids });
+                metadataPackage.dataStores = await d2ApiDataStore.getDataStores({ namespaces: ids });
             }
+            const dataStoresMetadata = await this.getDataStoresMetadata(ids);
+            const responseWithDataStores = { ...metadataPackage, ...dataStoresMetadata } as T;
 
-            return metadataPackage as T;
+            return responseWithDataStores;
         }
+    }
+
+    private async getDataStoresMetadata(ids: Id[]) {
+        const d2ApiDataStore = new D2ApiDataStore(this.instance);
+        const dataStoreIds = DataStoreMetadata.getDataStoreIds(ids);
+        if (dataStoreIds.length === 0) return {};
+
+        const dataStores = await d2ApiDataStore.getDataStores({ namespaces: dataStoreIds });
+        return { dataStores: dataStores };
     }
 
     @cache()
@@ -115,7 +125,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const options = { type, fields, filter, order, page, pageSize, rootJunction };
         if (type === "dataStores") {
             const d2ApiDataStore = new D2ApiDataStore(this.instance);
-            const response = await d2ApiDataStore.getDataStore({ namespaces: [] });
+            const response = await d2ApiDataStore.getDataStores({ namespaces: undefined });
             // Hardcoded pagination since DHIS2 does not support pagination for namespaces
             return { objects: response, pager: { page: 1, total: response.length, pageSize: 100 } };
         } else {

@@ -243,6 +243,8 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                         return null;
                     }
 
+                    if (modelByMetadataType.schema.displayName === "Key Json Value") return null;
+
                     if (syncRule.metadataModelsSyncAll.includes(metadataType)) {
                         const length = syncAllTypesLength[metadataType];
 
@@ -528,12 +530,9 @@ export const DataStoreSectionContent = (props: { metadataIds: string[] }) => {
     const { metadataIds } = props;
 
     const dataStoreInfo = React.useMemo(() => {
-        return _(metadataIds)
-            .map(metadataId => {
-                return metadataId.includes(DataStoreMetadata.NS_SEPARATOR) ? metadataId : undefined;
-            })
-            .compact()
-            .value();
+        return metadataIds.filter(metadataId => {
+            return metadataId.includes(DataStoreMetadata.NS_SEPARATOR);
+        });
     }, [metadataIds]);
 
     if (dataStoreInfo.length === 0) return null;

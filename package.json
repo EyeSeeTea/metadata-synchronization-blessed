@@ -55,7 +55,7 @@
         "rehype-sanitize": "^5.0.1",
         "rxjs": "5.5.7",
         "semver": "7.5.2",
-        "styled-components": "6.1.11",
+        "styled-components": "6.1.8",
         "styled-jsx": "5.0.0"
     },
     "scripts": {

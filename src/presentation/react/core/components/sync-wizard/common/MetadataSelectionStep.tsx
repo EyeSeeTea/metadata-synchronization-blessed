@@ -24,6 +24,7 @@ import { useAppContext } from "../../../contexts/AppContext";
 import { getChildrenRows } from "../../mapping-table/utils";
 import MetadataTable from "../../metadata-table/MetadataTable";
 import { SyncWizardStepProps } from "../Steps";
+import { DataStoreMetadata } from "../../../../../../domain/data-store/DataStoreMetadata";
 
 const config = {
     metadata: {
@@ -89,7 +90,9 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
                 );
             }
 
-            compositionRoot.metadata.getByIds(newMetadataIds, remoteInstance, "id").then(metadata => {
+            const onlyMetadataIds = newMetadataIds.filter(id => !id.includes(DataStoreMetadata.NS_SEPARATOR));
+
+            compositionRoot.metadata.getByIds(onlyMetadataIds, remoteInstance, "id").then(metadata => {
                 const types = _(metadata).keys().concat(metadataModelsSyncAll).uniq().value();
 
                 onChange(
