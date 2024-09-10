@@ -2,11 +2,14 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { defaultName, modelFactory } from "../../../models/dhis/factory";
 import { ExportBuilder } from "../../../types/synchronization";
+import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
 import { Ref } from "../../common/entities/Ref";
+import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
+import { Stats } from "../../reports/entities/Stats";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { Document, MetadataEntities, MetadataPackage, Program } from "../entities/MetadataEntities";
@@ -100,7 +103,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const metadataRepository = await this.getMetadataRepository();
         const filterRulesIds = await metadataRepository.getByFilterRules(filterRules);
         const allMetadataIds = _.union(metadataIds, filterRulesIds);
-        const metadata = await metadataRepository.getMetadataByIds<Ref>(allMetadataIds, "id,type"); //type is required to transform visualizations to charts and report tables
+        const idsWithoutDataStore = allMetadataIds.filter(id => !DataStoreMetadata.isDataStoreId(id));
+        const metadata = await metadataRepository.getMetadataByIds<Ref>(idsWithoutDataStore, "id,type"); //type is required to transform visualizations to charts and report tables
 
         const metadataWithSyncAll: Partial<Record<keyof MetadataEntities, Ref[]>> = await Promise.all(
             (syncParams?.metadataModelsSyncAll ?? []).map(
@@ -163,11 +167,59 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
         debug("Metadata package", { originalPayload, payload });
 
+        const dataStorePayload = await this.buildDataStorePayload(instance);
+        const dataStoreResult =
+            dataStorePayload.length > 0 ? await this.saveDataStorePayload(instance, dataStorePayload) : undefined;
+
         const remoteMetadataRepository = await this.getMetadataRepository(instance);
-        const syncResult = await remoteMetadataRepository.save(payload, syncParams);
+        const metadataResult = await remoteMetadataRepository.save(payload, syncParams);
         const origin = await this.getOriginInstance();
 
+        const syncResult = this.generateSyncResults(metadataResult, dataStoreResult);
         return [{ ...syncResult, origin: origin.toPublicObject(), payload }];
+    }
+
+    private generateSyncResults(
+        metadataResult: SynchronizationResult,
+        dataStoreResult: Maybe<SynchronizationResult>
+    ): SynchronizationResult {
+        if (!dataStoreResult) return metadataResult;
+
+        return {
+            ...metadataResult,
+            typeStats: _(metadataResult.typeStats)
+                .concat(dataStoreResult.typeStats || [])
+                .value(),
+            stats: metadataResult.stats ? Stats.sumStats(metadataResult.stats, dataStoreResult.stats) : undefined,
+        };
+    }
+
+    private async buildDataStorePayload(instance: Instance): Promise<DataStoreMetadata[]> {
+        const { metadataIds, syncParams } = this.builder;
+        const dataStore = DataStoreMetadata.buildFromKeys(metadataIds);
+        if (dataStore.length === 0) return [];
+
+        const dataStoreRepository = await this.getDataStoreMetadataRepository();
+        const dataStoreRemoteRepository = await this.getDataStoreMetadataRepository(instance);
+
+        const dataStoreLocal = await dataStoreRepository.get(dataStore);
+        const dataStoreRemote = await dataStoreRemoteRepository.get(dataStore);
+
+        const dataStorePayload = DataStoreMetadata.combine(metadataIds, dataStoreLocal, dataStoreRemote, {
+            action: syncParams?.mergeMode,
+        });
+        return syncParams?.includeSharingSettings
+            ? dataStorePayload
+            : DataStoreMetadata.removeSharingSettings(dataStorePayload);
+    }
+
+    private async saveDataStorePayload(
+        instance: Instance,
+        dataStores: DataStoreMetadata[]
+    ): Promise<SynchronizationResult> {
+        const dataStoreRemoteRepository = await this.getDataStoreMetadataRepository(instance);
+        const result = await dataStoreRemoteRepository.save(dataStores);
+        return result;
     }
 
     public async buildDataStats() {
