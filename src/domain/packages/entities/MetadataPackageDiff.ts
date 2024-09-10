@@ -110,7 +110,7 @@ function getStringValue(value: AttributeValue): string {
                 // On arrays, remove the ignored fields and apply a simple, best-effort sorting
                 // so the same items in different order are considered equal.
                 return stringify(
-                    _(value as Obj[])
+                    _(value as unknown as Obj[])
                         .map(obj => _.omit(obj, ignoredFields))
                         .sortBy(obj => obj.id || stringify(obj))
                         .value()
