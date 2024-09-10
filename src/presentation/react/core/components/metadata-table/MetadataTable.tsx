@@ -722,7 +722,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 rows={shownRows}
                 columns={columns}
                 details={details}
-                onChangeSearch={changeSearchFilter}
+                onChangeSearch={model.getMetadataType() !== "dataStore" ? changeSearchFilter : undefined}
                 initialState={initialState}
                 searchBoxLabel={i18n.t(`Search by name, code or id`)}
                 pagination={pager}

@@ -8,6 +8,7 @@ import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
@@ -54,7 +55,8 @@ export abstract class GenericSyncUseCase {
 
     @cache()
     public async extractMetadata<T>(remoteInstance = this.localInstance) {
-        const cleanIds = this.builder.metadataIds.map(id => _.last(id.split("-")) ?? id);
+        const onlyMetadataIds = this.builder.metadataIds.filter(id => !DataStoreMetadata.isDataStoreId(id));
+        const cleanIds = onlyMetadataIds.map(id => _.last(id.split("-")) ?? id);
         const metadataRepository = await this.getMetadataRepository(remoteInstance);
         return metadataRepository.getMetadataByIds<T>(cleanIds, this.fields);
     }
@@ -92,6 +94,12 @@ export abstract class GenericSyncUseCase {
     protected async getEventsRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
         return this.repositoryFactory.eventsRepository(remoteInstance ?? defaultInstance);
+    }
+
+    @cache()
+    protected async getDataStoreMetadataRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.dataStoreMetadataRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
