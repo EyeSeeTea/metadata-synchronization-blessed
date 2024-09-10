@@ -513,16 +513,12 @@ describe("SyncRule", () => {
             expect(editedSyncRule.dataSyncStartDate?.getMonth()).toEqual(now.getMonth());
             expect(editedSyncRule.dataSyncStartDate?.getFullYear()).toEqual(now.getFullYear());
         });
-        it("should have start date as now if the period is set to since last successfully executed and it does not exist", () => {
+        it("should have no start date if the period is set to since last successfully executed and it does not exist", () => {
             const syncRule = givenASyncRuleWithoutPeriod();
-
-            const now = new Date();
 
             const editedSyncRule = syncRule.updateDataSyncPeriod("SINCE_LAST_SUCCESSFUL_SYNC");
 
-            expect(editedSyncRule.dataSyncStartDate?.getDay()).toEqual(now.getDay());
-            expect(editedSyncRule.dataSyncStartDate?.getMonth()).toEqual(now.getMonth());
-            expect(editedSyncRule.dataSyncStartDate?.getFullYear()).toEqual(now.getFullYear());
+            expect(editedSyncRule.dataSyncStartDate).toEqual(undefined);
         });
         it("should has start date as last executed after build if the period is since last executed and exist last executed", () => {
             const lastExecuted = new Date();
@@ -561,18 +557,14 @@ describe("SyncRule", () => {
             expect(syncRule.dataSyncStartDate?.getMonth()).toEqual(now.getMonth());
             expect(syncRule.dataSyncStartDate?.getFullYear()).toEqual(now.getFullYear());
         });
-        it("should have start date as now after build if the period is set to since last successfully executed and it does not exist", () => {
-            const now = new Date();
-
+        it("should have no start date after build if the period is set to since last successfully executed and it does not exist", () => {
             const syncRuleData = givenASyncRuleWithoutPeriod()
                 .updateDataSyncPeriod("SINCE_LAST_SUCCESSFUL_SYNC")
                 .toObject();
 
             const syncRule = SynchronizationRule.build(syncRuleData);
 
-            expect(syncRule.dataSyncStartDate?.getDay()).toEqual(now.getDay());
-            expect(syncRule.dataSyncStartDate?.getMonth()).toEqual(now.getMonth());
-            expect(syncRule.dataSyncStartDate?.getFullYear()).toEqual(now.getFullYear());
+            expect(syncRule.dataSyncStartDate).toEqual(undefined);
         });
     });
 });

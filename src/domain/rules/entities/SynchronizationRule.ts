@@ -311,7 +311,7 @@ export class SynchronizationRule {
                             ...syncRule.builder,
                             dataParams: {
                                 ...syncRule.builder.dataParams,
-                                startDate: syncRule.lastSuccessfulSync ?? new Date(),
+                                startDate: syncRule.lastSuccessfulSync,
                             },
                         },
                     });
