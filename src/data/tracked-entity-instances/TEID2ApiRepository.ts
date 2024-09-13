@@ -3,7 +3,7 @@ import {
     DataImportParams,
     DataSynchronizationParams,
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
-import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { buildPeriodFromParams, getStartAndEndDateFromPeriod } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     SynchronizationResult,
@@ -31,6 +31,9 @@ export class TEID2ApiRepository implements TEIRepository {
     }
 
     async getAllTEIs(params: DataSynchronizationParams, programs: string[]): Promise<TrackedEntityInstance[]> {
+        const { period } = params;
+        const { startDate } = buildPeriodFromParams(params);
+
         const result = await promiseMap(programs, async program => {
             const { trackedEntityInstances, pager } = await this.getTEIs(params, program, 1, 250);
 
@@ -42,7 +45,16 @@ export class TEID2ApiRepository implements TEIRepository {
             return [...trackedEntityInstances, ..._.flatten(paginatedTEIs)];
         });
 
-        return result.flat();
+        return _(result)
+            .flatten()
+            .map(object => {
+                const isUpdatedAfterStartDate = new Date(object.lastUpdated).toISOString() >= startDate.toISOString();
+                const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
+
+                return isUpdatedAfterStartDate || !isLastSuccessfulSync ? object : undefined;
+            })
+            .compact()
+            .value();
     }
 
     async getTEIs(
@@ -51,8 +63,8 @@ export class TEID2ApiRepository implements TEIRepository {
         page: number,
         pageSize: number
     ): Promise<TEIsResponse> {
-        const { period, orgUnitPaths = [] } = params;
-        const { startDate, endDate } = buildPeriodFromParams(params);
+        const { orgUnitPaths = [] } = params;
+        const startAndEndDates = getStartAndEndDateFromPeriod(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
@@ -72,8 +84,8 @@ export class TEID2ApiRepository implements TEIRepository {
                 program,
                 ou: orgUnits.join(";"),
                 fields: this.fields,
-                programStartDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                programEndDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                programStartDate: startAndEndDates.startDate,
+                programEndDate: startAndEndDates.endDate,
                 totalPages: true,
                 page,
                 pageSize,

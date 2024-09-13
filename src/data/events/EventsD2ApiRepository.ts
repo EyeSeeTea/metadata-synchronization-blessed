@@ -5,7 +5,7 @@ import {
     DataImportParams,
     DataSynchronizationParams,
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
-import { buildPeriodFromParams } from "../../domain/aggregated/utils";
+import { buildPeriodFromParams, getStartAndEndDateFromPeriod } from "../../domain/aggregated/utils";
 import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
@@ -118,10 +118,11 @@ export class EventsD2ApiRepository implements EventsRepository {
         programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        if (programStageIds.length === 0) return [];
-
         const { period, orgUnitPaths = [], lastUpdated } = params;
-        const { startDate, endDate } = buildPeriodFromParams(params);
+        const { startDate } = buildPeriodFromParams(params);
+        const startAndEndDates = getStartAndEndDateFromPeriod(params);
+
+        if (programStageIds.length === 0) return [];
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
@@ -133,8 +134,8 @@ export class EventsD2ApiRepository implements EventsRepository {
                     page,
                     programStage,
                     orgUnit,
-                    startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                    endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                    startDate: startAndEndDates.startDate,
+                    endDate: startAndEndDates.endDate,
                     lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
                     fields: { $all: true },
                 })
@@ -158,8 +159,16 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         return _(result)
             .flatten()
-            .map(object => ({ ...object, id: object.event }))
-            .map(object => cleanObjectDefault(object, defaults))
+            .map(object => {
+                const isUpdatedAfterStartDate = new Date(object.lastUpdated).toISOString() >= startDate.toISOString();
+                const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
+                const event = { ...object, id: object.event };
+
+                return isUpdatedAfterStartDate || !isLastSuccessfulSync
+                    ? cleanObjectDefault(event, defaults)
+                    : undefined;
+            })
+            .compact()
             .value();
     }
 
