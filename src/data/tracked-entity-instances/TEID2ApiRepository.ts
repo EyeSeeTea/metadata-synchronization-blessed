@@ -48,7 +48,7 @@ export class TEID2ApiRepository implements TEIRepository {
         return _(result)
             .flatten()
             .map(object => {
-                const isUpdatedAfterStartDate = new Date(object.lastUpdated).toISOString() >= startDate.toISOString();
+                const isUpdatedAfterStartDate = new Date(object.lastUpdated).toISOString() >= startDate.format();
                 const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
 
                 return isUpdatedAfterStartDate || !isLastSuccessfulSync ? object : undefined;

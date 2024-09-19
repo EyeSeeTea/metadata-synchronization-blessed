@@ -160,7 +160,7 @@ export class EventsD2ApiRepository implements EventsRepository {
         return _(result)
             .flatten()
             .map(object => {
-                const isUpdatedAfterStartDate = new Date(object.lastUpdated).toISOString() >= startDate.toISOString();
+                const isUpdatedAfterStartDate = new Date(object.lastUpdated).toISOString() >= startDate.format();
                 const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
                 const event = { ...object, id: object.event };
 
