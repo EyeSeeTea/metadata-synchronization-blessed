@@ -5,7 +5,7 @@ import {
     DataImportParams,
     DataSynchronizationParams,
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
-import { buildPeriodFromParams, getStartAndEndDateFromPeriod } from "../../domain/aggregated/utils";
+import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
@@ -118,11 +118,10 @@ export class EventsD2ApiRepository implements EventsRepository {
         programStageIds: string[] = [],
         defaults: string[] = []
     ): Promise<ProgramEvent[]> {
-        const { period, orgUnitPaths = [], lastUpdated } = params;
-        const { startDate } = buildPeriodFromParams(params);
-        const startAndEndDates = getStartAndEndDateFromPeriod(params);
-
         if (programStageIds.length === 0) return [];
+
+        const { period, orgUnitPaths = [], lastUpdated } = params;
+        const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
@@ -134,8 +133,11 @@ export class EventsD2ApiRepository implements EventsRepository {
                     page,
                     programStage,
                     orgUnit,
-                    startDate: startAndEndDates.startDate,
-                    endDate: startAndEndDates.endDate,
+                    startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                    endDate:
+                        period !== "ALL" && period !== "SINCE_LAST_SUCCESSFUL_SYNC"
+                            ? endDate.format("YYYY-MM-DD")
+                            : undefined,
                     lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
                     fields: { $all: true },
                 })

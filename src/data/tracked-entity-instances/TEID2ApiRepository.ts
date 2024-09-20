@@ -3,7 +3,7 @@ import {
     DataImportParams,
     DataSynchronizationParams,
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
-import { buildPeriodFromParams, getStartAndEndDateFromPeriod } from "../../domain/aggregated/utils";
+import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     SynchronizationResult,
@@ -63,8 +63,8 @@ export class TEID2ApiRepository implements TEIRepository {
         page: number,
         pageSize: number
     ): Promise<TEIsResponse> {
-        const { orgUnitPaths = [] } = params;
-        const startAndEndDates = getStartAndEndDateFromPeriod(params);
+        const { period, orgUnitPaths = [] } = params;
+        const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
@@ -84,8 +84,11 @@ export class TEID2ApiRepository implements TEIRepository {
                 program,
                 ou: orgUnits.join(";"),
                 fields: this.fields,
-                programStartDate: startAndEndDates.startDate,
-                programEndDate: startAndEndDates.endDate,
+                programStartDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                programEndDate:
+                    period !== "ALL" && period !== "SINCE_LAST_SUCCESSFUL_SYNC"
+                        ? endDate.format("YYYY-MM-DD")
+                        : undefined,
                 totalPages: true,
                 page,
                 pageSize,

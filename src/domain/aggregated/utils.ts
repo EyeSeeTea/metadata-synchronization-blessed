@@ -76,29 +76,3 @@ export function buildPeriodFromParams(params: Pick<DataSynchronizationParams, "p
         endDate: moment().subtract(endAmount, endType).endOf(endType),
     };
 }
-
-export function getStartAndEndDateFromPeriod(params: DataSynchronizationParams): {
-    startDate: string | undefined;
-    endDate: string | undefined;
-} {
-    const { period } = params;
-    const { startDate, endDate } = buildPeriodFromParams(params);
-
-    switch (period) {
-        case "SINCE_LAST_SUCCESSFUL_SYNC":
-            return {
-                startDate: startDate.format("YYYY-MM-DD"),
-                endDate: undefined,
-            };
-        case "ALL":
-            return {
-                startDate: undefined,
-                endDate: undefined,
-            };
-        default:
-            return {
-                startDate: startDate.format("YYYY-MM-DD"),
-                endDate: endDate.format("YYYY-MM-DD"),
-            };
-    }
-}
