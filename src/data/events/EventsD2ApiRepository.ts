@@ -4,6 +4,7 @@ import moment from "moment";
 import {
     DataImportParams,
     DataSynchronizationParams,
+    isDataSynchronizationRequired,
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { EventsPackage } from "../../domain/events/entities/EventsPackage";
@@ -162,11 +163,9 @@ export class EventsD2ApiRepository implements EventsRepository {
         return _(result)
             .flatten()
             .map(object => {
-                const isUpdatedAfterStartDate = new Date(object.lastUpdated).toISOString() >= startDate.format();
-                const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
                 const event = { ...object, id: object.event };
 
-                return isUpdatedAfterStartDate || !isLastSuccessfulSync
+                return isDataSynchronizationRequired(params, object.lastUpdated)
                     ? cleanObjectDefault(event, defaults)
                     : undefined;
             })

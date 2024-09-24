@@ -2,6 +2,7 @@ import _ from "lodash";
 import {
     DataImportParams,
     DataSynchronizationParams,
+    isDataSynchronizationRequired,
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
@@ -31,9 +32,6 @@ export class TEID2ApiRepository implements TEIRepository {
     }
 
     async getAllTEIs(params: DataSynchronizationParams, programs: string[]): Promise<TrackedEntityInstance[]> {
-        const { period } = params;
-        const { startDate } = buildPeriodFromParams(params);
-
         const result = await promiseMap(programs, async program => {
             const { trackedEntityInstances, pager } = await this.getTEIs(params, program, 1, 250);
 
@@ -47,13 +45,7 @@ export class TEID2ApiRepository implements TEIRepository {
 
         return _(result)
             .flatten()
-            .map(object => {
-                const isUpdatedAfterStartDate = new Date(object.lastUpdated).toISOString() >= startDate.format();
-                const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
-
-                return isUpdatedAfterStartDate || !isLastSuccessfulSync ? object : undefined;
-            })
-            .compact()
+            .filter(object => isDataSynchronizationRequired(params, object.lastUpdated))
             .value();
     }
 
