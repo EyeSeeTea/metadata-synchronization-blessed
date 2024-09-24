@@ -278,11 +278,12 @@ export abstract class GenericSyncUseCase {
 
         // Phase 6: if sync report is DONE, update sync rule last successful sync date
         if (syncReport.status === "DONE" && syncRule) {
-            const rule = await this.repositoryFactory.rulesRepository(this.localInstance).getById(syncRule);
+            const syncRulesRepository = this.repositoryFactory.rulesRepository(this.localInstance);
+            const rule = await syncRulesRepository.getById(syncRule);
 
             if (rule) {
                 const updatedRule = rule.updateLastSuccessfulSync(new Date());
-                await this.repositoryFactory.rulesRepository(this.localInstance).save([updatedRule]);
+                await syncRulesRepository.save([updatedRule]);
             }
         }
 
