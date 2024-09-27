@@ -4,6 +4,7 @@ import moment from "moment";
 import {
     DataImportParams,
     DataSynchronizationParams,
+    isDataSynchronizationRequired,
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { EventsPackage } from "../../domain/events/entities/EventsPackage";
@@ -134,7 +135,10 @@ export class EventsD2ApiRepository implements EventsRepository {
                     programStage,
                     orgUnit,
                     startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                    endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                    endDate:
+                        period !== "ALL" && period !== "SINCE_LAST_SUCCESSFUL_SYNC"
+                            ? endDate.format("YYYY-MM-DD")
+                            : undefined,
                     lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
                     fields: { $all: true },
                 })
@@ -158,8 +162,14 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         return _(result)
             .flatten()
-            .map(object => ({ ...object, id: object.event }))
-            .map(object => cleanObjectDefault(object, defaults))
+            .map(object => {
+                const event = { ...object, id: object.event };
+
+                return isDataSynchronizationRequired(params, object.lastUpdated)
+                    ? cleanObjectDefault(event, defaults)
+                    : undefined;
+            })
+            .compact()
             .value();
     }
 

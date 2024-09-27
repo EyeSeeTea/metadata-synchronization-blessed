@@ -2259,6 +2259,9 @@ msgstr ""
 msgid "Since last execution"
 msgstr ""
 
+msgid "Since last successful execution"
+msgstr ""
+
 msgid "Today"
 msgstr ""
 

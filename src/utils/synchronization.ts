@@ -43,6 +43,7 @@ export const availablePeriods = buildObject<{
     ALL: { name: i18n.t("All time") },
     FIXED: { name: i18n.t("Fixed period") },
     SINCE_LAST_EXECUTED_DATE: { name: i18n.t("Since last execution") },
+    SINCE_LAST_SUCCESSFUL_SYNC: { name: i18n.t("Since last successful execution") },
     TODAY: { name: i18n.t("Today"), start: [0, "day"] },
     YESTERDAY: { name: i18n.t("Yesterday"), start: [1, "day"] },
     LAST_7_DAYS: { name: i18n.t("Last 7 days"), start: [7, "day"], end: [0, "day"] },
