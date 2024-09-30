@@ -2,6 +2,7 @@ import _ from "lodash";
 import {
     DataImportParams,
     DataSynchronizationParams,
+    isDataSynchronizationRequired,
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
@@ -42,7 +43,10 @@ export class TEID2ApiRepository implements TEIRepository {
             return [...trackedEntityInstances, ..._.flatten(paginatedTEIs)];
         });
 
-        return result.flat();
+        return _(result)
+            .flatten()
+            .filter(object => isDataSynchronizationRequired(params, object.lastUpdated))
+            .value();
     }
 
     async getTEIs(
@@ -73,7 +77,10 @@ export class TEID2ApiRepository implements TEIRepository {
                 ou: orgUnits.join(";"),
                 fields: this.fields,
                 programStartDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                programEndDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                programEndDate:
+                    period !== "ALL" && period !== "SINCE_LAST_SUCCESSFUL_SYNC"
+                        ? endDate.format("YYYY-MM-DD")
+                        : undefined,
                 totalPages: true,
                 page,
                 pageSize,

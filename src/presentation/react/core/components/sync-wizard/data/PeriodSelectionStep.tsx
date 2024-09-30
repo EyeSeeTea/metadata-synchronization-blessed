@@ -6,7 +6,7 @@ import { SyncWizardStepProps } from "../Steps";
 
 const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const [skipPeriods] = useState<Set<PeriodType> | undefined>(
-        syncRule.ondemand ? new Set(["SINCE_LAST_EXECUTED_DATE"]) : undefined
+        syncRule.ondemand ? new Set(["SINCE_LAST_EXECUTED_DATE", "SINCE_LAST_SUCCESSFUL_SYNC"]) : undefined
     );
 
     const updatePeriod = useCallback(
