@@ -491,6 +491,17 @@ describe("SyncRule", () => {
 
             expect(editedSyncRule.dataSyncStartDate).toEqual(lastExecuted);
         });
+        it("should have start date as last successfully executed date if the period is set to since last successfully executed and it exists", () => {
+            const syncRule = givenASyncRuleWithoutPeriod();
+
+            const lastSuccessfulSync = new Date();
+
+            const editedSyncRule = syncRule
+                .updateLastSuccessfulSync(lastSuccessfulSync)
+                .updateDataSyncPeriod("SINCE_LAST_SUCCESSFUL_SYNC");
+
+            expect(editedSyncRule.dataSyncStartDate).toEqual(lastSuccessfulSync);
+        });
         it("should has start date as now if change the period to since last executed and does not exist", () => {
             const syncRule = givenASyncRuleWithoutPeriod();
 
@@ -501,6 +512,13 @@ describe("SyncRule", () => {
             expect(editedSyncRule.dataSyncStartDate?.getDay()).toEqual(now.getDay());
             expect(editedSyncRule.dataSyncStartDate?.getMonth()).toEqual(now.getMonth());
             expect(editedSyncRule.dataSyncStartDate?.getFullYear()).toEqual(now.getFullYear());
+        });
+        it("should have no start date if the period is set to since last successfully executed and it does not exist", () => {
+            const syncRule = givenASyncRuleWithoutPeriod();
+
+            const editedSyncRule = syncRule.updateDataSyncPeriod("SINCE_LAST_SUCCESSFUL_SYNC");
+
+            expect(editedSyncRule.dataSyncStartDate).toEqual(undefined);
         });
         it("should has start date as last executed after build if the period is since last executed and exist last executed", () => {
             const lastExecuted = new Date();
@@ -514,7 +532,19 @@ describe("SyncRule", () => {
 
             expect(syncRule.dataSyncStartDate).toEqual(lastExecuted);
         });
-        it("should has start date as now after build if the period is since last executed and  last executed does not exist", () => {
+        it("should have start date as last successfully executed date after build if the period is set to since last successfully executed and it exists", () => {
+            const lastSuccessfulSync = new Date();
+
+            const syncRuleData = givenASyncRuleWithoutPeriod()
+                .updateLastSuccessfulSync(lastSuccessfulSync)
+                .updateDataSyncPeriod("SINCE_LAST_SUCCESSFUL_SYNC")
+                .toObject();
+
+            const syncRule = SynchronizationRule.build(syncRuleData);
+
+            expect(syncRule.dataSyncStartDate).toEqual(lastSuccessfulSync);
+        });
+        it("should has start date as now after build if the period is since last executed and last executed does not exist", () => {
             const now = new Date();
 
             const syncRuleData = givenASyncRuleWithoutPeriod()
@@ -526,6 +556,15 @@ describe("SyncRule", () => {
             expect(syncRule.dataSyncStartDate?.getDay()).toEqual(now.getDay());
             expect(syncRule.dataSyncStartDate?.getMonth()).toEqual(now.getMonth());
             expect(syncRule.dataSyncStartDate?.getFullYear()).toEqual(now.getFullYear());
+        });
+        it("should have no start date after build if the period is set to since last successfully executed and it does not exist", () => {
+            const syncRuleData = givenASyncRuleWithoutPeriod()
+                .updateDataSyncPeriod("SINCE_LAST_SUCCESSFUL_SYNC")
+                .toObject();
+
+            const syncRule = SynchronizationRule.build(syncRuleData);
+
+            expect(syncRule.dataSyncStartDate).toEqual(undefined);
         });
     });
 });

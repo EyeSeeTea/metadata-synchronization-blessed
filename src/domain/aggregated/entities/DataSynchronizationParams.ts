@@ -1,3 +1,4 @@
+import { buildPeriodFromParams } from "../utils";
 import { DataSyncAggregation } from "./DataSyncAggregation";
 import { DataSyncPeriod } from "./DataSyncPeriod";
 
@@ -35,4 +36,14 @@ export interface DataSynchronizationParams extends DataImportParams {
     includeAnalyticsZeroValues?: boolean;
     analyticsYears?: number;
     ignoreDuplicateExistingValues?: boolean;
+}
+
+export function isDataSynchronizationRequired(params: DataSynchronizationParams, lastUpdated: string): boolean {
+    const { period } = params;
+    const { startDate } = buildPeriodFromParams(params);
+
+    const isUpdatedAfterStartDate = new Date(lastUpdated).toISOString() >= startDate.format();
+    const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
+
+    return isUpdatedAfterStartDate || !isLastSuccessfulSync;
 }
