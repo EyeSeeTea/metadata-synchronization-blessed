@@ -231,7 +231,7 @@ function givenAnEventsPackage(valueField?: string): EventsPackage {
     const result: EventsPackage = {
         events: [
             {
-                eventDate: "NA",
+                occurredAt: "NA",
                 orgUnit: "NA",
                 id: "NA",
                 program: "NA",
