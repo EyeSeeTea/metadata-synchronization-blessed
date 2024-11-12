@@ -87,6 +87,13 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                     importMode: dryRun ? "VALIDATE" : "COMMIT",
                 })
             );
+        } else if (syncRule.type === "events") {
+            onChange(
+                syncRule.updateDataParams({
+                    ...dataParams,
+                    importMode: dryRun ? "VALIDATE" : "COMMIT",
+                })
+            );
         } else {
             onChange(
                 syncRule.updateDataParams({
@@ -256,6 +263,8 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                     value={
                         syncRule.type === "metadata" || syncRule.type === "deleted"
                             ? syncParams.importMode === "VALIDATE"
+                            : syncRule.type === "events"
+                            ? dataParams.importMode === "VALIDATE"
                             : dataParams.dryRun || false
                     }
                 />
