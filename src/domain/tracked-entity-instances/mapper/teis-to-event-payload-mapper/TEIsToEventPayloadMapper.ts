@@ -69,7 +69,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
 
                                 return {
                                     createdAt: date,
-                                    updateAt: date,
+                                    updatedAt: date,
                                     dataElement: mappedDataElement,
                                     value: mapOptionValue(att.value, [
                                         trackedEntityAttributesToDE[att.attribute]?.mapping ?? {},
