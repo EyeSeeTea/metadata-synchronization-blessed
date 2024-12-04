@@ -17,7 +17,7 @@ import { getValidationsByVersionFeedback } from "../module-list-table/utils";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import Dropdown from "../dropdown/Dropdown";
 import { Module } from "../../../../../domain/modules/entities/Module";
-import { DhisRelease } from "../../../../../domain/dhis-releases/entities/DhisRelease";
+import { useGetSupportedVersions } from "../../hooks/useGetSupportedVersions";
 
 interface CreatePackageFromFileDialogProps {
     onClose: () => void;
@@ -47,7 +47,7 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
     );
     const [userGroups, setUserGroups] = useState<NamedRef[]>([]);
     const [contents, setContents] = useState<MetadataPackage>();
-    const [dhisSupportedVersions, setDhisSupportedVersions] = useState<DhisRelease[]>([]);
+    const { supportedVersions } = useGetSupportedVersions();
     const [errors, setErrors] = useState<Dictionary<ValidationError>>({});
 
     useEffect(() => {
@@ -58,7 +58,6 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
 
     useEffect(() => {
         compositionRoot.user.current().then(({ userGroups }) => setUserGroups(userGroups));
-        compositionRoot.dhisReleases.getSupportedDhisVersions().then(versions => setDhisSupportedVersions(versions));
     }, [compositionRoot]);
 
     const updateModel = useCallback(
@@ -252,7 +251,7 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
                 <Autocomplete
                     className={classes.row}
                     multiple
-                    options={dhisSupportedVersions}
+                    options={supportedVersions}
                     value={versions}
                     onChange={(_event, value) => updateVersions(value)}
                     renderTags={(values: string[]) => values.sort().join(", ")}

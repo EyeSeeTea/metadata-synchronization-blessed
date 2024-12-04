@@ -5,7 +5,7 @@ import React, { useMemo, useState, useEffect, useCallback } from "react";
 import i18n from "../../../../../locales";
 import { Dropdown, DropdownOption } from "../dropdown/Dropdown";
 import { PackageItem } from "../package-list-table/PackageModuleItem";
-import { useAppContext } from "../../contexts/AppContext";
+import { useGetSupportedVersions } from "../../hooks/useGetSupportedVersions";
 
 export interface PackagesExtendCompatibilityDialogProps {
     onClose(): void;
@@ -19,7 +19,7 @@ export const PackagesExtendCompatibilityDialog: React.FC<PackagesExtendCompatibi
     packages,
 }) => {
     const classes = useStyles();
-    const { compositionRoot } = useAppContext();
+    const { supportedVersions } = useGetSupportedVersions();
 
     const [existedDhis2Versions, SetExistedDhis2Versions] = useState<DropdownOption[]>([]);
     const [selectedExistedDhis2Version, setSelectedExistedDhis2Version] = useState<string>("");
@@ -29,13 +29,11 @@ export const PackagesExtendCompatibilityDialog: React.FC<PackagesExtendCompatibi
 
     useEffect(() => {
         const dhis2VersionsInPackages = packages.map(pkg => pkg.dhisVersion);
-        compositionRoot.dhisReleases.getSupportedDhisVersions().then(dhis2Versions => {
-            SetNewDhis2Versions(dhis2Versions.filter(d2version => !dhis2VersionsInPackages.includes(d2version)));
-            SetExistedDhis2Versions(
-                dhis2VersionsInPackages.map(dhis2Version => ({ id: dhis2Version, name: dhis2Version }))
-            );
-        });
-    }, [packages, compositionRoot]);
+        SetNewDhis2Versions(supportedVersions.filter(d2version => !dhis2VersionsInPackages.includes(d2version)));
+        SetExistedDhis2Versions(
+            dhis2VersionsInPackages.map(dhis2Version => ({ id: dhis2Version, name: dhis2Version }))
+        );
+    }, [packages, supportedVersions]);
 
     const title = useMemo(() => {
         const firstPackage = packages[0];
