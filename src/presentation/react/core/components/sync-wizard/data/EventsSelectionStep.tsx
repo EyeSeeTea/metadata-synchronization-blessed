@@ -17,6 +17,8 @@ import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import { extractAllPrograms } from "../utils";
+import useListColumns from "../../../hooks/useTableColumns";
+import { Namespace } from "../../../../../../data/storage/Namespaces";
 
 interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
@@ -41,6 +43,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const [programs, setPrograms] = useState<CustomProgram[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
     const [error, setError] = useState<unknown>();
+    const { visibleColumns, saveReorderedColumns } = useListColumns(Namespace.EVENTS_USER_COLUMNS);
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
@@ -204,6 +207,21 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         }));
     }, [programFilter, programs]);
 
+    const columnsToShow = useMemo(() => {
+        const allColumns = [...columns, ...additionalColumns];
+        if (!visibleColumns || _.isEmpty(visibleColumns)) return allColumns;
+
+        const indexes = _(visibleColumns)
+            .map((columnName, idx) => [columnName, idx] as [string, number])
+            .fromPairs()
+            .value();
+
+        return _(allColumns)
+            .map(column => ({ ...column, hidden: !visibleColumns.includes(column.name) }))
+            .sortBy(column => indexes[column.name] || 0)
+            .value();
+    }, [visibleColumns, columns, additionalColumns]);
+
     const filteredObjects = objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
 
     if (error) {
@@ -223,13 +241,14 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 <ObjectsTable<ProgramEventObject>
                     rows={filteredObjects}
                     loading={objects === undefined}
-                    columns={[...columns, ...additionalColumns]}
+                    columns={columnsToShow}
                     details={details}
                     actions={actions}
                     forceSelectionColumn={true}
                     onChange={handleTableChange}
                     selection={syncRule.dataSyncEvents?.map(id => ({ id })) ?? []}
                     filterComponents={filterComponents}
+                    onReorderColumns={saveReorderedColumns}
                 />
             )}
 

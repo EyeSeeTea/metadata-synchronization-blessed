@@ -9,6 +9,6 @@ export interface ConfigRepositoryConstructor {
 export interface ConfigRepository {
     // Storage client should only be accessible from data layer
     // This two methods will be removed in future refactors
-    getStorageClient(): Promise<StorageClient>;
+    getStorageClient(options?: { userStorage: boolean }): Promise<StorageClient>;
     changeStorageClient(client: StorageType): Promise<void>;
 }

@@ -14,10 +14,10 @@ export class StorageDataStoreClient extends StorageClient {
     private api: D2Api;
     private dataStore: DataStore;
 
-    constructor(instance: Instance, namespace: string = dataStoreNamespace) {
+    constructor(instance: Instance, namespace: string = dataStoreNamespace, userStorage = false) {
         super();
         this.api = getD2APiFromInstance(instance);
-        this.dataStore = this.api.dataStore(namespace);
+        this.dataStore = userStorage ? this.api.userDataStore(namespace) : this.api.dataStore(namespace);
     }
 
     public async getObject<T extends object>(key: string): Promise<T | undefined> {
