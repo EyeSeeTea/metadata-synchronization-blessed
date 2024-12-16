@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../contexts/AppContext";
 
-export default function useListColumns(nameSpace: string) {
+export default function useTableColumns(nameSpace: string) {
     const { compositionRoot } = useAppContext();
     const [visibleColumns, setVisibleColumns] = useState<string[]>();
 
@@ -9,7 +9,9 @@ export default function useListColumns(nameSpace: string) {
         compositionRoot.tableColumns.getColumns(nameSpace).then(columns => {
             setVisibleColumns(columns);
         });
-    }, [compositionRoot, nameSpace]);
+    }, [compositionRoot.tableColumns, nameSpace]);
+
+    console.log({ visibleColumns });
 
     const saveReorderedColumns = useCallback(
         async (columnKeys: string[]) => {
@@ -17,7 +19,7 @@ export default function useListColumns(nameSpace: string) {
 
             await compositionRoot.tableColumns.saveColumns(nameSpace, columnKeys);
         },
-        [compositionRoot, nameSpace, visibleColumns]
+        [compositionRoot.tableColumns, nameSpace, visibleColumns]
     );
 
     return {

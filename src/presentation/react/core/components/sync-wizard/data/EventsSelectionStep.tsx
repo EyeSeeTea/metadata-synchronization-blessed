@@ -17,7 +17,7 @@ import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import { extractAllPrograms } from "../utils";
-import useListColumns from "../../../hooks/useTableColumns";
+import useTableColumns from "../../../hooks/useTableColumns";
 import { Namespace } from "../../../../../../data/storage/Namespaces";
 
 interface ProgramEventObject extends ProgramEvent {
@@ -43,7 +43,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const [programs, setPrograms] = useState<CustomProgram[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
     const [error, setError] = useState<unknown>();
-    const { visibleColumns, saveReorderedColumns } = useListColumns(Namespace.EVENTS_USER_COLUMNS);
+    const { visibleColumns, saveReorderedColumns } = useTableColumns(Namespace.EVENTS_USER_COLUMNS);
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
