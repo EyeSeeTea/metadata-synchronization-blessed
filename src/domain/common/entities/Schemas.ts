@@ -23,12 +23,6 @@ export interface Axis {
     axis: number;
 }
 
-export interface ProgramOwner {
-    ownerOrgUnit: Id;
-    program: Id;
-    trackedEntityInstance: Id;
-}
-
 export interface ReportingParams {
     reportingPeriod: boolean;
     grandParentOrganisationUnit: boolean;
