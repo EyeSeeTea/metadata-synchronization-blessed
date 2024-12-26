@@ -44,7 +44,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
 
                     const event = {
                         event: id,
-                        occurredAt: enrollment.enrollmentDate,
+                        occurredAt: enrollment.enrolledAt,
                         orgUnit: cleanOrgUnitPath(mappedOrgUnit),
                         program: mappedProgram,
                         programStage: mappedProgramStage.id,
