@@ -96,7 +96,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                 .getData();
         };
 
-        const result: D2TrackerEvent[][] = await promiseMap(orgUnits, async orgUnit => {
+        const result = await promiseMap(orgUnits, async (orgUnit): Promise<D2TrackerEvent[]> => {
             const { instances, total = 0, pageSize } = await fetchApi(orgUnit, 1);
 
             const pageCount = Math.ceil(total / pageSize);
@@ -111,7 +111,7 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         return _(result)
             .flatten()
-            .filter(({ programStage }) => programStageIds.includes(programStage || ""))
+            .filter(({ programStage }) => (programStage ? programStageIds.includes(programStage) : false))
             .map(object => ({ ...object, id: object.event }))
             .map(object => cleanObjectDefault(object, defaults))
             .value();
@@ -273,10 +273,6 @@ export class EventsD2ApiRepository implements EventsRepository {
             dataElementIdScheme: params.dataElementIdScheme ?? "UID",
             orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
             importMode: params.importMode ?? "COMMIT",
-
-            // TODO: Check if these params exists in the new tracker endpoint
-            // preheatCache: params.preheatCache ?? false,
-            // skipExistingCheck: params.skipExistingCheck ?? false,
         };
 
         const trackerPostRequest: TrackerPostRequest = {
