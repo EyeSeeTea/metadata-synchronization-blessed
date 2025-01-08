@@ -16,7 +16,7 @@ import { D2Api } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 import mime from "mime-types";
-import { D2TrackerEvent } from "@eyeseetea/d2-api/api/trackerEvents";
+import { D2TrackerEvent, TrackerEventsResponse } from "@eyeseetea/d2-api/api/trackerEvents";
 import { TrackerPostParams, TrackerPostRequest, TrackerPostResponse } from "@eyeseetea/d2-api/api/tracker";
 
 export class EventsD2ApiRepository implements EventsRepository {
@@ -97,16 +97,19 @@ export class EventsD2ApiRepository implements EventsRepository {
         };
 
         const result = await promiseMap(orgUnits, async (orgUnit): Promise<D2TrackerEvent[]> => {
-            const { instances, total = 0, pageSize } = await fetchApi(orgUnit, 1);
+            const firstResponse = await fetchApi(orgUnit, 1);
 
-            const pageCount = Math.ceil(total / pageSize);
+            const pageCount = Math.ceil((firstResponse.total || 0) / firstResponse.pageSize);
 
             const paginatedEvents = await promiseMap(_.range(2, pageCount + 1), async page => {
-                const { instances } = await fetchApi(orgUnit, page);
-                return instances;
+                const response = await fetchApi(orgUnit, page);
+
+                return this.extractEvents(response);
             });
 
-            return [...instances, ..._.flatten(paginatedEvents)];
+            const events = this.extractEvents(firstResponse);
+
+            return [...events, ..._.flatten(paginatedEvents)];
         });
 
         return _(result)
@@ -150,16 +153,21 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         const result = await promiseMap(programStageIds, async programStage => {
             const filteredEvents = await promiseMap(orgUnits, async orgUnit => {
-                const { instances, total = 0, pageSize } = await fetchApi(programStage, orgUnit, 1);
+                const firstResponse = await fetchApi(programStage, orgUnit, 1);
 
-                const pageCount = Math.ceil(total / pageSize);
+                const pageCount = Math.ceil(firstResponse.total || 0 / firstResponse.pageSize);
 
                 const paginatedEvents = await promiseMap(_.range(2, pageCount + 1), async page => {
-                    const { instances } = await fetchApi(programStage, orgUnit, page);
-                    return instances;
+                    const response = await fetchApi(programStage, orgUnit, page);
+
+                    const events = this.extractEvents(response);
+
+                    return events;
                 });
 
-                return [...instances, ..._.flatten(paginatedEvents)];
+                const events = this.extractEvents(firstResponse);
+
+                return [...events, ..._.flatten(paginatedEvents)];
             });
 
             return _.flatten(filteredEvents);
@@ -191,7 +199,7 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         for (const programStage of programStageIds) {
             for (const ids of _.chunk(filter, 300)) {
-                const { instances } = await this.api.tracker.events
+                const response = await this.api.tracker.events
                     .get({
                         programStage,
                         event: ids.join(";"),
@@ -199,7 +207,10 @@ export class EventsD2ApiRepository implements EventsRepository {
                         skipPaging: true,
                     })
                     .getData();
-                result.push(...instances);
+
+                const events = this.extractEvents(response);
+
+                result.push(...events);
             }
         }
 
@@ -324,4 +335,12 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         return new File([blob], fileName, { type: fileResource.contentType });
     }
+
+    extractEvents(response: TrackerEventsResponse): D2TrackerEvent[] {
+        return response.instances || (hasEventsProperty(response) ? response.events : []);
+    }
+}
+
+function hasEventsProperty(obj: any): obj is { events: D2TrackerEvent[] } {
+    return obj && Array.isArray(obj.events);
 }
