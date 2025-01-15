@@ -80,8 +80,10 @@ export class TEID2ApiRepository implements TEIRepository {
             })
             .getData();
 
+        const trackedEntities = this.extractTrackeEntity(result)
+
         return {
-            instances: result.instances.map(tei => this.buildTrackedEntityInstance(tei)),
+            instances: trackedEntities.map(tei => this.buildTrackedEntityInstance(tei)),
             page,
             pageSize,
             total: result.total || 0,
@@ -104,7 +106,9 @@ export class TEID2ApiRepository implements TEIRepository {
             })
             .getData();
 
-        return result.instances.map(tei => this.buildTrackedEntityInstance(tei));
+        const trackedEntities = this.extractTrackeEntity(result)
+
+        return trackedEntities.map(tei => this.buildTrackedEntityInstance(tei));
     }
 
     async save(data: TEIsPackage, additionalParams: DataImportParams | undefined): Promise<SynchronizationResult> {
@@ -140,7 +144,7 @@ export class TEID2ApiRepository implements TEIRepository {
     }
 
     private cleanTEIsImportResponse(importResult: TrackerPostResponse): SynchronizationResult {
-        const stats = importResult.bundleReport.typeReportMap.TRACKED_ENTITY.stats;
+        const stats = importResult.bundleReport? importResult.bundleReport.typeReportMap.TRACKED_ENTITY.stats: importResult.stats;
         return {
             status: importResult.status === "OK" ? "SUCCESS" : importResult.status,
             stats: {
@@ -194,6 +198,14 @@ export class TEID2ApiRepository implements TEIRepository {
             }),
         };
     }
+
+    extractTrackeEntity(response: TrackedEntitiesGetResponse): D2TrackerTrackedEntity[] {
+        return response.instances || (hasEventsProperty(response) ? response.trackedEntities : []);
+    }
+}
+
+function hasEventsProperty(obj: any): obj is { trackedEntities: D2TrackerTrackedEntity[] } {
+    return obj && Array.isArray(obj.trackedEntities);
 }
 
 const enrollmentsFields = {
