@@ -80,7 +80,7 @@ export class TEID2ApiRepository implements TEIRepository {
             })
             .getData();
 
-        const trackedEntities = this.extractTrackeEntity(result)
+        const trackedEntities = this.extractTrackeEntity(result);
 
         return {
             instances: trackedEntities.map(tei => this.buildTrackedEntityInstance(tei)),
@@ -106,7 +106,7 @@ export class TEID2ApiRepository implements TEIRepository {
             })
             .getData();
 
-        const trackedEntities = this.extractTrackeEntity(result)
+        const trackedEntities = this.extractTrackeEntity(result);
 
         return trackedEntities.map(tei => this.buildTrackedEntityInstance(tei));
     }
@@ -144,7 +144,9 @@ export class TEID2ApiRepository implements TEIRepository {
     }
 
     private cleanTEIsImportResponse(importResult: TrackerPostResponse): SynchronizationResult {
-        const stats = importResult.bundleReport? importResult.bundleReport.typeReportMap.TRACKED_ENTITY.stats: importResult.stats;
+        const stats = importResult.bundleReport
+            ? importResult.bundleReport.typeReportMap.TRACKED_ENTITY.stats
+            : importResult.stats;
         return {
             status: importResult.status === "OK" ? "SUCCESS" : importResult.status,
             stats: {
