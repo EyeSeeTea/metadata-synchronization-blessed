@@ -39,7 +39,6 @@ export function useMetadataIncludeExcludeStep(
         compositionRoot.metadata
             .getByIds(syncRule.metadataIds, instance, "id,name,type") //type is required to transform visualizations to charts and report tables
             .then((metadata: MetadataPackage<MetadataEntity>) => {
-                debugger;
                 const models = getModels(metadata, syncRule);
 
                 const modelSelectItems = getModelSelectItems(models, api);
@@ -107,6 +106,56 @@ export function useMetadataIncludeExcludeStep(
         [includeRules, onChange, selectedType, syncRule]
     );
 
+    const changeSharingSettings = useCallback(
+        (includeSharingSettings: boolean) => {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncRule.syncParams,
+                    includeSharingSettings,
+                })
+            );
+        },
+        [onChange, syncRule]
+    );
+
+    const changeOrgUnitReferences = useCallback(
+        (removeOrgUnitReferences: boolean) => {
+            onChange(syncRule.updateSyncParams({ ...syncRule.syncParams, removeOrgUnitReferences }));
+        },
+        [onChange, syncRule]
+    );
+
+    const changeRemoveUserObjects = useCallback(
+        (removeUserObjects: boolean) => {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncRule.syncParams,
+                    removeUserObjects,
+                })
+            );
+        },
+        [onChange, syncRule]
+    );
+
+    const changeRemoveUserObjectsAndReferences = useCallback(
+        (removeUserObjectsAndReferences: boolean) => {
+            onChange(syncRule.updateSyncParams({ ...syncRule.syncParams, removeUserObjectsAndReferences }));
+        },
+        [onChange, syncRule]
+    );
+
+    const changeRemoveOrgUnitObjects = useCallback(
+        (removeOrgUnitObjects: boolean) => {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncRule.syncParams,
+                    removeOrgUnitObjects,
+                })
+            );
+        },
+        [onChange, syncRule]
+    );
+
     return {
         error,
         d2,
@@ -117,6 +166,11 @@ export function useMetadataIncludeExcludeStep(
         selectedType,
         ruleOptions,
         includeRules,
+        changeSharingSettings,
+        changeOrgUnitReferences,
+        changeRemoveOrgUnitObjects,
+        changeRemoveUserObjects,
+        changeRemoveUserObjectsAndReferences,
     };
 }
 

@@ -35,6 +35,11 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
         changeInclude,
         ruleOptions,
         includeRules,
+        changeSharingSettings,
+        changeOrgUnitReferences,
+        changeRemoveOrgUnitObjects,
+        changeRemoveUserObjects,
+        changeRemoveUserObjectsAndReferences,
     } = useMetadataIncludeExcludeStep(syncRule, onChange);
 
     useEffect(() => {
@@ -45,6 +50,48 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
 
     return (
         <React.Fragment>
+            <div>
+                <div>
+                    <Toggle
+                        label={i18n.t("Include owner and sharing settings")}
+                        onValueChange={changeSharingSettings}
+                        value={syncRule.syncParams.includeSharingSettings}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove organisation units and references (UID)")}
+                        onValueChange={changeOrgUnitReferences}
+                        value={syncRule.syncParams.removeOrgUnitReferences}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        disabled={syncRule.syncParams.removeOrgUnitReferences}
+                        label={i18n.t("Remove organisation units and keep organisation units references (UID)")}
+                        onValueChange={changeRemoveOrgUnitObjects}
+                        value={syncRule.syncParams.removeOrgUnitObjects || false}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove users and references (UID)")}
+                        onValueChange={changeRemoveUserObjectsAndReferences}
+                        value={syncRule.syncParams.removeUserObjectsAndReferences || false}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove users and keep user references (UID)")}
+                        onValueChange={changeRemoveUserObjects}
+                        value={syncRule.syncParams.removeUserObjects || false}
+                    />
+                </div>
+            </div>
             <Toggle
                 label={i18n.t("Use default dependencies")}
                 value={syncRule.useDefaultIncludeExclude}
