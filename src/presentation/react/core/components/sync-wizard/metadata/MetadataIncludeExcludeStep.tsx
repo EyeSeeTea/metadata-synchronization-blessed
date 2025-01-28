@@ -1,16 +1,12 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Typography } from "@material-ui/core";
 import { MultiSelector, useSnackbar, withSnackbar } from "@eyeseetea/d2-ui-components";
-import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { MetadataEntity, MetadataPackage } from "../../../../../../domain/metadata/entities/MetadataEntities";
-import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
+import React, { useEffect } from "react";
 import i18n from "../../../../../../locales";
-import { D2Model } from "../../../../../../models/dhis/default";
-import { defaultName, modelFactory } from "../../../../../../models/dhis/factory";
-import { useAppContext } from "../../../contexts/AppContext";
-import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
+import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
+import { styled } from "styled-components";
+import { useMetadataIncludeExcludeStep } from "./useMetadataIncludeExcludeStep";
 
 const useStyles = makeStyles({
     includeExcludeContainer: {
@@ -21,97 +17,31 @@ const useStyles = makeStyles({
     },
     multiselectorContainer: {
         width: "100%",
+        paddingTop: "20px",
     },
 });
 
 const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
-    const { d2, api } = useAppContext();
     const snackbar = useSnackbar();
 
-    const [modelSelectItems, setModelSelectItems] = useState<DropdownOption[]>([]);
-    const [models, setModels] = useState<typeof D2Model[]>([]);
-    const [pendingApplyUseDefaultChange, setPendingApplyUseDefaultChange] = useState(false);
-    const [selectedType, setSelectedType] = useState<string>("");
-    const { compositionRoot } = useAppContext();
+    const {
+        error,
+        changeUseDefaultIncludeExclude,
+        modelSelectItems,
+        changeModelName,
+        selectedType,
+        d2,
+        changeInclude,
+        ruleOptions,
+        includeRules,
+    } = useMetadataIncludeExcludeStep(syncRule, onChange);
 
     useEffect(() => {
-        compositionRoot.instances.getById(syncRule.originInstance).then(result => {
-            result.match({
-                error: () => snackbar.error(i18n.t("Invalid origin instance")),
-                success: instance => {
-                    compositionRoot.metadata
-                        .getByIds(syncRule.metadataIds, instance, "id,name,type") //type is required to transform visualizations to charts and report tables
-                        .then((metadata: MetadataPackage<MetadataEntity>) => {
-                            const models = _(metadata)
-                                .keys()
-                                .concat(syncRule.metadataModelsSyncAll)
-                                .sort()
-                                .uniq()
-                                .value()
-                                .map(type => modelFactory(type));
-
-                            const options = models
-                                .filter(model => model.getMetadataType() !== defaultName)
-                                .map(model => {
-                                    const apiModel = api.models[model.getCollectionName()];
-                                    return apiModel.schema;
-                                })
-                                .map(schema => ({
-                                    name: schema.displayName,
-                                    id: schema.name,
-                                }));
-
-                            setModels(models);
-                            setModelSelectItems(options);
-
-                            if (pendingApplyUseDefaultChange) {
-                                onChange(
-                                    syncRule.useDefaultIncludeExclude
-                                        ? syncRule.markToUseDefaultIncludeExclude()
-                                        : syncRule.markToNotUseDefaultIncludeExclude(models)
-                                );
-                            }
-                        });
-                },
-            });
-        });
-    }, [compositionRoot, api, syncRule, snackbar, pendingApplyUseDefaultChange, onChange]);
-
-    const { includeRules = [], excludeRules = [] } = syncRule.metadataIncludeExcludeRules[selectedType] || {};
-    const allRules = [...includeRules, ...excludeRules];
-    const ruleOptions = allRules.map(rule => ({
-        value: rule,
-        text: includeExcludeRulesFriendlyNames[rule] || rule,
-    }));
-
-    const changeUseDefaultIncludeExclude = (useDefault: boolean) => {
-        if (models.length === 0) {
-            setPendingApplyUseDefaultChange(true);
+        if (error) {
+            snackbar.error(error);
         }
-        onChange(
-            useDefault ? syncRule.markToUseDefaultIncludeExclude() : syncRule.markToNotUseDefaultIncludeExclude(models)
-        );
-    };
-
-    const changeModelName = (modelName: string) => {
-        setSelectedType(modelName);
-    };
-
-    const changeInclude = (currentIncludeRules: any) => {
-        const type: string = selectedType;
-
-        const oldIncludeRules: string[] = includeRules;
-
-        const ruleToExclude = _.difference(oldIncludeRules, currentIncludeRules);
-        const ruleToInclude = _.difference(currentIncludeRules, oldIncludeRules);
-
-        if (ruleToInclude.length > 0) {
-            onChange(syncRule.moveRuleFromExcludeToInclude(type, ruleToInclude));
-        } else if (ruleToExclude.length > 0) {
-            onChange(syncRule.moveRuleFromIncludeToExclude(type, ruleToExclude));
-        }
-    };
+    }, [error, snackbar]);
 
     return (
         <React.Fragment>
@@ -132,6 +62,10 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
 
                     {selectedType && (
                         <div className={classes.multiselectorContainer}>
+                            <Row>
+                                <Typography>{i18n.t("Exclude objects and references ->")}</Typography>
+                                <Typography>{i18n.t("Include objects")}</Typography>
+                            </Row>
                             <MultiSelector
                                 d2={d2}
                                 height={300}
@@ -148,3 +82,9 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
 };
 
 export default withSnackbar(MetadataIncludeExcludeStep);
+
+const Row = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`;
