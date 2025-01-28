@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-01-28T10:40:10.952Z\n"
+"POT-Creation-Date: 2025-01-28T11:14:31.180Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1062,21 +1062,6 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
-msgid "Include owner and sharing settings"
-msgstr ""
-
-msgid "Remove organisation units and references (UID)"
-msgstr ""
-
-msgid "Remove organisation units and keep organisation units references (UID)"
-msgstr ""
-
-msgid "Remove users and references (UID)"
-msgstr ""
-
-msgid "Remove users and keep user references (UID)"
-msgstr ""
-
 msgid "Disable atomic verification"
 msgstr ""
 
@@ -1473,6 +1458,21 @@ msgid "Sync all TEIs"
 msgstr ""
 
 msgid "Exclude relationships"
+msgstr ""
+
+msgid "Include owner and sharing settings"
+msgstr ""
+
+msgid "Remove organisation units and references (UID)"
+msgstr ""
+
+msgid "Remove organisation units and keep organisation units references (UID)"
+msgstr ""
+
+msgid "Remove users and references (UID)"
+msgstr ""
+
+msgid "Remove users and keep user references (UID)"
 msgstr ""
 
 msgid "Exclude objects and references ->"

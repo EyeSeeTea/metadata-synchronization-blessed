@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-01-28T10:45:49.258Z\n"
-"PO-Revision-Date: 2025-01-28T10:45:49.258Z\n"
+"POT-Creation-Date: 2025-01-28T11:14:31.180Z\n"
+"PO-Revision-Date: 2025-01-28T11:14:31.181Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1059,21 +1059,6 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
-msgid "Include owner and sharing settings"
-msgstr ""
-
-msgid "Remove organisation units and references (UID)"
-msgstr ""
-
-msgid "Remove organisation units and keep organisation units references (UID)"
-msgstr ""
-
-msgid "Remove users and references (UID)"
-msgstr ""
-
-msgid "Remove users and keep user references (UID)"
-msgstr ""
-
 msgid "Disable atomic verification"
 msgstr ""
 
@@ -1468,6 +1453,21 @@ msgid "Sync all TEIs"
 msgstr ""
 
 msgid "Exclude relationships"
+msgstr ""
+
+msgid "Include owner and sharing settings"
+msgstr ""
+
+msgid "Remove organisation units and references (UID)"
+msgstr ""
+
+msgid "Remove organisation units and keep organisation units references (UID)"
+msgstr ""
+
+msgid "Remove users and references (UID)"
+msgstr ""
+
+msgid "Remove users and keep user references (UID)"
 msgstr ""
 
 msgid "Exclude objects and references ->"
