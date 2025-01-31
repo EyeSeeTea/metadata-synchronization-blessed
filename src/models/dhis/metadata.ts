@@ -153,12 +153,10 @@ export class DashboardModel extends D2Model {
         "visualizations.categoryOptionGroups",
         "visualizations.dataElementGroupSets",
         "visualizations.dataElementGroups",
-
         "visualizations.dataElements",
         "visualizations.dataElements.programIndicators",
         "visualizations.indicators.programIndicators",
         "visualizations.indicators.dataElements",
-
         "eventCharts",
         "eventReports",
         "maps",
