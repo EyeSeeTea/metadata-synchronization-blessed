@@ -140,6 +140,10 @@
         "typescript": "4.4.4",
         "wait-on": "6.0.0"
     },
+    "resolutions": {
+        "@types/react": "17.0.30",
+        "@types/react-dom": "17.0.9"
+    },
     "manifest.webapp": {
         "name": "MetaData Synchronization",
         "description": "Advanced metadata & data synchronization utility",
