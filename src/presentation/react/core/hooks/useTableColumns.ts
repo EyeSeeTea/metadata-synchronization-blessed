@@ -11,8 +11,6 @@ export default function useTableColumns(nameSpace: string) {
         });
     }, [compositionRoot.tableColumns, nameSpace]);
 
-    console.log({ visibleColumns });
-
     const saveReorderedColumns = useCallback(
         async (columnKeys: string[]) => {
             if (!visibleColumns) return;
