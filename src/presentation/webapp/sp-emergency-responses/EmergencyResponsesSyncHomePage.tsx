@@ -29,13 +29,10 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
 
     const executeRules = React.useCallback(
         (rules: SynchronizationRule[]) =>
-            promiseMap(
-                _.orderBy(rules, rule => rule.code === "EFH_METADATA_ORGUNITS", "desc"),
-                rule => {
-                    console.debug("Running: " + rule.name);
-                    return runSyncRule(rule);
-                }
-            ),
+            promiseMap(rules, rule => {
+                console.debug("Running: " + rule.name);
+                return runSyncRule(rule);
+            }),
         [runSyncRule]
     );
 
