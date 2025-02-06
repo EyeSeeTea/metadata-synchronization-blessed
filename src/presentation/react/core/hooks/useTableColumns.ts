@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../contexts/AppContext";
+import { useColumnsToShow } from "./useColumnsToShow";
+import { ReferenceObject, TableColumn } from "@eyeseetea/d2-ui-components";
 
-export default function useTableColumns(nameSpace: string) {
+export default function useTableColumns<T extends ReferenceObject>(nameSpace: string, tableColumns: TableColumn<T>[]) {
     const { compositionRoot } = useAppContext();
     const [visibleColumns, setVisibleColumns] = useState<string[]>();
+    const { columnsToShow } = useColumnsToShow(tableColumns, visibleColumns);
 
     useEffect(() => {
         compositionRoot.tableColumns.getColumns(nameSpace).then(columns => {
@@ -21,7 +24,7 @@ export default function useTableColumns(nameSpace: string) {
     );
 
     return {
-        visibleColumns: visibleColumns,
+        columnsToShow: columnsToShow,
         saveReorderedColumns: saveReorderedColumns,
     };
 }

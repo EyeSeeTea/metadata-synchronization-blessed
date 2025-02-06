@@ -43,7 +43,6 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
     const [programs, setPrograms] = useState<CustomProgram[]>([]);
     const [programFilter, changeProgramFilter] = useState<string>("");
     const [error, setError] = useState<unknown>();
-    const { visibleColumns, saveReorderedColumns } = useTableColumns(Namespace.EVENTS_USER_COLUMNS);
 
     useEffect(() => {
         const sync = compositionRoot.sync.events(memoizedSyncRule.toBuilder());
@@ -197,7 +196,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
             .value();
 
         return dataElements.map(({ id, displayFormName }) => ({
-            name: id,
+            name: id as keyof ProgramEvent,
             text: displayFormName,
             sortable: true,
             hidden: true,
@@ -207,20 +206,8 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         }));
     }, [programFilter, programs]);
 
-    const columnsToShow = useMemo(() => {
-        const allColumns = [...columns, ...additionalColumns];
-        if (!visibleColumns || _.isEmpty(visibleColumns)) return allColumns;
-
-        const indexes = _(visibleColumns)
-            .map((columnName, idx) => [columnName, idx] as [string, number])
-            .fromPairs()
-            .value();
-
-        return _(allColumns)
-            .map(column => ({ ...column, hidden: !visibleColumns.includes(column.name) }))
-            .sortBy(column => indexes[column.name] || 0)
-            .value();
-    }, [visibleColumns, columns, additionalColumns]);
+    const tableColumns = [...columns, ...additionalColumns];
+    const { columnsToShow, saveReorderedColumns } = useTableColumns(Namespace.EVENTS_USER_COLUMNS, tableColumns);
 
     const filteredObjects = objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
 
