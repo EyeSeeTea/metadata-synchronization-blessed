@@ -120,6 +120,9 @@ import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/Lis
 import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { cache } from "../utils/cache";
 import { DataStoreMetadataD2Repository } from "../data/data-store/DataStoreMetadataD2Repository";
+import { GetColumnsUseCase } from "../domain/table-columns/usecases/GetColumnsUseCase";
+import { SaveColumnsUseCase } from "../domain/table-columns/usecases/SaveColumnsUseCase";
+import { TableColumnsDataStoreRepository } from "../data/table-columns/TableColumnsDataStoreRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -150,6 +153,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.SchedulerRepository, SchedulerD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
+        this.repositoryFactory.bind(Repositories.TableColumnsRepository, TableColumnsDataStoreRepository);
     }
 
     @cache()
@@ -308,6 +312,14 @@ export class CompositionRoot {
     public get events() {
         return getExecute({
             list: new ListEventsUseCase(this.repositoryFactory, this.localInstance),
+        });
+    }
+
+    @cache()
+    public get tableColumns() {
+        return getExecute({
+            getColumns: new GetColumnsUseCase(this.repositoryFactory, this.localInstance),
+            saveColumns: new SaveColumnsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
