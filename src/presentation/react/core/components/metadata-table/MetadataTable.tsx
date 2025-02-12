@@ -30,8 +30,6 @@ import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
 import { getFilterData, getOrgUnitSubtree } from "./utils";
 import { Toggle } from "../toggle/Toggle";
-import useTableColumns from "../../hooks/useTableColumns";
-import { Namespace } from "../../../../../data/storage/Namespaces";
 
 export type MetadataTableFilters =
     | "group"
@@ -149,6 +147,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 }) => {
     const { compositionRoot, api: defaultApi } = useAppContext();
     const classes = useStyles();
+
     const snackbar = useSnackbar();
 
     const [model, updateModel] = useState<typeof D2Model>(() => models[0] ?? DataElementModel);
@@ -699,8 +698,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         ])
     );
 
-    const { columnsToShow, saveReorderedColumns } = useTableColumns(Namespace.METADATA_USER_COLUMNS, columns);
-
     const details: ObjectsTableDetailField<MetadataType>[] = uniqCombine([...model.getDetails(), responsibleField]);
 
     const actions: TableAction<MetadataType>[] = uniqCombine([...tableActions, ...additionalActions]);
@@ -723,7 +720,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
 
             <ObjectsTable<MetadataType>
                 rows={shownRows}
-                columns={columnsToShow}
+                columns={columns}
                 details={details}
                 onChangeSearch={model.getMetadataType() !== "dataStore" ? changeSearchFilter : undefined}
                 initialState={initialState}
@@ -738,7 +735,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 forceSelectionColumn={true}
                 actions={actions}
                 sideComponents={orgUnitTreeFilter}
-                onReorderColumns={saveReorderedColumns}
                 {...rest}
             />
         </React.Fragment>

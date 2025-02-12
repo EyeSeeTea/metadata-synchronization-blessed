@@ -206,7 +206,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
         }));
     }, [programFilter, programs]);
 
-    const tableColumns = [...columns, ...additionalColumns];
+    const tableColumns = useMemo(() => [...columns, ...additionalColumns], [columns, additionalColumns]);
     const { columnsToShow, saveReorderedColumns } = useTableColumns(Namespace.EVENTS_USER_COLUMNS, tableColumns);
 
     const filteredObjects = objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
