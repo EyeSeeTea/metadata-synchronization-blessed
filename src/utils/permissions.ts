@@ -147,7 +147,7 @@ export const initializeAppRoles = async (baseUrl: string) => {
         const { name, description, initialize } = AppRoles[role];
         if (initialize) {
             const { userRoles } = (
-                await axios.get(baseUrl + "/api/metadata", {
+                await axios.get(baseUrl + "api/metadata", {
                     withCredentials: true,
                     params: {
                         userRoles: true,
@@ -160,7 +160,7 @@ export const initializeAppRoles = async (baseUrl: string) => {
             if (!userRoles || userRoles.length === 0) {
                 try {
                     await axios.post(
-                        baseUrl + "/api/metadata.json",
+                        baseUrl + "api/metadata.json",
                         {
                             userRoles: [
                                 {
