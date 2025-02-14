@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-01-28T11:14:31.180Z\n"
-"PO-Revision-Date: 2025-01-28T11:14:31.181Z\n"
+"POT-Creation-Date: 2025-02-14T06:29:56.875Z\n"
+"PO-Revision-Date: 2025-02-14T06:29:56.875Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1474,6 +1474,12 @@ msgid "Exclude objects and references ->"
 msgstr ""
 
 msgid "Include objects"
+msgstr ""
+
+msgid "Include only references ->"
+msgstr ""
+
+msgid "Include references and objects"
 msgstr ""
 
 msgid "Use sync rules periods"

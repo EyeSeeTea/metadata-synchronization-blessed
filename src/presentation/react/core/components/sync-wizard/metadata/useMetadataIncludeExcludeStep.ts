@@ -15,12 +15,11 @@ export function useMetadataIncludeExcludeStep(
     syncRule: SynchronizationRule,
     onChange: (syncRule: SynchronizationRule) => void
 ) {
-    const { d2, api } = useAppContext();
+    const { d2, api, compositionRoot } = useAppContext();
     const [modelSelectItems, setModelSelectItems] = useState<DropdownOption[]>([]);
     const [models, setModels] = useState<typeof D2Model[]>([]);
     const [pendingApplyUseDefaultChange, setPendingApplyUseDefaultChange] = useState(false);
     const [selectedType, setSelectedType] = useState<string>("");
-    const { compositionRoot } = useAppContext();
     const [error, setError] = useState<string>();
     const [instance, setInstance] = useState<Instance>();
 
@@ -56,9 +55,21 @@ export function useMetadataIncludeExcludeStep(
             });
     }, [compositionRoot, api, syncRule, pendingApplyUseDefaultChange, onChange, instance]);
 
+    const syncParams = useMemo(() => syncRule.syncParams, [syncRule.syncParams]);
+
+    const useDefaultIncludeExclude = useMemo(
+        () => syncRule.useDefaultIncludeExclude,
+        [syncRule.useDefaultIncludeExclude]
+    );
+
     const includeRules = useMemo(() => {
         const { includeRules = [] } = syncRule.metadataIncludeExcludeRules[selectedType] || {};
         return includeRules;
+    }, [syncRule.metadataIncludeExcludeRules, selectedType]);
+
+    const includeReferencesAndObjectsRules = useMemo(() => {
+        const { includeReferencesAndObjectsRules = [] } = syncRule.metadataIncludeExcludeRules[selectedType] || {};
+        return includeReferencesAndObjectsRules;
     }, [syncRule.metadataIncludeExcludeRules, selectedType]);
 
     const ruleOptions = useMemo(() => {
@@ -69,6 +80,13 @@ export function useMetadataIncludeExcludeStep(
             text: includeExcludeRulesFriendlyNames[rule] || rule,
         }));
     }, [includeRules, syncRule.metadataIncludeExcludeRules, selectedType]);
+
+    const includeRuleOptions = useMemo(() => {
+        return includeRules.map(rule => ({
+            value: rule,
+            text: includeExcludeRulesFriendlyNames[rule] || rule,
+        }));
+    }, [includeRules]);
 
     const changeUseDefaultIncludeExclude = useCallback(
         (useDefault: boolean) => {
@@ -104,6 +122,37 @@ export function useMetadataIncludeExcludeStep(
             }
         },
         [includeRules, onChange, selectedType, syncRule]
+    );
+
+    const changeIncludeReferencesAndObjectsRules = useCallback(
+        (currentIncludeReferencesAndObjectsRules: any) => {
+            const type: string = selectedType;
+
+            const oldIncludeReferencesAndObjectsRules: string[] = includeReferencesAndObjectsRules;
+
+            const ruleToIncludeOnlyReferences = _.difference(
+                oldIncludeReferencesAndObjectsRules,
+                currentIncludeReferencesAndObjectsRules
+            );
+            const ruleToIncludeReferencesAndObjects = _.difference(
+                currentIncludeReferencesAndObjectsRules,
+                oldIncludeReferencesAndObjectsRules
+            );
+
+            if (ruleToIncludeReferencesAndObjects.length > 0) {
+                onChange(
+                    syncRule.moveFromIncludeOnlyReferencesToReferencesAndObjects(
+                        type,
+                        ruleToIncludeReferencesAndObjects
+                    )
+                );
+            } else if (ruleToIncludeOnlyReferences.length > 0) {
+                onChange(
+                    syncRule.moveRuleFromIncludeReferencesAndObjectsToOnlyReferences(type, ruleToIncludeOnlyReferences)
+                );
+            }
+        },
+        [includeReferencesAndObjectsRules, onChange, selectedType, syncRule]
     );
 
     const changeSharingSettings = useCallback(
@@ -159,6 +208,8 @@ export function useMetadataIncludeExcludeStep(
     return {
         error,
         d2,
+        syncParams,
+        useDefaultIncludeExclude,
         changeUseDefaultIncludeExclude,
         changeModelName,
         changeInclude,
@@ -166,6 +217,9 @@ export function useMetadataIncludeExcludeStep(
         selectedType,
         ruleOptions,
         includeRules,
+        changeIncludeReferencesAndObjectsRules,
+        includeRuleOptions,
+        includeReferencesAndObjectsRules,
         changeSharingSettings,
         changeOrgUnitReferences,
         changeRemoveOrgUnitObjects,

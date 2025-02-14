@@ -32,9 +32,14 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
         changeModelName,
         selectedType,
         d2,
+        syncParams,
+        useDefaultIncludeExclude,
         changeInclude,
         ruleOptions,
         includeRules,
+        changeIncludeReferencesAndObjectsRules,
+        includeRuleOptions,
+        includeReferencesAndObjectsRules,
         changeSharingSettings,
         changeOrgUnitReferences,
         changeRemoveOrgUnitObjects,
@@ -55,7 +60,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     <Toggle
                         label={i18n.t("Include owner and sharing settings")}
                         onValueChange={changeSharingSettings}
-                        value={syncRule.syncParams.includeSharingSettings}
+                        value={syncParams.includeSharingSettings}
                     />
                 </div>
 
@@ -63,16 +68,16 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     <Toggle
                         label={i18n.t("Remove organisation units and references (UID)")}
                         onValueChange={changeOrgUnitReferences}
-                        value={syncRule.syncParams.removeOrgUnitReferences}
+                        value={syncParams.removeOrgUnitReferences}
                     />
                 </div>
 
                 <div>
                     <Toggle
-                        disabled={syncRule.syncParams.removeOrgUnitReferences}
+                        disabled={syncParams.removeOrgUnitReferences}
                         label={i18n.t("Remove organisation units and keep organisation units references (UID)")}
                         onValueChange={changeRemoveOrgUnitObjects}
-                        value={syncRule.syncParams.removeOrgUnitObjects || false}
+                        value={syncParams.removeOrgUnitObjects || false}
                     />
                 </div>
 
@@ -80,7 +85,7 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     <Toggle
                         label={i18n.t("Remove users and references (UID)")}
                         onValueChange={changeRemoveUserObjectsAndReferences}
-                        value={syncRule.syncParams.removeUserObjectsAndReferences || false}
+                        value={syncParams.removeUserObjectsAndReferences || false}
                     />
                 </div>
 
@@ -88,16 +93,16 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     <Toggle
                         label={i18n.t("Remove users and keep user references (UID)")}
                         onValueChange={changeRemoveUserObjects}
-                        value={syncRule.syncParams.removeUserObjects || false}
+                        value={syncParams.removeUserObjects || false}
                     />
                 </div>
             </div>
             <Toggle
                 label={i18n.t("Use default dependencies")}
-                value={syncRule.useDefaultIncludeExclude}
+                value={useDefaultIncludeExclude}
                 onValueChange={changeUseDefaultIncludeExclude}
             />
-            {!syncRule.useDefaultIncludeExclude && (
+            {!useDefaultIncludeExclude && (
                 <div className={classes.includeExcludeContainer}>
                     <Dropdown
                         key={"model-selection"}
@@ -108,19 +113,34 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     />
 
                     {selectedType && (
-                        <div className={classes.multiselectorContainer}>
-                            <Row>
-                                <Typography>{i18n.t("Exclude objects and references ->")}</Typography>
-                                <Typography>{i18n.t("Include objects")}</Typography>
-                            </Row>
-                            <MultiSelector
-                                d2={d2}
-                                height={300}
-                                onChange={changeInclude}
-                                options={ruleOptions}
-                                selected={includeRules}
-                            />
-                        </div>
+                        <>
+                            <div className={classes.multiselectorContainer}>
+                                <Row>
+                                    <Typography>{i18n.t("Exclude objects and references ->")}</Typography>
+                                    <Typography>{i18n.t("Include objects")}</Typography>
+                                </Row>
+                                <MultiSelector
+                                    d2={d2}
+                                    height={300}
+                                    onChange={changeInclude}
+                                    options={ruleOptions}
+                                    selected={includeRules}
+                                />
+                            </div>
+                            <div className={classes.multiselectorContainer}>
+                                <Row>
+                                    <Typography>{i18n.t("Include only references ->")}</Typography>
+                                    <Typography>{i18n.t("Include references and objects")}</Typography>
+                                </Row>
+                                <MultiSelector
+                                    d2={d2}
+                                    height={300}
+                                    onChange={changeIncludeReferencesAndObjectsRules}
+                                    options={includeRuleOptions}
+                                    selected={includeReferencesAndObjectsRules}
+                                />
+                            </div>
+                        </>
                     )}
                 </div>
             )}

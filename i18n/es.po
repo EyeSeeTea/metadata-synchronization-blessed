@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-01-28T11:14:31.180Z\n"
+"POT-Creation-Date: 2025-02-14T06:29:56.875Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1479,6 +1479,12 @@ msgid "Exclude objects and references ->"
 msgstr ""
 
 msgid "Include objects"
+msgstr ""
+
+msgid "Include only references ->"
+msgstr ""
+
+msgid "Include references and objects"
 msgstr ""
 
 msgid "Use sync rules periods"
