@@ -3565,7 +3565,7 @@ export type ProgramStageInstance = {
     displayName: string;
     dueDate: string;
     eventDataValues: unknown[];
-    eventDate: string;
+    occurredAt: string;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];

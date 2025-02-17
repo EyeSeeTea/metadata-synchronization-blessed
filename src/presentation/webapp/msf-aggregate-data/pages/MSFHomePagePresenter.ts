@@ -191,10 +191,10 @@ async function validatePreviousDataValues(
                 .flatten()
                 .uniqBy("id")
                 .map(
-                    ({ id, orgUnitName, orgUnit, eventDate, lastUpdated }) =>
-                        `\n- Event ${id} for org unit ${orgUnitName ?? orgUnit} on date ${moment(eventDate).format(
+                    ({ id, orgUnitName, orgUnit, occurredAt, updatedAt }) =>
+                        `\n- Event ${id} for org unit ${orgUnitName ?? orgUnit} on date ${moment(occurredAt).format(
                             "DD-MM-YYYY"
-                        )} and updated ${moment(lastUpdated).format("DD-MM-YYYY")}`
+                        )} and updated ${moment(updatedAt).format("DD-MM-YYYY")}`
                 )
                 .value();
 

@@ -1,5 +1,7 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import React from "react";
+import { DataSynchronizationParams } from "../../../../../domain/aggregated/entities/DataSynchronizationParams";
+import { MetadataSynchronizationParams } from "../../../../../domain/metadata/entities/MetadataSynchronizationParams";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import i18n from "../../../../../locales";
 import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
@@ -84,6 +86,13 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
             onChange(
                 syncRule.updateSyncParams({
                     ...syncParams,
+                    importMode: dryRun ? "VALIDATE" : "COMMIT",
+                })
+            );
+        } else if (syncRule.type === "events") {
+            onChange(
+                syncRule.updateDataParams({
+                    ...dataParams,
                     importMode: dryRun ? "VALIDATE" : "COMMIT",
                 })
             );
@@ -253,11 +262,7 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                 <Toggle
                     label={i18n.t("Dry Run")}
                     onValueChange={changeDryRun}
-                    value={
-                        syncRule.type === "metadata" || syncRule.type === "deleted"
-                            ? syncParams.importMode === "VALIDATE"
-                            : dataParams.dryRun || false
-                    }
+                    value={isDryRunEnabled(syncRule, syncParams, dataParams)}
                 />
             </div>
 
@@ -289,3 +294,17 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
 };
 
 export default SyncParamsSelector;
+
+function isDryRunEnabled(
+    syncRule: SynchronizationRule,
+    syncParams: MetadataSynchronizationParams,
+    dataParams: DataSynchronizationParams
+): boolean {
+    if (syncRule.type === "metadata" || syncRule.type === "deleted") {
+        return syncParams.importMode === "VALIDATE";
+    } else if (syncRule.type === "events") {
+        return dataParams.importMode === "VALIDATE";
+    } else {
+        return dataParams.dryRun || false;
+    }
+}

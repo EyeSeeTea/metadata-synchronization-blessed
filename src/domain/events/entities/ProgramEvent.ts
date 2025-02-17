@@ -4,18 +4,18 @@ export interface ProgramEvent {
     orgUnit: string;
     orgUnitName?: string;
     program: string;
-    href: string;
-    programStage: string;
-    created: string;
-    deleted: boolean;
-    lastUpdated: string;
+    programStage?: string;
+    createdAt?: string;
+    deleted?: boolean;
+    updatedAt?: string;
     status: EventStatus;
-    storedBy: string;
-    dueDate: string;
-    eventDate: string;
+    storedBy?: string;
+    scheduledAt?: string;
+    occurredAt: string;
     attributeCategoryOptions?: string;
     attributeOptionCombo?: string;
     dataValues: ProgramEventDataValue[];
+    event?: string;
 }
 
-export type EventStatus = "ACTIVE" | "COMPLETED" | "VISITED" | "SCHEDULED" | "OVERDUE" | "SKIPPED";
+export type EventStatus = "ACTIVE" | "COMPLETED" | "VISITED" | "SCHEDULE" | "OVERDUE" | "SKIPPED";
