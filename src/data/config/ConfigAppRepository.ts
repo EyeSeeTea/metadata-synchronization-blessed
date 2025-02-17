@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { StorageType } from "../../domain/config/entities/Config";
+import { DataStorageType, StorageType } from "../../domain/config/entities/Config";
 import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
@@ -23,8 +23,8 @@ export class ConfigAppRepository implements ConfigRepository {
     }
 
     @cache()
-    public async getStorageClient(): Promise<StorageClient> {
-        const dataStoreClient = new StorageDataStoreClient(this.instance);
+    public async getStorageClient(options?: { storageType: DataStorageType }): Promise<StorageClient> {
+        const dataStoreClient = new StorageDataStoreClient(this.instance, undefined, options);
         const constantClient = new StorageConstantClient(this.instance);
 
         const constantConfig = await constantClient.getObject(Namespace.CONFIG);

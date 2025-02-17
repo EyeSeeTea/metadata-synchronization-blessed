@@ -5,19 +5,24 @@ import { D2Api, DataStore, DataStoreKeyMetadata } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
+import { DataStorageType } from "../../domain/config/entities/Config";
 
 export const dataStoreNamespace = "metadata-synchronization";
 
+type StorageOptions = {
+    storageType: DataStorageType;
+};
 export class StorageDataStoreClient extends StorageClient {
     public type = "dataStore" as const;
 
     private api: D2Api;
     private dataStore: DataStore;
 
-    constructor(instance: Instance, namespace: string = dataStoreNamespace) {
+    constructor(instance: Instance, namespace: string = dataStoreNamespace, options?: StorageOptions) {
         super();
         this.api = getD2APiFromInstance(instance);
-        this.dataStore = this.api.dataStore(namespace);
+        this.dataStore =
+            options?.storageType === "user" ? this.api.userDataStore(namespace) : this.api.dataStore(namespace);
     }
 
     public async getObject<T extends object>(key: string): Promise<T | undefined> {

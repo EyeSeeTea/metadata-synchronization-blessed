@@ -12,6 +12,7 @@ export const Namespace = {
     MAPPINGS: "mappings",
     SETTINGS: "settings",
     SCHEDULER_EXECUTIONS: "scheduler-executions",
+    EVENTS_USER_COLUMNS: "events-user-columns",
 };
 
 export const NamespaceProperties: Record<string, string[]> = {
