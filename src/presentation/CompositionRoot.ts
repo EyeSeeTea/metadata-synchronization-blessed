@@ -120,6 +120,8 @@ import { ListTEIsUseCase } from "../domain/tracked-entity-instances/usecases/Lis
 import { GetCurrentUserUseCase } from "../domain/user/usecases/GetCurrentUserUseCase";
 import { cache } from "../utils/cache";
 import { DataStoreMetadataD2Repository } from "../data/data-store/DataStoreMetadataD2Repository";
+import { GetSupportedDhisVersionsUseCase } from "../domain/dhis-releases/usecases/GetSupportedDhisVersionsUseCase";
+import { DhisReleasesLocalRepository } from "../data/dhis-releases/DhisReleasesLocalRepository";
 import { GetColumnsUseCase } from "../domain/table-columns/usecases/GetColumnsUseCase";
 import { SaveColumnsUseCase } from "../domain/table-columns/usecases/SaveColumnsUseCase";
 import { TableColumnsDataStoreRepository } from "../data/table-columns/TableColumnsDataStoreRepository";
@@ -153,6 +155,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.SchedulerRepository, SchedulerD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
+        this.repositoryFactory.bind(Repositories.DhisReleasesRepository, DhisReleasesLocalRepository);
         this.repositoryFactory.bind(Repositories.TableColumnsRepository, TableColumnsDataStoreRepository);
     }
 
@@ -416,6 +419,15 @@ export class CompositionRoot {
         return getExecute({
             get: new GetSettingsUseCase(this.repositoryFactory.settingsRepository(this.localInstance)),
             save: new SaveSettingsUseCase(this.repositoryFactory.settingsRepository(this.localInstance)),
+        });
+    }
+
+    @cache()
+    public get dhisReleases() {
+        return getExecute({
+            getSupportedDhisVersions: new GetSupportedDhisVersionsUseCase(
+                this.repositoryFactory.dhisReleasesRepository()
+            ),
         });
     }
 }
