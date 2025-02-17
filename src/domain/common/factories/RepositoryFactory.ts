@@ -24,6 +24,10 @@ import { SchedulerRepositoryConstructor } from "../../scheduler/repositories/Sch
 import { SettingsRepositoryConstructor } from "../../settings/SettingsRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
+import {
+    TableColumnsRepository,
+    TableColumnsRepositoryConstructor,
+} from "../../table-columns/repositories/TableColumnsRepository";
 import { TEIRepository, TEIRepositoryConstructor } from "../../tracked-entity-instances/repositories/TEIRepository";
 import {
     TransformationRepository,
@@ -120,6 +124,13 @@ export class RepositoryFactory {
     @cache()
     public eventsRepository(instance: Instance): EventsRepository {
         return this.get<EventsRepositoryConstructor>(Repositories.EventsRepository, [instance]);
+    }
+
+    @cache()
+    public tableColumnsRepository(instance: Instance): TableColumnsRepository {
+        const config = this.configRepository(instance);
+
+        return this.get<TableColumnsRepositoryConstructor>(Repositories.TableColumnsRepository, [config]);
     }
 
     @cache()
@@ -223,4 +234,5 @@ export const Repositories = {
     SchedulerRepository: "schedulerRepository",
     DataStoreMetadataRepository: "dataStoreMetadataRepository",
     DhisReleasesRepository: "dhisReleasesRepository",
+    TableColumnsRepository: "tableColumnsRepository",
 } as const;
