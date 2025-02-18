@@ -1,3 +1,5 @@
+import { TrackerPostParams, TrackerPostRequest, TrackerPostResponse } from "@eyeseetea/d2-api/api/tracker";
+import { D2TrackerTrackedEntity, TrackedEntitiesGetResponse } from "@eyeseetea/d2-api/api/trackerTrackedEntities";
 import _ from "lodash";
 import {
     DataImportParams,
@@ -6,11 +8,7 @@ import {
 } from "../../domain/aggregated/entities/DataSynchronizationParams";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { Instance } from "../../domain/instance/entities/Instance";
-import {
-    SynchronizationResult,
-    SynchronizationStats,
-    SynchronizationStatus,
-} from "../../domain/reports/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TEIsPackage } from "../../domain/tracked-entity-instances/entities/TEIsPackage";
 import { TrackedEntityInstance } from "../../domain/tracked-entity-instances/entities/TrackedEntityInstance";
@@ -22,30 +20,27 @@ import { getD2APiFromInstance } from "../../utils/d2-utils";
 export class TEID2ApiRepository implements TEIRepository {
     private api: D2Api;
 
-    //Specify fields because without fields enrollment relation is not in response
-    //and if assign fiedls: "*" return events inside enrollments
-    private fields =
-        "trackedEntityInstance, created,orgUnit,createdAtClient,lastUpdated,trackedEntityType,lastUpdatedAtClient,inactive,deleted,featureType,programOwners,enrollments,relationships,attributes";
-
     constructor(private instance: Instance) {
         this.api = getD2APiFromInstance(instance);
     }
 
     async getAllTEIs(params: DataSynchronizationParams, programs: string[]): Promise<TrackedEntityInstance[]> {
         const result = await promiseMap(programs, async program => {
-            const { trackedEntityInstances, pager } = await this.getTEIs(params, program, 1, 250);
+            const { instances, total = 0, pageSize } = await this.getTEIs(params, program, 1, 250);
 
-            const paginatedTEIs = await promiseMap(_.range(2, pager.pageCount + 1), async page => {
-                const { trackedEntityInstances } = await this.getTEIs(params, program, page, 250);
-                return trackedEntityInstances;
+            const pageCount = Math.ceil(total / pageSize);
+
+            const paginatedTEIs = await promiseMap(_.range(2, pageCount + 1), async page => {
+                const { instances } = await this.getTEIs(params, program, page, 250);
+                return instances;
             });
 
-            return [...trackedEntityInstances, ..._.flatten(paginatedTEIs)];
+            return [...instances, ..._.flatten(paginatedTEIs)];
         });
 
         return _(result)
             .flatten()
-            .filter(object => isDataSynchronizationRequired(params, object.lastUpdated))
+            .filter(object => isDataSynchronizationRequired(params, object.updatedAt))
             .value();
     }
 
@@ -62,22 +57,20 @@ export class TEID2ApiRepository implements TEIRepository {
 
         if (orgUnits.length === 0)
             return {
-                trackedEntityInstances: [],
-                pager: {
-                    pageCount: 1,
-                    pageSize,
-                    total: 0,
-                    page,
-                },
+                instances: [],
+                pageCount: 1,
+                pageSize,
+                total: 0,
+                page,
             };
 
-        const result = await this.api
-            .get<TEIsResponse>("/trackedEntityInstances", {
+        const result = await this.api.tracker.trackedEntities
+            .get({
+                fields: teiFields,
                 program,
-                ou: orgUnits.join(";"),
-                fields: this.fields,
-                programStartDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                programEndDate:
+                orgUnit: orgUnits.join(";"),
+                enrollmentEnrolledAfter: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                enrollmentEnrolledBefore:
                     period !== "ALL" && period !== "SINCE_LAST_SUCCESSFUL_SYNC"
                         ? endDate.format("YYYY-MM-DD")
                         : undefined,
@@ -87,7 +80,15 @@ export class TEID2ApiRepository implements TEIRepository {
             })
             .getData();
 
-        return { ...result };
+        const trackedEntities = this.extractTrackeEntity(result);
+
+        return {
+            instances: trackedEntities.map(tei => this.buildTrackedEntityInstance(tei)),
+            page,
+            pageSize,
+            total: result.total || 0,
+            pageCount: result.total ? Math.ceil(result.total / pageSize) : 1,
+        };
     }
 
     async getTEIsById(params: DataSynchronizationParams, ids: string[]): Promise<TrackedEntityInstance[]> {
@@ -97,35 +98,35 @@ export class TEID2ApiRepository implements TEIRepository {
         if (orgUnits.length === 0) return [];
         if (ids.length === 0) return [];
 
-        const result = await this.api
-            .get<TEIsResponse>("/trackedEntityInstances", {
-                fields: this.fields,
-                ou: orgUnits.join(";"),
-                trackedEntityInstance: ids.join(";"),
+        const result: TrackedEntitiesGetResponse = await this.api.tracker.trackedEntities
+            .get({
+                fields: teiFields,
+                orgUnit: orgUnits.join(";"),
+                trackedEntity: ids.join(";"),
             })
             .getData();
 
-        return result.trackedEntityInstances;
+        const trackedEntities = this.extractTrackeEntity(result);
+
+        return trackedEntities.map(tei => this.buildTrackedEntityInstance(tei));
     }
 
     async save(data: TEIsPackage, additionalParams: DataImportParams | undefined): Promise<SynchronizationResult> {
         try {
-            const response = await this.api
-                .post<TEIsPostResponse>(
-                    "/trackedEntityInstances",
-                    {
-                        idScheme: "UID",
-                        dataElementIdScheme: "UID",
-                        orgUnitIdScheme: "UID",
-                        format: "json",
-                        dryRun: false,
-                        ...additionalParams,
-                        strategy: "CREATE_AND_UPDATE",
-                        ignoreEmptyCollection: true,
-                    },
-                    data
-                )
-                .getData();
+            const teiPostParams: TrackerPostParams = {
+                idScheme: "UID",
+                dataElementIdScheme: "UID",
+                orgUnitIdScheme: "UID",
+                importMode: "COMMIT",
+                importStrategy: "CREATE_AND_UPDATE",
+                ...additionalParams,
+            };
+
+            const trackerPostRequest: TrackerPostRequest = {
+                trackedEntities: data.trackedEntityInstances.map(tei => this.buildD2TrackerTrackedEntity(tei)),
+            };
+
+            const response = await this.api.tracker.post(teiPostParams, trackerPostRequest).getData();
 
             return this.cleanTEIsImportResponse(response);
         } catch (error: any) {
@@ -142,50 +143,104 @@ export class TEID2ApiRepository implements TEIRepository {
         }
     }
 
-    private cleanTEIsImportResponse(importResult: TEIsPostResponse): SynchronizationResult {
-        const { status, message, response } = importResult;
-
-        const errors =
-            response.importSummaries?.flatMap(
-                ({ reference = "", description = "", conflicts }) =>
-                    conflicts?.map(({ object, value }) => ({
-                        id: reference,
-                        message: _([description, object, value]).compact().join(" "),
-                    })) ?? [{ id: reference, message: description }]
-            ) ?? [];
-
-        const stats: SynchronizationStats = _.pick(response, ["imported", "updated", "ignored", "deleted", "total"]);
-
+    private cleanTEIsImportResponse(importResult: TrackerPostResponse): SynchronizationResult {
+        const stats = importResult.bundleReport
+            ? importResult.bundleReport.typeReportMap.TRACKED_ENTITY.stats
+            : importResult.stats;
         return {
-            status,
-            message,
-            stats,
+            status: importResult.status === "OK" ? "SUCCESS" : importResult.status,
+            stats: {
+                imported: stats.created,
+                updated: stats.updated,
+                ignored: stats.ignored,
+                deleted: stats.deleted,
+                total: stats.total,
+            },
             instance: this.instance.toPublicObject(),
-            errors,
+            errors: importResult.validationReport.errorReports.map(error => {
+                return {
+                    id: error.uid,
+                    message: error.message,
+                    type: error.trackerType,
+                };
+            }),
             date: new Date(),
             type: "trackedEntityInstances",
             response: importResult,
         };
     }
+
+    private buildTrackedEntityInstance(tei: D2TrackerTrackedEntity): TrackedEntityInstance {
+        return {
+            ...tei,
+            trackedEntity: tei.trackedEntity || "",
+            orgUnit: tei.orgUnit || "",
+            programOwners: tei.programOwners || [],
+            enrollments:
+                tei.enrollments?.map(enrollment => ({
+                    ...enrollment,
+                    orgUnit: enrollment.orgUnit || "",
+                })) || [],
+            relationships: tei.relationships || [],
+            attributes:
+                tei.attributes?.map(attribute => {
+                    return {
+                        ...attribute,
+                        displayName: attribute.displayName || "",
+                    };
+                }) || [],
+        };
+    }
+
+    private buildD2TrackerTrackedEntity(tei: TrackedEntityInstance): D2TrackerTrackedEntity {
+        return {
+            ...tei,
+            enrollments: tei.enrollments.map(enrollment => {
+                return { ...enrollment, events: [], relationships: [], attributes: [], notes: [] };
+            }),
+        };
+    }
+
+    extractTrackeEntity(response: TrackedEntitiesGetResponse): D2TrackerTrackedEntity[] {
+        return response.instances || (hasEventsProperty(response) ? response.trackedEntities : []);
+    }
 }
 
-interface TEIsPostResponse {
-    status: SynchronizationStatus;
-    message?: string;
-    response: {
-        status: SynchronizationStatus;
-        imported: number;
-        updated: number;
-        deleted: number;
-        ignored: number;
-        total: number;
-        importSummaries?: {
-            description?: string;
-            reference: string;
-            conflicts?: {
-                object: string;
-                value: string;
-            }[];
-        }[];
-    };
+function hasEventsProperty(obj: any): obj is { trackedEntities: D2TrackerTrackedEntity[] } {
+    return obj && Array.isArray(obj.trackedEntities);
 }
+
+const enrollmentsFields = {
+    enrollment: true,
+    createdAt: true,
+    createdAtClient: true,
+    updatedAt: true,
+    updatedAtClient: true,
+    trackedEntity: true,
+    program: true,
+    status: true,
+    orgUnit: true,
+    orgUnitName: true,
+    enrolledAt: true,
+    occurredAt: true,
+    followUp: true,
+    deleted: true,
+    storedBy: true,
+    notes: true,
+} as const;
+
+const teiFields = {
+    trackedEntity: true,
+    createdAt: true,
+    orgUnit: true,
+    createdAtClient: true,
+    updatedAt: true,
+    trackedEntityType: true,
+    updatedAtClient: true,
+    inactive: true,
+    deleted: true,
+    programOwners: true,
+    enrollments: enrollmentsFields,
+    relationships: true,
+    attributes: true,
+} as const;

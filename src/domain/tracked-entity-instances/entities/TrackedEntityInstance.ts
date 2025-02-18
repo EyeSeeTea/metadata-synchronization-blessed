@@ -3,29 +3,27 @@ import { Relationship } from "./Relationship";
 import { TrakedEntityAttribute } from "./TrackedEntityAttribute";
 
 export interface ProgramOwner {
-    ownerOrgUnit: string;
+    orgUnit: string;
     program: string;
-    trackedEntityInstance: string;
+    trackedEntity: string;
 }
 
 export interface TEIRef {
-    trackedEntityInstance: {
-        trackedEntityInstance: string;
-        programOwners: ProgramOwner[];
+    trackedEntity?: {
+        trackedEntity: string;
     };
 }
 
 export interface TrackedEntityInstance {
-    trackedEntityInstance: string;
-    created: string;
+    trackedEntity: string;
+    createdAt?: string;
     orgUnit: string;
-    createdAtClient: string;
-    lastUpdated: string;
-    trackedEntityType: string;
-    lastUpdatedAtClient: string;
-    inactive: boolean;
-    deleted: boolean;
-    featureType: string;
+    createdAtClient?: string;
+    updatedAt?: string;
+    trackedEntityType?: string;
+    updatedAtClient?: string;
+    inactive?: boolean;
+    deleted?: boolean;
     programOwners: ProgramOwner[];
     enrollments: Enrollment[];
     relationships: Relationship[];
