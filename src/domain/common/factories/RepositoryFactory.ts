@@ -6,6 +6,7 @@ import {
 import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
 import { CustomDataRepositoryConstructor } from "../../custom-data/repository/CustomDataRepository";
 import { DataStoreMetadataRepositoryConstructor } from "../../data-store/DataStoreMetadataRepository";
+import { DhisReleasesRepositoryConstructor } from "../../dhis-releases/repository/DhisReleasesRepository";
 import { EventsRepository, EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { FileRepositoryConstructor } from "../../file/repositories/FileRepository";
 import { DataSource } from "../../instance/entities/DataSource";
@@ -23,6 +24,10 @@ import { SchedulerRepositoryConstructor } from "../../scheduler/repositories/Sch
 import { SettingsRepositoryConstructor } from "../../settings/SettingsRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
+import {
+    TableColumnsRepository,
+    TableColumnsRepositoryConstructor,
+} from "../../table-columns/repositories/TableColumnsRepository";
 import { TEIRepository, TEIRepositoryConstructor } from "../../tracked-entity-instances/repositories/TEIRepository";
 import {
     TransformationRepository,
@@ -122,6 +127,13 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public tableColumnsRepository(instance: Instance): TableColumnsRepository {
+        const config = this.configRepository(instance);
+
+        return this.get<TableColumnsRepositoryConstructor>(Repositories.TableColumnsRepository, [config]);
+    }
+
+    @cache()
     public dataStoreMetadataRepository(instance: Instance) {
         return this.get<DataStoreMetadataRepositoryConstructor>(Repositories.DataStoreMetadataRepository, [instance]);
     }
@@ -188,6 +200,11 @@ export class RepositoryFactory {
         const config = this.configRepository(instance);
         return this.get<SettingsRepositoryConstructor>(Repositories.SettingsRepository, [config]);
     }
+
+    @cache()
+    public dhisReleasesRepository() {
+        return this.get<DhisReleasesRepositoryConstructor>(Repositories.DhisReleasesRepository, []);
+    }
 }
 
 type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
@@ -216,4 +233,6 @@ export const Repositories = {
     SettingsRepository: "settingsRepository",
     SchedulerRepository: "schedulerRepository",
     DataStoreMetadataRepository: "dataStoreMetadataRepository",
+    DhisReleasesRepository: "dhisReleasesRepository",
+    TableColumnsRepository: "tableColumnsRepository",
 } as const;
