@@ -30,8 +30,6 @@ export async function migrate(storage: AppStorage, _debug: Debug, _params: Migra
     await promiseMap(oldMetadataRules, async oldRule => {
         const oldRuleDetails = await storage.get<SynchronizationRuleDetails>("rules-" + oldRule.id);
 
-        debugger;
-
         if (
             oldRuleDetails &&
             oldRuleDetails.builder.syncParams?.metadataIncludeExcludeRules &&
