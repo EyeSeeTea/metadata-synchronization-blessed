@@ -148,7 +148,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         const { organisationUnits, users, categories, categoryCombos, categoryOptions, categoryOptionCombos, ...rest } =
             metadataWithoutDuplicates;
 
-        const removeCategoryObjects = !syncParams?.removeDefaultCategoryObjects;
+        const removeCategoryObjects = !!syncParams?.removeDefaultCategoryObjects;
 
         const finalMetadataPackage = {
             categories: this.excludeDefaultMetadataObjects(categories, removeCategoryObjects),
@@ -237,7 +237,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         removeMetadataObjects: boolean
     ): MetadataEntity[] | undefined {
         return removeMetadataObjects && metadata
-            ? metadata.filter(metadataObject => metadataObject.name === "default" || metadataObject.code === "default")
-            : undefined;
+            ? metadata.filter(metadataObject => metadataObject.name !== "default" || metadataObject.code !== "default")
+            : metadata;
     }
 }
