@@ -13,7 +13,7 @@ export class ValidateRolesUseCase implements UseCase {
             if (initialize) {
                 const role = await this.roleRepository.getByName(name);
 
-                if (role === undefined) {
+                if (!role) {
                     const role = Role.createRole({ name, description });
 
                     await this.roleRepository.save(role);

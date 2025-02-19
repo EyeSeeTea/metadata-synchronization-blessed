@@ -4,26 +4,22 @@ import { D2Api } from "../../types/d2-api";
 
 export class RoleD2ApiRepository implements RoleRepository {
     constructor(private api: D2Api) {}
+
     async getByName(name: string): Promise<Role | undefined> {
         const { userRoles } = await this.api.metadata
             .get({
                 userRoles: {
                     fields: { id: true, name: true, publicAccess: true, description: true },
-                    filter: { displayName: { eq: name } },
+                    filter: { name: { eq: name } },
                     userRoles: true,
                 },
             })
             .getData();
 
-        if (userRoles && userRoles.length > 0) {
-            const role = userRoles[0];
+        const role = userRoles[0];
 
-            return Role.create({
-                id: role.id,
-                name: role.name,
-                description: role.description,
-                publicAccess: role.publicAccess,
-            });
+        if (role) {
+            return Role.create(role);
         } else {
             return undefined;
         }
