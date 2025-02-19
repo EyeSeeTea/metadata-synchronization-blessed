@@ -1,4 +1,3 @@
-import axios from "axios";
 import memoize from "nano-memoize";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import { D2Api } from "../types/d2-api";
@@ -142,26 +141,24 @@ export const verifyUserHasAccessToSyncRule = async (api: D2Api, syncRule: Synchr
 };
 
 // TODO: Migrate to composition root set-up
-export const initializeAppRoles = async (baseUrl: string) => {
+export const initializeAppRoles = async (api: D2Api) => {
     for (const role in AppRoles) {
         const { name, description, initialize } = AppRoles[role];
         if (initialize) {
-            const { userRoles } = (
-                await axios.get(baseUrl + "api/metadata", {
-                    withCredentials: true,
-                    params: {
+            const { userRoles } = await api.metadata
+                .get({
+                    userRoles: {
+                        fields: { id: true },
+                        filter: { displayName: { eq: name } },
                         userRoles: true,
-                        filter: `name:eq:${name}`,
-                        fields: "id",
                     },
                 })
-            ).data as { userRoles?: { id: string }[] };
+                .getData();
 
             if (!userRoles || userRoles.length === 0) {
                 try {
-                    await axios.post(
-                        baseUrl + "api/metadata.json",
-                        {
+                    await api.metadata
+                        .post({
                             userRoles: [
                                 {
                                     name,
@@ -169,11 +166,8 @@ export const initializeAppRoles = async (baseUrl: string) => {
                                     publicAccess: "--------",
                                 },
                             ],
-                        },
-                        {
-                            withCredentials: true,
-                        }
-                    );
+                        })
+                        .getData();
                 } catch (error: any) {
                     console.error(error);
                 }

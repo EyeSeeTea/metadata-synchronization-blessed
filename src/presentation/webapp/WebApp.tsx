@@ -62,7 +62,7 @@ const App = () => {
             Object.assign(window, { api });
             setUsername(currentUser.username);
             setAppConfig(configFromJson);
-            await initializeAppRoles(baseUrl);
+            await initializeAppRoles(api);
         };
 
         run();
