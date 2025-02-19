@@ -8,7 +8,7 @@ export class RoleD2ApiRepository implements RoleRepository {
         const { userRoles } = await this.api.metadata
             .get({
                 userRoles: {
-                    fields: { id: true, displayName: true, publicAccess: true, description: true },
+                    fields: { id: true, name: true, publicAccess: true, description: true },
                     filter: { displayName: { eq: name } },
                     userRoles: true,
                 },
@@ -18,11 +18,12 @@ export class RoleD2ApiRepository implements RoleRepository {
         if (userRoles && userRoles.length > 0) {
             const role = userRoles[0];
 
-            return {
-                name: role.displayName,
+            return Role.create({
+                id: role.id,
+                name: role.name,
                 description: role.description,
                 publicAccess: role.publicAccess,
-            };
+            });
         } else {
             return undefined;
         }
@@ -31,7 +32,7 @@ export class RoleD2ApiRepository implements RoleRepository {
     async save(role: Role): Promise<void> {
         await this.api.metadata
             .post({
-                userRoles: [role],
+                userRoles: [role._getAttributes()],
             })
             .getData();
     }

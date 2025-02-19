@@ -1,5 +1,6 @@
 import { UseCase } from "../common/entities/UseCase";
 import { AppRoles } from "./AppRoles";
+import { Role } from "./Role";
 import { RoleRepository } from "./RoleRepository";
 
 export class ValidateRolesUseCase implements UseCase {
@@ -13,11 +14,7 @@ export class ValidateRolesUseCase implements UseCase {
                 const role = await this.roleRepository.getByName(name);
 
                 if (role === undefined) {
-                    const role = {
-                        name,
-                        description,
-                        publicAccess: "--------",
-                    };
+                    const role = Role.createRole({ name, description });
 
                     await this.roleRepository.save(role);
                 }
