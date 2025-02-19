@@ -1,4 +1,5 @@
 import memoize from "nano-memoize";
+import { AppRoles } from "../domain/role/AppRoles";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
 import { D2Api } from "../types/d2-api";
 
@@ -7,31 +8,6 @@ import { D2Api } from "../types/d2-api";
 //TODO: remove all this code when all code use GetCurrentUseCase because contains all necessary data about permisions
 //  | |
 //  V V
-
-const AppRoles: {
-    [key: string]: {
-        name: string;
-        description: string;
-        initialize: boolean;
-    };
-} = {
-    CONFIGURATION_ACCESS: {
-        name: "METADATA_SYNC_CONFIGURATOR",
-        description:
-            "APP - This role allows to create new instances and synchronization rules in the Metadata Sync app",
-        initialize: true,
-    },
-    SYNC_RULE_EXECUTION_ACCESS: {
-        name: "METADATA_SYNC_EXECUTOR",
-        description: "APP - This role allows to execute synchronization rules in the Metadata Sync app",
-        initialize: true,
-    },
-    SHOW_DELETED_OBJECTS: {
-        name: "METADATA_SYNC_SHOW_DELETED_OBJECTS",
-        description: "APP - This role allows the user to synchronize deleted objects",
-        initialize: false,
-    },
-};
 
 /**
  * @deprecated The interface should not be used, please use domain user entity
@@ -138,40 +114,4 @@ export const verifyUserHasAccessToSyncRule = async (api: D2Api, syncRule: Synchr
     const syncRuleVisibleToUser = syncRule?.isVisibleToUser(userInfo, "WRITE") ?? true;
 
     return appConfigurator && syncRuleVisibleToUser;
-};
-
-// TODO: Migrate to composition root set-up
-export const initializeAppRoles = async (api: D2Api) => {
-    for (const role in AppRoles) {
-        const { name, description, initialize } = AppRoles[role];
-        if (initialize) {
-            const { userRoles } = await api.metadata
-                .get({
-                    userRoles: {
-                        fields: { id: true },
-                        filter: { displayName: { eq: name } },
-                        userRoles: true,
-                    },
-                })
-                .getData();
-
-            if (!userRoles || userRoles.length === 0) {
-                try {
-                    await api.metadata
-                        .post({
-                            userRoles: [
-                                {
-                                    name,
-                                    description,
-                                    publicAccess: "--------",
-                                },
-                            ],
-                        })
-                        .getData();
-                } catch (error: any) {
-                    console.error(error);
-                }
-            }
-        }
-    }
 };

@@ -1,33 +1,9 @@
 import { Instance } from "../../domain/instance/entities/Instance";
+import { AppRoles } from "../../domain/role/AppRoles";
 import { User } from "../../domain/user/entities/User";
 import { UserRepository } from "../../domain/user/repositories/UserRepository";
 import { D2Api } from "../../types/d2-api";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
-
-const AppRoles: {
-    [key: string]: {
-        name: string;
-        description: string;
-        initialize: boolean;
-    };
-} = {
-    CONFIGURATION_ACCESS: {
-        name: "METADATA_SYNC_CONFIGURATOR",
-        description:
-            "APP - This role allows to create new instances and synchronization rules in the Metadata Sync app",
-        initialize: true,
-    },
-    SYNC_RULE_EXECUTION_ACCESS: {
-        name: "METADATA_SYNC_EXECUTOR",
-        description: "APP - This role allows to execute synchronization rules in the Metadata Sync app",
-        initialize: true,
-    },
-    SHOW_DELETED_OBJECTS: {
-        name: "METADATA_SYNC_SHOW_DELETED_OBJECTS",
-        description: "APP - This role allows the user to synchronize deleted objects",
-        initialize: false,
-    },
-};
 
 export class UserD2ApiRepository implements UserRepository {
     private api: D2Api;

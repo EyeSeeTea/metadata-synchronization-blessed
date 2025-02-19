@@ -123,6 +123,9 @@ import { DataStoreMetadataD2Repository } from "../data/data-store/DataStoreMetad
 import { GetColumnsUseCase } from "../domain/table-columns/usecases/GetColumnsUseCase";
 import { SaveColumnsUseCase } from "../domain/table-columns/usecases/SaveColumnsUseCase";
 import { TableColumnsDataStoreRepository } from "../data/table-columns/TableColumnsDataStoreRepository";
+import { getD2APiFromInstance } from "../utils/d2-utils";
+import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
+import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -416,6 +419,14 @@ export class CompositionRoot {
         return getExecute({
             get: new GetSettingsUseCase(this.repositoryFactory.settingsRepository(this.localInstance)),
             save: new SaveSettingsUseCase(this.repositoryFactory.settingsRepository(this.localInstance)),
+        });
+    }
+
+    public get roles() {
+        const api = getD2APiFromInstance(this.localInstance);
+
+        return getExecute({
+            validate: new ValidateRolesUseCase(new RoleD2ApiRepository(api)),
         });
     }
 }
