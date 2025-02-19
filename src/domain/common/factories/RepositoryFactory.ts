@@ -6,6 +6,7 @@ import {
 import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
 import { CustomDataRepositoryConstructor } from "../../custom-data/repository/CustomDataRepository";
 import { DataStoreMetadataRepositoryConstructor } from "../../data-store/DataStoreMetadataRepository";
+import { DhisReleasesRepositoryConstructor } from "../../dhis-releases/repository/DhisReleasesRepository";
 import { EventsRepository, EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { FileRepositoryConstructor } from "../../file/repositories/FileRepository";
 import { DataSource } from "../../instance/entities/DataSource";
@@ -199,6 +200,11 @@ export class RepositoryFactory {
         const config = this.configRepository(instance);
         return this.get<SettingsRepositoryConstructor>(Repositories.SettingsRepository, [config]);
     }
+
+    @cache()
+    public dhisReleasesRepository() {
+        return this.get<DhisReleasesRepositoryConstructor>(Repositories.DhisReleasesRepository, []);
+    }
 }
 
 type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
@@ -227,5 +233,6 @@ export const Repositories = {
     SettingsRepository: "settingsRepository",
     SchedulerRepository: "schedulerRepository",
     DataStoreMetadataRepository: "dataStoreMetadataRepository",
+    DhisReleasesRepository: "dhisReleasesRepository",
     TableColumnsRepository: "tableColumnsRepository",
 } as const;

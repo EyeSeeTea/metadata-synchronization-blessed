@@ -31,13 +31,13 @@ export class TEIsPayloadMapper implements PayloadMapper {
                 ...tei,
                 orgUnit: cleanOrgUnitPath(mappedOrgUnit),
                 programOwners: tei.programOwners.map(owner => {
-                    const mappedOrgUnit = organisationUnits[owner.ownerOrgUnit]?.mappedId ?? owner.ownerOrgUnit;
+                    const mappedOrgUnit = organisationUnits[owner.orgUnit]?.mappedId ?? owner.orgUnit;
 
                     const mappedProgram = trackerPrograms[owner.program]?.mappedId ?? owner.program;
 
                     return {
                         ...owner,
-                        ownerOrgUnit: cleanOrgUnitPath(mappedOrgUnit),
+                        orgUnit: cleanOrgUnitPath(mappedOrgUnit),
                         program: mappedProgram,
                     };
                 }),
@@ -164,7 +164,7 @@ export class TEIsPayloadMapper implements PayloadMapper {
     }
 
     private isDisabledProgramOwner(item: ProgramOwner): boolean {
-        return item.ownerOrgUnit === "DISABLED" || item.program === "DISABLED";
+        return item.orgUnit === "DISABLED" || item.program === "DISABLED";
     }
 
     private isDisabledEnrollment(item: Enrollment): boolean {

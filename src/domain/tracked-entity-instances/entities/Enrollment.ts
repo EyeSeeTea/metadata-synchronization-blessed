@@ -1,18 +1,19 @@
 export interface Enrollment {
-    storedBy: string;
-    createdAtClient: string;
-    program: string;
-    lastUpdated: string;
-    created: string;
-    orgUnit: string;
-    trackedEntityInstance: string;
     enrollment: string;
-    trackedEntityType: string;
-    lastUpdatedAtClient: string;
+    createdAt: string;
+    createdAtClient: string;
+    updatedAt: string;
+    updatedAtClient: string;
+    trackedEntity?: string;
+    trackedEntityType?: string;
+    program: string;
+    status: "ACTIVE" | "COMPLETED" | "CANCELLED";
+    orgUnit: string;
     orgUnitName: string;
-    enrollmentDate: string;
-    deleted: Boolean;
-    incidentDate: string;
-    status: "ACTIVE" | "COMPLETED" | "CANCELED";
-    notes: String[];
+    enrolledAt: string;
+    occurredAt: string;
+    followUp: boolean;
+    deleted: boolean;
+    storedBy: string;
+    notes: string[];
 }

@@ -231,11 +231,10 @@ function givenAnEventsPackage(valueField?: string): EventsPackage {
     const result: EventsPackage = {
         events: [
             {
-                eventDate: "NA",
+                occurredAt: "NA",
                 orgUnit: "NA",
                 id: "NA",
                 program: "NA",
-                href: "NA",
                 programStage: "NA",
                 created: "NA",
                 deleted: false,
@@ -246,7 +245,6 @@ function givenAnEventsPackage(valueField?: string): EventsPackage {
                 dataValues: [
                     {
                         dataElement: "dataElementId",
-                        storedBy: "user",
                         created: "2019-12-12",
                         lastUpdated: "2019-12-12",
                         value: "12",

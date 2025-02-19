@@ -1,4 +1,3 @@
-import { EventsPostParams, EventsPostResponse } from "@eyeseetea/d2-api/api/events";
 import _ from "lodash";
 import moment from "moment";
 import {
@@ -11,12 +10,14 @@ import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
-import { SynchronizationResult, SynchronizationStats } from "../../domain/reports/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { D2Api } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 import mime from "mime-types";
+import { D2TrackerEvent, TrackerEventsResponse } from "@eyeseetea/d2-api/api/trackerEvents";
+import { TrackerPostParams, TrackerPostRequest, TrackerPostResponse } from "@eyeseetea/d2-api/api/tracker";
 
 export class EventsD2ApiRepository implements EventsRepository {
     private api: D2Api;
@@ -81,34 +82,39 @@ export class EventsD2ApiRepository implements EventsRepository {
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
         const fetchApi = async (orgUnit: string, page: number) => {
-            return this.api.events
+            return this.api.tracker.events
                 .get({
                     pageSize: 250,
                     totalPages: true,
                     page,
                     orgUnit,
-                    startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                    endDate: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
-                    lastUpdated: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
+                    occurredAfter: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                    occurredBefore: period !== "ALL" ? endDate.format("YYYY-MM-DD") : undefined,
+                    updatedAfter: lastUpdated ? moment(lastUpdated).format("YYYY-MM-DD") : undefined,
                     fields: { $all: true },
                 })
                 .getData();
         };
 
-        const result = await promiseMap(orgUnits, async orgUnit => {
-            const { events, pager } = await fetchApi(orgUnit, 1);
+        const result = await promiseMap(orgUnits, async (orgUnit): Promise<D2TrackerEvent[]> => {
+            const firstResponse = await fetchApi(orgUnit, 1);
 
-            const paginatedEvents = await promiseMap(_.range(2, pager.pageCount + 1), async page => {
-                const { events } = await fetchApi(orgUnit, page);
-                return events;
+            const pageCount = Math.ceil((firstResponse.total || 0) / firstResponse.pageSize);
+
+            const paginatedEvents = await promiseMap(_.range(2, pageCount + 1), async page => {
+                const response = await fetchApi(orgUnit, page);
+
+                return this.extractEvents(response);
             });
+
+            const events = this.extractEvents(firstResponse);
 
             return [...events, ..._.flatten(paginatedEvents)];
         });
 
         return _(result)
             .flatten()
-            .filter(({ programStage }) => programStageIds.includes(programStage))
+            .filter(({ programStage }) => (programStage ? programStageIds.includes(programStage) : false))
             .map(object => ({ ...object, id: object.event }))
             .map(object => cleanObjectDefault(object, defaults))
             .value();
@@ -127,19 +133,19 @@ export class EventsD2ApiRepository implements EventsRepository {
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
 
         const fetchApi = async (programStage: string, orgUnit: string, page: number) => {
-            return this.api.events
+            return this.api.tracker.events
                 .get({
                     pageSize: 250,
                     totalPages: true,
                     page,
                     programStage,
                     orgUnit,
-                    startDate: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                    endDate:
+                    occurredAfter: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                    occurredBefore:
                         period !== "ALL" && period !== "SINCE_LAST_SUCCESSFUL_SYNC"
                             ? endDate.format("YYYY-MM-DD")
                             : undefined,
-                    lastUpdated: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
+                    updatedAfter: lastUpdated ? moment(lastUpdated).toISOString() : undefined,
                     fields: { $all: true },
                 })
                 .getData();
@@ -147,12 +153,19 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         const result = await promiseMap(programStageIds, async programStage => {
             const filteredEvents = await promiseMap(orgUnits, async orgUnit => {
-                const { events, pager } = await fetchApi(programStage, orgUnit, 1);
+                const firstResponse = await fetchApi(programStage, orgUnit, 1);
 
-                const paginatedEvents = await promiseMap(_.range(2, pager.pageCount + 1), async page => {
-                    const { events } = await fetchApi(programStage, orgUnit, page);
+                const pageCount = Math.ceil(firstResponse.total || 0 / firstResponse.pageSize);
+
+                const paginatedEvents = await promiseMap(_.range(2, pageCount + 1), async page => {
+                    const response = await fetchApi(programStage, orgUnit, page);
+
+                    const events = this.extractEvents(response);
+
                     return events;
                 });
+
+                const events = this.extractEvents(firstResponse);
 
                 return [...events, ..._.flatten(paginatedEvents)];
             });
@@ -165,7 +178,7 @@ export class EventsD2ApiRepository implements EventsRepository {
             .map(object => {
                 const event = { ...object, id: object.event };
 
-                return isDataSynchronizationRequired(params, object.lastUpdated)
+                return isDataSynchronizationRequired(params, object.updatedAt)
                     ? cleanObjectDefault(event, defaults)
                     : undefined;
             })
@@ -186,13 +199,17 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         for (const programStage of programStageIds) {
             for (const ids of _.chunk(filter, 300)) {
-                const { events } = await this.api.events
-                    .getAll({
+                const response = await this.api.tracker.events
+                    .get({
                         programStage,
                         event: ids.join(";"),
                         fields: { $all: true },
+                        skipPaging: true,
                     })
                     .getData();
+
+                const events = this.extractEvents(response);
+
                 result.push(...events);
             }
         }
@@ -221,7 +238,7 @@ export class EventsD2ApiRepository implements EventsRepository {
                     type: "events",
                 };
             } else {
-                return this.push(params, data);
+                return this.push(params, data.events);
             }
         } catch (error: any) {
             if (error?.response?.data) {
@@ -237,53 +254,46 @@ export class EventsD2ApiRepository implements EventsRepository {
         }
     }
 
-    private cleanEventsImportResponse(importResult: EventsPostResponse): SynchronizationResult {
-        const errors = _(importResult.importSummaries)
-            .flatMap(element => {
-                if (element.status !== "ERROR") return undefined;
-                return (
-                    element.conflicts?.map(({ object, value }) => ({
-                        id: element.reference ?? "",
-                        message: _([element.description, object, value]).compact().join(" "),
-                    })) ?? [{ id: element.reference ?? "", message: element.description }]
-                );
-            })
-            .compact()
-            .value();
-
-        const stats: SynchronizationStats = _.pick(importResult, [
-            "imported",
-            "updated",
-            "ignored",
-            "deleted",
-            "total",
-        ]);
-
+    private cleanEventsImportResponse(importResult: TrackerPostResponse): SynchronizationResult {
         return {
-            status: importResult.status,
-            stats,
+            status: importResult.status === "OK" ? "SUCCESS" : importResult.status,
+            stats: {
+                imported: importResult.stats.created,
+                updated: importResult.stats.updated,
+                ignored: importResult.stats.ignored,
+                deleted: importResult.stats.deleted,
+                total: importResult.stats.total,
+            },
             instance: this.instance.toPublicObject(),
-            errors,
+            errors: importResult.validationReport.errorReports.map(error => {
+                return {
+                    id: error.uid,
+                    message: error.message,
+                    type: error.trackerType,
+                };
+            }),
             date: new Date(),
             type: "events",
             response: importResult,
         };
     }
 
-    private async push(params: DataImportParams, data: EventsPackage): Promise<SynchronizationResult> {
-        const eventsPostParams: EventsPostParams = {
+    private async push(params: DataImportParams, events: ProgramEvent[]): Promise<SynchronizationResult> {
+        const eventsPostParams: TrackerPostParams = {
             idScheme: params.idScheme ?? "UID",
             dataElementIdScheme: params.dataElementIdScheme ?? "UID",
             orgUnitIdScheme: params.orgUnitIdScheme ?? "UID",
-            dryRun: params.dryRun ?? false,
-            preheatCache: params.preheatCache ?? false,
-            skipExistingCheck: params.skipExistingCheck ?? false,
+            importMode: params.importMode ?? "COMMIT",
+        };
+
+        const trackerPostRequest: TrackerPostRequest = {
+            events: events.map(event => ({ ...event, event: event.event || "" })),
         };
 
         if (params.async || params.async === undefined) {
-            const { response } = await this.api.events.postAsync(eventsPostParams, data).getData();
+            const { response } = await this.api.tracker.postAsync(eventsPostParams, trackerPostRequest).getData();
 
-            const result = await this.api.system.waitFor(response.jobType, response.id).getData();
+            const result = await this.api.system.waitFor("TRACKER_IMPORT_JOB", response.id).getData();
 
             if (!result) {
                 return {
@@ -296,9 +306,9 @@ export class EventsD2ApiRepository implements EventsRepository {
 
             return this.cleanEventsImportResponse(result);
         } else {
-            const { response } = await this.api.events.post(eventsPostParams, data).getData();
+            const result = await this.api.tracker.post(eventsPostParams, trackerPostRequest).getData();
 
-            return this.cleanEventsImportResponse(response);
+            return this.cleanEventsImportResponse(result);
         }
     }
 
@@ -325,4 +335,12 @@ export class EventsD2ApiRepository implements EventsRepository {
 
         return new File([blob], fileName, { type: fileResource.contentType });
     }
+
+    extractEvents(response: TrackerEventsResponse): D2TrackerEvent[] {
+        return response.instances || (hasEventsProperty(response) ? response.events : []);
+    }
+}
+
+function hasEventsProperty(obj: any): obj is { events: D2TrackerEvent[] } {
+    return obj && Array.isArray(obj.events);
 }

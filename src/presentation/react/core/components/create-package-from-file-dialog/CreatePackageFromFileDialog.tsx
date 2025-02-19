@@ -17,6 +17,7 @@ import { getValidationsByVersionFeedback } from "../module-list-table/utils";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import Dropdown from "../dropdown/Dropdown";
 import { Module } from "../../../../../domain/modules/entities/Module";
+import { useGetSupportedVersions } from "../../hooks/useGetSupportedVersions";
 
 interface CreatePackageFromFileDialogProps {
     onClose: () => void;
@@ -46,7 +47,7 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
     );
     const [userGroups, setUserGroups] = useState<NamedRef[]>([]);
     const [contents, setContents] = useState<MetadataPackage>();
-
+    const { supportedVersions } = useGetSupportedVersions();
     const [errors, setErrors] = useState<Dictionary<ValidationError>>({});
 
     useEffect(() => {
@@ -250,7 +251,7 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
                 <Autocomplete
                     className={classes.row}
                     multiple
-                    options={["2.30", "2.31", "2.32", "2.33", "2.34"]}
+                    options={supportedVersions}
                     value={versions}
                     onChange={(_event, value) => updateVersions(value)}
                     renderTags={(values: string[]) => values.sort().join(", ")}
