@@ -4,7 +4,9 @@ function role(role: AppRole): AppRole {
     return role;
 }
 
-export const AppRoles = {
+export const AppRoles: {
+    [key: string]: AppRole;
+} = {
     CONFIGURATION_ACCESS: role({
         name: "METADATA_SYNC_CONFIGURATOR",
         description:
