@@ -1,9 +1,7 @@
 import schedule from "node-schedule";
 import { SchedulerContract } from "./entities/SchedulerContract";
-import { ScheduledJob } from "./entities/ScheduledJob";
-
-export const DEFAULT_SCHEDULED_JOB_ID = "__default__";
-export const EVERY_MINUTE_FREQUENCY = "0 * * * * *";
+import { DEFAULT_SCHEDULED_JOB_ID, ScheduledJob } from "./entities/ScheduledJob";
+import { EVERY_MINUTE_FREQUENCY } from "../domain/scheduler/entities/SyncRuleJobConfig";
 
 export default class Scheduler implements SchedulerContract {
     public getScheduledJobs(): ScheduledJob[] {

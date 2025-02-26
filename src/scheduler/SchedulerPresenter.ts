@@ -2,12 +2,10 @@ import { CompositionRoot } from "../presentation/CompositionRoot";
 import { SchedulerContract } from "./entities/SchedulerContract";
 import { getLogger } from "log4js";
 import cronstrue from "cronstrue";
-import _ from "lodash";
 import moment from "moment";
-import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
-import { DEFAULT_SCHEDULED_JOB_ID } from "./Scheduler";
-
-const DEFAULT_CODE = "__default__";
+import { DEFAULT_SCHEDULED_JOB_ID, ScheduledJob } from "./entities/ScheduledJob";
+import { SyncRuleJobConfig } from "../domain/scheduler/entities/SyncRuleJobConfig";
+import { SchedulerExecutionInfo } from "../domain/scheduler/entities/SchedulerExecutionInfo";
 
 export class SchedulerPresenter {
     constructor(private schedulerContract: SchedulerContract, private compositionRoot: CompositionRoot) {}
@@ -22,50 +20,27 @@ export class SchedulerPresenter {
 
     private async fetchTask(apiPath: string): Promise<void> {
         try {
-            const { rows: rules } = await this.compositionRoot.rules.list({ paging: false });
+            const syncRuleJobConfigs = await this.getSyncRuleJobConfigs();
+            const jobIdsToBeScheduled = syncRuleJobConfigs.map(({ id }) => id);
 
-            const jobs = _.filter(rules, rule => rule.enabled);
-            const enabledJobIds = jobs.map(({ id }) => id);
-            getLogger("scheduler").trace(`There are ${jobs.length} total jobs scheduled`);
-
-            // Cancel disabled jobs that were scheduled
             const scheduledJobs = this.schedulerContract.getScheduledJobs();
+            const currentJobIdsScheduled = scheduledJobs.map(({ id }) => id);
 
-            const currentJobIds = scheduledJobs.map(({ id }) => id);
-            const newJobs = _.reject(jobs, ({ id }) => currentJobIds.includes(id));
-            const idsToCancel = _.difference(currentJobIds, enabledJobIds, [DEFAULT_CODE]);
-            idsToCancel.forEach((id: string) => {
-                getLogger("scheduler").info(`Cancelling disabled rule with id ${id}`);
-                const scheduledJobToCancel = scheduledJobs.find(scheduledJob => scheduledJob.id === id);
-                if (scheduledJobToCancel) {
-                    this.schedulerContract.cancelJob(scheduledJobToCancel.id);
-                }
-            });
-
-            // Create or update enabled jobs
-            newJobs.forEach((syncRule: SynchronizationRule): void => {
-                const { id, name, frequency } = syncRule;
-
-                if (id && frequency) {
-                    const job = this.schedulerContract.scheduleJob({
-                        jobId: id,
-                        frequency: frequency,
-                        jobCallback: (): Promise<void> => this.synchronizationTask(id, apiPath),
-                    });
-
-                    // Format date to keep timezone offset
-                    const nextDate = moment(job.nextExecution.toISOString()).toISOString(true);
-                    getLogger("scheduler").info(`Scheduling new sync rule ${name} (${id}) at ${nextDate}`);
-                }
-            });
-
-            const defaultScheduledJob = scheduledJobs.find(
-                scheduledJob => scheduledJob.id === DEFAULT_SCHEDULED_JOB_ID
+            const jobIdsToCancel = currentJobIdsScheduled.filter(
+                id => !jobIdsToBeScheduled.includes(id) && id !== DEFAULT_SCHEDULED_JOB_ID
             );
+            if (jobIdsToCancel.length > 0) {
+                this.cancelScheduledJobs(jobIdsToCancel, scheduledJobs);
+            }
 
-            const nextExecution = defaultScheduledJob?.nextExecution;
-            const lastExecution = await this.compositionRoot.scheduler.getLastExecution();
-            await this.compositionRoot.scheduler.updateLastExecution({ ...lastExecution, nextExecution });
+            const newSyncRuleJobConfigs = syncRuleJobConfigs.filter(({ id }) => !currentJobIdsScheduled.includes(id));
+            if (newSyncRuleJobConfigs.length > 0) {
+                this.createNewScheduledJobs(newSyncRuleJobConfigs, apiPath);
+            }
+
+            // TODO: update currentJobIdsScheduled if frequency has changed: first cancel job and then schedule it again
+
+            this.updateNextExecutionOfScheduler(scheduledJobs);
         } catch (error) {
             getLogger("scheduler").error(error);
         }
@@ -118,6 +93,58 @@ export class SchedulerPresenter {
         } catch (error: any) {
             getLogger(name).error(`Failed executing rule`, error);
         }
+    }
+
+    private async getSyncRuleJobConfigs(): Promise<SyncRuleJobConfig[]> {
+        const syncRuleJobConfigsToBeScheduled = await this.compositionRoot.scheduler.getSyncRuleJobConfigs();
+
+        getLogger("scheduler").trace(
+            `There are ${syncRuleJobConfigsToBeScheduled.length} valid sync rules marked to be scheduled`
+        );
+
+        return syncRuleJobConfigsToBeScheduled;
+    }
+
+    private cancelScheduledJobs(jobIdsToCancel: string[], scheduledJobs: ScheduledJob[]): void {
+        jobIdsToCancel.forEach((id: string) => {
+            getLogger("scheduler").info(`Cancelling disabled rule with id ${id}`);
+            const scheduledJobToCancel = scheduledJobs.find(scheduledJob => scheduledJob.id === id);
+            if (scheduledJobToCancel) {
+                this.schedulerContract.cancelJob(scheduledJobToCancel.id);
+            }
+        });
+    }
+
+    private createNewScheduledJobs(syncRuleJobConfig: SyncRuleJobConfig[], apiPath: string): void {
+        syncRuleJobConfig.forEach((syncRuleJobConfig: SyncRuleJobConfig): void => {
+            const { id, name, frequency } = syncRuleJobConfig;
+
+            if (id && frequency) {
+                const job = this.schedulerContract.scheduleJob({
+                    jobId: id,
+                    frequency: frequency,
+                    jobCallback: (): Promise<void> => this.synchronizationTask(id, apiPath),
+                });
+
+                // Format date to keep timezone offset
+                const nextDate = moment(job.nextExecution.toISOString()).toISOString(true);
+                getLogger("scheduler").info(`Scheduling new sync rule ${name} (${id}) at ${nextDate}`);
+            }
+        });
+    }
+
+    private async updateNextExecutionOfScheduler(scheduledJobs: ScheduledJob[]): Promise<void> {
+        const defaultScheduledJob = scheduledJobs.find(scheduledJob => scheduledJob.id === DEFAULT_SCHEDULED_JOB_ID);
+        const nextExecution = defaultScheduledJob?.nextExecution;
+        const schedulerExecutionInfo = await this.compositionRoot.scheduler.getLastExecutionInfo();
+
+        const newSchedulerExecutionInfo: SchedulerExecutionInfo = {
+            ...schedulerExecutionInfo,
+            lastExecution: schedulerExecutionInfo.nextExecution,
+            nextExecution: nextExecution,
+        };
+
+        await this.compositionRoot.scheduler.updateExecutionInfo(newSchedulerExecutionInfo);
     }
 
     private buildUrl(apiPath: string, type: string, id: string): string {

@@ -20,7 +20,8 @@ import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubR
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
 import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
-import { SchedulerRepositoryConstructor } from "../../scheduler/repositories/SchedulerRepository";
+import { SchedulerExecutionInfoRepositoryConstructor } from "../../scheduler/repositories/SchedulerExecutionInfoRepositoryConstructor";
+import { SyncRuleJobConfigRepositoryConstructor } from "../../scheduler/repositories/SyncRuleJobConfigRepository";
 import { SettingsRepositoryConstructor } from "../../settings/SettingsRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
@@ -190,9 +191,11 @@ export class RepositoryFactory {
     }
 
     @cache()
-    public schedulerRepository(instance: Instance) {
+    public schedulerExecutionInfoRepository(instance: Instance) {
         const config = this.configRepository(instance);
-        return this.get<SchedulerRepositoryConstructor>(Repositories.SchedulerRepository, [config]);
+        return this.get<SchedulerExecutionInfoRepositoryConstructor>(Repositories.SchedulerExecutionInfoRepository, [
+            config,
+        ]);
     }
 
     @cache()
@@ -204,6 +207,16 @@ export class RepositoryFactory {
     @cache()
     public dhisReleasesRepository() {
         return this.get<DhisReleasesRepositoryConstructor>(Repositories.DhisReleasesRepository, []);
+    }
+
+    @cache()
+    public syncRuleJobConfigRepository(instance: Instance) {
+        // TODO: remove coupling with ConfigRepository repository having directly the StorageClient
+        const configRepository = this.configRepository(instance);
+
+        return this.get<SyncRuleJobConfigRepositoryConstructor>(Repositories.SyncRuleJobConfigRepository, [
+            configRepository,
+        ]);
     }
 }
 
@@ -231,8 +244,9 @@ export const Repositories = {
     UserRepository: "userRepository",
     MappingRepository: "mappingRepository",
     SettingsRepository: "settingsRepository",
-    SchedulerRepository: "schedulerRepository",
+    SchedulerExecutionInfoRepository: "schedulerExecutionInfoRepository",
     DataStoreMetadataRepository: "dataStoreMetadataRepository",
     DhisReleasesRepository: "dhisReleasesRepository",
     TableColumnsRepository: "tableColumnsRepository",
+    SyncRuleJobConfigRepository: "syncRuleJobConfigRepository",
 } as const;

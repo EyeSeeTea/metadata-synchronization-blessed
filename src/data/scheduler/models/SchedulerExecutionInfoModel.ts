@@ -1,7 +1,7 @@
-import { SchedulerExecution } from "../../../domain/scheduler/entities/SchedulerExecution";
+import { SchedulerExecutionInfo } from "../../../domain/scheduler/entities/SchedulerExecutionInfo";
 import { Codec, Schema } from "../../../utils/codec";
 
-export const SchedulerExecutionModel: Codec<SchedulerExecution> = Schema.object({
+export const SchedulerExecutionInfoModel: Codec<SchedulerExecutionInfo> = Schema.object({
     lastExecutionDuration: Schema.optional(Schema.number),
     lastExecution: Schema.optional(Schema.date),
     nextExecution: Schema.optional(Schema.date),

@@ -1,7 +1,7 @@
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { SchedulerExecution } from "../../../../../domain/scheduler/entities/SchedulerExecution";
+import { SchedulerExecutionInfo } from "../../../../../domain/scheduler/entities/SchedulerExecutionInfo";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../contexts/AppContext";
 
@@ -15,10 +15,10 @@ export const SchedulerInfo: React.FC<SchedulerInfoProps> = React.memo(props => {
     const [status, setStatus] = useState<boolean>(false);
 
     const getSchedulerInfo = useCallback(() => {
-        compositionRoot.scheduler.getLastExecution().then(execution => {
-            const timestamp = execution?.lastExecution?.toISOString() ?? "";
+        compositionRoot.scheduler.getLastExecutionInfo().then(lastExecutionInfo => {
+            const timestamp = lastExecutionInfo?.lastExecution?.toISOString() ?? "";
             if (onSchedulerRun) onSchedulerRun(timestamp);
-            return setStatus(isRunning(execution));
+            return setStatus(isRunning(lastExecutionInfo));
         });
     }, [compositionRoot, onSchedulerRun]);
 
@@ -49,6 +49,6 @@ const SchedulerContainer = styled.div`
     gap: 10px;
 `;
 
-function isRunning(info?: SchedulerExecution): boolean {
+function isRunning(info?: SchedulerExecutionInfo): boolean {
     return !!info?.nextExecution && info.nextExecution >= new Date();
 }
