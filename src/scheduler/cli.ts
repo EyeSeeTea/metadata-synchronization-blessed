@@ -8,7 +8,8 @@ import { Instance } from "../domain/instance/entities/Instance";
 import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
 import { ConfigModel, SchedulerConfig } from "./entities/SchedulerConfig";
-import Scheduler from "./scheduler";
+import Scheduler from "./Scheduler";
+import { SchedulerPresenter } from "./SchedulerPresenter";
 
 const development = process.env.NODE_ENV === "development";
 
@@ -90,7 +91,9 @@ const start = async (config: SchedulerConfig): Promise<void> => {
     getLogger("main").info("-".repeat(welcomeMessage.length));
     getLogger("main").info(welcomeMessage);
 
-    new Scheduler(api, compositionRoot).initialize();
+    const scheduler = new Scheduler();
+    const schedulerPresenter = new SchedulerPresenter(scheduler, compositionRoot);
+    schedulerPresenter.initialize(api.apiPath);
 };
 
 main();
