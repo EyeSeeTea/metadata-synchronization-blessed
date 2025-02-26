@@ -41,7 +41,7 @@ export class EventsPayloadMapper implements PayloadMapper {
     }
 
     private buildMappedEvent(
-        { orgUnit, program, programStage, dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
+        { orgUnit, program, programStage = "", dataValues, attributeOptionCombo, ...rest }: ProgramEvent,
         globalMapping: MetadataMappingDictionary,
         originCategoryOptionCombos: Partial<CategoryOptionCombo>[],
         destinationCategoryOptionCombos: Partial<CategoryOptionCombo>[],

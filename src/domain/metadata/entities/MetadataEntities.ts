@@ -6,7 +6,6 @@ import {
     DimensionalKeywords,
     Geometry,
     Id,
-    ProgramOwner,
     RelationshipConstraint,
     ReportingParams,
     Sharing,
@@ -3244,7 +3243,6 @@ export type ProgramInstance = {
     status: "ACTIVE" | "COMPLETED" | "CANCELLED";
     storedBy: string;
     trackedEntityComments: unknown[];
-    trackedEntityInstance: TrackedEntityInstance;
     translations: Translation[];
     user: User;
     userAccesses: UserAccess[];
@@ -3565,7 +3563,7 @@ export type ProgramStageInstance = {
     displayName: string;
     dueDate: string;
     eventDataValues: unknown[];
-    eventDate: string;
+    occurredAt: string;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
@@ -4349,55 +4347,11 @@ export type TrackedEntityAttribute = {
         | "IMAGE";
 };
 
-export type TrackedEntityAttributeValue = {
-    created: string;
-    lastUpdated: string;
-    storedBy: string;
-    trackedEntityAttribute: TrackedEntityAttribute;
-    trackedEntityInstance: TrackedEntityInstance;
-    value: string;
-};
-
 export type TrackedEntityDataElementDimension = {
     dataElement: DataElement;
     filter: string;
     legendSet: LegendSet;
     programStage: ProgramStage;
-};
-
-export type TrackedEntityInstance = {
-    access: Access;
-    attributeValues: AttributeValue[];
-    code: Id;
-    created: string;
-    createdAtClient: string;
-    createdBy: User;
-    deleted: boolean;
-    displayName: string;
-    externalAccess: boolean;
-    favorite: boolean;
-    favorites: string[];
-    geometry: Geometry;
-    href: string;
-    id: Id;
-    inactive: boolean;
-    lastUpdated: string;
-    lastUpdatedAtClient: string;
-    lastUpdatedBy: User;
-    name: string;
-    organisationUnit: OrganisationUnit;
-    programInstances: ProgramInstance[];
-    programOwners: ProgramOwner[];
-    publicAccess: string;
-    relationshipItems: unknown[];
-    sharing: Sharing;
-    storedBy: string;
-    trackedEntityAttributeValues: TrackedEntityAttributeValue[];
-    trackedEntityType: TrackedEntityType;
-    translations: Translation[];
-    user: User;
-    userAccesses: UserAccess[];
-    userGroupAccesses: UserGroupAccess[];
 };
 
 export type TrackedEntityInstanceFilter = {

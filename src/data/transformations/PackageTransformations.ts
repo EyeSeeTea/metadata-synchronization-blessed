@@ -11,6 +11,37 @@ export const metadataTransformations: Transformation[] = [
             };
         },
     },
+    {
+        name: "eventCharts, eventReports missing in 2.41",
+        apiVersion: 41,
+        undo: ({ eventVisualizations, eventCharts, eventReports, ...rest }: any) => {
+            const isEventReport = (visualizationType: string) =>
+                visualizationType === "PIVOT_TABLE" || visualizationType === "LINE_LIST";
+
+            const finalEventCharts = eventCharts
+                ? eventCharts
+                : eventVisualizations?.filter((eventVisualization: any) => !isEventReport(eventVisualization.type)) ||
+                  [];
+            const finalEventReports = eventReports
+                ? eventReports
+                : eventVisualizations?.filter((eventVisualization: any) => isEventReport(eventVisualization.type)) ||
+                  [];
+
+            return {
+                ...rest,
+                eventCharts: finalEventCharts,
+                eventReports: finalEventReports,
+            };
+        },
+        apply: ({ eventCharts, eventReports, ...rest }: any) => {
+            const eventVisualizations = [...(eventCharts || []), ...(eventReports || [])];
+
+            return {
+                ...rest,
+                eventVisualizations,
+            };
+        },
+    },
 ];
 
 export const aggregatedTransformations: Transformation[] = [];

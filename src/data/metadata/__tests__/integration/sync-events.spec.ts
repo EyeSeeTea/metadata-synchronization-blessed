@@ -98,29 +98,32 @@ describe("Sync events", () => {
         local.get("/dataValueSets", async () => ({ dataValues: [] }));
         remote.get("/dataValueSets", async () => ({ dataValues: [] }));
 
-        local.get("/events", async () => ({
-            pager: { page: 1, pageCount: 1, pageSize: 1, total: 1 },
-            events: [
+        local.get("/tracker/events", async () => ({
+            page: 1,
+            pageCount: 1,
+            pageSize: 1,
+            total: 1,
+            instances: [
                 {
                     storedBy: "widp.admin",
-                    dueDate: "2020-04-11T00:00:02.846",
+                    scheduledAt: "2020-04-11T00:00:02.846",
                     program: "program1",
                     event: "test-event-1",
                     programStage: "EGA9fqLFtxM",
                     orgUnit: "Global",
                     status: "ACTIVE",
                     orgUnitName: "Global",
-                    eventDate: "2020-04-11T00:00:00.000",
+                    occurredAt: "2020-04-11T00:00:00.000",
                     attributeCategoryOptions: "Y7fcspgsU43",
-                    lastUpdated: "2020-06-09T07:06:35.514",
-                    created: "2020-06-09T07:06:35.513",
+                    updatedAt: "2020-06-09T07:06:35.514",
+                    createdAt: "2020-06-09T07:06:35.513",
                     deleted: false,
                     attributeOptionCombo: "Xr12mI7VPn3",
                     dataValues: [
                         {
-                            lastUpdated: "2020-06-09T07:06:35.515",
+                            updatedAt: "2020-06-09T07:06:35.515",
                             storedBy: "widp.admin",
-                            created: "2020-06-09T07:06:35.515",
+                            createdAt: "2020-06-09T07:06:35.515",
                             dataElement: "id1",
                             value: "true",
                             providedElsewhere: false,
@@ -131,29 +134,32 @@ describe("Sync events", () => {
             ],
         }));
 
-        remote.get("/events", async () => ({
-            pager: { page: 1, pageCount: 1, pageSize: 1, total: 1 },
-            events: [
+        remote.get("/tracker/events", async () => ({
+            page: 1,
+            pageCount: 1,
+            pageSize: 1,
+            total: 1,
+            instances: [
                 {
                     storedBy: "widp.admin",
-                    dueDate: "2020-04-11T00:00:02.846",
+                    scheduledAt: "2020-04-11T00:00:02.846",
                     program: "program1",
                     event: "test-event-2",
                     programStage: "EGA9fqLFtxM",
                     orgUnit: "Global",
                     status: "ACTIVE",
                     orgUnitName: "Global",
-                    eventDate: "2020-04-11T00:00:00.000",
+                    occurredAt: "2020-04-11T00:00:00.000",
                     attributeCategoryOptions: "Y7fcspgsU43",
-                    lastUpdated: "2020-06-09T07:06:35.514",
-                    created: "2020-06-09T07:06:35.513",
+                    updatedAt: "2020-06-09T07:06:35.514",
+                    createdAt: "2020-06-09T07:06:35.513",
                     deleted: false,
                     attributeOptionCombo: "Xr12mI7VPn3",
                     dataValues: [
                         {
-                            lastUpdated: "2020-06-09T07:06:35.515",
+                            updatedAt: "2020-06-09T07:06:35.515",
                             storedBy: "widp.admin",
-                            created: "2020-06-09T07:06:35.515",
+                            createdAt: "2020-06-09T07:06:35.515",
                             dataElement: "id1",
                             value: "true",
                             providedElsewhere: false,
@@ -262,28 +268,51 @@ describe("Sync events", () => {
         // }));
 
         const addEventsToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
-            schema.db.events.insert(JSON.parse(request.requestBody));
+            const body = JSON.parse(request.requestBody);
+            schema.db.events.insert(body);
 
             return {
-                responseType: "ImportSummary",
-                status: "WARNING",
-                description: "Import process completed successfully",
-                importCount: { imported: 0, updated: 0, ignored: 477, deleted: 0 },
-                conflicts: [
-                    {
-                        object: "id1",
-                        value: "Data element not found or not accessible",
+                status: "OK",
+                validationReport: {
+                    errorReports: [],
+                    warningReports: [],
+                },
+                stats: {
+                    created: 1,
+                    updated: 0,
+                    deleted: 0,
+                    ignored: 0,
+                    total: 1,
+                },
+                bundleReport: {
+                    typeReportMap: {
+                        EVENT: {
+                            trackerType: "EVENT",
+                            stats: {
+                                created: 1,
+                                updated: 0,
+                                deleted: 0,
+                                ignored: 0,
+                                total: 1,
+                            },
+                            objectReports: [
+                                {
+                                    trackerType: "EVENT",
+                                    uid: body.events[0].event,
+                                    errorReports: [],
+                                },
+                            ],
+                        },
                     },
-                ],
-                dataSetComplete: "false",
+                },
             };
         };
 
         local.db.createCollection("events", []);
-        local.post("/events", addEventsToDb);
+        local.post("/tracker", addEventsToDb);
 
         remote.db.createCollection("events", []);
-        remote.post("/events", addEventsToDb);
+        remote.post("/tracker", addEventsToDb);
     });
 
     afterEach(() => {

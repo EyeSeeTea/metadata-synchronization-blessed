@@ -120,7 +120,7 @@ export const NewPackageDialog: React.FC<NewPackageDialogProps> = ({ module, save
             <Autocomplete
                 className={classes.row}
                 multiple
-                options={["2.30", "2.31", "2.32", "2.33", "2.34"]}
+                options={["2.37", "2.38", "2.39", "2.40", "2.41"]}
                 value={versions}
                 onChange={(_event, value) => updateVersions(value)}
                 renderTags={(values: string[]) => values.sort().join(", ")}
