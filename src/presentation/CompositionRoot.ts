@@ -126,7 +126,7 @@ import { GetColumnsUseCase } from "../domain/table-columns/usecases/GetColumnsUs
 import { SaveColumnsUseCase } from "../domain/table-columns/usecases/SaveColumnsUseCase";
 import { TableColumnsDataStoreRepository } from "../data/table-columns/TableColumnsDataStoreRepository";
 import { GetSyncRuleJobConfigsUseCase } from "../domain/scheduler/usecases/GetSyncRuleJobConfigsUseCase";
-import { SyncRuleJobConfigD2Repository } from "../data/scheduler/SyncRuleJobConfigD2Repository";
+import { SyncRuleJobConfigD2ApiRepository } from "../data/scheduler/SyncRuleJobConfigD2ApiRepository";
 
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -162,7 +162,7 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
         this.repositoryFactory.bind(Repositories.DhisReleasesRepository, DhisReleasesLocalRepository);
         this.repositoryFactory.bind(Repositories.TableColumnsRepository, TableColumnsDataStoreRepository);
-        this.repositoryFactory.bind(Repositories.SyncRuleJobConfigRepository, SyncRuleJobConfigD2Repository);
+        this.repositoryFactory.bind(Repositories.SyncRuleJobConfigRepository, SyncRuleJobConfigD2ApiRepository);
     }
 
     @cache()

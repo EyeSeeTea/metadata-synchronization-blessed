@@ -6,7 +6,7 @@ import { SyncRuleJobConfig } from "../../domain/scheduler/entities/SyncRuleJobCo
 import { Namespace } from "../storage/Namespaces";
 
 // TODO: remove coupling with ConfigRepository repository having in the constructor directly the StorageClient
-export class SyncRuleJobConfigD2Repository implements SyncRuleJobConfigRepository {
+export class SyncRuleJobConfigD2ApiRepository implements SyncRuleJobConfigRepository {
     constructor(private configRepository: ConfigRepository) {}
 
     public async getAll(currentUser: User): Promise<SyncRuleJobConfig[]> {
