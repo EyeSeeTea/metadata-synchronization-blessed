@@ -8,7 +8,6 @@ import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { D2Api } from "../../types/d2-api";
-import { initializeAppRoles } from "../../utils/permissions";
 import { CompositionRoot } from "../CompositionRoot";
 import { useMigrations } from "../react/core/components/migrations/hooks";
 import Migrations from "../react/core/components/migrations/Migrations";
@@ -62,7 +61,7 @@ const App = () => {
             Object.assign(window, { api });
             setUsername(currentUser.username);
             setAppConfig(configFromJson);
-            await initializeAppRoles(baseUrl);
+            await compositionRoot.roles.validate();
         };
 
         run();
