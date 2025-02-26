@@ -1,10 +1,9 @@
 import { SyncRuleJobConfig } from "../entities/SyncRuleJobConfig";
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
 import { User } from "../../user/entities/User";
+import { Instance } from "../../instance/entities/Instance";
 
 export interface SyncRuleJobConfigRepositoryConstructor {
-    // TODO: remove coupling with ConfigRepository repository having in the constructor directly the StorageClient
-    new (configRepository: ConfigRepository): SyncRuleJobConfigRepository;
+    new (instance: Instance): SyncRuleJobConfigRepository;
 }
 
 export interface SyncRuleJobConfigRepository {

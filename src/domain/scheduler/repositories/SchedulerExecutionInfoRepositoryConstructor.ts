@@ -1,8 +1,8 @@
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
+import { Instance } from "../../instance/entities/Instance";
 import { SchedulerExecutionInfo } from "../entities/SchedulerExecutionInfo";
 
 export interface SchedulerExecutionInfoRepositoryConstructor {
-    new (configRepository: ConfigRepository): SchedulerExecutionInfoRepository;
+    new (instance: Instance): SchedulerExecutionInfoRepository;
 }
 
 export interface SchedulerExecutionInfoRepository {

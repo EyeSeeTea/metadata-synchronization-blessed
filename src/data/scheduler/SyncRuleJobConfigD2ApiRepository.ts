@@ -1,13 +1,17 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { SynchronizationRule, SynchronizationRuleData } from "../../domain/rules/entities/SynchronizationRule";
 import { SyncRuleJobConfigRepository } from "../../domain/scheduler/repositories/SyncRuleJobConfigRepository";
 import { User } from "../../domain/user/entities/User";
 import { SyncRuleJobConfig } from "../../domain/scheduler/entities/SyncRuleJobConfig";
 import { Namespace } from "../storage/Namespaces";
+import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
+import { Instance } from "../../domain/instance/entities/Instance";
 
-// TODO: remove coupling with ConfigRepository repository having in the constructor directly the StorageClient
 export class SyncRuleJobConfigD2ApiRepository implements SyncRuleJobConfigRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    private dataStoreClient: StorageDataStoreClient;
+
+    constructor(private instance: Instance) {
+        this.dataStoreClient = new StorageDataStoreClient(this.instance);
+    }
 
     public async getAll(currentUser: User): Promise<SyncRuleJobConfig[]> {
         const synchRulesToBeScheduled = await this.getAllSynchronizationRules(currentUser);
@@ -18,10 +22,8 @@ export class SyncRuleJobConfigD2ApiRepository implements SyncRuleJobConfigReposi
     }
 
     private async getAllSynchronizationRules(currentUser: User): Promise<SynchronizationRule[]> {
-        const storageClient = await this.configRepository.getStorageClient();
-        const storedSynchronizationRuleData = await storageClient.listObjectsInCollection<SynchronizationRuleData>(
-            Namespace.RULES
-        );
+        const storedSynchronizationRuleData =
+            await this.dataStoreClient.listObjectsInCollection<SynchronizationRuleData>(Namespace.RULES);
 
         const syncRules = storedSynchronizationRuleData.map(data => SynchronizationRule.build(data));
 

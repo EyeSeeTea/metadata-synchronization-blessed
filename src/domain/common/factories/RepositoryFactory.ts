@@ -192,9 +192,8 @@ export class RepositoryFactory {
 
     @cache()
     public schedulerExecutionInfoRepository(instance: Instance) {
-        const config = this.configRepository(instance);
         return this.get<SchedulerExecutionInfoRepositoryConstructor>(Repositories.SchedulerExecutionInfoRepository, [
-            config,
+            instance,
         ]);
     }
 
@@ -211,12 +210,7 @@ export class RepositoryFactory {
 
     @cache()
     public syncRuleJobConfigRepository(instance: Instance) {
-        // TODO: remove coupling with ConfigRepository repository having directly the StorageClient
-        const configRepository = this.configRepository(instance);
-
-        return this.get<SyncRuleJobConfigRepositoryConstructor>(Repositories.SyncRuleJobConfigRepository, [
-            configRepository,
-        ]);
+        return this.get<SyncRuleJobConfigRepositoryConstructor>(Repositories.SyncRuleJobConfigRepository, [instance]);
     }
 }
 
