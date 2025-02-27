@@ -1,5 +1,5 @@
-import { makeStyles, Typography } from "@material-ui/core";
-import { MultiSelector, useSnackbar, withSnackbar } from "@eyeseetea/d2-ui-components";
+import { CircularProgress, makeStyles, Typography } from "@material-ui/core";
+import { MultiSelector, useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { useEffect } from "react";
 import i18n from "../../../../../../locales";
 import Dropdown from "../../dropdown/Dropdown";
@@ -53,7 +53,9 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
         }
     }, [error, snackbar]);
 
-    return (
+    console.debug("Rendering MetadataIncludeExcludeStep");
+
+    return modelSelectItems.length > 0 ? (
         <React.Fragment>
             <div>
                 <div>
@@ -145,13 +147,25 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                 </div>
             )}
         </React.Fragment>
+    ) : (
+        <LoadingContainer>
+            <CircularProgress />
+        </LoadingContainer>
     );
 };
 
-export default withSnackbar(MetadataIncludeExcludeStep);
+export default React.memo(MetadataIncludeExcludeStep);
 
 const Row = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
+`;
+
+const LoadingContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
 `;
