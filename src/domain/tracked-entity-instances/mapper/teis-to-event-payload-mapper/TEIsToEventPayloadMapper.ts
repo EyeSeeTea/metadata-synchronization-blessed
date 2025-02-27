@@ -44,14 +44,14 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
 
                     const event = {
                         event: id,
-                        eventDate: enrollment.enrollmentDate,
+                        occurredAt: enrollment.enrolledAt,
                         orgUnit: cleanOrgUnitPath(mappedOrgUnit),
                         program: mappedProgram,
                         programStage: mappedProgramStage.id,
                         deleted: false,
-                        created: date,
-                        dueDate: date,
-                        lastUpdated: date,
+                        createdAt: date,
+                        scheduledAt: date,
+                        updatedAt: date,
                         dataValues: tei.attributes
                             .filter(att => {
                                 const dateElementId = trackedEntityAttributesToDE[att.attribute]?.mappedId;
@@ -68,8 +68,8 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
                                     ?.mappedId as string;
 
                                 return {
-                                    created: date,
-                                    lastUpdated: date,
+                                    createdAt: date,
+                                    updatedAt: date,
                                     dataElement: mappedDataElement,
                                     value: mapOptionValue(att.value, [
                                         trackedEntityAttributesToDE[att.attribute]?.mapping ?? {},

@@ -17,11 +17,9 @@ export interface TEIRepository {
 }
 
 export interface TEIsResponse {
-    trackedEntityInstances: TrackedEntityInstance[];
-    pager: {
-        pageCount: number;
-        pageSize: number;
-        total: number;
-        page: number;
-    };
+    page: number;
+    total: number;
+    pageCount: number;
+    pageSize: number;
+    instances: TrackedEntityInstance[];
 }

@@ -7,6 +7,7 @@ export interface DataImportParams {
     dataElementIdScheme?: "UID" | "CODE" | "NAME";
     orgUnitIdScheme?: "UID" | "CODE" | "NAME";
     dryRun?: boolean;
+    importMode?: "COMMIT" | "VALIDATE"; // used to be dryRun in new tracker endpoint
     preheatCache?: boolean;
     skipExistingCheck?: boolean;
     skipAudit?: boolean;
@@ -38,11 +39,11 @@ export interface DataSynchronizationParams extends DataImportParams {
     ignoreDuplicateExistingValues?: boolean;
 }
 
-export function isDataSynchronizationRequired(params: DataSynchronizationParams, lastUpdated: string): boolean {
+export function isDataSynchronizationRequired(params: DataSynchronizationParams, lastUpdated?: string): boolean {
     const { period } = params;
     const { startDate } = buildPeriodFromParams(params);
 
-    const isUpdatedAfterStartDate = new Date(lastUpdated).toISOString() >= startDate.format();
+    const isUpdatedAfterStartDate = lastUpdated && new Date(lastUpdated).toISOString() >= startDate.format();
     const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
 
     return isUpdatedAfterStartDate || !isLastSuccessfulSync;

@@ -70,11 +70,15 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
                                 paginationFilters.pageSize
                             )
                             .then(teisResponse => {
-                                setPager(teisResponse.pager);
+                                setPager({
+                                    page: teisResponse.page,
+                                    pageSize: teisResponse.pageSize,
+                                    total: teisResponse.total,
+                                });
                                 setRows(
-                                    teisResponse.trackedEntityInstances.map(tei => ({
+                                    teisResponse.instances.map(tei => ({
                                         ...tei,
-                                        id: tei.trackedEntityInstance,
+                                        id: tei.trackedEntity,
                                     }))
                                 );
                                 setRowsLoading(false);
@@ -152,8 +156,7 @@ export default function TEIsSelectionStep({ syncRule, onChange }: SyncWizardStep
                 name: "enrollmentDate" as const,
                 text: i18n.t("Enrollment Date"),
                 sortable: true,
-                getValue: (tei: TrackedEntityInstance) =>
-                    moment(tei.enrollments[0].enrollmentDate).format("YYYY-MM-DD"),
+                getValue: (tei: TrackedEntityInstance) => moment(tei.enrollments[0].enrolledAt).format("YYYY-MM-DD"),
             },
             ...attributes.map(columnAtt => {
                 return {
