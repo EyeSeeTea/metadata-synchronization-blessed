@@ -472,7 +472,9 @@ export class SynchronizationRule {
         } = this.metadataIncludeExcludeRules[type];
 
         if (_.difference(rulesToIncludeRefsAndObjects, oldIncludeOnlyReferencesRules).length > 0) {
-            throw Error("Rules error: It's not possible move rules that do not exist in exclude to include");
+            throw Error(
+                "Rules error: It's not possible to move rules that do not exist in includeOnlyReferencesRules to includeReferencesAndObjectsRules"
+            );
         }
 
         const rulesToIncludeWithParents = _(rulesToIncludeRefsAndObjects)
@@ -509,7 +511,9 @@ export class SynchronizationRule {
         } = this.metadataIncludeExcludeRules[type];
 
         if (_.difference(rulesToIncludeOnlyReferences, oldIncludeReferencesAndObjectsRules).length > 0) {
-            throw Error("Rules error: It's not possible move rules that do not exist in include to exclude");
+            throw Error(
+                "Rules error: It's not possible move rules that do not exist in includeReferencesAndObjectsRule to includeOnlyReferencesRules"
+            );
         }
 
         const rulesToExcludeWithChildren = _(rulesToIncludeOnlyReferences)
