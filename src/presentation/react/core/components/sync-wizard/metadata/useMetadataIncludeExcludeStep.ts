@@ -34,26 +34,40 @@ export function useMetadataIncludeExcludeStep(
         });
     }, [compositionRoot, syncRule.originInstance]);
 
+    const handleDefaultChange = useCallback(
+        (models: typeof D2Model[]) => {
+            onChange(
+                syncRule.useDefaultIncludeExclude
+                    ? syncRule.markToUseDefaultIncludeExclude()
+                    : syncRule.markToNotUseDefaultIncludeExclude(models)
+            );
+        },
+        [onChange, syncRule]
+    );
+
     useEffect(() => {
         compositionRoot.metadata
-            .getByIds(syncRule.metadataIds, instance, "id,name,type") //type is required to transform visualizations to charts and report tables
+            .getByIds(syncRule.metadataIds, instance, "id,name,type")
             .then((metadata: MetadataPackage<MetadataEntity>) => {
-                const models = getModels(metadata, syncRule);
-
+                const models = getModels(metadata, syncRule.metadataModelsSyncAll);
                 const modelSelectItems = getModelSelectItems(models, api);
 
                 setModels(models);
                 setModelSelectItems(modelSelectItems);
 
                 if (pendingApplyUseDefaultChange) {
-                    onChange(
-                        syncRule.useDefaultIncludeExclude
-                            ? syncRule.markToUseDefaultIncludeExclude()
-                            : syncRule.markToNotUseDefaultIncludeExclude(models)
-                    );
+                    handleDefaultChange(models);
                 }
             });
-    }, [compositionRoot, api, syncRule, pendingApplyUseDefaultChange, onChange, instance]);
+    }, [
+        compositionRoot,
+        api,
+        syncRule.metadataIds,
+        syncRule.metadataModelsSyncAll,
+        pendingApplyUseDefaultChange,
+        handleDefaultChange,
+        instance,
+    ]);
 
     const syncParams = useMemo(() => syncRule.syncParams, [syncRule.syncParams]);
 
@@ -241,10 +255,10 @@ function getModelSelectItems(models: typeof D2Model[], api: D2Api) {
         }));
 }
 
-function getModels(metadata: MetadataPackage<MetadataEntity>, syncRule: SynchronizationRule) {
+function getModels(metadata: MetadataPackage<MetadataEntity>, metadataModelsSyncAll: string[]) {
     return _(metadata)
         .keys()
-        .concat(syncRule.metadataModelsSyncAll)
+        .concat(metadataModelsSyncAll)
         .sort()
         .uniq()
         .value()
