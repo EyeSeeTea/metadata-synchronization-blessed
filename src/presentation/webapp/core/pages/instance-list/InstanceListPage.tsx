@@ -31,7 +31,7 @@ import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import { StorageType } from "../../../../../domain/config/entities/Config";
 
 const InstanceListPage = () => {
-    const { api, compositionRoot } = useAppContext();
+    const { api, compositionRoot, newCompositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -58,8 +58,8 @@ const InstanceListPage = () => {
     }, [compositionRoot, search, toDelete]);
 
     useEffect(() => {
-        compositionRoot.config.getStorage().then(storage => setAppStorage(storage));
-    }, [compositionRoot]);
+        newCompositionRoot.config.getStorage.execute().then(storage => setAppStorage(storage));
+    }, [newCompositionRoot]);
 
     useEffect(() => {
         compositionRoot.instances.getLocal().then(setLocalInstance);

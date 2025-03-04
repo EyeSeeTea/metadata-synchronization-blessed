@@ -20,6 +20,6 @@ export class TableColumnsDataStoreRepository implements TableColumnsRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.configRepository.getStorageClient({ storageType: "user" });
+        return this.configRepository.getUserStorageClient();
     }
 }

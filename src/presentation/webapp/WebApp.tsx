@@ -21,6 +21,7 @@ import { DeletingHistory } from "../react/core/components/deleting-history/Delet
 import { Feedback } from "@eyeseetea/feedback-component";
 import { AppConfig } from "../../app-config.template";
 import { Maybe } from "../../types/utils";
+import { getWebappCompositionRoot } from "../NewCompositionRoot";
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -56,7 +57,8 @@ const App = () => {
             const currentUser = await compositionRoot.user.current();
             if (!currentUser) throw new Error("User not logged in");
 
-            setAppContext({ d2: d2, api, compositionRoot });
+            const newCompositionRoot = getWebappCompositionRoot(api, instance);
+            setAppContext({ d2: d2, api, compositionRoot, newCompositionRoot });
 
             Object.assign(window, { api });
             setUsername(currentUser.username);

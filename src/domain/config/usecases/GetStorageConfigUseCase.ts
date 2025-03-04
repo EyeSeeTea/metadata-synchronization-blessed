@@ -1,13 +1,11 @@
-import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Instance } from "../../instance/entities/Instance";
 import { StorageType } from "../entities/Config";
+import { ConfigRepository } from "../repositories/ConfigRepository";
 
-export class GetStorageConfigUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+export class GetStorageConfigUseCase {
+    constructor(private configRepository: ConfigRepository) {}
 
     public async execute(): Promise<StorageType> {
-        const client = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const client = await this.configRepository.getStorageClient();
 
         return client.type;
     }

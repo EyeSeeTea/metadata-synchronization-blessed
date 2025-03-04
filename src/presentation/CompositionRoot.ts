@@ -27,8 +27,6 @@ import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggrega
 import { UseCase } from "../domain/common/entities/UseCase";
 import { Repositories, RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
 import { StartApplicationUseCase } from "../domain/common/usecases/StartApplicationUseCase";
-import { GetStorageConfigUseCase } from "../domain/config/usecases/GetStorageConfigUseCase";
-import { SetStorageConfigUseCase } from "../domain/config/usecases/SetStorageConfigUseCase";
 import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDataUseCase";
 import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
@@ -368,14 +366,6 @@ export class CompositionRoot {
             readFiles: new ReadSyncRuleFilesUseCase(this.repositoryFactory, this.localInstance),
             export: new ExportSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(this, this.repositoryFactory, this.localInstance),
-        });
-    }
-
-    @cache()
-    public get config() {
-        return getExecute({
-            getStorage: new GetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
-            setStorage: new SetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 

@@ -20,7 +20,7 @@ const initialSettingsForm = {
 };
 
 export function useSettings() {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, newCompositionRoot } = useAppContext();
 
     const [storageType, setStorageType] = useState<StorageType>("dataStore");
     const [savedStorageType, setSavedStorageType] = useState<StorageType>("dataStore");
@@ -33,11 +33,11 @@ export function useSettings() {
     const [error, setError] = useState<string | undefined>(undefined);
 
     useEffect(() => {
-        compositionRoot.config.getStorage().then(storage => {
+        newCompositionRoot.config.getStorage.execute().then(storage => {
             setStorageType(storage);
             setSavedStorageType(storage);
         });
-    }, [compositionRoot]);
+    }, [compositionRoot, newCompositionRoot]);
 
     useEffect(() => {
         compositionRoot.settings.get().then(settings => {
@@ -54,14 +54,14 @@ export function useSettings() {
     const changeStorage = useCallback(
         async (storage: StorageType) => {
             setLoadingMessage(i18n.t("Updating storage location, please wait..."));
-            await compositionRoot.config.setStorage(storage);
+            await newCompositionRoot.config.setStorage.execute(storage);
 
-            const newStorage = await compositionRoot.config.getStorage();
+            const newStorage = await newCompositionRoot.config.getStorage.execute();
             setStorageType(newStorage);
             setLoadingMessage(undefined);
             setGoHome(true);
         },
-        [compositionRoot.config]
+        [newCompositionRoot]
     );
 
     const saveSettings = useCallback(() => {
