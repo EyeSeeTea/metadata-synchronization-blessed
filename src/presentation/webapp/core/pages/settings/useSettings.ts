@@ -33,7 +33,7 @@ export function useSettings() {
     const [error, setError] = useState<string | undefined>(undefined);
 
     useEffect(() => {
-        newCompositionRoot.config.getStorage.execute().then(storage => {
+        newCompositionRoot.config.getStorageClient.execute().then(storage => {
             setStorageType(storage);
             setSavedStorageType(storage);
         });
@@ -54,9 +54,9 @@ export function useSettings() {
     const changeStorage = useCallback(
         async (storage: AppStorageType) => {
             setLoadingMessage(i18n.t("Updating storage location, please wait..."));
-            await newCompositionRoot.config.setStorage.execute(storage);
+            await newCompositionRoot.config.setStorageClient.execute(storage);
 
-            const newStorage = await newCompositionRoot.config.getStorage.execute();
+            const newStorage = await newCompositionRoot.config.getStorageClient.execute();
             setStorageType(newStorage);
             setLoadingMessage(undefined);
             setGoHome(true);

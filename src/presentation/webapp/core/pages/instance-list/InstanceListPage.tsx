@@ -58,7 +58,7 @@ const InstanceListPage = () => {
     }, [compositionRoot, search, toDelete]);
 
     useEffect(() => {
-        newCompositionRoot.config.getStorage.execute().then(storage => setAppStorage(storage));
+        newCompositionRoot.config.getStorageClient.execute().then(storage => setAppStorage(storage));
     }, [newCompositionRoot]);
 
     useEffect(() => {
