@@ -1,5 +1,5 @@
 import { Either } from "../../domain/common/entities/Either";
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { DataSourceMapping } from "../../domain/mapping/entities/DataSourceMapping";
 import { isMappingOwnerStore, MappingOwner } from "../../domain/mapping/entities/MappingOwner";
 import { MappingRepository, SaveMappingError } from "../../domain/mapping/repositories/MappingRepository";
@@ -7,7 +7,7 @@ import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Namespace } from "../storage/Namespaces";
 
 export class MappingD2ApiRepository implements MappingRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private configRepository: StorageClientRepository) {}
 
     async getByOwner(owner: MappingOwner): Promise<DataSourceMapping | undefined> {
         const storageClient = await this.getStorageClient();

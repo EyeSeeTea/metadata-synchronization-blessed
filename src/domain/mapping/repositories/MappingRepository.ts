@@ -1,10 +1,10 @@
 import { Either } from "../../common/entities/Either";
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../storage-client-config/repositories/StorageClientRepository";
 import { DataSourceMapping } from "../entities/DataSourceMapping";
 import { MappingOwner } from "../entities/MappingOwner";
 
 export interface MappingRepositoryConstructor {
-    new (configRepository: ConfigRepository): MappingRepository;
+    new (configRepository: StorageClientRepository): MappingRepository;
 }
 
 export type SaveMappingError = "UNEXPECTED_ERROR";

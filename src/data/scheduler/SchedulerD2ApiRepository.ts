@@ -1,11 +1,11 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { SchedulerExecution } from "../../domain/scheduler/entities/SchedulerExecution";
 import { SchedulerRepository } from "../../domain/scheduler/repositories/SchedulerRepository";
 import { Namespace } from "../storage/Namespaces";
 import { SchedulerExecutionModel } from "./models/SchedulerExecutionModel";
 
 export class SchedulerD2ApiRepository implements SchedulerRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private configRepository: StorageClientRepository) {}
 
     public async updateLastExecution(execution: SchedulerExecution): Promise<void> {
         const data = SchedulerExecutionModel.encode<SchedulerExecution>(execution);

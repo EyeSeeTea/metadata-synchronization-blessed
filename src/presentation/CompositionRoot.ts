@@ -1,5 +1,5 @@
 import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRepository";
-import { ConfigAppRepository } from "../data/config/ConfigAppRepository";
+import { StorageClientD2Repository } from "../data/config/StorageClientD2Repository";
 import { CustomDataD2ApiRepository } from "../data/custom-data/CustomDataD2ApiRepository";
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { FileDataRepository } from "../data/file/FileDataRepository";
@@ -134,7 +134,7 @@ export class CompositionRoot {
         this.repositoryFactory = new RepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
         this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
-        this.repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
+        this.repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
         this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
         this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);

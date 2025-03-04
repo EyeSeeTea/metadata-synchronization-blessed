@@ -1,4 +1,4 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { Debug } from "../../domain/migrations/entities/Debug";
 import { MigrationVersions } from "../../domain/migrations/entities/MigrationVersions";
 import { MigrationsRepository } from "../../domain/migrations/repositories/MigrationsRepository";
@@ -14,7 +14,7 @@ import { D2Api } from "../../types/d2-api";
 export class MigrationsAppRepository implements MigrationsRepository {
     private d2Api: D2Api;
 
-    constructor(private configRepository: ConfigRepository, localInstance: Instance) {
+    constructor(private configRepository: StorageClientRepository, localInstance: Instance) {
         this.d2Api = getD2APiFromInstance(localInstance);
     }
 

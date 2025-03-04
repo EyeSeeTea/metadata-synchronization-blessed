@@ -1,7 +1,7 @@
 import Cryptr from "cryptr";
 import _ from "lodash";
 import { Either } from "../../domain/common/entities/Either";
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
 import { InstanceMessage } from "../../domain/instance/entities/Message";
 import { InstanceRepository, InstancesFilter } from "../../domain/instance/repositories/InstanceRepository";
@@ -20,7 +20,11 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     private api: D2Api;
     private cache = new InmemoryCache();
 
-    constructor(private configRepository: ConfigRepository, private instance: Instance, private encryptionKey: string) {
+    constructor(
+        private configRepository: StorageClientRepository,
+        private instance: Instance,
+        private encryptionKey: string
+    ) {
         this.api = getD2APiFromInstance(instance);
     }
 

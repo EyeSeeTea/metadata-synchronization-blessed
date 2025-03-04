@@ -3,7 +3,7 @@ import { NamespaceProperties } from "../../../data/storage/Namespaces";
 import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
-import { StorageType } from "../../config/entities/Config";
+import { AppStorageType } from "../../storage-client-config/entities/StorageConfig";
 import { Instance } from "../../instance/entities/Instance";
 
 export interface StorageClientConstructor {
@@ -22,7 +22,7 @@ export interface ObjectSharing {
 }
 
 export abstract class StorageClient {
-    public abstract type: StorageType;
+    public abstract type: AppStorageType;
 
     // Object operations
     public abstract getObject<T extends object>(key: string): Promise<T | undefined>;

@@ -1,11 +1,11 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { Settings, SettingsData } from "../../domain/settings/Settings";
 import { SettingsRepository } from "../../domain/settings/SettingsRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Namespace } from "../storage/Namespaces";
 
 export class SettingsD2ApiRepository implements SettingsRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private configRepository: StorageClientRepository) {}
 
     async get(): Promise<Settings> {
         const storageClient = await this.getStorageClient();

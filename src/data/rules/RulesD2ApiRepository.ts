@@ -1,4 +1,4 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { SynchronizationRule, SynchronizationRuleData } from "../../domain/rules/entities/SynchronizationRule";
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
@@ -6,7 +6,7 @@ import { UserRepository } from "../../domain/user/repositories/UserRepository";
 import { Namespace } from "../storage/Namespaces";
 
 export class RulesD2ApiRepository implements RulesRepository {
-    constructor(private configRepository: ConfigRepository, private userRepository: UserRepository) {}
+    constructor(private configRepository: StorageClientRepository, private userRepository: UserRepository) {}
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {
         const storageClient = await this.getStorageClient();

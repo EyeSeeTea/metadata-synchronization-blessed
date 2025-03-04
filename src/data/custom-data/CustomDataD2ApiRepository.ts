@@ -1,10 +1,10 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { CustomData } from "../../domain/custom-data/entities/CustomData";
 import { CustomDataRepository } from "../../domain/custom-data/repository/CustomDataRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 
 export class CustomDataD2ApiRepository implements CustomDataRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private configRepository: StorageClientRepository) {}
 
     async get<T extends CustomData>(key: string): Promise<T | undefined> {
         const storageClient = await this.getStorageClient();

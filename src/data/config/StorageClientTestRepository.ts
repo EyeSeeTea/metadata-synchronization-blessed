@@ -1,16 +1,15 @@
-
-import { StorageType } from "../../domain/config/entities/Config";
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { AppStorageType } from "../../domain/storage-client-config/entities/StorageConfig";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 
-export class ConfigTestRepository implements ConfigRepository {
+export class StorageClientTestRepository implements StorageClientRepository {
     getUserStorageClient(): Promise<StorageClient> {
         throw new Error("Method not implemented.");
     }
     getStorageClient(): Promise<StorageClient> {
         throw new Error("Method not implemented.");
     }
-    changeStorageClient(_client: StorageType): Promise<void> {
+    changeStorageClient(_client: AppStorageType): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

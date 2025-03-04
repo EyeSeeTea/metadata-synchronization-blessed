@@ -1,10 +1,10 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { TableColumn } from "../../domain/table-columns/entities/TableColumn";
 import { TableColumnsRepository } from "../../domain/table-columns/repositories/TableColumnsRepository";
 
 export class TableColumnsDataStoreRepository implements TableColumnsRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private configRepository: StorageClientRepository) {}
 
     async getColumns(namespace: string): Promise<TableColumn[]> {
         const storageClient = await this.getStorageClient();

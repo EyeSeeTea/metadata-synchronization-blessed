@@ -1,4 +1,4 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { SynchronizationReport, SynchronizationReportData } from "../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { ReportsRepository } from "../../domain/reports/repositories/ReportsRepository";
@@ -6,7 +6,7 @@ import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Namespace } from "../storage/Namespaces";
 
 export class ReportsD2ApiRepository implements ReportsRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private configRepository: StorageClientRepository) {}
 
     public async getById(id: string): Promise<SynchronizationReport | undefined> {
         try {

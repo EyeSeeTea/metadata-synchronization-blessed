@@ -1,8 +1,8 @@
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
+import { StorageClientRepository } from "../../storage-client-config/repositories/StorageClientRepository";
 import { Store } from "../entities/Store";
 
 export interface StoreRepositoryConstructor {
-    new (configRepository: ConfigRepository): StoreRepository;
+    new (configRepository: StorageClientRepository): StoreRepository;
 }
 
 export interface StoreRepository {
