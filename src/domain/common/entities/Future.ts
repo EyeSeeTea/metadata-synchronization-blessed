@@ -10,6 +10,10 @@ import { Cancellation } from "real-cancellable-promise";
  *
  * More info: https://github.com/EyeSeeTea/know-how/wiki/Async-futures
  */
+
+/**
+ * @description Future is refactored
+ */
 export class Future<E, D> {
     private constructor(private _promise: () => rcpromise.CancellablePromise<D>) {}
 

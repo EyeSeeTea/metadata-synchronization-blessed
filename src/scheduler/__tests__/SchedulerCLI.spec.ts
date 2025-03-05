@@ -13,6 +13,8 @@ import { FutureData, Future } from "../../domain/common/entities/Future";
 import { getSynchronizationRule } from "./data/getSynchronizationRule";
 import { getSyncRuleJobConfig } from "./data/getSyncRuleJobConfig";
 
+// NOTICE: This file is refactored.
+
 const API_PATH = "baseUrl/api/";
 
 describe("SchedulerCLI", () => {

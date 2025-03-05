@@ -1,3 +1,5 @@
+// NOTICE: This is refactored
+
 export type ScheduledJob = {
     id: string;
     nextExecution: Date;

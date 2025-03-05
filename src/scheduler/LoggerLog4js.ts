@@ -1,6 +1,9 @@
 import { configure, getLogger } from "log4js";
 import { Logger } from "../domain/scheduler/entities/Logger";
 
+/**
+ * @description This file is refactored.
+ */
 export default class LoggerLog4js implements Logger {
     constructor(isDevelopment: boolean) {
         configure({

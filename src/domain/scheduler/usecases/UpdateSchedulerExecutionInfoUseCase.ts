@@ -5,7 +5,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { SchedulerExecutionInfo } from "../entities/SchedulerExecutionInfo";
 
 /**
- * @todo Do not pass RepositoryFactory and Instance, only pass the necessary repositories
+ * @todo This file is refactored but we need to not pass RepositoryFactory and Instance, only pass the necessary repositories
  */
 export class UpdateSchedulerExecutionInfoUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}

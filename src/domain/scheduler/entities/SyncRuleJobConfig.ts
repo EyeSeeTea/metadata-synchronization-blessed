@@ -1,3 +1,5 @@
+// NOTICE: This is refactored
+
 export type SyncRuleJobConfig = {
     id: string;
     name: string;

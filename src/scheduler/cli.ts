@@ -12,6 +12,7 @@ import { SchedulerCLI } from "./SchedulerCLI";
 import { Future, FutureData } from "../domain/common/entities/Future";
 
 // NOTICE: This file is refactored
+
 const isDevelopment = process.env.NODE_ENV === "development";
 
 const checkMigrations = (compositionRoot: CompositionRoot): FutureData<boolean> => {

@@ -7,7 +7,7 @@ import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
 import { SchedulerExecutionInfoModel } from "./models/SchedulerExecutionInfoModel";
 
 /**
- * @todo This file is refactored but in the constructor instead of Instance whe should get D2Api or directly DataStoreClient
+ * @todo This file is refactored but in the constructor instead of Instance we should get D2Api or directly DataStoreClient
  */
 export class SchedulerExecutionInfoD2ApiRepository implements SchedulerExecutionInfoRepository {
     private dataStoreClient: StorageDataStoreClient;

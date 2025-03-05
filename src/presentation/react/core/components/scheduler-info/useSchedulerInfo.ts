@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../../contexts/AppContext";
 import { SchedulerExecutionInfo } from "../../../../../domain/scheduler/entities/SchedulerExecutionInfo";
 
+// NOTICE: This is refactored
+
 export type SchedulerInfoState = {
     status: boolean;
     errorMessage: string;

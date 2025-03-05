@@ -3,6 +3,9 @@ import { SchedulerContract } from "../domain/scheduler/entities/SchedulerContrac
 import { DEFAULT_SCHEDULED_JOB_ID, ScheduledJob } from "../domain/scheduler/entities/ScheduledJob";
 import { EVERY_MINUTE_FREQUENCY } from "../domain/scheduler/entities/SyncRuleJobConfig";
 
+/**
+ * @description This file is refactored.
+ */
 export default class Scheduler implements SchedulerContract {
     public getScheduledJobs(): ScheduledJob[] {
         const jobs = schedule.scheduledJobs;

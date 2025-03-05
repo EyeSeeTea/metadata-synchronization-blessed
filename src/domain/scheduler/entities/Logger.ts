@@ -1,3 +1,6 @@
+/**
+ * @description This is refactored
+ */
 export interface Logger {
     trace(name: string, message: string): void;
     debug(name: string, message: string): void;

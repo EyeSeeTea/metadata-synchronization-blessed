@@ -4,7 +4,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { FutureData } from "../../common/entities/Future";
 
 /**
- * @todo We need to remove SyncRuleJobConfigRepositoryConstructor concept
+ * @todo This file is refactored but we need to remove SyncRuleJobConfigRepositoryConstructor concept
  */
 export interface SyncRuleJobConfigRepositoryConstructor {
     new (instance: Instance): SyncRuleJobConfigRepository;

@@ -5,7 +5,7 @@ import { Instance } from "../../instance/entities/Instance";
 import { SyncRuleJobConfig } from "../entities/SyncRuleJobConfig";
 
 /**
- * @todo Do not pass RepositoryFactory and Instance, only pass the necessary repositories
+ * @todo This file is refactored but we need to not pass RepositoryFactory and Instance, only pass the necessary repositories
  */
 export class GetSyncRuleJobConfigsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}

@@ -8,7 +8,7 @@ import { Instance } from "../../domain/instance/entities/Instance";
 import { Future, FutureData } from "../../domain/common/entities/Future";
 
 /**
- * @todo This file is refactored but in the constructor instead of Instance whe should get D2Api or directly DataStoreClient
+ * @todo This file is refactored but in the constructor instead of Instance we should get D2Api or directly DataStoreClient
  */
 export class SyncRuleJobConfigD2ApiRepository implements SyncRuleJobConfigRepository {
     private dataStoreClient: StorageDataStoreClient;

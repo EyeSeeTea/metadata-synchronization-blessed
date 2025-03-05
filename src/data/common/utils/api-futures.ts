@@ -1,6 +1,9 @@
 import { Future, FutureData } from "../../../domain/common/entities/Future";
 import { CancelableResponse } from "../../../types/d2-api";
 
+/**
+ * @description This file is refactored
+ */
 export function apiToFuture<Data>(res: CancelableResponse<Data>): FutureData<Data> {
     return Future.fromComputation((resolve, reject) => {
         res.getData()

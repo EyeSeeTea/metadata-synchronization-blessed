@@ -5,6 +5,8 @@ import i18n from "../../../../../locales";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import { useSchedulerInfo } from "./useSchedulerInfo";
 
+// NOTICE: This is refactored
+
 export interface SchedulerInfoProps {
     onSchedulerRun?: (timestamp: string) => void;
 }

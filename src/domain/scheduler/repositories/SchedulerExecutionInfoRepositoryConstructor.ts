@@ -3,7 +3,7 @@ import { SchedulerExecutionInfo } from "../entities/SchedulerExecutionInfo";
 import { FutureData } from "../../common/entities/Future";
 
 /**
- * @todo We need to remove SchedulerExecutionInfoRepositoryConstructor concept
+ * @todo This file is refactored but we need to remove SchedulerExecutionInfoRepositoryConstructor concept
  */
 export interface SchedulerExecutionInfoRepositoryConstructor {
     new (instance: Instance): SchedulerExecutionInfoRepository;
