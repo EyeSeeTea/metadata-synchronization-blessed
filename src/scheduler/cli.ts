@@ -2,15 +2,16 @@ import { command, option, run, string } from "cmd-ts";
 import "dotenv/config";
 import fs from "fs";
 import path from "path";
-import { Future, FutureData } from "../domain/common/entities/Future";
 import { Instance } from "../domain/instance/entities/Instance";
 import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
-import { ConfigModel, SchedulerConfig } from "./entities/SchedulerConfig";
+import { ConfigModel, SchedulerConfig } from "../domain/scheduler/entities/SchedulerConfig";
 import Scheduler from "./Scheduler";
-import { SchedulerPresenter } from "./SchedulerPresenter";
 import LoggerLog4js from "./LoggerLog4js";
+import { SchedulerCLI } from "./SchedulerCLI";
+import { Future, FutureData } from "../domain/common/entities/Future";
 
+// NOTICE: This file is refactored
 const isDevelopment = process.env.NODE_ENV === "development";
 
 const checkMigrations = (compositionRoot: CompositionRoot): FutureData<boolean> => {
@@ -20,7 +21,9 @@ const checkMigrations = (compositionRoot: CompositionRoot): FutureData<boolean> 
         })
         .flatMap(pendingMigrations => {
             if (pendingMigrations) {
-                return Future.error<string, boolean>("There are pending migrations, unable to continue");
+                return Future.error<Error, boolean>(
+                    new Error("There are pending migrations. Please run them before starting the script")
+                );
             }
 
             return Future.success(pendingMigrations);
@@ -87,12 +90,14 @@ const start = async (config: SchedulerConfig, logger: LoggerLog4js): Promise<voi
     logger.info("main", welcomeMessage);
 
     const scheduler = new Scheduler();
-    const schedulerPresenter = new SchedulerPresenter({
+
+    const schedulerCLI = new SchedulerCLI({
         scheduler: scheduler,
         logger: logger,
         compositionRoot: compositionRoot,
     });
-    schedulerPresenter.initialize(api.apiPath);
+
+    schedulerCLI.initialize(api.apiPath);
 };
 
 main();

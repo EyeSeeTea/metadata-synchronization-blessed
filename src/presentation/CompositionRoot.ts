@@ -131,6 +131,9 @@ import { getD2APiFromInstance } from "../utils/d2-utils";
 import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 
+/**
+ * @todo needs refactoring and a testing CompositionRoot
+ */
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
 

@@ -1,5 +1,5 @@
 import { configure, getLogger } from "log4js";
-import { Logger } from "./entities/Logger";
+import { Logger } from "../domain/scheduler/entities/Logger";
 
 export default class LoggerLog4js implements Logger {
     constructor(isDevelopment: boolean) {

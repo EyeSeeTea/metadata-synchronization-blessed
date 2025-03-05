@@ -38,6 +38,9 @@ import { UserRepositoryConstructor } from "../../user/repositories/UserRepositor
 
 type ClassType = new (...args: any[]) => any;
 
+/**
+ * @todo We need to remove RepositoryFactory concept
+ */
 export class RepositoryFactory {
     constructor(private encryptionKey: string) {}
 
