@@ -5,7 +5,11 @@ import { SyncRuleJobConfig } from "../../domain/scheduler/entities/SyncRuleJobCo
 import { Namespace } from "../storage/Namespaces";
 import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
 import { Instance } from "../../domain/instance/entities/Instance";
+import { Future, FutureData } from "../../domain/common/entities/Future";
 
+/**
+ * @todo This file is refactored but in the constructor instead of Instance whe should get D2Api or directly DataStoreClient
+ */
 export class SyncRuleJobConfigD2ApiRepository implements SyncRuleJobConfigRepository {
     private dataStoreClient: StorageDataStoreClient;
 
@@ -13,27 +17,26 @@ export class SyncRuleJobConfigD2ApiRepository implements SyncRuleJobConfigReposi
         this.dataStoreClient = new StorageDataStoreClient(this.instance);
     }
 
-    public async getAll(currentUser: User): Promise<SyncRuleJobConfig[]> {
-        const synchRulesToBeScheduled = await this.getAllSynchronizationRules(currentUser);
+    public getAll(currentUser: User): FutureData<SyncRuleJobConfig[]> {
+        return this.getAllSynchronizationRules(currentUser).flatMap(synchRulesToBeScheduled => {
+            const validSyncRuleJobConfigs = this.mapSynchronizationRulesToSyncRuleJobConfigs(synchRulesToBeScheduled);
 
-        const validSyncRuleJobConfigs = this.mapSynchronizationRulesToSyncRuleJobConfigs(synchRulesToBeScheduled);
-
-        return validSyncRuleJobConfigs;
+            return Future.success(validSyncRuleJobConfigs);
+        });
     }
 
-    private async getAllSynchronizationRules(currentUser: User): Promise<SynchronizationRule[]> {
-        const storedSynchronizationRuleData =
-            await this.dataStoreClient.listObjectsInCollection<SynchronizationRuleData>(Namespace.RULES);
+    private getAllSynchronizationRules(currentUser: User): FutureData<SynchronizationRule[]> {
+        return Future.fromPromise(
+            this.dataStoreClient.listObjectsInCollection<SynchronizationRuleData>(Namespace.RULES)
+        ).flatMap(storedSynchronizationRuleData => {
+            const syncRules = storedSynchronizationRuleData.map(data => SynchronizationRule.build(data));
+            const synchRulesToBeScheduled = syncRules.filter(rule => rule.enabled);
+            const allowedSynchRulesToBeScheduled = synchRulesToBeScheduled.filter(
+                rule => currentUser.isGlobalAdmin || rule.isVisibleToUser(currentUser)
+            );
 
-        const syncRules = storedSynchronizationRuleData.map(data => SynchronizationRule.build(data));
-
-        const synchRulesToBeScheduled = syncRules.filter(rule => rule.enabled);
-
-        const allowedSynchRulesToBeScheduled = synchRulesToBeScheduled.filter(
-            rule => currentUser.isGlobalAdmin || rule.isVisibleToUser(currentUser)
-        );
-
-        return allowedSynchRulesToBeScheduled;
+            return Future.success(allowedSynchRulesToBeScheduled);
+        });
     }
 
     private mapSynchronizationRulesToSyncRuleJobConfigs(syncRule: SynchronizationRule[]): SyncRuleJobConfig[] {
