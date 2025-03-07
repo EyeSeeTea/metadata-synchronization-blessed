@@ -9314,7 +9314,7 @@ flush-write-stream@^1.0.0, flush-write-stream@^1.0.2:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-fluture@14.0.0, fluture@^14.0.0:
+fluture@^14.0.0:
   version "14.0.0"
   resolved "https://registry.yarnpkg.com/fluture/-/fluture-14.0.0.tgz#81e1cae996a262e214aa2a8d7845fe1359018e3b"
   integrity sha512-pENtLF948a8DfduVKugT8edTAbFi4rBS94xjHwzLanQqIu5PYtLGl+xqs6H8TaIRL7z/B0cDpswdINzH/HRUGA==

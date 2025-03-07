@@ -1,16 +1,15 @@
 import { FutureData } from "../../common/entities/Future";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
-import { Instance } from "../../instance/entities/Instance";
 import { SchedulerExecutionInfo } from "../entities/SchedulerExecutionInfo";
+import { SchedulerExecutionInfoRepository } from "../repositories/SchedulerExecutionInfoRepositoryConstructor";
 
 /**
- * @todo This file is refactored but we need to not pass RepositoryFactory and Instance, only pass the necessary repositories
+ * @description This file is refactored
  */
 export class GetLastSchedulerExecutionInfoUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private schedulerExecutionInfoRepository: SchedulerExecutionInfoRepository) {}
 
     public execute(): FutureData<SchedulerExecutionInfo> {
-        return this.repositoryFactory.schedulerExecutionInfoRepository(this.localInstance).getLastExecutionInfo();
+        return this.schedulerExecutionInfoRepository.getLastExecutionInfo();
     }
 }

@@ -20,7 +20,6 @@ import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubR
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
 import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
-import { SchedulerExecutionInfoRepositoryConstructor } from "../../scheduler/repositories/SchedulerExecutionInfoRepositoryConstructor";
 import { SettingsRepositoryConstructor } from "../../settings/SettingsRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
@@ -193,13 +192,6 @@ export class RepositoryFactory {
     }
 
     @cache()
-    public schedulerExecutionInfoRepository(instance: Instance) {
-        return this.get<SchedulerExecutionInfoRepositoryConstructor>(Repositories.SchedulerExecutionInfoRepository, [
-            instance,
-        ]);
-    }
-
-    @cache()
     public settingsRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<SettingsRepositoryConstructor>(Repositories.SettingsRepository, [config]);
@@ -235,7 +227,6 @@ export const Repositories = {
     UserRepository: "userRepository",
     MappingRepository: "mappingRepository",
     SettingsRepository: "settingsRepository",
-    SchedulerExecutionInfoRepository: "schedulerExecutionInfoRepository",
     DataStoreMetadataRepository: "dataStoreMetadataRepository",
     DhisReleasesRepository: "dhisReleasesRepository",
     TableColumnsRepository: "tableColumnsRepository",

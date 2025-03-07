@@ -128,6 +128,7 @@ import { TableColumnsDataStoreRepository } from "../data/table-columns/TableColu
 import { getD2APiFromInstance } from "../utils/d2-utils";
 import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
+import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 
 /**
  * @todo needs refactoring
@@ -158,10 +159,6 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
         this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
-        this.repositoryFactory.bind(
-            Repositories.SchedulerExecutionInfoRepository,
-            SchedulerExecutionInfoD2ApiRepository
-        );
         this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
         this.repositoryFactory.bind(Repositories.DhisReleasesRepository, DhisReleasesLocalRepository);
@@ -410,9 +407,15 @@ export class CompositionRoot {
 
     @cache()
     public get scheduler() {
+        const dataStoreClient = new StorageDataStoreClient(this.localInstance);
+
         return getExecute({
-            getLastExecutionInfo: new GetLastSchedulerExecutionInfoUseCase(this.repositoryFactory, this.localInstance),
-            updateExecutionInfo: new UpdateSchedulerExecutionInfoUseCase(this.repositoryFactory, this.localInstance),
+            getLastExecutionInfo: new GetLastSchedulerExecutionInfoUseCase(
+                new SchedulerExecutionInfoD2ApiRepository(dataStoreClient)
+            ),
+            updateExecutionInfo: new UpdateSchedulerExecutionInfoUseCase(
+                new SchedulerExecutionInfoD2ApiRepository(dataStoreClient)
+            ),
         });
     }
 
