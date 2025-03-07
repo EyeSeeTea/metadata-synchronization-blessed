@@ -1,4 +1,4 @@
-import { Logger } from "../../../domain/scheduler/entities/Logger";
+import { Logger } from "../../Logger";
 
 export class MockLogger implements Logger {
     trace(name: string, message: string): void {

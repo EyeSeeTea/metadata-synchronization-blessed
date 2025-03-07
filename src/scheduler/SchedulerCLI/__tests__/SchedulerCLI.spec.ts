@@ -1,19 +1,18 @@
-import { SchedulerContract } from "../../domain/scheduler/entities/SchedulerContract";
-import { SchedulerCLI } from "../SchedulerCLI";
-import { CompositionRoot } from "../../presentation/CompositionRoot";
-import { Logger } from "../../domain/scheduler/entities/Logger";
-import { MockScheduler } from "./mocks/MockScheduler";
-import { MockLogger } from "./mocks/MockLogger";
-import { SynchronizationRule } from "../../domain/rules/entities/SynchronizationRule";
-import { SchedulerExecutionInfo } from "../../domain/scheduler/entities/SchedulerExecutionInfo";
-import { SyncRuleJobConfig } from "../../domain/scheduler/entities/SyncRuleJobConfig";
-import { PrepareSyncError } from "../../domain/synchronization/usecases/PrepareSyncUseCase";
-import { Either } from "../../domain/common/entities/Either";
-import { FutureData, Future } from "../../domain/common/entities/Future";
+import { Either } from "../../../domain/common/entities/Either";
+import { FutureData, Future } from "../../../domain/common/entities/Future";
+import { SynchronizationRule } from "../../../domain/rules/entities/SynchronizationRule";
+import { ListSyncRuleUseCaseParams } from "../../../domain/rules/usecases/ListSyncRuleUseCase";
+import { SchedulerExecutionInfo } from "../../../domain/scheduler/entities/SchedulerExecutionInfo";
+import { PrepareSyncError } from "../../../domain/synchronization/usecases/PrepareSyncUseCase";
+import { CompositionRoot } from "../../../presentation/CompositionRoot";
+import { Logger } from "../Logger";
+import { SchedulerCLI, SyncRuleJobConfig } from "../SchedulerCLI";
+import { SchedulerContract } from "../SchedulerContract";
 import { getSynchronizationRule } from "./data/getSynchronizationRule";
-import { getSyncRuleJobConfig } from "./data/getSyncRuleJobConfig";
+import { MockLogger } from "./mocks/MockLogger";
+import { MockScheduler } from "./mocks/MockScheduler";
 
-// NOTICE: This file is refactored.
+// TODO: This is the first version of tests, needs a refactor to use ts-mockito instead
 
 const API_PATH = "baseUrl/api/";
 
@@ -38,7 +37,7 @@ describe("SchedulerCLI", () => {
 
     describe("initialize", () => {
         it("should fetch tasks, schedule a job and log a message", async () => {
-            const spyGetSyncRuleJobConfigs = jest.spyOn(mockCompositionRoot.scheduler, "getSyncRuleJobConfigs");
+            const spyGetSyncRuleJobConfigs = jest.spyOn(mockCompositionRoot.rules, "list");
             const spyScheduleJob = jest.spyOn(mockScheduler, "scheduleJob");
             const spyLoggerInfo = jest.spyOn(mockLogger, "info");
 
@@ -48,8 +47,30 @@ describe("SchedulerCLI", () => {
             expect(spyScheduleJob).toHaveBeenCalled();
             expect(spyLoggerInfo).toHaveBeenCalledWith("main", "Loading synchronization rules from remote server");
         });
+
+        it("should call compositionRoot.rules.list with correct params and return correct SyncRuleJobConfig[]", async () => {
+            const spyListRules = jest.spyOn(mockCompositionRoot.rules, "list");
+
+            const expectedConfigs: SyncRuleJobConfig[] = [getSyncRuleJobConfig()];
+
+            const result = await schedulerCLI["getSyncRuleJobConfigs"]();
+
+            expect(spyListRules).toHaveBeenCalledWith({
+                paging: false,
+                filters: { schedulerEnabledFilter: "enabled" },
+            });
+            expect(result).toEqual(expectedConfigs);
+        });
     });
 });
+
+function getSyncRuleJobConfig(): SyncRuleJobConfig {
+    return {
+        id: "sync-rule-id",
+        name: "Sync Rule",
+        frequency: "0 */2 * * * *",
+    };
+}
 
 /**
  * @deprecated this is only a workaround, we need to replace this by a correct implementation of testing CompositionRoot
@@ -59,13 +80,15 @@ class MockCompositionRoot {
         get(): Promise<SynchronizationRule | undefined> {
             return Promise.resolve(getSynchronizationRule());
         },
+
+        list(params: ListSyncRuleUseCaseParams): Promise<{ rows: SynchronizationRule[] }> {
+            const { schedulerEnabledFilter = null } = params.filters || {};
+            const isSchedulerEnabled = schedulerEnabledFilter === "enabled";
+            return Promise.resolve({ rows: [getSynchronizationRule(isSchedulerEnabled)] });
+        },
     };
 
     scheduler = {
-        getSyncRuleJobConfigs(): FutureData<SyncRuleJobConfig[]> {
-            return Future.success([getSyncRuleJobConfig()]);
-        },
-
         getLastExecutionInfo(): FutureData<SchedulerExecutionInfo> {
             return Future.success({ lastExecution: new Date() });
         },

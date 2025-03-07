@@ -1,7 +1,7 @@
 import schedule from "node-schedule";
-import { SchedulerContract } from "../domain/scheduler/entities/SchedulerContract";
+import { SchedulerContract } from "./SchedulerCLI/SchedulerContract";
 import { DEFAULT_SCHEDULED_JOB_ID, ScheduledJob } from "../domain/scheduler/entities/ScheduledJob";
-import { EVERY_MINUTE_FREQUENCY } from "../domain/scheduler/entities/SyncRuleJobConfig";
+import { EVERY_MINUTE_FREQUENCY } from "./SchedulerCLI/SchedulerCLI";
 
 /**
  * @description This file is refactored.

@@ -1,6 +1,6 @@
-import { SynchronizationRule, SynchronizationRuleData } from "../../../domain/rules/entities/SynchronizationRule";
+import { SynchronizationRule, SynchronizationRuleData } from "../../../../domain/rules/entities/SynchronizationRule";
 
-export function getSynchronizationRule(): SynchronizationRule {
+export function getSynchronizationRule(isSchedulerEnabled = false): SynchronizationRule {
     const data: SynchronizationRuleData = {
         id: "sync-rule-id",
         code: "Sync Rule",
@@ -8,7 +8,7 @@ export function getSynchronizationRule(): SynchronizationRule {
         type: "metadata",
         user: { id: "user-id", name: "User Name" },
         created: new Date(),
-        enabled: true,
+        enabled: isSchedulerEnabled,
         frequency: "0 */2 * * * *",
         description: "Sync Rule",
         lastUpdated: new Date(),

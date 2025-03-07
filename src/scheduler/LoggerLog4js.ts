@@ -1,5 +1,5 @@
 import { configure, getLogger } from "log4js";
-import { Logger } from "../domain/scheduler/entities/Logger";
+import { Logger } from "./SchedulerCLI/Logger";
 
 /**
  * @description This file is refactored.

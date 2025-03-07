@@ -1,11 +1,21 @@
 import moment from "moment";
 import cronstrue from "cronstrue";
-import { CompositionRoot } from "../presentation/CompositionRoot";
-import { SchedulerContract } from "../domain/scheduler/entities/SchedulerContract";
-import { DEFAULT_SCHEDULED_JOB_ID, ScheduledJob } from "../domain/scheduler/entities/ScheduledJob";
-import { SyncRuleJobConfig } from "../domain/scheduler/entities/SyncRuleJobConfig";
-import { SchedulerExecutionInfo } from "../domain/scheduler/entities/SchedulerExecutionInfo";
-import { Logger } from "../domain/scheduler/entities/Logger";
+import { CompositionRoot } from "../../presentation/CompositionRoot";
+import { SchedulerContract } from "./SchedulerContract";
+import { DEFAULT_SCHEDULED_JOB_ID, ScheduledJob } from "../../domain/scheduler/entities/ScheduledJob";
+import { SchedulerExecutionInfo } from "../../domain/scheduler/entities/SchedulerExecutionInfo";
+import { Logger } from "./Logger";
+import { SynchronizationRule } from "../../domain/rules/entities/SynchronizationRule";
+
+// NOTICE: This is refactored
+
+export type SyncRuleJobConfig = {
+    id: string;
+    name: string;
+    frequency: string;
+};
+
+export const EVERY_MINUTE_FREQUENCY = "0 * * * * *";
 
 /**
  * @description This file is refactored
@@ -111,10 +121,17 @@ export class SchedulerCLI {
         }
     }
 
+    // use same use case list rules schedulerEnabledFilter = true
     private async getSyncRuleJobConfigs(): Promise<SyncRuleJobConfig[]> {
         const { logger, compositionRoot } = this.options;
 
-        const syncRuleJobConfigsToBeScheduled = await compositionRoot.scheduler.getSyncRuleJobConfigs().toPromise();
+        const { rows: rulesWithSchedulerEnabled } = await compositionRoot.rules.list({
+            paging: false,
+            filters: { schedulerEnabledFilter: "enabled" },
+        });
+
+        const syncRuleJobConfigsToBeScheduled =
+            this.mapSynchronizationRulesToSyncRuleJobConfigs(rulesWithSchedulerEnabled);
 
         logger.trace(
             "scheduler",
@@ -122,6 +139,23 @@ export class SchedulerCLI {
         );
 
         return syncRuleJobConfigsToBeScheduled;
+    }
+
+    private mapSynchronizationRulesToSyncRuleJobConfigs(syncRule: SynchronizationRule[]): SyncRuleJobConfig[] {
+        return syncRule.reduce((acc: SyncRuleJobConfig[], syncRule: SynchronizationRule): SyncRuleJobConfig[] => {
+            if (syncRule.frequency) {
+                return [
+                    ...acc,
+                    {
+                        id: syncRule.id,
+                        name: syncRule.name,
+                        frequency: syncRule.frequency,
+                    },
+                ];
+            } else {
+                return acc;
+            }
+        }, []);
     }
 
     private cancelScheduledJobs(jobIdsToCancel: string[], scheduledJobs: ScheduledJob[]): void {

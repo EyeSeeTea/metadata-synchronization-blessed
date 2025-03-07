@@ -1,4 +1,4 @@
-import { ScheduledJob } from "./ScheduledJob";
+import { ScheduledJob } from "../../domain/scheduler/entities/ScheduledJob";
 
 /**
  * @description This is refactored

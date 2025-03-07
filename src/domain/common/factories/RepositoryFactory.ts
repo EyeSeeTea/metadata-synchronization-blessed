@@ -21,7 +21,6 @@ import { ReportsRepositoryConstructor } from "../../reports/repositories/Reports
 import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
 import { SchedulerExecutionInfoRepositoryConstructor } from "../../scheduler/repositories/SchedulerExecutionInfoRepositoryConstructor";
-import { SyncRuleJobConfigRepositoryConstructor } from "../../scheduler/repositories/SyncRuleJobConfigRepository";
 import { SettingsRepositoryConstructor } from "../../settings/SettingsRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
@@ -39,7 +38,7 @@ import { UserRepositoryConstructor } from "../../user/repositories/UserRepositor
 type ClassType = new (...args: any[]) => any;
 
 /**
- * @todo We need to remove RepositoryFactory concept
+ * @todo We need to think how to refactor RepositoryFactory concept
  */
 export class RepositoryFactory {
     constructor(private encryptionKey: string) {}
@@ -210,11 +209,6 @@ export class RepositoryFactory {
     public dhisReleasesRepository() {
         return this.get<DhisReleasesRepositoryConstructor>(Repositories.DhisReleasesRepository, []);
     }
-
-    @cache()
-    public syncRuleJobConfigRepository(instance: Instance) {
-        return this.get<SyncRuleJobConfigRepositoryConstructor>(Repositories.SyncRuleJobConfigRepository, [instance]);
-    }
 }
 
 type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
@@ -245,5 +239,4 @@ export const Repositories = {
     DataStoreMetadataRepository: "dataStoreMetadataRepository",
     DhisReleasesRepository: "dhisReleasesRepository",
     TableColumnsRepository: "tableColumnsRepository",
-    SyncRuleJobConfigRepository: "syncRuleJobConfigRepository",
 } as const;

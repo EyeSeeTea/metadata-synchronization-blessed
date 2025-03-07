@@ -1,5 +1,5 @@
-import { DEFAULT_SCHEDULED_JOB_ID, ScheduledJob } from "../../../domain/scheduler/entities/ScheduledJob";
-import { SchedulerContract } from "../../../domain/scheduler/entities/SchedulerContract";
+import { ScheduledJob, DEFAULT_SCHEDULED_JOB_ID } from "../../../../domain/scheduler/entities/ScheduledJob";
+import { SchedulerContract } from "../../SchedulerContract";
 
 export class MockScheduler implements SchedulerContract {
     private jobs: ScheduledJob[] = [];

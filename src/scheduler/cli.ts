@@ -8,7 +8,7 @@ import { D2Api } from "../types/d2-api";
 import { ConfigModel, SchedulerConfig } from "../domain/scheduler/entities/SchedulerConfig";
 import Scheduler from "./Scheduler";
 import LoggerLog4js from "./LoggerLog4js";
-import { SchedulerCLI } from "./SchedulerCLI";
+import { SchedulerCLI } from "./SchedulerCLI/SchedulerCLI";
 import { Future, FutureData } from "../domain/common/entities/Future";
 
 // NOTICE: This file is refactored

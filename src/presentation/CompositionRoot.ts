@@ -125,14 +125,12 @@ import { DhisReleasesLocalRepository } from "../data/dhis-releases/DhisReleasesL
 import { GetColumnsUseCase } from "../domain/table-columns/usecases/GetColumnsUseCase";
 import { SaveColumnsUseCase } from "../domain/table-columns/usecases/SaveColumnsUseCase";
 import { TableColumnsDataStoreRepository } from "../data/table-columns/TableColumnsDataStoreRepository";
-import { GetSyncRuleJobConfigsUseCase } from "../domain/scheduler/usecases/GetSyncRuleJobConfigsUseCase";
-import { SyncRuleJobConfigD2ApiRepository } from "../data/scheduler/SyncRuleJobConfigD2ApiRepository";
 import { getD2APiFromInstance } from "../utils/d2-utils";
 import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 
 /**
- * @todo needs refactoring and a testing CompositionRoot
+ * @todo needs refactoring
  */
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
@@ -168,7 +166,6 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
         this.repositoryFactory.bind(Repositories.DhisReleasesRepository, DhisReleasesLocalRepository);
         this.repositoryFactory.bind(Repositories.TableColumnsRepository, TableColumnsDataStoreRepository);
-        this.repositoryFactory.bind(Repositories.SyncRuleJobConfigRepository, SyncRuleJobConfigD2ApiRepository);
     }
 
     @cache()
@@ -416,7 +413,6 @@ export class CompositionRoot {
         return getExecute({
             getLastExecutionInfo: new GetLastSchedulerExecutionInfoUseCase(this.repositoryFactory, this.localInstance),
             updateExecutionInfo: new UpdateSchedulerExecutionInfoUseCase(this.repositoryFactory, this.localInstance),
-            getSyncRuleJobConfigs: new GetSyncRuleJobConfigsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
