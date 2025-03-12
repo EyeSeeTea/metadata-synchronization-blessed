@@ -1,9 +1,9 @@
-import { StorageClientRepository } from "../../storage-client-config/repositories/StorageClientRepository";
+import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 import { UserRepository } from "../../user/repositories/UserRepository";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
 
 export interface RulesRepositoryConstructor {
-    new (configRepository: StorageClientRepository, userRepository: UserRepository): RulesRepository;
+    new (storageClientFactory: StorageClientFactory, userRepository: UserRepository): RulesRepository;
 }
 
 export interface RulesRepository {

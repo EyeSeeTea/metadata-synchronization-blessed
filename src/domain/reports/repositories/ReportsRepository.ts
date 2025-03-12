@@ -1,9 +1,9 @@
-import { StorageClientRepository } from "../../storage-client-config/repositories/StorageClientRepository";
+import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 import { SynchronizationResult } from "../entities/SynchronizationResult";
 
 export interface ReportsRepositoryConstructor {
-    new (configRepository: StorageClientRepository): ReportsRepository;
+    new (storageClientFactory: StorageClientFactory): ReportsRepository;
 }
 
 export interface ReportsRepository {

@@ -1,12 +1,12 @@
-import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { SynchronizationRule, SynchronizationRuleData } from "../../domain/rules/entities/SynchronizationRule";
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { UserRepository } from "../../domain/user/repositories/UserRepository";
 import { Namespace } from "../storage/Namespaces";
+import { StorageClientFactory } from "../config/StorageClientFactory";
 
 export class RulesD2ApiRepository implements RulesRepository {
-    constructor(private configRepository: StorageClientRepository, private userRepository: UserRepository) {}
+    constructor(private storageClientFactory: StorageClientFactory, private userRepository: UserRepository) {}
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {
         const storageClient = await this.getStorageClient();
@@ -50,6 +50,6 @@ export class RulesD2ApiRepository implements RulesRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.configRepository.getStorageClient();
+        return this.storageClientFactory.getStorageClient();
     }
 }

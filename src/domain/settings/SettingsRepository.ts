@@ -1,8 +1,8 @@
-import { StorageClientRepository } from "../storage-client-config/repositories/StorageClientRepository";
+import { StorageClientFactory } from "../../data/config/StorageClientFactory";
 import { Settings } from "./Settings";
 
 export interface SettingsRepositoryConstructor {
-    new (configRepository: StorageClientRepository): SettingsRepository;
+    new (storageClientFactory: StorageClientFactory): SettingsRepository;
 }
 
 export interface SettingsRepository {

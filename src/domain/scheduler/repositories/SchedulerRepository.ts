@@ -1,8 +1,8 @@
-import { StorageClientRepository } from "../../storage-client-config/repositories/StorageClientRepository";
+import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 import { SchedulerExecution } from "../entities/SchedulerExecution";
 
 export interface SchedulerRepositoryConstructor {
-    new (configRepository: StorageClientRepository): SchedulerRepository;
+    new (storageClientFactory: StorageClientFactory): SchedulerRepository;
 }
 
 export interface SchedulerRepository {

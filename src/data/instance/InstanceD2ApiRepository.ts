@@ -1,7 +1,6 @@
 import Cryptr from "cryptr";
 import _ from "lodash";
 import { Either } from "../../domain/common/entities/Either";
-import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { Instance, InstanceData } from "../../domain/instance/entities/Instance";
 import { InstanceMessage } from "../../domain/instance/entities/Message";
 import { InstanceRepository, InstancesFilter } from "../../domain/instance/repositories/InstanceRepository";
@@ -13,6 +12,7 @@ import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { InmemoryCache } from "../common/InmemoryCache";
 import { Namespace } from "../storage/Namespaces";
+import { StorageClientFactory } from "../config/StorageClientFactory";
 
 type ObjectSharingError = "authority-error" | "unexpected-error";
 
@@ -21,7 +21,7 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     private cache = new InmemoryCache();
 
     constructor(
-        private configRepository: StorageClientRepository,
+        private storageClientFactory: StorageClientFactory,
         private instance: Instance,
         private encryptionKey: string
     ) {
@@ -226,6 +226,6 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.configRepository.getStorageClient();
+        return this.storageClientFactory.getStorageClient();
     }
 }

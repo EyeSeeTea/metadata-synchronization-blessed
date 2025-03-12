@@ -7,8 +7,9 @@ import { cache, clear } from "../../utils/cache";
 import { Namespace } from "../storage/Namespaces";
 import { StorageConstantClient } from "../storage/StorageConstantClient";
 import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
+import { StorageClientFactory } from "./StorageClientFactory";
 
-export class StorageClientD2Repository implements StorageClientRepository {
+export class StorageClientD2Repository implements StorageClientRepository, StorageClientFactory {
     private dataStoreClient: StorageDataStoreClient;
     private constantClient: StorageConstantClient;
 
