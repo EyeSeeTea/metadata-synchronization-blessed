@@ -4,7 +4,6 @@ import { SetStorageClientUseCase } from "../domain/storage-client-config/usecase
 import { StorageClientRepository } from "../domain/storage-client-config/repositories/StorageClientRepository";
 import { Instance } from "../domain/instance/entities/Instance";
 import { StorageClientD2Repository } from "../data/config/StorageClientD2Repository";
-import { StorageClientTestRepository } from "../data/config/StorageClientTestRepository";
 
 export type NewCompositionRoot = ReturnType<typeof getCompositionRoot>;
 
@@ -29,10 +28,6 @@ export function getWebappCompositionRoot(api: D2Api, instance: Instance) {
     return getCompositionRoot(repositories);
 }
 
-export function getTestCompositionRoot() {
-    const repositories: Repositories = {
-        storageClientRepository: new StorageClientTestRepository(),
-    };
-
+export function getTestCompositionRoot(repositories: Repositories) {
     return getCompositionRoot(repositories);
 }

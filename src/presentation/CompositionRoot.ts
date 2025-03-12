@@ -127,6 +127,11 @@ import { getD2APiFromInstance } from "../utils/d2-utils";
 import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 
+/**
+ * @deprecated CompositionRoot has been deprecated and will be removed in the future.
+ * Please use NewCompositionRoot for all further development.
+ */
+
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
 

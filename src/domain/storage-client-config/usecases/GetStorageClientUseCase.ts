@@ -6,7 +6,6 @@ export class GetStorageClientUseCase {
 
     public async execute(): Promise<AppStorageType> {
         const client = await this.storageClientRepository.getStorageClient();
-
         return client.type;
     }
 }
