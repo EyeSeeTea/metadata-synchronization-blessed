@@ -1,5 +1,6 @@
-import { Codec, Schema } from "../../utils/codec";
+import { Codec, Schema } from "../../../utils/codec";
 
+// NOTICE: This is refactored
 export const ConfigModel: Codec<SchedulerConfig> = Schema.object({
     baseUrl: Schema.string,
     username: Schema.string,

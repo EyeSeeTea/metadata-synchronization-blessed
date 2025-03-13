@@ -103,7 +103,7 @@ const App = () => {
                             </div>
 
                             <Share visible={showShareButton} />
-                            {appConfig && <Feedback options={appConfig.feedback} username={username} />}
+                            {appConfig?.feedback && <Feedback options={appConfig.feedback} username={username} />}
                         </SnackbarProvider>
                     </LoadingProvider>
                 </MuiThemeProvider>

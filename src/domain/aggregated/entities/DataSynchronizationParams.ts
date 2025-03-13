@@ -43,7 +43,7 @@ export function isDataSynchronizationRequired(params: DataSynchronizationParams,
     const { period } = params;
     const { startDate } = buildPeriodFromParams(params);
 
-    const isUpdatedAfterStartDate = lastUpdated && new Date(lastUpdated).toISOString() >= startDate.format();
+    const isUpdatedAfterStartDate = lastUpdated && new Date(lastUpdated).toISOString() >= startDate.toISOString();
     const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
 
     return isUpdatedAfterStartDate || !isLastSuccessfulSync;

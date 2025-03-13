@@ -3,7 +3,9 @@ import { AppStorageType } from "../../domain/storage-client-config/entities/Stor
 import { StorageClientRepository } from "../../domain/storage-client-config/repositories/StorageClientRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
-
+/**
+ * @description This file is refactored
+ */
 export class StorageClientTestRepository implements StorageClientRepository {
     getUserStorageClient(): Promise<StorageClient> {
         const localInstance = Instance.build({

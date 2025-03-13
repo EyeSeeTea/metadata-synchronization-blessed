@@ -192,6 +192,10 @@ export abstract class GenericSyncUseCase {
     public async *execute() {
         const { targetInstances: targetInstanceIds, syncRule, dataParams } = this.builder;
 
+        // NOTICE: The date is stored in a variable at the beginning of execution and save it at the end
+        // to ensure no items created/updated during the sync process are missed
+        const executionDate = new Date();
+
         const origin = await this.getOriginInstance();
 
         if (dataParams?.enableAggregation && dataParams?.runAnalyticsBefore) {
@@ -265,7 +269,8 @@ export abstract class GenericSyncUseCase {
                 const currentUser = await this.api.currentUser
                     .get({ fields: { userCredentials: { name: true }, id: true } })
                     .getData();
-                const updatedRule = oldRule.updateLastExecuted(new Date(), {
+
+                const updatedRule = oldRule.updateLastExecuted(executionDate, {
                     id: currentUser.id,
                     name: currentUser.userCredentials.name,
                 });
@@ -282,7 +287,7 @@ export abstract class GenericSyncUseCase {
             const rule = await syncRulesRepository.getById(syncRule);
 
             if (rule) {
-                const updatedRule = rule.updateLastSuccessfulSync(new Date());
+                const updatedRule = rule.updateLastSuccessfulSync(executionDate);
                 await syncRulesRepository.save([updatedRule]);
             }
         }

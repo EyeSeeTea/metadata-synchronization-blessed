@@ -13,7 +13,7 @@ import { GitHubOctokitRepository } from "../data/packages/GitHubOctokitRepositor
 import { ReportsD2ApiRepository } from "../data/reports/ReportsD2ApiRepository";
 import { FileRulesDefaultRepository } from "../data/rules/FileRulesDefaultRepository";
 import { RulesD2ApiRepository } from "../data/rules/RulesD2ApiRepository";
-import { SchedulerD2ApiRepository } from "../data/scheduler/SchedulerD2ApiRepository";
+import { SchedulerExecutionInfoD2ApiRepository } from "../data/scheduler/SchedulerExecutionInfoD2ApiRepository";
 import { SettingsD2ApiRepository } from "../data/settings/SettingsD2ApiRepository";
 import { DownloadWebRepository } from "../data/storage/DownloadWebRepository";
 import { StoreD2ApiRepository } from "../data/stores/StoreD2ApiRepository";
@@ -98,8 +98,8 @@ import { GetSyncRuleUseCase } from "../domain/rules/usecases/GetSyncRuleUseCase"
 import { ListSyncRuleUseCase } from "../domain/rules/usecases/ListSyncRuleUseCase";
 import { ReadSyncRuleFilesUseCase } from "../domain/rules/usecases/ReadSyncRuleFilesUseCase";
 import { SaveSyncRuleUseCase } from "../domain/rules/usecases/SaveSyncRuleUseCase";
-import { GetLastSchedulerExecutionUseCase } from "../domain/scheduler/usecases/GetLastSchedulerExecutionUseCase";
-import { UpdateLastSchedulerExecutionUseCase } from "../domain/scheduler/usecases/UpdateLastSchedulerExecutionUseCase";
+import { GetLastSchedulerExecutionInfoUseCase } from "../domain/scheduler/usecases/GetLastSchedulerExecutionInfoUseCase";
+import { UpdateSchedulerExecutionInfoUseCase } from "../domain/scheduler/usecases/UpdateSchedulerExecutionInfoUseCase";
 import { GetSettingsUseCase } from "../domain/settings/GetSettingsUseCase";
 import { SaveSettingsUseCase } from "../domain/settings/SaveSettingsUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
@@ -126,6 +126,7 @@ import { TableColumnsDataStoreRepository } from "../data/table-columns/TableColu
 import { getD2APiFromInstance } from "../utils/d2-utils";
 import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
+import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -158,7 +159,6 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
         this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.SchedulerRepository, SchedulerD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
         this.repositoryFactory.bind(Repositories.DhisReleasesRepository, DhisReleasesLocalRepository);
@@ -399,9 +399,15 @@ export class CompositionRoot {
 
     @cache()
     public get scheduler() {
+        const dataStoreClient = new StorageDataStoreClient(this.localInstance);
+
         return getExecute({
-            getLastExecution: new GetLastSchedulerExecutionUseCase(this.repositoryFactory, this.localInstance),
-            updateLastExecution: new UpdateLastSchedulerExecutionUseCase(this.repositoryFactory, this.localInstance),
+            getLastExecutionInfo: new GetLastSchedulerExecutionInfoUseCase(
+                new SchedulerExecutionInfoD2ApiRepository(dataStoreClient)
+            ),
+            updateExecutionInfo: new UpdateSchedulerExecutionInfoUseCase(
+                new SchedulerExecutionInfoD2ApiRepository(dataStoreClient)
+            ),
         });
     }
 

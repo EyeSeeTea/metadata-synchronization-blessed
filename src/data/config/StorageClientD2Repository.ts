@@ -9,6 +9,10 @@ import { StorageConstantClient } from "../storage/StorageConstantClient";
 import { StorageDataStoreClient } from "../storage/StorageDataStoreClient";
 import { StorageClientFactory } from "./StorageClientFactory";
 
+/**
+ * @description This file is refactored
+ */
+
 export class StorageClientD2Repository implements StorageClientRepository, StorageClientFactory {
     private dataStoreClient: StorageDataStoreClient;
     private constantClient: StorageConstantClient;

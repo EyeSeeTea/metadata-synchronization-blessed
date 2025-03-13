@@ -4,6 +4,9 @@ import { SetStorageClientUseCase } from "../domain/storage-client-config/usecase
 import { StorageClientRepository } from "../domain/storage-client-config/repositories/StorageClientRepository";
 import { Instance } from "../domain/instance/entities/Instance";
 import { StorageClientD2Repository } from "../data/config/StorageClientD2Repository";
+/**
+ * @description This file is refactored
+ */
 
 export type NewCompositionRoot = ReturnType<typeof getCompositionRoot>;
 

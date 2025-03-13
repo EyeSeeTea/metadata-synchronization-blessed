@@ -65,7 +65,12 @@ const config: {
     },
 };
 
-const enabledFilterData = [
+type SchedulerFilter = {
+    id: "enabled" | "disabled";
+    name: string;
+};
+
+const schedulerEnabledFilterData: SchedulerFilter[] = [
     { id: "enabled", name: i18n.t("Enabled") },
     { id: "disabled", name: i18n.t("Disabled") },
 ];
@@ -86,7 +91,7 @@ export const SyncRulesListPage: React.FC = () => {
     const [toDelete, setToDelete] = useState<string[]>([]);
     const [search, setSearchFilter] = useState("");
     const [targetInstanceFilter, setTargetInstanceFilter] = useState("");
-    const [enabledFilter, setEnabledFilter] = useState("");
+    const [schedulerEnabledFilter, setSchedulerEnabledFilter] = useState("");
     const [lastExecutedFilter, setLastExecutedFilter] = useState<Date | null>(null);
     const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
@@ -99,7 +104,7 @@ export const SyncRulesListPage: React.FC = () => {
                 filters: {
                     types: [type],
                     targetInstanceFilter,
-                    enabledFilter,
+                    schedulerEnabledFilter,
                     lastExecutedFilter,
                     search,
                 },
@@ -112,7 +117,7 @@ export const SyncRulesListPage: React.FC = () => {
         type,
         search,
         targetInstanceFilter,
-        enabledFilter,
+        schedulerEnabledFilter,
         lastExecutedFilter,
         sharingSettingsObject,
     ]);
@@ -631,9 +636,9 @@ export const SyncRulesListPage: React.FC = () => {
             />
             <Dropdown
                 key={"enabled-filter"}
-                items={enabledFilterData}
-                onValueChange={setEnabledFilter}
-                value={enabledFilter}
+                items={schedulerEnabledFilterData}
+                onValueChange={setSchedulerEnabledFilter}
+                value={schedulerEnabledFilter}
                 label={i18n.t("Scheduling")}
             />
         </React.Fragment>
