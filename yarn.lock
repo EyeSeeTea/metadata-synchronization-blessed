@@ -9314,7 +9314,7 @@ flush-write-stream@^1.0.0, flush-write-stream@^1.0.2:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-fluture@14.0.0, fluture@^14.0.0:
+fluture@^14.0.0:
   version "14.0.0"
   resolved "https://registry.yarnpkg.com/fluture/-/fluture-14.0.0.tgz#81e1cae996a262e214aa2a8d7845fe1359018e3b"
   integrity sha512-pENtLF948a8DfduVKugT8edTAbFi4rBS94xjHwzLanQqIu5PYtLGl+xqs6H8TaIRL7z/B0cDpswdINzH/HRUGA==
@@ -15841,6 +15841,11 @@ readline-sync@^1.4.1:
   version "1.4.10"
   resolved "https://registry.yarnpkg.com/readline-sync/-/readline-sync-1.4.10.tgz#41df7fbb4b6312d673011594145705bf56d8873b"
   integrity sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==
+
+real-cancellable-promise@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/real-cancellable-promise/-/real-cancellable-promise-1.2.1.tgz#a6cc6c887597e44426c157534ca739ae148cbc30"
+  integrity sha512-JwhiWJTMMyzFYfpKsiSb8CyQktCi1MZ8ZBn3wXvq28qXDh8Y5dM7RYzgW3r6SV22JTEcof8pRsvDp4GxLmGIxg==
 
 recompose@^0.26.0:
   version "0.26.0"

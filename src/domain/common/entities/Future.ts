@@ -1,139 +1,205 @@
-import * as fluture from "fluture";
-import _ from "lodash";
-import { Either } from "purify-ts";
+import * as rcpromise from "real-cancellable-promise";
+import { Cancellation } from "real-cancellable-promise";
 
+/**
+ * Futures are async values similar to promises, with some differences:
+ *   - Futures are only executed when their method `run` is called.
+ *   - Futures are cancellable (thus, they can be easily used in a `React.useEffect`, for example).
+ *   - Futures have fully typed errors. Subclass Error if you need full stack traces.
+ *   - You may still use async/await monad-style blocks (check Future.block).
+ *
+ * More info: https://github.com/EyeSeeTea/know-how/wiki/Async-futures
+ */
+
+/**
+ * @description Future is refactored
+ */
 export class Future<E, D> {
-    private constructor(private instance: fluture.FutureInstance<E, D>) {}
+    private constructor(private _promise: () => rcpromise.CancellablePromise<D>) {}
 
-    run(onSuccess: Fn<D>, onError: Fn<E>): Cancel {
-        return fluture.fork(onError)(onSuccess)(this.instance);
+    static success<E, D>(data: D): Future<E, D> {
+        return new Future(() => rcpromise.CancellablePromise.resolve(data));
     }
 
-    map<D2>(mapper: (data: D) => D2): Future<E, D2> {
-        const instance2 = fluture.map(mapper)(this.instance) as fluture.FutureInstance<E, D2>;
-        return new Future(instance2);
+    static error<E, D>(error: E): Future<E, D> {
+        return new Future(() => rcpromise.CancellablePromise.reject(error));
     }
 
-    mapError<E2>(mapper: (data: E) => E2): Future<E2, D> {
-        const instance2 = fluture.mapRej(mapper)(this.instance) as fluture.FutureInstance<E2, D>;
-        return new Future(instance2);
-    }
+    static fromComputation<E, D>(
+        computation: (resolve: (value: D) => void, reject: (error: E) => void) => Cancel
+    ): Future<E, D> {
+        let cancel: Cancel = () => {};
 
-    bimap<E2, D2>(dataMapper: (data: D) => D2, errorMapper: (error: E) => E2): Future<E2, D2> {
-        const instance2 = fluture.bimap(errorMapper)(dataMapper)(this.instance);
-        return new Future(instance2);
-    }
+        return new Future(() => {
+            const promise = new Promise<D>((resolve, reject) => {
+                cancel = computation(resolve, error => reject(error));
+            });
 
-    flatMap<D2>(mapper: (data: D) => Future<E, D2>): Future<E, D2> {
-        const chainMapper = fluture.chain<E, D, D2>(data => mapper(data).instance);
-        return new Future(chainMapper(this.instance));
-    }
-
-    flatMapError<E2>(mapper: (error: E) => Future<E2, D>): Future<E2, D> {
-        const chainRejMapper = fluture.chainRej<E, E2, D>(error => mapper(error).instance);
-        return new Future(chainRejMapper(this.instance));
-    }
-
-    toPromise(onError?: (error: E) => void): Promise<D> {
-        return new Promise((resolve, reject) => {
-            this.run(resolve, onError ?? reject);
+            return new rcpromise.CancellablePromise(promise, cancel || (() => {}));
         });
     }
 
-    runAsync(): Promise<{ data?: D; error?: E }> {
-        return new Promise(resolve => {
-            this.run(
-                data => resolve({ data }),
-                error => resolve({ error })
-            );
+    static fromPromise<Data>(promise: Promise<Data>): FutureData<Data> {
+        return Future.fromComputation((resolve, reject) => {
+            promise.then(resolve).catch(err => reject(err ? err.message : "Unknown error"));
+            return () => {};
         });
     }
 
-    /* Static methods */
-    static noCancel: Cancel = () => {};
+    run(onSuccess: (data: D) => void, onError: (error: E) => void): Cancel {
+        return this._promise().then(onSuccess, err => {
+            if (err instanceof rcpromise.Cancellation) {
+                // no-op
+            } else {
+                onError(err);
+            }
+        }).cancel;
+    }
 
-    static fromPromise<E, D>(computation: Promise<D>): Future<E, D> {
-        return new Future(
-            fluture.Future((reject, resolve) => {
-                computation.then(data => resolve(data)).catch(error => reject(error));
-                return Future.noCancel;
+    map<U>(fn: (data: D) => U): Future<E, U> {
+        return new Future(() => this._promise().then(fn));
+    }
+
+    mapError<E2>(fn: (error: E) => E2): Future<E2, D> {
+        return new Future(() =>
+            this._promise().catch((error: E) => {
+                throw fn(error);
             })
         );
     }
 
-    static fromComputation<E, D>(computation: Computation<E, D>): Future<E, D> {
-        return new Future(fluture.Future((reject, resolve) => computation(resolve, reject)));
+    flatMap<U, E>(fn: (data: D) => Future<U, E>): Future<U, E> {
+        return new Future(() => this._promise().then(data => fn(data)._promise()));
     }
 
-    static fromPurifyEither<E, D>(input: Either<E, D>): Future<E, D> {
-        return new Future(
-            fluture.Future((reject, resolve) => {
-                if (input.isRight()) resolve(input.extract());
-                else if (input.isLeft()) reject(input.extract());
-                return () => {};
+    chain<U, E>(fn: (data: D) => Future<U, E>): Future<U, E> {
+        return this.flatMap(fn);
+    }
+
+    toPromise(): Promise<D> {
+        return this._promise();
+    }
+
+    static join2<E, T, S>(async1: Future<E, T>, async2: Future<E, S>): Future<E, [T, S]> {
+        return new Future(() => {
+            return rcpromise.CancellablePromise.all<T, S>([async1._promise(), async2._promise()]);
+        });
+    }
+
+    static joinObj<Obj extends Record<string, Future<any, any>>>(
+        obj: Obj,
+        options: ParallelOptions = { concurrency: 1 }
+    ): Future<
+        Obj[keyof Obj] extends Future<infer E, any> ? E : never,
+        { [K in keyof Obj]: Obj[K] extends Future<any, infer U> ? U : never }
+    > {
+        const asyncs = Object.values(obj);
+
+        return Future.parallel(asyncs, options).map(values => {
+            const keys = Object.keys(obj);
+            const pairs = keys.map((key, idx) => [key, values[idx]]);
+            return Object.fromEntries(pairs);
+        });
+    }
+
+    static sequential<E, D>(asyncs: Future<E, D>[]): Future<E, D[]> {
+        return Future.block(async $ => {
+            const output: D[] = [];
+            for (const async of asyncs) {
+                const res = await $(async);
+                output.push(res);
+            }
+            return output;
+        });
+    }
+
+    static parallel<E, D>(asyncs: Future<E, D>[], options: ParallelOptions): Future<E, D[]> {
+        return new Future(() =>
+            rcpromise.buildCancellablePromise(async $ => {
+                const queue: rcpromise.CancellablePromise<void>[] = [];
+                const output: D[] = new Array(asyncs.length);
+
+                for (const [idx, async] of asyncs.entries()) {
+                    const queueItem$ = async._promise().then(res => {
+                        queue.splice(queue.indexOf(queueItem$), 1);
+                        output[idx] = res;
+                    });
+
+                    queue.push(queueItem$);
+
+                    if (queue.length >= options.concurrency) await $(rcpromise.CancellablePromise.race(queue));
+                }
+
+                await $(rcpromise.CancellablePromise.all(queue));
+                return output;
             })
         );
     }
 
-    static success<D, E = unknown>(data: D): Future<E, D> {
-        return new Future<E, D>(fluture.resolve(data));
+    static sleep(ms: number): Future<any, number> {
+        return new Future(() => rcpromise.CancellablePromise.delay(ms)).map(() => ms);
     }
 
-    static error<E, D = unknown>(error: E): Future<E, D> {
-        return new Future<E, D>(fluture.reject(error));
+    static void(): Future<unknown, undefined> {
+        return Future.success(undefined);
     }
 
-    static join2<E, D1, D2>(future1: Future<E, D1>, future2: Future<E, D2>): Future<E, [D1, D2]> {
-        const instance = fluture.both(future1.instance)(future2.instance);
-        return new Future(instance);
+    static block<E, U>(blockFn: (capture: CaptureAsync<E>) => Promise<U>): Future<E, U> {
+        return new Future((): rcpromise.CancellablePromise<U> => {
+            return rcpromise.buildCancellablePromise(capturePromise => {
+                const captureAsync: CaptureAsync<E> = async => {
+                    return capturePromise(async._promise());
+                };
+
+                captureAsync.throw = function (error: E) {
+                    throw error;
+                };
+
+                return blockFn(captureAsync);
+            });
+        });
     }
 
-    static parallel<E, D>(futures: Array<Future<E, D>>, options: ParallelOptions<E, D> = {}): Future<E, Array<D>> {
-        const { maxConcurrency = 10, catchErrors } = options;
-        const parallel = fluture.parallel(maxConcurrency);
-        const coalesce = catchErrors ? fluture.coalesce<E, D>(error => catchErrors(error))((d: D) => d) : undefined;
-        const instance = parallel(futures.map(future => (coalesce ? coalesce(future.instance) : future.instance)));
-        return new Future(instance);
-    }
-
-    static joinObj<FuturesObj extends Record<string, Future<any, any>>>(
-        futuresObj: FuturesObj,
-        options: ParallelOptions<any, any> = {}
-    ): JoinObj<FuturesObj> {
-        const { maxConcurrency = 10 } = options;
-        const parallel = fluture.parallel(maxConcurrency);
-        const keys = _.keys(futuresObj);
-        const futures = _.values(futuresObj);
-        const flutures = parallel(futures.map(future => future.instance));
-        const futureObj = new Future(flutures).map(values => _.zipObject(keys, values));
-        return futureObj as JoinObj<FuturesObj>;
-    }
-
-    static futureMap<T, E, D>(
-        inputValues: T[],
-        mapper: (value: T, index: number) => Future<E, D>,
-        options?: ParallelOptions<E, D>
-    ): Future<E, D[]> {
-        return this.parallel(
-            inputValues.map((value, index) => mapper(value, index)),
-            options
-        );
+    static block_<E>() {
+        return function <U>(blockFn: (capture: CaptureAsync<E>) => Promise<U>): Future<E, U> {
+            return Future.block<E, U>(blockFn);
+        };
     }
 }
 
-type ParallelOptions<E, D> = { maxConcurrency?: number; catchErrors?: (error: E) => D };
+export type Cancel = (() => void) | undefined;
 
-type JoinObj<Futures extends Record<string, Future<any, any>>> = Future<
-    ExtractFutureError<Futures[keyof Futures]>,
-    { [K in keyof Futures]: ExtractFutureData<Futures[K]> }
->;
+interface CaptureAsync<E> {
+    <D>(async: Future<E, D>): Promise<D>;
+    throw: (error: E) => never;
+}
 
-export type ExtractFutureData<F> = F extends Future<any, infer D> ? D : never;
-export type ExtractFutureError<F> = F extends Future<infer E, any> ? E : never;
+type ParallelOptions = { concurrency: number };
 
-type Fn<T> = (value: T) => void;
+export function getJSON<U>(url: string): Future<TypeError | SyntaxError, U> {
+    const abortController = new AbortController();
 
-export type Cancel = () => void;
+    return Future.fromComputation((resolve, reject) => {
+        // exceptions: TypeError | DOMException[name=AbortError]
+        fetch(url, { method: "get", signal: abortController.signal })
+            .then(res => res.json() as unknown as U) // exceptions: SyntaxError
+            .then(data => resolve(data))
+            .catch((error: unknown) => {
+                if (isNamedError(error) && error.name === "AbortError") {
+                    throw new Cancellation();
+                } else if (error instanceof TypeError || error instanceof SyntaxError) {
+                    reject(error);
+                } else {
+                    reject(new TypeError("Unknown error"));
+                }
+            });
 
-export type Computation<E, D> = (resolve: Fn<D>, reject: Fn<E>) => fluture.Cancel;
-export type FutureData<Data> = Future<string, Data>;
+        return () => abortController.abort();
+    });
+}
+
+function isNamedError(error: unknown): error is { name: string } {
+    return Boolean(error && typeof error === "object" && "name" in error);
+}
+
+export type FutureData<D> = Future<Error, D>;
