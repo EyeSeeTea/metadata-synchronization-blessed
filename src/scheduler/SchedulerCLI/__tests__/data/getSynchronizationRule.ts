@@ -9,6 +9,7 @@ export function getSynchronizationRule(isSchedulerEnabled = false): Synchronizat
         user: { id: "user-id", name: "User Name" },
         created: new Date(),
         enabled: isSchedulerEnabled,
+        needsUpdateSchedulingFrequency: false,
         frequency: "0 */2 * * * *",
         description: "Sync Rule",
         lastUpdated: new Date(),

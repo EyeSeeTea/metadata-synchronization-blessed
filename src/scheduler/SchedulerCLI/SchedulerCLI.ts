@@ -13,6 +13,7 @@ export type SyncRuleJobConfig = {
     id: string;
     name: string;
     frequency: string;
+    needsUpdateFrequency: boolean;
 };
 
 export const EVERY_MINUTE_FREQUENCY = "0 * * * * *";
@@ -41,7 +42,8 @@ export class SchedulerCLI {
     private async fetchTask(apiPath: string): Promise<void> {
         const { scheduler, logger } = this.options;
         try {
-            const syncRuleJobConfigs = await this.getSyncRuleJobConfigs();
+            const syncRulesWithSchedulerEnabled = await this.getEnabledSyncRules();
+            const syncRuleJobConfigs = await this.getSyncRuleJobConfigs(syncRulesWithSchedulerEnabled);
             const jobIdsToBeScheduled = syncRuleJobConfigs.map(({ id }) => id);
 
             const scheduledJobs = scheduler.getScheduledJobs();
@@ -59,7 +61,28 @@ export class SchedulerCLI {
                 this.createNewScheduledJobs(newSyncRuleJobConfigs, apiPath);
             }
 
-            // TODO: update currentJobIdsScheduled if frequency has changed: first cancel job and then schedule it again
+            const currentJobConfigsScheduledThatHasChange: SyncRuleJobConfig[] = syncRuleJobConfigs
+                .filter(({ id }) => currentJobIdsScheduled.includes(id))
+                .filter(({ id, needsUpdateFrequency }) => {
+                    if (needsUpdateFrequency) {
+                        logger.info("scheduler", `Frequency has changed for rule with id ${id}`);
+                        return true;
+                    }
+                    return false;
+                });
+
+            if (currentJobConfigsScheduledThatHasChange.length > 0) {
+                this.updateCurrentScheduledJobs({
+                    syncRuleJobConfig: currentJobConfigsScheduledThatHasChange,
+                    scheduledJobs,
+                    apiPath,
+                });
+                const jobIdsToUpdate = currentJobConfigsScheduledThatHasChange.map(({ id }) => id);
+                const syncRulesToUpdate = syncRulesWithSchedulerEnabled.filter(syncRule =>
+                    jobIdsToUpdate.includes(syncRule.id)
+                );
+                this.disableNeedsUpdateSchedulingFrequencyInSyncRules(syncRulesToUpdate);
+            }
 
             this.updateNextExecutionOfScheduler(scheduledJobs);
         } catch (error) {
@@ -121,14 +144,21 @@ export class SchedulerCLI {
         }
     }
 
-    // use same use case list rules schedulerEnabledFilter = true
-    private async getSyncRuleJobConfigs(): Promise<SyncRuleJobConfig[]> {
-        const { logger, compositionRoot } = this.options;
+    private async getEnabledSyncRules(): Promise<SynchronizationRule[]> {
+        const { compositionRoot } = this.options;
 
         const { rows: rulesWithSchedulerEnabled } = await compositionRoot.rules.list({
             paging: false,
             filters: { schedulerEnabledFilter: "enabled" },
         });
+
+        return rulesWithSchedulerEnabled;
+    }
+
+    private async getSyncRuleJobConfigs(
+        rulesWithSchedulerEnabled: SynchronizationRule[]
+    ): Promise<SyncRuleJobConfig[]> {
+        const { logger } = this.options;
 
         const syncRuleJobConfigsToBeScheduled =
             this.mapSynchronizationRulesToSyncRuleJobConfigs(rulesWithSchedulerEnabled);
@@ -144,14 +174,13 @@ export class SchedulerCLI {
     private mapSynchronizationRulesToSyncRuleJobConfigs(syncRule: SynchronizationRule[]): SyncRuleJobConfig[] {
         return syncRule.reduce((acc: SyncRuleJobConfig[], syncRule: SynchronizationRule): SyncRuleJobConfig[] => {
             if (syncRule.frequency) {
-                return [
-                    ...acc,
-                    {
-                        id: syncRule.id,
-                        name: syncRule.name,
-                        frequency: syncRule.frequency,
-                    },
-                ];
+                const syncRuleJobConfig: SyncRuleJobConfig = {
+                    id: syncRule.id,
+                    name: syncRule.name,
+                    frequency: syncRule.frequency,
+                    needsUpdateFrequency: syncRule.needsUpdateSchedulingFrequency,
+                };
+                return [...acc, syncRuleJobConfig];
             } else {
                 return acc;
             }
@@ -162,7 +191,7 @@ export class SchedulerCLI {
         const { scheduler, logger } = this.options;
 
         jobIdsToCancel.forEach((id: string) => {
-            logger.info("scheduler", `Cancelling disabled rule with id ${id}`);
+            logger.info("scheduler", `Cancelling rule with id ${id}`);
             const scheduledJobToCancel = scheduledJobs.find(scheduledJob => scheduledJob.id === id);
             if (scheduledJobToCancel) {
                 scheduler.cancelJob(scheduledJobToCancel.id);
@@ -185,9 +214,39 @@ export class SchedulerCLI {
 
                 // Format date to keep timezone offset
                 const nextDate = moment(job.nextExecution.toISOString()).toISOString(true);
-                logger.info("scheduler", `Scheduling new sync rule ${name} (${id}) at ${nextDate}`);
+                logger.info("scheduler", `Scheduling sync rule ${name} (${id}) at ${nextDate}`);
             }
         });
+    }
+
+    private updateCurrentScheduledJobs(params: {
+        syncRuleJobConfig: SyncRuleJobConfig[];
+        scheduledJobs: ScheduledJob[];
+        apiPath: string;
+    }): void {
+        const { logger } = this.options;
+        const { syncRuleJobConfig, scheduledJobs, apiPath } = params;
+
+        const jobIdsToCancel = syncRuleJobConfig.map(({ id }) => id);
+        logger.info("scheduler", `Updating frequency for rules with ids ${jobIdsToCancel.join(", ")}`);
+
+        this.cancelScheduledJobs(jobIdsToCancel, scheduledJobs);
+        this.createNewScheduledJobs(syncRuleJobConfig, apiPath);
+    }
+
+    private async disableNeedsUpdateSchedulingFrequencyInSyncRules(syncRulesToUpdate: SynchronizationRule[]) {
+        const { logger, compositionRoot } = this.options;
+
+        const updatedSyncRules = syncRulesToUpdate.map(syncRule =>
+            syncRule.updateNeedsUpdateSchedulingFrequency(false)
+        );
+        await compositionRoot.rules.save(updatedSyncRules);
+        logger.info(
+            "scheduler",
+            `Disabled needsUpdateSchedulingFrequency for rules with ids ${syncRulesToUpdate
+                .map(({ id }) => id)
+                .join(", ")}`
+        );
     }
 
     private async updateNextExecutionOfScheduler(scheduledJobs: ScheduledJob[]): Promise<void> {
