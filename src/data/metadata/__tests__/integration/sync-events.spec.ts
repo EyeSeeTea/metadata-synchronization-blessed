@@ -7,7 +7,7 @@ import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
-import { ConfigAppRepository } from "../../../config/ConfigAppRepository";
+import { StorageClientD2Repository } from "../../../config/StorageClientD2Repository";
 import { EventsD2ApiRepository } from "../../../events/EventsD2ApiRepository";
 import { TEID2ApiRepository } from "../../../tracked-entity-instances/TEID2ApiRepository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
@@ -388,7 +388,7 @@ describe("Sync events", () => {
 function buildRepositoryFactory() {
     const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
+    repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
     repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
     repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);

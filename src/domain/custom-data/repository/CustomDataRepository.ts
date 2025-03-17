@@ -1,8 +1,8 @@
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
+import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 import { CustomData } from "../entities/CustomData";
 
 export interface CustomDataRepositoryConstructor {
-    new (configRepository: ConfigRepository): CustomDataRepository;
+    new (storageClientFactory: StorageClientFactory): CustomDataRepository;
 }
 
 export interface CustomDataRepository {

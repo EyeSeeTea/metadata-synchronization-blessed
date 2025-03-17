@@ -1,9 +1,9 @@
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
+import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 import { SynchronizationResult } from "../entities/SynchronizationResult";
 
 export interface ReportsRepositoryConstructor {
-    new (configRepository: ConfigRepository): ReportsRepository;
+    new (storageClientFactory: StorageClientFactory): ReportsRepository;
 }
 
 export interface ReportsRepository {
