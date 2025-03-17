@@ -1,11 +1,11 @@
 import { D2Api } from "../../../types/d2-api";
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
 import { OrganisationUnit } from "../../metadata/entities/MetadataEntities";
 import { Instance } from "../entities/Instance";
 import { InstanceMessage } from "../entities/Message";
+import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 
 export interface InstanceRepositoryConstructor {
-    new (configRepository: ConfigRepository, instance: Instance, encryptionKey: string): InstanceRepository;
+    new (storageClientFactory: StorageClientFactory, instance: Instance, encryptionKey: string): InstanceRepository;
 }
 
 export interface InstancesFilter {

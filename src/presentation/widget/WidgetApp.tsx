@@ -14,6 +14,7 @@ import { muiTheme } from "../react/core/themes/dhis2.theme";
 import { d2 } from "../webapp/WebApp";
 import Root from "./pages/Root";
 import "./WidgetApp.css";
+import { getWebappCompositionRoot } from "../NewCompositionRoot";
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -45,7 +46,9 @@ const App = () => {
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
             await compositionRoot.app.initialize();
 
-            setAppContext({ d2: d2, api, compositionRoot });
+            const newCompositionRoot = getWebappCompositionRoot(api, instance);
+
+            setAppContext({ d2: d2, api, compositionRoot, newCompositionRoot });
         };
 
         run();

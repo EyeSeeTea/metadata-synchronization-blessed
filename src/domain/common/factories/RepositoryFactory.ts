@@ -3,7 +3,7 @@ import {
     AggregatedRepository,
     AggregatedRepositoryConstructor,
 } from "../../aggregated/repositories/AggregatedRepository";
-import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
+import { StorageClientRepositoryConstructor } from "../../storage-client-config/repositories/StorageClientRepository";
 import { CustomDataRepositoryConstructor } from "../../custom-data/repository/CustomDataRepository";
 import { DataStoreMetadataRepositoryConstructor } from "../../data-store/DataStoreMetadataRepository";
 import { DhisReleasesRepositoryConstructor } from "../../dhis-releases/repository/DhisReleasesRepository";
@@ -20,7 +20,6 @@ import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubR
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
 import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
-import { SchedulerRepositoryConstructor } from "../../scheduler/repositories/SchedulerRepository";
 import { SettingsRepositoryConstructor } from "../../settings/SettingsRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
@@ -37,6 +36,9 @@ import { UserRepositoryConstructor } from "../../user/repositories/UserRepositor
 
 type ClassType = new (...args: any[]) => any;
 
+/**
+ * @todo We need to think how to refactor RepositoryFactory concept
+ */
 export class RepositoryFactory {
     constructor(private encryptionKey: string) {}
 
@@ -65,7 +67,7 @@ export class RepositoryFactory {
 
     @cache()
     public configRepository(instance: Instance) {
-        return this.get<ConfigRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
+        return this.get<StorageClientRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
     }
 
     @cache()
@@ -190,12 +192,6 @@ export class RepositoryFactory {
     }
 
     @cache()
-    public schedulerRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-        return this.get<SchedulerRepositoryConstructor>(Repositories.SchedulerRepository, [config]);
-    }
-
-    @cache()
     public settingsRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<SettingsRepositoryConstructor>(Repositories.SettingsRepository, [config]);
@@ -231,7 +227,6 @@ export const Repositories = {
     UserRepository: "userRepository",
     MappingRepository: "mappingRepository",
     SettingsRepository: "settingsRepository",
-    SchedulerRepository: "schedulerRepository",
     DataStoreMetadataRepository: "dataStoreMetadataRepository",
     DhisReleasesRepository: "dhisReleasesRepository",
     TableColumnsRepository: "tableColumnsRepository",

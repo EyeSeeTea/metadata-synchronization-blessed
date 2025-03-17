@@ -5,7 +5,7 @@ import { D2Api, DataStore, DataStoreKeyMetadata } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
-import { DataStorageType } from "../../domain/config/entities/Config";
+import { DataStorageType } from "../../domain/storage-client-config/entities/StorageConfig";
 
 export const dataStoreNamespace = "metadata-synchronization";
 
