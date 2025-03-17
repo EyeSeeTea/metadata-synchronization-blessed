@@ -8,10 +8,13 @@ export interface StorageClientRepositoryConstructor {
 }
 
 export interface StorageClientRepository {
-    // Storage client should only be accessible from data layer
-    // This two methods will be removed in future refactors
-    getStorageClientFuture(): FutureData<StorageClient>; //This returns the default storage client
-    getStorageClient(): Promise<StorageClient>; //This returns the default storage client
+    getStorageClient(): FutureData<StorageClient>; //This returns the default storage client
     getUserStorageClient(): FutureData<StorageClient>;
     changeStorageClient(client: AppStorageType): FutureData<void>;
+
+    /**
+    @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+    use getStorageClient instead
+    */
+    getStorageClientPromise(): Promise<StorageClient>;
 }

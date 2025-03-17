@@ -11,7 +11,9 @@ export class StartApplicationUseCase implements UseCase {
     }
 
     private async verifyLocalInstanceExists() {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const objects = await storageClient.listObjectsInCollection<InstanceData>(Namespace.INSTANCES);
 

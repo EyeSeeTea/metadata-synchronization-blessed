@@ -8,6 +8,6 @@ export class GetStorageClientUseCase {
     constructor(private storageClientRepository: StorageClientRepository) {}
 
     public execute(): FutureData<AppStorageType> {
-        return this.storageClientRepository.getStorageClientFuture().map(client => client.type);
+        return this.storageClientRepository.getStorageClient().map(client => client.type);
     }
 }

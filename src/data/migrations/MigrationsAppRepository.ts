@@ -49,7 +49,7 @@ export class MigrationsAppRepository implements MigrationsRepository {
     }
 
     private async getStorageClient(): Promise<AppStorage> {
-        const storageClient = await this.storageClientFactory.getStorageClient();
+        const storageClient = await this.storageClientFactory.getStorageClientPromise();
 
         return {
             get: <T extends object>(key: string) => storageClient.getObject<T>(key),

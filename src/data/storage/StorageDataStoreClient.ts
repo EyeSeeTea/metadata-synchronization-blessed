@@ -70,16 +70,6 @@ export class StorageDataStoreClient extends StorageClient {
         await promiseMap(keys, key => this.removeObject(key));
     }
 
-    // public clearStorageFuture(): FutureData<void> {
-    //     return apiToFuture(this.dataStore.getKeys()).flatMap(keys => {
-    //         const abc = keys.map(key => {
-    //             return apiToFuture(this.dataStore.delete(key));
-    //         });
-    //         const bcs = Future.sequential(abc);
-    //         return Future.success(undefined);
-    //     });
-    // }
-
     public async clone(): Promise<Dictionary<unknown>> {
         const keys = await this.listKeys();
 

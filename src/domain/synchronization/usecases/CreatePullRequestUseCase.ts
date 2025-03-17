@@ -35,9 +35,11 @@ export class CreatePullRequestUseCase implements UseCase {
         description = "",
         notificationUsers: { users, userGroups },
     }: CreatePullRequestParams): Promise<void> {
-        const localStorageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const localStorageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
-        const remoteStorageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const remoteStorageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const owner = await this.getOwner();
 
@@ -102,7 +104,7 @@ export class CreatePullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 

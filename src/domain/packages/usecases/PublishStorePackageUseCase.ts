@@ -20,7 +20,9 @@ export class PublishStorePackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(packageId: string, force = false): Promise<Either<PublishStorePackageError, void>> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const defaultStore = await this.repositoryFactory.storeRepository(this.localInstance).getDefault();
 

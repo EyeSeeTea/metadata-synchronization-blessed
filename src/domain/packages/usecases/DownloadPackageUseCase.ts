@@ -26,7 +26,7 @@ export class DownloadPackageUseCase implements UseCase {
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         return storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
     }

@@ -24,7 +24,9 @@ export class CreatePackageUseCase implements UseCase {
         dhisVersion: string,
         contents?: MetadataPackage
     ): Promise<ValidationError[]> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const apiVersion = getMajorVersion(dhisVersion);
 

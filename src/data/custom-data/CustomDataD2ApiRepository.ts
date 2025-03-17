@@ -16,6 +16,6 @@ export class CustomDataD2ApiRepository implements CustomDataRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.storageClientFactory.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

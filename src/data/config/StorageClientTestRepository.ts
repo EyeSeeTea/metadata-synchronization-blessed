@@ -16,7 +16,7 @@ export class StorageClientTestRepository implements StorageClientRepository {
         });
         return Future.success(new StorageDataStoreClient(localInstance, undefined, { storageType: "user" }));
     }
-    getStorageClient(): Promise<StorageClient> {
+    getStorageClientPromise(): Promise<StorageClient> {
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",
@@ -24,7 +24,7 @@ export class StorageClientTestRepository implements StorageClientRepository {
         });
         return Promise.resolve(new StorageDataStoreClient(localInstance));
     }
-    getStorageClientFuture(): FutureData<StorageClient> {
+    getStorageClient(): FutureData<StorageClient> {
         const localInstance = Instance.build({
             url: "http://origin.test",
             name: "Testing",

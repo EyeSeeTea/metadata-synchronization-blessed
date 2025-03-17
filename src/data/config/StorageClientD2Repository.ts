@@ -27,22 +27,22 @@ export class StorageClientD2Repository implements StorageClientRepository, Stora
     private detectStorageClients(): FutureData<Array<AppStorageType>> {
         return this.dataStoreClient.getObjectFuture(Namespace.CONFIG).flatMap(dataStoreConfig => {
             return this.constantClient.getObjectFuture(Namespace.CONFIG).map(constantConfig => {
-                const abc = _.compact([
-                    dataStoreConfig ? "dataStore" : undefined,
-                    constantConfig ? "constant" : undefined,
-                ]);
-                return abc;
+                return _.compact([dataStoreConfig ? "dataStore" : undefined, constantConfig ? "constant" : undefined]);
             });
         });
     }
 
-    public getStorageClientFuture(): FutureData<StorageClient> {
+    public getStorageClient(): FutureData<StorageClient> {
         return this.constantClient.getObjectFuture(Namespace.CONFIG).map(constantConfig => {
             return constantConfig ? this.constantClient : this.dataStoreClient;
         });
     }
 
-    public async getStorageClient(): Promise<StorageClient> {
+    /**
+    @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+    use getStorageClient instead
+    */
+    public async getStorageClientPromise(): Promise<StorageClient> {
         const constantConfig = await this.constantClient.getObject(Namespace.CONFIG);
         return constantConfig ? this.constantClient : this.dataStoreClient;
     }
@@ -56,59 +56,12 @@ export class StorageClientD2Repository implements StorageClientRepository, Stora
         });
     }
 
-    // public changeStorageClient(client: AppStorageType): FutureData<void> {
-    //     const dataStoreClient = new StorageDataStoreClient(this.instance);
-    //     const constantClient = new StorageConstantClient(this.instance);
-
-    //     const oldClient = client === "dataStore" ? constantClient : dataStoreClient;
-    //     const newClient = client === "dataStore" ? dataStoreClient : constantClient;
-
-    //     // TODO: Back-up everything
-
-    //     const clearStorage$ = Future.fromPromise(newClient.clearStorage());
-    //     const oldClientClone = Future.fromPromise(oldClient.clone());
-    //     const oldClientClear = Future.fromPromise(oldClient.clearStorage());
-
-    //     return clearStorage$.flatMap(_ => {
-    //         console.debug("New client cleared");
-    //         return oldClientClone.flatMap(dump => {
-    //             console.debug("Old client cloned");
-    //             const newClientImport = Future.fromPromise(newClient.import(dump));
-    //             return newClientImport.flatMap(_ => {
-    //                 console.debug("new client imported");
-    //                 return oldClientClear.flatMap(_ => {
-    //                     console.debug("Old client cleared");
-    //                     // clear(this.detectStorageClients, this);
-    //                     // clear(this.getStorageClient, this);
-    //                     return Future.success(undefined);
-    //                 });
-    //             });
-    //         });
-    //     });
-
-    //     // Clear new client
-    //     // return Future.fromPromise(clearStorage$).flatMap(() => {
-    //     //     console.debug("New client cleared");
-    //     //     // Copy old client data into new client
-    //     //     return Future.fromPromise(oldClient.clone()).flatMap(dump => {
-    //     //         console.debug("Old client cloned");
-    //     //         return Future.fromPromise(newClient.import(dump)).flatMap(() => {
-    //     //             console.debug("new client imported");
-    //     //             // Clear old client
-    //     //             return Future.fromPromise(oldClient.clearStorage()).flatMap(() => {
-    //     //                 console.debug("Old client cleared");
-    //     //                 // Reset memoize
-    //     //                 clear(this.detectStorageClients, this);
-    //     //                 clear(this.getStorageClient, this);
-    //     //                 return Future.success(undefined);
-    //     //             });
-    //     //         });
-    //     //     });
-    //     // });
-    // }
+    /**
+    @todo - We are moving from Promises to Futures, this method should return 
+            a future after refactor of data store and constant clients
+    */
 
     public async changeStorageClientPromise(client: AppStorageType): Promise<void> {
-        console.debug("Changing storage client to", client);
         const oldClient = client === "dataStore" ? this.constantClient : this.dataStoreClient;
         const newClient = client === "dataStore" ? this.dataStoreClient : this.constantClient;
 
@@ -116,23 +69,19 @@ export class StorageClientD2Repository implements StorageClientRepository, Stora
 
         // Clear new client
         await newClient.clearStorage();
-        console.debug(`New client cleared`);
 
         // Copy old client data into new client
         const dump = await oldClient.clone();
-        console.debug(`Old client cloned`);
 
         await newClient.import(dump);
-        console.debug(`new client imported`);
 
         // Clear old client
         await oldClient.clearStorage();
-        console.debug(`Old client cleared`);
 
         // Reset memoize
         clear(this.detectStorageClients, this);
 
-        clear(this.getStorageClient, this);
+        clear(this.getStorageClientPromise, this);
     }
 
     public changeStorageClient(client: AppStorageType): FutureData<void> {

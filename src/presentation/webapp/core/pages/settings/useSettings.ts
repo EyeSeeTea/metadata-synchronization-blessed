@@ -43,7 +43,7 @@ export function useSettings() {
                     setSavedStorageType(storage);
                 },
                 error => {
-                    console.error("error fetching storage client in useeffect", error);
+                    console.error(`error fetching storage client in useeffect :  ${error}`);
                 }
             );
     }, [newCompositionRoot, storageType]);
@@ -66,22 +66,20 @@ export function useSettings() {
 
             return newCompositionRoot.config.setStorageClient.execute(storage).run(
                 () => {
-                    // console.debug(`Set called`);
                     return newCompositionRoot.config.getStorageClient.execute().run(
                         newStorage => {
-                            // console.debug("Storage fetched new", newStorage);
                             setStorageType(newStorage);
                             setLoadingMessage(undefined);
                             backHome();
                         },
                         error => {
-                            console.error("error fetching storage client", error);
+                            console.error(`error fetching storage client:  ${error}`);
                             setLoadingMessage(undefined);
                         }
                     );
                 },
                 error => {
-                    console.error("error setting storage client", error);
+                    console.error(`error setting storage client:  ${error}`);
                     setLoadingMessage(undefined);
                 }
             );
@@ -96,11 +94,11 @@ export function useSettings() {
 
         compositionRoot.settings
             .save(settings)
-            .then(() => console.debug("Settings saved"))
+            .then(() => backHome())
             .catch(error => {
                 setError(`${i18n.t("An error has occurred saving settings")}:${error}`);
             });
-    }, [compositionRoot.settings, settingsForm.historyRetentionDays.value]);
+    }, [compositionRoot.settings, settingsForm.historyRetentionDays.value, backHome]);
 
     const showConfirmationDialog = useCallback(() => {
         updateDialog({

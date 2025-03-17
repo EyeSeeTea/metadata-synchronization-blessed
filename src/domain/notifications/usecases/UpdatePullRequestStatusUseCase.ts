@@ -13,7 +13,9 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string, status: PullRequestStatus): Promise<Either<UpdatePullRequestStatusError, void>> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const notification = await storageClient.getObjectInCollection<ReceivedPullRequestNotification>(
             Namespace.NOTIFICATIONS,
@@ -55,7 +57,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
     }
 
     private async getResponsibles(instance: Instance, ids: string[]) {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 

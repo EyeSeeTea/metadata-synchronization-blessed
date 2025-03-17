@@ -11,7 +11,9 @@ export class ExtendsPackagesFromPackageUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(packageSourceId: string, dhisVersions: string[]): Promise<void> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
         const transformationRepository = this.repositoryFactory.transformationRepository();
 
         const packageData = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageSourceId);

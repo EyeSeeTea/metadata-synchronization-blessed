@@ -50,6 +50,6 @@ export class MappingD2ApiRepository implements MappingRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.storageClientFactory.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

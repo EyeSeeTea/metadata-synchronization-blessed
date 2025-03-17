@@ -26,6 +26,6 @@ export class SettingsD2ApiRepository implements SettingsRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.storageClientFactory.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }
