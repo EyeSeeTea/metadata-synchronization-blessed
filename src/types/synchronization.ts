@@ -5,7 +5,7 @@ export interface ExportBuilder {
     type: keyof MetadataEntities;
     ids: string[];
     excludeRules: string[][];
-    includeRules: string[][];
+    includeReferencesAndObjectsRules: string[][];
     includeSharingSettings: boolean;
     removeOrgUnitReferences: boolean;
     removeUserObjectsAndReferences: boolean;
