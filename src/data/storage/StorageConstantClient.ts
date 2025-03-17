@@ -7,6 +7,7 @@ import { D2Api, SelectedPick, FieldsOf } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
+import { Future, FutureData } from "../../domain/common/entities/Future";
 
 const CONSTANT_NAME = "MDSync Storage";
 const CONSTANT_PREFIX = "MDSYNC_";
@@ -24,6 +25,15 @@ export class StorageConstantClient extends StorageClient {
     public async getObject<T extends object>(key: string): Promise<T | undefined> {
         const { value } = await this.getConstant<T>(key);
         return value;
+    }
+
+    public getObjectFuture<T extends object>(key: string): FutureData<T | undefined> {
+        return Future.fromPromise(this.getConstant<T>(key))
+            .map(({ value }) => value)
+            .mapError(error => {
+                console.error(error);
+                return error;
+            });
     }
 
     public async getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T> {

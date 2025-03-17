@@ -6,6 +6,7 @@ import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { DataStorageType } from "../../domain/storage-client-config/entities/StorageConfig";
+import { Future, FutureData } from "../../domain/common/entities/Future";
 
 export const dataStoreNamespace = "metadata-synchronization";
 
@@ -35,6 +36,15 @@ export class StorageDataStoreClient extends StorageClient {
         }
     }
 
+    public getObjectFuture<T extends object>(key: string): FutureData<T | undefined> {
+        return Future.fromPromise(this.dataStore.get<T>(key).getData())
+            .map(value => value)
+            .mapError(error => {
+                console.error(error);
+                return error;
+            });
+    }
+
     public async getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T> {
         const value = await this.getObject<T>(key);
         if (!value) await this.saveObject(key, defaultValue);
@@ -59,6 +69,16 @@ export class StorageDataStoreClient extends StorageClient {
         const keys = await this.dataStore.getKeys().getData();
         await promiseMap(keys, key => this.removeObject(key));
     }
+
+    // public clearStorageFuture(): FutureData<void> {
+    //     return apiToFuture(this.dataStore.getKeys()).flatMap(keys => {
+    //         const abc = keys.map(key => {
+    //             return apiToFuture(this.dataStore.delete(key));
+    //         });
+    //         const bcs = Future.sequential(abc);
+    //         return Future.success(undefined);
+    //     });
+    // }
 
     public async clone(): Promise<Dictionary<unknown>> {
         const keys = await this.listKeys();

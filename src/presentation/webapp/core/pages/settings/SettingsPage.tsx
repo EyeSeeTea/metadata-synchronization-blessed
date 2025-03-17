@@ -18,14 +18,15 @@ export const SettingsPage: React.FC = () => {
     const {
         storageType,
         settingsForm,
-        onChangeStorageType,
+
         onChangeSettings,
         onCancel,
         onSave,
         dialogProps,
         loadingMessage,
-        goHome,
+
         error,
+        setStorageType,
     } = useSettings();
 
     const backHome = useCallback(() => history.push("/dashboard"), [history]);
@@ -37,12 +38,6 @@ export const SettingsPage: React.FC = () => {
             loading.reset();
         }
     }, [loading, loadingMessage]);
-
-    useEffect(() => {
-        if (goHome) {
-            backHome();
-        }
-    }, [backHome, goHome]);
 
     useEffect(() => {
         if (error) {
@@ -65,7 +60,12 @@ export const SettingsPage: React.FC = () => {
                 <h4 className={classes.title}>{i18n.t("Application storage")}</h4>
 
                 <FormGroup className={classes.content} row={true}>
-                    <StorageSettingDropdown selectedOption={storageType} onChangeStorage={onChangeStorageType} />
+                    <StorageSettingDropdown
+                        selectedOption={storageType}
+                        onChangeStorage={storage => {
+                            setStorageType(storage);
+                        }}
+                    />
                 </FormGroup>
 
                 <h4 className={classes.title}>{i18n.t("History")}</h4>
