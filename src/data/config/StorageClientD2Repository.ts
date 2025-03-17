@@ -60,7 +60,6 @@ export class StorageClientD2Repository implements StorageClientRepository, Stora
     @todo - We are moving from Promises to Futures, this method should return 
             a future after refactor of data store and constant clients
     */
-
     public async changeStorageClientPromise(client: AppStorageType): Promise<void> {
         const oldClient = client === "dataStore" ? this.constantClient : this.dataStoreClient;
         const newClient = client === "dataStore" ? this.dataStoreClient : this.constantClient;
@@ -80,8 +79,7 @@ export class StorageClientD2Repository implements StorageClientRepository, Stora
 
         // Reset memoize
         clear(this.detectStorageClients, this);
-
-        clear(this.getStorageClientPromise, this);
+        clear(this.getUserStorageClient, this);
     }
 
     public changeStorageClient(client: AppStorageType): FutureData<void> {

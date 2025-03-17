@@ -18,15 +18,14 @@ export const SettingsPage: React.FC = () => {
     const {
         storageType,
         settingsForm,
-
         onChangeSettings,
         onCancel,
         onSave,
         dialogProps,
         loadingMessage,
-
         error,
         setStorageType,
+        info,
     } = useSettings();
 
     const backHome = useCallback(() => history.push("/dashboard"), [history]);
@@ -42,8 +41,10 @@ export const SettingsPage: React.FC = () => {
     useEffect(() => {
         if (error) {
             snackbar.error(error);
+        } else if (info) {
+            snackbar.info(info);
         }
-    }, [error, snackbar]);
+    }, [error, info, snackbar]);
 
     const onChangeRetentionDays = useCallback(
         (event: React.ChangeEvent<{ value: string }>) => {

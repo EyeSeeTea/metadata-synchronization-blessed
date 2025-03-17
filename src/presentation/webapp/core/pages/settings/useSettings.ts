@@ -31,6 +31,7 @@ export function useSettings() {
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [loadingMessage, setLoadingMessage] = useState<string | undefined>();
     const [error, setError] = useState<string | undefined>(undefined);
+    const [info, setInfo] = useState<string | undefined>(undefined);
 
     const history = useHistory();
     const backHome = useCallback(() => history.push("/dashboard"), [history]);
@@ -94,11 +95,11 @@ export function useSettings() {
 
         compositionRoot.settings
             .save(settings)
-            .then(() => backHome())
+            .then(() => setInfo(i18n.t("Settings saved succesfully!")))
             .catch(error => {
                 setError(`${i18n.t("An error has occurred saving settings")}:${error}`);
             });
-    }, [compositionRoot.settings, settingsForm.historyRetentionDays.value, backHome]);
+    }, [compositionRoot.settings, settingsForm.historyRetentionDays.value]);
 
     const showConfirmationDialog = useCallback(() => {
         updateDialog({
@@ -161,5 +162,6 @@ export function useSettings() {
         loadingMessage,
         error,
         setStorageType,
+        info,
     };
 }
