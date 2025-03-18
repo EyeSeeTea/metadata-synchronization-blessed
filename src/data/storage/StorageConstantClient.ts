@@ -23,6 +23,10 @@ export class StorageConstantClient extends StorageClient {
         this.api = getD2APiFromInstance(instance);
     }
 
+    /**
+     * @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getObjectFuture instead
+     */
     public async getObject<T extends object>(key: string): Promise<T | undefined> {
         const { value } = await this.getConstantPromise<T>(key);
         return value;
@@ -142,6 +146,7 @@ export class StorageConstantClient extends StorageClient {
 
     /**
      * @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+     * use updateConstant instead
      */
     private async updateConstantPromise<T extends object>(
         id: string,
@@ -194,6 +199,7 @@ export class StorageConstantClient extends StorageClient {
 
     /**
      * @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getConstant instead
      */
     private async getConstantPromise<T>(key: string): Promise<Constant & { value?: T }> {
         const { objects: constants } = await this.api.models.constants

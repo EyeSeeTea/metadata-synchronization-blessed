@@ -28,8 +28,9 @@ export abstract class StorageClient {
     // Object operations
 
     public abstract getObjectFuture<T extends object>(key: string): FutureData<T | undefined>;
-    public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;
     public abstract saveObjectFuture<T extends object>(key: string, value: T): FutureData<void>;
+
+    public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;
     public abstract removeObject(key: string): Promise<void>;
     public abstract clearStorage(): Promise<void>;
     public abstract clone(): Promise<Dictionary<unknown>>;

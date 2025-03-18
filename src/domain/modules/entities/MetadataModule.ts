@@ -92,9 +92,13 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             .uniq()
             .value();
 
+        const includeRules = _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]);
+
         const excludeIncludeRules = {
-            includeRules: _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]),
+            includeRules,
             excludeRules: oldExcludeRules.filter(rule => !rulesToIncludeWithParents.includes(rule)),
+            includeOnlyReferencesRules: [],
+            includeReferencesAndObjectsRules: includeRules,
         };
 
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);
@@ -114,9 +118,13 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             .uniq()
             .value();
 
+        const includeRules = oldIncludeRules.filter(rule => !rulesToExcludeWithChildren.includes(rule));
+
         const excludeIncludeRules = {
-            includeRules: oldIncludeRules.filter(rule => !rulesToExcludeWithChildren.includes(rule)),
+            includeRules,
             excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
+            includeOnlyReferencesRules: [],
+            includeReferencesAndObjectsRules: includeRules,
         };
 
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);

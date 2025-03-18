@@ -16,6 +16,7 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
         [11, import("./11.rename-run-analytics")],
         [12, import("./12.metadata-models-sync-all")],
         [13, import("./13.dashboard-with-visualizations")],
+        [14, import("./14.metadata-include-objects-and-references")],
     ];
 }
 

@@ -27,6 +27,10 @@ export class StorageDataStoreClient extends StorageClient {
             options?.storageType === "user" ? this.api.userDataStore(namespace) : this.api.dataStore(namespace);
     }
 
+    /**
+     * @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getObjectFuture instead
+     */
     public async getObject<T extends object>(key: string): Promise<T | undefined> {
         try {
             const value = await this.dataStore.get<T>(key).getData();
@@ -52,6 +56,10 @@ export class StorageDataStoreClient extends StorageClient {
         return value ?? defaultValue;
     }
 
+    /**
+     * @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+     * use saveObjectFuture instead
+     */
     public async saveObject<T extends object>(key: string, value: T): Promise<void> {
         await this.dataStore.save(key, value).getData();
     }
