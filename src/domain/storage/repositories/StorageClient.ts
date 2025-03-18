@@ -5,6 +5,7 @@ import { Ref } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
 import { AppStorageType } from "../../storage-client-config/entities/StorageConfig";
 import { Instance } from "../../instance/entities/Instance";
+import { FutureData } from "../../common/entities/Future";
 
 export interface StorageClientConstructor {
     new (instance: Instance): StorageClient;
@@ -25,9 +26,10 @@ export abstract class StorageClient {
     public abstract type: AppStorageType;
 
     // Object operations
-    public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
+
+    public abstract getObjectFuture<T extends object>(key: string): FutureData<T | undefined>;
     public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;
-    public abstract saveObject<T extends object>(key: string, value: T): Promise<void>;
+    public abstract saveObjectFuture<T extends object>(key: string, value: T): FutureData<void>;
     public abstract removeObject(key: string): Promise<void>;
     public abstract clearStorage(): Promise<void>;
     public abstract clone(): Promise<Dictionary<unknown>>;
@@ -117,4 +119,15 @@ export abstract class StorageClient {
             }
         }
     }
+
+    /**
+     * @deprecated : we are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getObjectFuture instead
+     */
+    public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
+    /**
+     * @deprecated : we are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getObjectFuture instead
+     */
+    public abstract saveObject<T extends object>(key: string, value: T): Promise<void>;
 }

@@ -1,10 +1,16 @@
+import { FutureData } from "../common/entities/Future";
+import { StorageClientRepository } from "../storage-client-config/repositories/StorageClientRepository";
 import { Settings } from "./Settings";
 import { SettingsRepository } from "./SettingsRepository";
 
 export class SaveSettingsUseCase {
-    constructor(private settingsRepository: SettingsRepository) {}
+    constructor(
+        private options: { settingsRepository: SettingsRepository; storageClientRepository: StorageClientRepository }
+    ) {}
 
-    async execute(settings: Settings): Promise<void> {
-        return this.settingsRepository.save(settings);
+    public execute(settings: Settings): FutureData<void> {
+        return this.options.storageClientRepository.getStorageClient().flatMap(storageClient => {
+            return this.options.settingsRepository.save(settings, storageClient);
+        });
     }
 }

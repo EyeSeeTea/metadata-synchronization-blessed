@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-03-17T17:10:56.117Z\n"
-"PO-Revision-Date: 2025-03-17T17:10:56.117Z\n"
+"POT-Creation-Date: 2025-03-17T17:24:45.295Z\n"
+"PO-Revision-Date: 2025-03-17T17:24:45.295Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1949,6 +1949,9 @@ msgid "Data Store"
 msgstr ""
 
 msgid "Metadata constant"
+msgstr ""
+
+msgid "Settings saved succesfully!"
 msgstr ""
 
 msgid "An error has occurred saving settings"

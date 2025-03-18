@@ -7,6 +7,7 @@ import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { DataStorageType } from "../../domain/storage-client-config/entities/StorageConfig";
 import { Future, FutureData } from "../../domain/common/entities/Future";
+import { apiToFuture } from "../common/utils/api-futures";
 
 export const dataStoreNamespace = "metadata-synchronization";
 
@@ -53,6 +54,10 @@ export class StorageDataStoreClient extends StorageClient {
 
     public async saveObject<T extends object>(key: string, value: T): Promise<void> {
         await this.dataStore.save(key, value).getData();
+    }
+
+    public saveObjectFuture<T extends object>(key: string, value: T): FutureData<void> {
+        return apiToFuture(this.dataStore.save(key, value));
     }
 
     public async removeObject(key: string): Promise<void> {
