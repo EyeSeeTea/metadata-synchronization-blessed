@@ -178,7 +178,7 @@ export class SchedulerCLI {
                     id: syncRule.id,
                     name: syncRule.name,
                     frequency: syncRule.frequency,
-                    needsUpdateFrequency: syncRule.needsUpdateSchedulingFrequency,
+                    needsUpdateFrequency: syncRule.schedulingFrequencyNeedsUpdate,
                 };
                 return [...acc, syncRuleJobConfig];
             } else {
@@ -243,7 +243,7 @@ export class SchedulerCLI {
         await compositionRoot.rules.save(updatedSyncRules);
         logger.info(
             "scheduler",
-            `Disabled needsUpdateSchedulingFrequency for rules with ids ${syncRulesToUpdate
+            `Disabled schedulingFrequencyNeedsUpdate for rules with ids ${syncRulesToUpdate
                 .map(({ id }) => id)
                 .join(", ")}`
         );
