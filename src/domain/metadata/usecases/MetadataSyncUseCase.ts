@@ -25,7 +25,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 type,
                 ids,
                 excludeRules,
-                includeRules,
+                includeReferencesAndObjectsRules,
                 includeSharingSettings,
                 removeOrgUnitReferences,
                 removeUserObjectsAndReferences,
@@ -38,7 +38,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
             // Each level of recursion traverse the exclude/include rules with nested values
             const nestedExcludeRules: NestedRules = buildNestedRules(excludeRules);
-            const nestedIncludeRules: NestedRules = buildNestedRules(includeRules);
+            const nestedIncludeReferencesAndObjectsRules: NestedRules = buildNestedRules(
+                includeReferencesAndObjectsRules
+            );
 
             // Get all the required metadata
             const metadataRepository = await this.getMetadataRepository();
@@ -67,14 +69,14 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
                 // Get all the referenced metadata
                 const references = getAllReferences(this.api, object, schema.name);
-                const includedReferences = cleanReferences(references, includeRules);
+                const includedReferences = cleanReferences(references, includeReferencesAndObjectsRules);
 
                 const partialResults = await promiseMap(includedReferences, type => {
                     return recursiveExport({
                         type: type as keyof MetadataEntities,
                         ids: references[type],
                         excludeRules: nestedExcludeRules[type],
-                        includeRules: nestedIncludeRules[type],
+                        includeReferencesAndObjectsRules: nestedIncludeReferencesAndObjectsRules[type],
                         includeSharingSettings,
                         removeOrgUnitReferences,
                         removeUserObjectsAndReferences,
@@ -130,9 +132,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 excludeRules: useDefaultIncludeExclude
                     ? myClass.getExcludeRules()
                     : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
-                includeRules: useDefaultIncludeExclude
+                includeReferencesAndObjectsRules: useDefaultIncludeExclude
                     ? myClass.getIncludeRules()
-                    : metadataIncludeExcludeRules[metadataType].includeRules.map(_.toPath),
+                    : metadataIncludeExcludeRules[metadataType].includeReferencesAndObjectsRules.map(_.toPath),
                 includeSharingSettings,
                 removeOrgUnitReferences,
                 removeUserObjectsAndReferences,

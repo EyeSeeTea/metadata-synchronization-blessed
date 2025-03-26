@@ -3,7 +3,7 @@ import {
     AggregatedRepository,
     AggregatedRepositoryConstructor,
 } from "../../aggregated/repositories/AggregatedRepository";
-import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
+import { StorageClientRepositoryConstructor } from "../../storage-client-config/repositories/StorageClientRepository";
 import { CustomDataRepositoryConstructor } from "../../custom-data/repository/CustomDataRepository";
 import { DataStoreMetadataRepositoryConstructor } from "../../data-store/DataStoreMetadataRepository";
 import { DhisReleasesRepositoryConstructor } from "../../dhis-releases/repository/DhisReleasesRepository";
@@ -67,7 +67,7 @@ export class RepositoryFactory {
 
     @cache()
     public configRepository(instance: Instance) {
-        return this.get<ConfigRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
+        return this.get<StorageClientRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
     }
 
     @cache()

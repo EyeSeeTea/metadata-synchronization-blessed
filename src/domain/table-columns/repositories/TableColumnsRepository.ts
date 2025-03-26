@@ -1,8 +1,8 @@
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
+import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 import { TableColumn } from "../entities/TableColumn";
 
 export interface TableColumnsRepositoryConstructor {
-    new (configRepository: ConfigRepository): TableColumnsRepository;
+    new (storageClientFactory: StorageClientFactory): TableColumnsRepository;
 }
 
 export interface TableColumnsRepository {

@@ -1,5 +1,4 @@
 import { MigrationParams } from ".";
-import { MetadataImportParams } from "../../../domain/metadata/entities/MetadataSynchronizationParams";
 import { Debug } from "../../../domain/migrations/entities/Debug";
 import { SynchronizationType } from "../../../domain/synchronization/entities/SynchronizationType";
 import { promiseMap } from "../../../utils/common";
@@ -10,12 +9,13 @@ export interface SynchronizationRuleData {
     type: SynchronizationType;
 }
 
-export interface SynchronizationRuleDetails {
-    builder: SynchronizationBuilder;
-}
-
-export interface SynchronizationBuilder {
-    syncParams?: OldMetadataSynchronizationParams;
+export interface OldSynchronizationRuleDetails {
+    builder: {
+        syncParams?: {
+            metadataIncludeExcludeRules?: OldMetadataIncludeExcludeRules;
+            useDefaultIncludeExclude: boolean;
+        };
+    };
 }
 
 export interface OldExcludeIncludeRules {
@@ -27,8 +27,24 @@ export interface OldMetadataIncludeExcludeRules {
     [metadataType: string]: OldExcludeIncludeRules;
 }
 
-export interface OldMetadataSynchronizationParams extends MetadataImportParams {
-    metadataIncludeExcludeRules?: OldMetadataIncludeExcludeRules;
+export interface NewSynchronizationRuleDetails {
+    builder: {
+        syncParams?: {
+            metadataIncludeExcludeRules?: OldMetadataIncludeExcludeRules;
+            useDefaultIncludeExclude: boolean;
+        };
+    };
+}
+
+export interface NewExcludeIncludeRules {
+    excludeRules: string[];
+    includeRules: string[];
+    includeOnlyReferencesRules: string[];
+    includeReferencesAndObjectsRules: string[];
+}
+
+export interface NewMetadataIncludeExcludeRules {
+    [metadataType: string]: NewExcludeIncludeRules;
 }
 
 export async function migrate(storage: AppStorage, _debug: Debug, _params: MigrationParams): Promise<void> {
@@ -36,32 +52,24 @@ export async function migrate(storage: AppStorage, _debug: Debug, _params: Migra
     const oldMetadataRules = oldRules.filter(rule => rule.type === "metadata");
 
     await promiseMap(oldMetadataRules, async oldRule => {
-        const oldRuleDetails = await storage.get<SynchronizationRuleDetails>("rules-" + oldRule.id);
+        const oldRuleDetails = await storage.get<OldSynchronizationRuleDetails>("rules-" + oldRule.id);
 
         if (
             oldRuleDetails &&
-            oldRuleDetails.builder.syncParams?.metadataIncludeExcludeRules &&
-            oldRuleDetails.builder.syncParams.metadataIncludeExcludeRules["dashboard"] !== undefined
+            oldRuleDetails.builder.syncParams?.useDefaultIncludeExclude === false &&
+            oldRuleDetails.builder.syncParams?.metadataIncludeExcludeRules
         ) {
             const fixedMetadataIncludeExcludeRules = Object.fromEntries(
                 Object.entries(oldRuleDetails.builder.syncParams.metadataIncludeExcludeRules).map(([key, value]) => {
-                    const fixRule = (rule: string) => {
-                        const isVisualizationRule = rule.split(".")[0] === "charts";
-
-                        return isVisualizationRule ? rule.replace("charts", "visualizations") : rule;
-                    };
-
-                    if (key === "dashboard") {
-                        return [
-                            key,
-                            {
-                                excludeRules: value.excludeRules.map(rule => fixRule(rule)),
-                                includeRules: value.includeRules.map(rule => fixRule(rule)),
-                            },
-                        ];
-                    } else {
-                        return [key, value];
-                    }
+                    return [
+                        key,
+                        {
+                            excludeRules: value.excludeRules,
+                            includeRules: value.includeRules,
+                            includeOnlyReferencesRules: [],
+                            includeReferencesAndObjectsRules: value.includeRules,
+                        },
+                    ];
                 })
             );
 
@@ -70,7 +78,7 @@ export async function migrate(storage: AppStorage, _debug: Debug, _params: Migra
                 metadataIncludeExcludeRules: fixedMetadataIncludeExcludeRules,
             };
 
-            const newRuleDatails: SynchronizationRuleDetails = {
+            const newRuleDatails: NewSynchronizationRuleDetails = {
                 builder: { ...oldRuleDetails?.builder, syncParams: newSyncParams },
             };
 
@@ -80,7 +88,7 @@ export async function migrate(storage: AppStorage, _debug: Debug, _params: Migra
 }
 
 const migration: Migration<MigrationParams> = {
-    name: "Fix missing dependencies to sync dashboards with visualizations",
+    name: "Add new fields to metadataIncludeExcludeRules",
     migrate,
 };
 

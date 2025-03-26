@@ -1,16 +1,12 @@
-import { makeStyles } from "@material-ui/core";
-import { MultiSelector, useSnackbar, withSnackbar } from "@eyeseetea/d2-ui-components";
-import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { MetadataEntity, MetadataPackage } from "../../../../../../domain/metadata/entities/MetadataEntities";
-import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
+import { CircularProgress, makeStyles, Typography } from "@material-ui/core";
+import { MultiSelector, useSnackbar } from "@eyeseetea/d2-ui-components";
+import React, { useEffect } from "react";
 import i18n from "../../../../../../locales";
-import { D2Model } from "../../../../../../models/dhis/default";
-import { defaultName, modelFactory } from "../../../../../../models/dhis/factory";
-import { useAppContext } from "../../../contexts/AppContext";
-import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
+import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
+import { styled } from "styled-components";
+import { useMetadataIncludeExcludeStep } from "./useMetadataIncludeExcludeStep";
 
 const useStyles = makeStyles({
     includeExcludeContainer: {
@@ -21,106 +17,94 @@ const useStyles = makeStyles({
     },
     multiselectorContainer: {
         width: "100%",
+        paddingTop: "20px",
     },
 });
 
 const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const classes = useStyles();
-    const { d2, api } = useAppContext();
     const snackbar = useSnackbar();
 
-    const [modelSelectItems, setModelSelectItems] = useState<DropdownOption[]>([]);
-    const [models, setModels] = useState<typeof D2Model[]>([]);
-    const [pendingApplyUseDefaultChange, setPendingApplyUseDefaultChange] = useState(false);
-    const [selectedType, setSelectedType] = useState<string>("");
-    const { compositionRoot } = useAppContext();
+    const {
+        error,
+        changeUseDefaultIncludeExclude,
+        modelSelectItems,
+        changeModelName,
+        selectedType,
+        d2,
+        syncParams,
+        useDefaultIncludeExclude,
+        changeInclude,
+        ruleOptions,
+        includeRules,
+        changeIncludeReferencesAndObjectsRules,
+        includeRuleOptions,
+        includeReferencesAndObjectsRules,
+        changeSharingSettings,
+        changeOrgUnitReferences,
+        changeRemoveOrgUnitObjects,
+        changeRemoveUserObjects,
+        changeRemoveUserObjectsAndReferences,
+    } = useMetadataIncludeExcludeStep(syncRule, onChange);
 
     useEffect(() => {
-        compositionRoot.instances.getById(syncRule.originInstance).then(result => {
-            result.match({
-                error: () => snackbar.error(i18n.t("Invalid origin instance")),
-                success: instance => {
-                    compositionRoot.metadata
-                        .getByIds(syncRule.metadataIds, instance, "id,name,type") //type is required to transform visualizations to charts and report tables
-                        .then((metadata: MetadataPackage<MetadataEntity>) => {
-                            const models = _(metadata)
-                                .keys()
-                                .concat(syncRule.metadataModelsSyncAll)
-                                .sort()
-                                .uniq()
-                                .value()
-                                .map(type => modelFactory(type));
-
-                            const options = models
-                                .filter(model => model.getMetadataType() !== defaultName)
-                                .map(model => {
-                                    const apiModel = api.models[model.getCollectionName()];
-                                    return apiModel.schema;
-                                })
-                                .map(schema => ({
-                                    name: schema.displayName,
-                                    id: schema.name,
-                                }));
-
-                            setModels(models);
-                            setModelSelectItems(options);
-
-                            if (pendingApplyUseDefaultChange) {
-                                onChange(
-                                    syncRule.useDefaultIncludeExclude
-                                        ? syncRule.markToUseDefaultIncludeExclude()
-                                        : syncRule.markToNotUseDefaultIncludeExclude(models)
-                                );
-                            }
-                        });
-                },
-            });
-        });
-    }, [compositionRoot, api, syncRule, snackbar, pendingApplyUseDefaultChange, onChange]);
-
-    const { includeRules = [], excludeRules = [] } = syncRule.metadataIncludeExcludeRules[selectedType] || {};
-    const allRules = [...includeRules, ...excludeRules];
-    const ruleOptions = allRules.map(rule => ({
-        value: rule,
-        text: includeExcludeRulesFriendlyNames[rule] || rule,
-    }));
-
-    const changeUseDefaultIncludeExclude = (useDefault: boolean) => {
-        if (models.length === 0) {
-            setPendingApplyUseDefaultChange(true);
+        if (error) {
+            snackbar.error(error);
         }
-        onChange(
-            useDefault ? syncRule.markToUseDefaultIncludeExclude() : syncRule.markToNotUseDefaultIncludeExclude(models)
-        );
-    };
+    }, [error, snackbar]);
 
-    const changeModelName = (modelName: string) => {
-        setSelectedType(modelName);
-    };
+    console.debug("Rendering MetadataIncludeExcludeStep");
 
-    const changeInclude = (currentIncludeRules: any) => {
-        const type: string = selectedType;
-
-        const oldIncludeRules: string[] = includeRules;
-
-        const ruleToExclude = _.difference(oldIncludeRules, currentIncludeRules);
-        const ruleToInclude = _.difference(currentIncludeRules, oldIncludeRules);
-
-        if (ruleToInclude.length > 0) {
-            onChange(syncRule.moveRuleFromExcludeToInclude(type, ruleToInclude));
-        } else if (ruleToExclude.length > 0) {
-            onChange(syncRule.moveRuleFromIncludeToExclude(type, ruleToExclude));
-        }
-    };
-
-    return (
+    return modelSelectItems.length > 0 ? (
         <React.Fragment>
+            <div>
+                <div>
+                    <Toggle
+                        label={i18n.t("Include owner and sharing settings")}
+                        onValueChange={changeSharingSettings}
+                        value={syncParams.includeSharingSettings}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove organisation units and references (UID)")}
+                        onValueChange={changeOrgUnitReferences}
+                        value={syncParams.removeOrgUnitReferences}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        disabled={syncParams.removeOrgUnitReferences}
+                        label={i18n.t("Remove organisation units and keep organisation units references (UID)")}
+                        onValueChange={changeRemoveOrgUnitObjects}
+                        value={syncParams.removeOrgUnitObjects || false}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove users and references (UID)")}
+                        onValueChange={changeRemoveUserObjectsAndReferences}
+                        value={syncParams.removeUserObjectsAndReferences || false}
+                    />
+                </div>
+
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove users and keep user references (UID)")}
+                        onValueChange={changeRemoveUserObjects}
+                        value={syncParams.removeUserObjects || false}
+                    />
+                </div>
+            </div>
             <Toggle
                 label={i18n.t("Use default dependencies")}
-                value={syncRule.useDefaultIncludeExclude}
+                value={useDefaultIncludeExclude}
                 onValueChange={changeUseDefaultIncludeExclude}
             />
-            {!syncRule.useDefaultIncludeExclude && (
+            {!useDefaultIncludeExclude && (
                 <div className={classes.includeExcludeContainer}>
                     <Dropdown
                         key={"model-selection"}
@@ -131,20 +115,57 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                     />
 
                     {selectedType && (
-                        <div className={classes.multiselectorContainer}>
-                            <MultiSelector
-                                d2={d2}
-                                height={300}
-                                onChange={changeInclude}
-                                options={ruleOptions}
-                                selected={includeRules}
-                            />
-                        </div>
+                        <>
+                            <div className={classes.multiselectorContainer}>
+                                <Row>
+                                    <Typography>{i18n.t("Exclude objects and references ->")}</Typography>
+                                    <Typography>{i18n.t("Include objects")}</Typography>
+                                </Row>
+                                <MultiSelector
+                                    d2={d2}
+                                    height={300}
+                                    onChange={changeInclude}
+                                    options={ruleOptions}
+                                    selected={includeRules}
+                                />
+                            </div>
+                            <div className={classes.multiselectorContainer}>
+                                <Row>
+                                    <Typography>{i18n.t("Include only references ->")}</Typography>
+                                    <Typography>{i18n.t("Include references and objects")}</Typography>
+                                </Row>
+                                <MultiSelector
+                                    d2={d2}
+                                    height={300}
+                                    onChange={changeIncludeReferencesAndObjectsRules}
+                                    options={includeRuleOptions}
+                                    selected={includeReferencesAndObjectsRules}
+                                />
+                            </div>
+                        </>
                     )}
                 </div>
             )}
         </React.Fragment>
+    ) : (
+        <LoadingContainer>
+            <CircularProgress />
+        </LoadingContainer>
     );
 };
 
-export default withSnackbar(MetadataIncludeExcludeStep);
+export default React.memo(MetadataIncludeExcludeStep);
+
+const Row = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`;
+
+const LoadingContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+`;

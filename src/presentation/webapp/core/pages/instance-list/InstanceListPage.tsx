@@ -28,10 +28,10 @@ import PageHeader from "../../../../react/core/components/page-header/PageHeader
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
-import { StorageType } from "../../../../../domain/config/entities/Config";
+import { AppStorageType } from "../../../../../domain/storage-client-config/entities/StorageConfig";
 
 const InstanceListPage = () => {
-    const { api, compositionRoot } = useAppContext();
+    const { api, compositionRoot, newCompositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -43,7 +43,7 @@ const InstanceListPage = () => {
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [user, setUser] = useState<User>();
-    const [appStorage, setAppStorage] = useState<StorageType>();
+    const [appStorage, setAppStorage] = useState<AppStorageType>();
     const [localInstance, setLocalInstance] = useState<Instance>();
 
     useEffect(() => {
@@ -58,8 +58,8 @@ const InstanceListPage = () => {
     }, [compositionRoot, search, toDelete]);
 
     useEffect(() => {
-        compositionRoot.config.getStorage().then(storage => setAppStorage(storage));
-    }, [compositionRoot]);
+        newCompositionRoot.config.getStorageClient.execute().then(storage => setAppStorage(storage));
+    }, [newCompositionRoot]);
 
     useEffect(() => {
         compositionRoot.instances.getLocal().then(setLocalInstance);

@@ -1,5 +1,5 @@
 import { AggregatedD2ApiRepository } from "../data/aggregated/AggregatedD2ApiRepository";
-import { ConfigAppRepository } from "../data/config/ConfigAppRepository";
+import { StorageClientD2Repository } from "../data/config/StorageClientD2Repository";
 import { CustomDataD2ApiRepository } from "../data/custom-data/CustomDataD2ApiRepository";
 import { EventsD2ApiRepository } from "../data/events/EventsD2ApiRepository";
 import { FileDataRepository } from "../data/file/FileDataRepository";
@@ -27,8 +27,6 @@ import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggrega
 import { UseCase } from "../domain/common/entities/UseCase";
 import { Repositories, RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
 import { StartApplicationUseCase } from "../domain/common/usecases/StartApplicationUseCase";
-import { GetStorageConfigUseCase } from "../domain/config/usecases/GetStorageConfigUseCase";
-import { SetStorageConfigUseCase } from "../domain/config/usecases/SetStorageConfigUseCase";
 import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDataUseCase";
 import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
@@ -131,8 +129,10 @@ import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 
 /**
- * @todo needs refactoring
+ * @deprecated CompositionRoot has been deprecated and will be removed in the future.
+ * Please use NewCompositionRoot for all further development.
  */
+
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
 
@@ -140,7 +140,7 @@ export class CompositionRoot {
         this.repositoryFactory = new RepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
         this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
-        this.repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
+        this.repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
         this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
         this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
@@ -371,14 +371,6 @@ export class CompositionRoot {
             readFiles: new ReadSyncRuleFilesUseCase(this.repositoryFactory, this.localInstance),
             export: new ExportSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(this, this.repositoryFactory, this.localInstance),
-        });
-    }
-
-    @cache()
-    public get config() {
-        return getExecute({
-            getStorage: new GetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
-            setStorage: new SetStorageConfigUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
