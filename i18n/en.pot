@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-03-13T11:53:41.743Z\n"
-"PO-Revision-Date: 2025-03-13T11:53:41.743Z\n"
+"POT-Creation-Date: 2025-03-28T06:48:07.547Z\n"
+"PO-Revision-Date: 2025-03-28T06:48:07.547Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1357,6 +1357,18 @@ msgstr ""
 msgid "Strategy"
 msgstr ""
 
+msgid "Include objects and references"
+msgstr ""
+
+msgid "Include only references"
+msgstr ""
+
+msgid "Remove objects and references"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
 msgid "No"
 msgstr ""
 
@@ -1458,16 +1470,10 @@ msgstr ""
 msgid "Include owner and sharing settings"
 msgstr ""
 
-msgid "Remove organisation units and references (UID)"
+msgid "Include users"
 msgstr ""
 
-msgid "Remove organisation units and keep organisation units references (UID)"
-msgstr ""
-
-msgid "Remove users and references (UID)"
-msgstr ""
-
-msgid "Remove users and keep user references (UID)"
+msgid "Include organisation units"
 msgstr ""
 
 msgid "Exclude objects and references ->"
