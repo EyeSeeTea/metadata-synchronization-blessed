@@ -35,13 +35,14 @@ export const MetadataSynchronizationParamsModel: Codec<MetadataSynchronizationPa
     MetadataImportParamsModel,
     Schema.object({
         enableMapping: Schema.optionalSafe(Schema.boolean, false),
-        includeSharingSettings: Schema.optionalSafe(Schema.boolean, true),
-        removeOrgUnitReferences: Schema.optionalSafe(Schema.boolean, false),
-        removeUserObjects: Schema.optional(Schema.boolean),
-        removeUserObjectsAndReferences: Schema.optional(Schema.boolean),
-        removeOrgUnitObjects: Schema.optional(Schema.boolean),
         useDefaultIncludeExclude: Schema.optionalSafe(Schema.boolean, true),
         metadataIncludeExcludeRules: Schema.optional(MetadataIncludeExcludeRulesModel),
         metadataModelsSyncAll: Schema.optionalSafe(Schema.array(Schema.string), []),
+        includeSharingSettingsObjectsAndReferences: Schema.optionalSafe(Schema.boolean, true),
+        includeOnlySharingSettingsReferences: Schema.optionalSafe(Schema.boolean, false),
+        includeUsersObjectsAndReferences: Schema.optionalSafe(Schema.boolean, true),
+        includeOnlyUsersReferences: Schema.optionalSafe(Schema.boolean, false),
+        includeOrgUnitsObjectsAndReferences: Schema.optionalSafe(Schema.boolean, true),
+        includeOnlyOrgUnitsReferences: Schema.optionalSafe(Schema.boolean, false),
     })
 );

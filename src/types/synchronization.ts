@@ -6,9 +6,14 @@ export interface ExportBuilder {
     ids: string[];
     excludeRules: string[][];
     includeReferencesAndObjectsRules: string[][];
-    includeSharingSettings: boolean;
-    removeOrgUnitReferences: boolean;
-    removeUserObjectsAndReferences: boolean;
+    includeSharingSettingsObjectsAndReferences: boolean;
+    includeOnlySharingSettingsReferences: boolean;
+    includeUsersObjectsAndReferences: boolean;
+    includeOnlyUsersReferences: boolean;
+    includeOrgUnitsObjectsAndReferences: boolean;
+    includeOnlyOrgUnitsReferences: boolean;
+    sharingSettingsIncludeReferencesAndObjectsRules: string[][];
+    usersIncludeReferencesAndObjectsRules: string[][];
 }
 
 export interface SynchronizationState {
