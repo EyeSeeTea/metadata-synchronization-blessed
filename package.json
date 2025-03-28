@@ -63,6 +63,7 @@
         "start": "yarn run-ts scripts/run.ts start-server -p ${PORT:-8081}",
         "start-scheduler": "yarn run-ts --files src/scheduler/cli.ts",
         "build": "yarn run-ts scripts/run.ts build",
+        "prebuild": "yarn localize && yarn test",
         "build-scheduler": "ncc build src/scheduler/cli.ts -m -o $npm_package_name-server && zip -r $npm_package_name-server.zip $npm_package_name-server && npx rimraf $npm_package_name-server/",
         "run-ts": "ts-node --files -O '{\"module\":\"commonjs\"}'",
         "migrate": "yarn run-ts src/migrations/cli.ts",
