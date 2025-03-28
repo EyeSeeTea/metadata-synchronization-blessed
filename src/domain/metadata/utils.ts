@@ -6,7 +6,9 @@ import { MetadataEntities } from "./entities/MetadataEntities";
 import { NestedRules } from "./entities/MetadataExcludeIncludeRules";
 
 const blacklistedProperties = ["access"];
-const userProperties = ["user", "userAccesses", "userGroupAccesses", "sharing"];
+const SHARING_SETTINGS_PROPERTIES = ["user", "userAccesses", "userGroupAccesses", "sharing"];
+const USER_PROPERTIES = ["createdBy", "lastUpdatedBy", "user"];
+const ORG_UNITS_PROPERTIES = ["organisationUnits"];
 
 export function buildNestedRules(rules: string[][] = []): NestedRules {
     return _(rules)
@@ -20,15 +22,30 @@ export function buildNestedRules(rules: string[][] = []): NestedRules {
  * Clean object to sync of dirty references
  * (blacklistedProperties, userProperties if required and references in exclude rules)
  */
-export function cleanObject(
-    api: D2Api,
-    modelName: string,
-    element: any,
-    excludeRules: string[][] = [],
-    includeSharingSettings: boolean,
-    removeOrgUnitReferences: boolean,
-    removeUserObjectsAndReferences: boolean
-): any {
+export function cleanObject(params: {
+    api: D2Api;
+    modelName: string;
+    element: any;
+    excludeRules: string[][];
+    includeSharingSettingsObjectsAndReferences: boolean;
+    includeOnlySharingSettingsReferences: boolean;
+    includeUsersObjectsAndReferences: boolean;
+    includeOnlyUsersReferences: boolean;
+    includeOrgUnitsObjectsAndReferences: boolean;
+    includeOnlyOrgUnitsReferences: boolean;
+}): any {
+    const {
+        api,
+        modelName,
+        element,
+        excludeRules = [],
+        includeSharingSettingsObjectsAndReferences,
+        includeOnlySharingSettingsReferences,
+        includeUsersObjectsAndReferences,
+        includeOnlyUsersReferences,
+        includeOrgUnitsObjectsAndReferences,
+        includeOnlyOrgUnitsReferences,
+    } = params;
     const leafRules: string[] = _(excludeRules)
         .filter(path => path.length === 1)
         .map(_.first)
@@ -43,9 +60,13 @@ export function cleanObject(
         []
     );
 
-    const sharingSettingsFilter = includeSharingSettings ? [] : userProperties;
-    const organisationUnitFilter = removeOrgUnitReferences ? ["organisationUnits"] : [];
-    const userFilter = removeUserObjectsAndReferences ? ["createdBy", "lastUpdatedBy", "user"] : [];
+    const sharingSettingsFilter =
+        includeSharingSettingsObjectsAndReferences || includeOnlySharingSettingsReferences
+            ? []
+            : SHARING_SETTINGS_PROPERTIES;
+    const organisationUnitFilter =
+        includeOrgUnitsObjectsAndReferences || includeOnlyOrgUnitsReferences ? [] : ORG_UNITS_PROPERTIES;
+    const userFilter = includeUsersObjectsAndReferences || includeOnlyUsersReferences ? [] : USER_PROPERTIES;
     const propsToRemove = [...sharingSettingsFilter, ...organisationUnitFilter, ...userFilter];
 
     return _.pick(element, _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove));
