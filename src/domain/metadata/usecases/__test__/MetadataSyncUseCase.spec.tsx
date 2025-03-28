@@ -31,6 +31,8 @@ import {
     getDataSetTypeExpectedPayload,
 } from "./data/data-set-metadata-type";
 
+// TODO: Notice these tests are fragile and can break easily if MetadataSyncUseCase or the metadata structure changes.
+// It is necesary a refactor of MetadataSyncUseCase and the tests to make them more robust.
 describe("MetadataSyncUseCase", () => {
     describe("executing buildPayload method for a Category metadata type with default dependencies", () => {
         it("should return expected payload when option include objects and references of sharing settings, users and organisation units is selected", async () => {

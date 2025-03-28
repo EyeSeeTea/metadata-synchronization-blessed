@@ -141,6 +141,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         });
     }
 
+    // TODO: It is necessary to refactor this method as it should not be called from outside the use case
+    // and also to avoid the use of nested promises
     public buildPayload = memoize(async () => {
         const { metadataIds, syncParams, filterRules = [] } = this.builder;
         const {
