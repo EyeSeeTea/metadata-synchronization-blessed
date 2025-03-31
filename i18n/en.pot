@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-08-06T07:39:27.037Z\n"
-"PO-Revision-Date: 2024-08-06T07:39:27.037Z\n"
+"POT-Creation-Date: 2025-03-31T18:24:46.668Z\n"
+"PO-Revision-Date: 2025-03-31T18:24:46.668Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1059,21 +1059,6 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
-msgid "Include owner and sharing settings"
-msgstr ""
-
-msgid "Remove organisation units and references (UID)"
-msgstr ""
-
-msgid "Remove organisation units and keep organisation units references (UID)"
-msgstr ""
-
-msgid "Remove users and references (UID)"
-msgstr ""
-
-msgid "Remove users and keep user references (UID)"
-msgstr ""
-
 msgid ""
 "Remove default categories, categoryOptions, categoryCombos and "
 "categoryOptionCombos"
@@ -1476,6 +1461,33 @@ msgid "Sync all TEIs"
 msgstr ""
 
 msgid "Exclude relationships"
+msgstr ""
+
+msgid "Include owner and sharing settings"
+msgstr ""
+
+msgid "Remove organisation units and references (UID)"
+msgstr ""
+
+msgid "Remove organisation units and keep organisation units references (UID)"
+msgstr ""
+
+msgid "Remove users and references (UID)"
+msgstr ""
+
+msgid "Remove users and keep user references (UID)"
+msgstr ""
+
+msgid "Exclude objects and references ->"
+msgstr ""
+
+msgid "Include objects"
+msgstr ""
+
+msgid "Include only references ->"
+msgstr ""
+
+msgid "Include references and objects"
 msgstr ""
 
 msgid "Use sync rules periods"
@@ -2265,6 +2277,9 @@ msgid "Fixed period"
 msgstr ""
 
 msgid "Since last execution"
+msgstr ""
+
+msgid "Since last successful execution"
 msgstr ""
 
 msgid "Today"

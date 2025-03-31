@@ -1,47 +1,12 @@
-name: Application testing
+name: "Shared Master Workflow"
+
 on:
   push:
-  workflow_dispatch: 
+    branches: ["master", "development"]
+  pull_request:
+    branches: [ "master", "development" ]
+  workflow_dispatch:
+
 jobs:
-  unit-tests:
-    name: Unit tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        
-      - name: Install apt libraries
-        run: sudo apt install gettext -y
-    
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16.14.0"
-          
-      - name: Install yarn
-        run: npm install -g yarn
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache yarn dependencies
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile --silent
-
-      - name: Install translations
-        run: yarn localize
-      
-      - name: Run jest tests
-        run: yarn test
-
-      - name: Run typescript tests
-        run: npx tsc
+  master-workflow:
+    uses: EyeSeeTea/github-workflows/.github/workflows/master.yml@master

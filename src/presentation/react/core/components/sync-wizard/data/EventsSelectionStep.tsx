@@ -17,6 +17,8 @@ import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import { extractAllPrograms } from "../utils";
+import useTableColumns from "../../../hooks/useTableColumns";
+import { Namespace } from "../../../../../../data/storage/Namespaces";
 
 interface ProgramEventObject extends ProgramEvent {
     [key: string]: any;
@@ -127,9 +129,9 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 },
             },
             { name: "orgUnitName" as const, text: i18n.t("Organisation unit"), sortable: true },
-            { name: "eventDate" as const, text: i18n.t("Event date"), sortable: true },
+            { name: "occurredAt" as const, text: i18n.t("Event date"), sortable: true },
             {
-                name: "lastUpdated" as const,
+                name: "updatedAt" as const,
                 text: i18n.t("Last updated"),
                 sortable: true,
                 hidden: true,
@@ -149,10 +151,10 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 getValue: ({ program }) => _.find(programs, { id: program })?.name ?? program,
             },
             { name: "orgUnitName" as const, text: i18n.t("Organisation unit") },
-            { name: "created" as const, text: i18n.t("Created") },
-            { name: "lastUpdated" as const, text: i18n.t("Last updated") },
-            { name: "eventDate" as const, text: i18n.t("Event date") },
-            { name: "dueDate" as const, text: i18n.t("Due date") },
+            { name: "createdAt" as const, text: i18n.t("Created") },
+            { name: "updatedAt" as const, text: i18n.t("Last updated") },
+            { name: "occurredAt" as const, text: i18n.t("Event date") },
+            { name: "scheduledAt" as const, text: i18n.t("Due date") },
             { name: "status" as const, text: i18n.t("Status") },
             { name: "storedBy" as const, text: i18n.t("Stored by") },
         ],
@@ -194,7 +196,7 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
             .value();
 
         return dataElements.map(({ id, displayFormName }) => ({
-            name: id,
+            name: id as keyof ProgramEvent,
             text: displayFormName,
             sortable: true,
             hidden: true,
@@ -203,6 +205,9 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
             },
         }));
     }, [programFilter, programs]);
+
+    const tableColumns = useMemo(() => [...columns, ...additionalColumns], [columns, additionalColumns]);
+    const { columnsToShow, saveReorderedColumns } = useTableColumns(Namespace.EVENTS_USER_COLUMNS, tableColumns);
 
     const filteredObjects = objects?.filter(({ program }) => !programFilter || program === programFilter) ?? [];
 
@@ -223,13 +228,14 @@ export default function EventsSelectionStep({ syncRule, onChange }: SyncWizardSt
                 <ObjectsTable<ProgramEventObject>
                     rows={filteredObjects}
                     loading={objects === undefined}
-                    columns={[...columns, ...additionalColumns]}
+                    columns={columnsToShow}
                     details={details}
                     actions={actions}
                     forceSelectionColumn={true}
                     onChange={handleTableChange}
                     selection={syncRule.dataSyncEvents?.map(id => ({ id })) ?? []}
                     filterComponents={filterComponents}
+                    onReorderColumns={saveReorderedColumns}
                 />
             )}
 

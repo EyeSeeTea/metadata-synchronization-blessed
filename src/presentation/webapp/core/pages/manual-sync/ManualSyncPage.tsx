@@ -37,6 +37,7 @@ import SyncSummary from "../../../../react/core/components/sync-summary/SyncSumm
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import InstancesSelectors from "./InstancesSelectors";
+import { DataStoreMetadata } from "../../../../../domain/data-store/DataStoreMetadata";
 
 const config: Record<
     SynchronizationType,
@@ -49,7 +50,7 @@ const config: Record<
     metadata: {
         title: i18n.t("Metadata Synchronization"),
         models: metadataModels,
-        childrenKeys: undefined,
+        childrenKeys: ["keys"],
     },
     aggregated: {
         title: i18n.t("Aggregated Data Synchronization"),
@@ -250,6 +251,8 @@ const ManualSyncPage: React.FC = () => {
             text: i18n.t("Metadata type"),
             hidden: config[type].childrenKeys === undefined,
             getValue: (row: MetadataType) => {
+                if (row.id.includes(DataStoreMetadata.NS_SEPARATOR)) return "";
+
                 return row.model.getModelName();
             },
         },

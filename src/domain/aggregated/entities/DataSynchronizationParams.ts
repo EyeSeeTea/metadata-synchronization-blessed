@@ -1,3 +1,4 @@
+import { buildPeriodFromParams } from "../utils";
 import { DataSyncAggregation } from "./DataSyncAggregation";
 import { DataSyncPeriod } from "./DataSyncPeriod";
 
@@ -6,6 +7,7 @@ export interface DataImportParams {
     dataElementIdScheme?: "UID" | "CODE" | "NAME";
     orgUnitIdScheme?: "UID" | "CODE" | "NAME";
     dryRun?: boolean;
+    importMode?: "COMMIT" | "VALIDATE"; // used to be dryRun in new tracker endpoint
     preheatCache?: boolean;
     skipExistingCheck?: boolean;
     skipAudit?: boolean;
@@ -35,4 +37,14 @@ export interface DataSynchronizationParams extends DataImportParams {
     includeAnalyticsZeroValues?: boolean;
     analyticsYears?: number;
     ignoreDuplicateExistingValues?: boolean;
+}
+
+export function isDataSynchronizationRequired(params: DataSynchronizationParams, lastUpdated?: string): boolean {
+    const { period } = params;
+    const { startDate } = buildPeriodFromParams(params);
+
+    const isUpdatedAfterStartDate = lastUpdated && new Date(lastUpdated).toISOString() >= startDate.toISOString();
+    const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
+
+    return isUpdatedAfterStartDate || !isLastSuccessfulSync;
 }

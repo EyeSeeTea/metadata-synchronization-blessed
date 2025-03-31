@@ -118,7 +118,7 @@ export class ProgramDataElementModel extends DataElementModel {
     protected static parentMappingType = "eventPrograms";
     protected static groupFilterName = DataElementModel.groupFilterName;
     protected static fields = dataElementFields;
-    protected static isSelectable = false;
+    protected static isSelectable = true;
 
     protected static modelFilters = { domainType: "TRACKER" };
 }

@@ -1,6 +1,6 @@
 import { ConfirmationDialogProps } from "@eyeseetea/d2-ui-components";
 import { useCallback, useEffect, useState } from "react";
-import { StorageType } from "../../../../../domain/config/entities/Config";
+import { AppStorageType } from "../../../../../domain/storage-client-config/entities/StorageConfig";
 import { Settings, SettingsParams } from "../../../../../domain/settings/Settings";
 import i18n from "../../../../../locales";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
@@ -20,10 +20,10 @@ const initialSettingsForm = {
 };
 
 export function useSettings() {
-    const { compositionRoot } = useAppContext();
+    const { compositionRoot, newCompositionRoot } = useAppContext();
 
-    const [storageType, setStorageType] = useState<StorageType>("dataStore");
-    const [savedStorageType, setSavedStorageType] = useState<StorageType>("dataStore");
+    const [storageType, setStorageType] = useState<AppStorageType>("dataStore");
+    const [savedStorageType, setSavedStorageType] = useState<AppStorageType>("dataStore");
 
     const [settingsForm, setSettingsForm] = useState<SettingsForm>(initialSettingsForm);
 
@@ -33,11 +33,11 @@ export function useSettings() {
     const [error, setError] = useState<string | undefined>(undefined);
 
     useEffect(() => {
-        compositionRoot.config.getStorage().then(storage => {
+        newCompositionRoot.config.getStorageClient.execute().then(storage => {
             setStorageType(storage);
             setSavedStorageType(storage);
         });
-    }, [compositionRoot]);
+    }, [compositionRoot, newCompositionRoot]);
 
     useEffect(() => {
         compositionRoot.settings.get().then(settings => {
@@ -52,16 +52,16 @@ export function useSettings() {
     }, [compositionRoot]);
 
     const changeStorage = useCallback(
-        async (storage: StorageType) => {
+        async (storage: AppStorageType) => {
             setLoadingMessage(i18n.t("Updating storage location, please wait..."));
-            await compositionRoot.config.setStorage(storage);
+            await newCompositionRoot.config.setStorageClient.execute(storage);
 
-            const newStorage = await compositionRoot.config.getStorage();
+            const newStorage = await newCompositionRoot.config.getStorageClient.execute();
             setStorageType(newStorage);
             setLoadingMessage(undefined);
             setGoHome(true);
         },
-        [compositionRoot.config]
+        [newCompositionRoot]
     );
 
     const saveSettings = useCallback(() => {
@@ -96,7 +96,7 @@ export function useSettings() {
         });
     }, [changeStorage, saveSettings, storageType]);
 
-    const onChangeStorageType = useCallback((storage: StorageType) => setStorageType(storage), []);
+    const onChangeStorageType = useCallback((storage: AppStorageType) => setStorageType(storage), []);
 
     const onChangeSettings = useCallback((settings: SettingsParams) => {
         const settingsValidation = Settings.create({ historyRetentionDays: settings.historyRetentionDays });

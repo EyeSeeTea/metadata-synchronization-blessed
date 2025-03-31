@@ -1,3 +1,4 @@
+import { DataStore } from "../../domain/metadata/entities/MetadataEntities";
 import {
     categoryOptionColumns,
     categoryOptionFields,
@@ -142,16 +143,20 @@ export class DashboardModel extends D2Model {
 
     protected static excludeRules = [];
     protected static includeRules = [
-        "charts",
-        "charts.programIndicators",
-        "charts.indicators",
-        "charts.indicators.indicatorTypes",
-        "charts.organisationUnitGroupSets",
-        "charts.organisationUnitGroups",
-        "charts.categoryOptionGroupSets",
-        "charts.categoryOptionGroups",
-        "charts.dataElementGroupSets",
-        "charts.dataElementGroups",
+        "visualizations",
+        "visualizations.programIndicators",
+        "visualizations.indicators",
+        "visualizations.indicators.indicatorTypes",
+        "visualizations.organisationUnitGroupSets",
+        "visualizations.organisationUnitGroups",
+        "visualizations.categoryOptionGroupSets",
+        "visualizations.categoryOptionGroups",
+        "visualizations.dataElementGroupSets",
+        "visualizations.dataElementGroups",
+        "visualizations.dataElements",
+        "visualizations.dataElements.programIndicators",
+        "visualizations.indicators.programIndicators",
+        "visualizations.indicators.dataElements",
         "eventCharts",
         "eventReports",
         "maps",
@@ -779,4 +784,22 @@ export class SqlView extends D2Model {
     protected static collectionName = "sqlViews" as const;
 
     protected static includeRules = ["attributes"];
+}
+
+export class DataStoreModel extends D2Model {
+    protected static metadataType = "dataStore";
+    protected static modelName = "Data Store";
+    protected static collectionName = "dataStores" as const;
+    protected static childrenKeys = ["keys"];
+
+    protected static modelTransform = (dataStores: DataStore[]) => {
+        return dataStores.map(({ keys = [], ...rest }) => ({
+            ...rest,
+            keys: keys.map(keyItem => ({ ...keyItem, model: DataStoreKeysModel })),
+        }));
+    };
+}
+
+export class DataStoreKeysModel extends D2Model {
+    protected static modelName = "Keys";
 }

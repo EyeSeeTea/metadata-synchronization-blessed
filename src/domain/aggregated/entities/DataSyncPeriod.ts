@@ -2,6 +2,7 @@ export type DataSyncPeriod =
     | "ALL"
     | "FIXED"
     | "SINCE_LAST_EXECUTED_DATE"
+    | "SINCE_LAST_SUCCESSFUL_SYNC"
     | "TODAY"
     | "YESTERDAY"
     | "LAST_7_DAYS"

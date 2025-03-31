@@ -8,6 +8,7 @@ import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataMapping, MetadataMappingDictionary } from "../../mapping/entities/MetadataMapping";
@@ -54,7 +55,8 @@ export abstract class GenericSyncUseCase {
 
     @cache()
     public async extractMetadata<T>(remoteInstance = this.localInstance) {
-        const cleanIds = this.builder.metadataIds.map(id => _.last(id.split("-")) ?? id);
+        const onlyMetadataIds = this.builder.metadataIds.filter(id => !DataStoreMetadata.isDataStoreId(id));
+        const cleanIds = onlyMetadataIds.map(id => _.last(id.split("-")) ?? id);
         const metadataRepository = await this.getMetadataRepository(remoteInstance);
         return metadataRepository.getMetadataByIds<T>(cleanIds, this.fields);
     }
@@ -92,6 +94,12 @@ export abstract class GenericSyncUseCase {
     protected async getEventsRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
         return this.repositoryFactory.eventsRepository(remoteInstance ?? defaultInstance);
+    }
+
+    @cache()
+    protected async getDataStoreMetadataRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.dataStoreMetadataRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
@@ -184,6 +192,10 @@ export abstract class GenericSyncUseCase {
     public async *execute() {
         const { targetInstances: targetInstanceIds, syncRule, dataParams } = this.builder;
 
+        // NOTICE: The date is stored in a variable at the beginning of execution and save it at the end
+        // to ensure no items created/updated during the sync process are missed
+        const executionDate = new Date();
+
         const origin = await this.getOriginInstance();
 
         if (dataParams?.enableAggregation && dataParams?.runAnalyticsBefore) {
@@ -257,7 +269,8 @@ export abstract class GenericSyncUseCase {
                 const currentUser = await this.api.currentUser
                     .get({ fields: { userCredentials: { name: true }, id: true } })
                     .getData();
-                const updatedRule = oldRule.updateLastExecuted(new Date(), {
+
+                const updatedRule = oldRule.updateLastExecuted(executionDate, {
                     id: currentUser.id,
                     name: currentUser.userCredentials.name,
                 });
@@ -267,6 +280,18 @@ export abstract class GenericSyncUseCase {
 
         // Phase 5: Update parent task status
         syncReport.setStatus(syncReport.hasErrors() ? "FAILURE" : "DONE");
+
+        // Phase 6: if sync report is DONE, update sync rule last successful sync date
+        if (syncReport.status === "DONE" && syncRule) {
+            const syncRulesRepository = this.repositoryFactory.rulesRepository(this.localInstance);
+            const rule = await syncRulesRepository.getById(syncRule);
+
+            if (rule) {
+                const updatedRule = rule.updateLastSuccessfulSync(executionDate);
+                await syncRulesRepository.save([updatedRule]);
+            }
+        }
+
         yield { syncReport, done: true };
 
         return syncReport;

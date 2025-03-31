@@ -3,8 +3,10 @@ import {
     AggregatedRepository,
     AggregatedRepositoryConstructor,
 } from "../../aggregated/repositories/AggregatedRepository";
-import { ConfigRepositoryConstructor } from "../../config/repositories/ConfigRepository";
+import { StorageClientRepositoryConstructor } from "../../storage-client-config/repositories/StorageClientRepository";
 import { CustomDataRepositoryConstructor } from "../../custom-data/repository/CustomDataRepository";
+import { DataStoreMetadataRepositoryConstructor } from "../../data-store/DataStoreMetadataRepository";
+import { DhisReleasesRepositoryConstructor } from "../../dhis-releases/repository/DhisReleasesRepository";
 import { EventsRepository, EventsRepositoryConstructor } from "../../events/repositories/EventsRepository";
 import { FileRepositoryConstructor } from "../../file/repositories/FileRepository";
 import { DataSource } from "../../instance/entities/DataSource";
@@ -18,10 +20,13 @@ import { GitHubRepositoryConstructor } from "../../packages/repositories/GitHubR
 import { ReportsRepositoryConstructor } from "../../reports/repositories/ReportsRepository";
 import { FileRulesRepositoryConstructor } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../rules/repositories/RulesRepository";
-import { SchedulerRepositoryConstructor } from "../../scheduler/repositories/SchedulerRepository";
 import { SettingsRepositoryConstructor } from "../../settings/SettingsRepository";
 import { DownloadRepositoryConstructor } from "../../storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../stores/repositories/StoreRepository";
+import {
+    TableColumnsRepository,
+    TableColumnsRepositoryConstructor,
+} from "../../table-columns/repositories/TableColumnsRepository";
 import { TEIRepository, TEIRepositoryConstructor } from "../../tracked-entity-instances/repositories/TEIRepository";
 import {
     TransformationRepository,
@@ -31,6 +36,9 @@ import { UserRepositoryConstructor } from "../../user/repositories/UserRepositor
 
 type ClassType = new (...args: any[]) => any;
 
+/**
+ * @todo We need to think how to refactor RepositoryFactory concept
+ */
 export class RepositoryFactory {
     constructor(private encryptionKey: string) {}
 
@@ -59,7 +67,7 @@ export class RepositoryFactory {
 
     @cache()
     public configRepository(instance: Instance) {
-        return this.get<ConfigRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
+        return this.get<StorageClientRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
     }
 
     @cache()
@@ -121,6 +129,18 @@ export class RepositoryFactory {
     }
 
     @cache()
+    public tableColumnsRepository(instance: Instance): TableColumnsRepository {
+        const config = this.configRepository(instance);
+
+        return this.get<TableColumnsRepositoryConstructor>(Repositories.TableColumnsRepository, [config]);
+    }
+
+    @cache()
+    public dataStoreMetadataRepository(instance: Instance) {
+        return this.get<DataStoreMetadataRepositoryConstructor>(Repositories.DataStoreMetadataRepository, [instance]);
+    }
+
+    @cache()
     public teisRepository(instance: Instance): TEIRepository {
         return this.get<TEIRepositoryConstructor>(Repositories.TEIsRepository, [instance]);
     }
@@ -172,15 +192,14 @@ export class RepositoryFactory {
     }
 
     @cache()
-    public schedulerRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-        return this.get<SchedulerRepositoryConstructor>(Repositories.SchedulerRepository, [config]);
-    }
-
-    @cache()
     public settingsRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<SettingsRepositoryConstructor>(Repositories.SettingsRepository, [config]);
+    }
+
+    @cache()
+    public dhisReleasesRepository() {
+        return this.get<DhisReleasesRepositoryConstructor>(Repositories.DhisReleasesRepository, []);
     }
 }
 
@@ -208,5 +227,7 @@ export const Repositories = {
     UserRepository: "userRepository",
     MappingRepository: "mappingRepository",
     SettingsRepository: "settingsRepository",
-    SchedulerRepository: "schedulerRepository",
+    DataStoreMetadataRepository: "dataStoreMetadataRepository",
+    DhisReleasesRepository: "dhisReleasesRepository",
+    TableColumnsRepository: "tableColumnsRepository",
 } as const;
