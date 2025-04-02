@@ -51,15 +51,24 @@ describe("SchedulerCLI", () => {
         it("should call compositionRoot.rules.list with correct params and return correct SyncRuleJobConfig[]", async () => {
             const spyListRules = jest.spyOn(mockCompositionRoot.rules, "list");
 
-            const expectedConfigs: SyncRuleJobConfig[] = [getSyncRuleJobConfig()];
+            const expectedSyncRules: SynchronizationRule[] = [getSynchronizationRule(true)];
 
-            const result = await schedulerCLI["getSyncRuleJobConfigs"]();
+            const result = await schedulerCLI["getEnabledSyncRules"]();
 
             expect(spyListRules).toHaveBeenCalledWith({
                 paging: false,
                 filters: { schedulerEnabledFilter: "enabled" },
             });
-            expect(result).toEqual(expectedConfigs);
+            expect(result).toEqual(expectedSyncRules);
+        });
+
+        it("should call getSyncRuleJobConfigs and return correct SyncRuleJobConfig", async () => {
+            const syncRulesEnabled: SynchronizationRule[] = [getSynchronizationRule(true)];
+            const expectedSyncRuleJobConfigs: SyncRuleJobConfig[] = [getSyncRuleJobConfig()];
+
+            const result = await schedulerCLI["getSyncRuleJobConfigs"](syncRulesEnabled);
+
+            expect(result).toEqual(expectedSyncRuleJobConfigs);
         });
     });
 });
@@ -69,6 +78,7 @@ function getSyncRuleJobConfig(): SyncRuleJobConfig {
         id: "sync-rule-id",
         name: "Sync Rule",
         frequency: "0 */2 * * * *",
+        needsUpdateFrequency: false,
     };
 }
 

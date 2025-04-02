@@ -24,6 +24,8 @@ const SyncRulesCreation: React.FC = () => {
 
     const [dialogOpen, updateDialogOpen] = useState(false);
     const [syncRule, updateSyncRule] = useState(location.state?.syncRule ?? SynchronizationRule.create(type));
+    const [originalSyncRule, setOriginalSyncRule] = useState<SynchronizationRule | undefined>(undefined);
+
     const isEdit = action === "edit" && !!id;
 
     const title = !isEdit
@@ -47,6 +49,7 @@ const SyncRulesCreation: React.FC = () => {
             loading.show(true, "Loading sync rule");
             compositionRoot.rules.get(id).then(syncRule => {
                 updateSyncRule(syncRule ?? SynchronizationRule.create(type));
+                setOriginalSyncRule(syncRule ?? SynchronizationRule.create(type));
                 loading.reset();
             });
         }
@@ -65,7 +68,12 @@ const SyncRulesCreation: React.FC = () => {
 
             <PageHeader title={title} onBackClick={openDialog} />
 
-            <SyncWizard syncRule={syncRule} onChange={updateSyncRule} onCancel={exit} />
+            <SyncWizard
+                syncRule={syncRule}
+                originalSyncRule={originalSyncRule}
+                onChange={updateSyncRule}
+                onCancel={exit}
+            />
         </TestWrapper>
     );
 };
