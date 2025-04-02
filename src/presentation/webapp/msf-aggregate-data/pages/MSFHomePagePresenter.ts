@@ -118,7 +118,7 @@ export async function executeAggregateData(
                 error: () => {
                     addEventToProgress(
                         i18n.t(`An error has occurred retrieving the instance {{name}}`, {
-                            name: instance.value.data?.name,
+                            name: instance.value.data ? instance.value.data.name : undefined,
                         }),
                         "admin"
                     );

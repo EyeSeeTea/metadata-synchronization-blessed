@@ -81,7 +81,7 @@ export const ResponsibleDialog: React.FC<ResponsibleDialogProps> = ({
                 permissionPicker: false,
             }}
             title={i18n.t("Custodians for {{name}}", {
-                name: sharingSettingsElement?.name,
+                name: sharingSettingsElement ? sharingSettingsElement.name : undefined,
             })}
             meta={sharingObject}
             onCancel={onClose}
