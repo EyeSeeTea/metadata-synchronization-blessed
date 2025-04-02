@@ -2,7 +2,7 @@ import { Box, Icon, IconButton } from "@material-ui/core";
 import React, { useState } from "react";
 import { PackageSource } from "../../../../../../domain/package-import/entities/PackageSource";
 import { Store } from "../../../../../../domain/stores/entities/Store";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import {
     InstanceSelectionDropdown,
     InstanceSelectionOption,

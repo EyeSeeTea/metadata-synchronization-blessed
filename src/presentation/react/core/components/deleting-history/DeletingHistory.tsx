@@ -1,6 +1,6 @@
 import { useLoading } from "@eyeseetea/d2-ui-components";
 import React, { useEffect } from "react";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 
 interface DeletetingHistoryProps {
     deleting: Boolean;

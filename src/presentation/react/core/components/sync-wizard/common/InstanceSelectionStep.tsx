@@ -3,7 +3,7 @@ import { makeStyles, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
 import { User } from "../../../../../../domain/user/entities/User";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { useAppContext } from "../../../contexts/AppContext";
 import SyncParamsSelector from "../../sync-params-selector/SyncParamsSelector";
 import { SyncWizardStepProps } from "../Steps";

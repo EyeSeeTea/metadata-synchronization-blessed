@@ -3,7 +3,7 @@ import { Button, FormGroup, makeStyles, Paper, TextField } from "@material-ui/co
 import React, { useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import { StorageSettingDropdown } from "./storage/StorageSettingDropdown";
 import { useSettings } from "./useSettings";

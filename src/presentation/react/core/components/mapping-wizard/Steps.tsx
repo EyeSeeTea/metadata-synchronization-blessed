@@ -1,4 +1,4 @@
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { D2Model } from "../../../../../models/dhis/default";
 import {
     CategoryOptionComboMappedModel,

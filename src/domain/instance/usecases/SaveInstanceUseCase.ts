@@ -1,4 +1,4 @@
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";

@@ -1,4 +1,4 @@
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";

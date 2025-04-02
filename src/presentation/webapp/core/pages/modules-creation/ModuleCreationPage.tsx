@@ -2,7 +2,7 @@ import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Module } from "../../../../../domain/modules/entities/Module";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import { ModuleWizard } from "../../../../react/core/components/module-wizard/ModuleWizard";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";

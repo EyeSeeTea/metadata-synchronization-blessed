@@ -1,6 +1,6 @@
 import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import { DialogContent, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import ErrorIcon from "@material-ui/icons/Error";
 import WarningIcon from "@material-ui/icons/Warning";
 

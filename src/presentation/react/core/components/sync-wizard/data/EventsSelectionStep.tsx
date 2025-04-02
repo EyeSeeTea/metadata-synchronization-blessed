@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ProgramEvent } from "../../../../../../domain/events/entities/ProgramEvent";
 import { DataElement, Program } from "../../../../../../domain/metadata/entities/MetadataEntities";
 import { SynchronizationRule } from "../../../../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";

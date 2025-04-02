@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { FieldUpdate, MetadataPackageDiff } from "../../../../../domain/packages/entities/MetadataPackageDiff";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 import { PackageToDiff } from "./PackagesDiffDialog";
 

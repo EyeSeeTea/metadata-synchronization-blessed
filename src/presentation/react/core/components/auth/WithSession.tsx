@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { Typography, CircularProgress, makeStyles } from "@material-ui/core";
 import { useAppContext } from "../../contexts/AppContext";
 

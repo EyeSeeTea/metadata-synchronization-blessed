@@ -1,7 +1,7 @@
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import semver from "semver";
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { DatedRef, NamedRef } from "../../common/entities/Ref";
 import { ModelValidation, validateModel, ValidationError } from "../../common/entities/Validations";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";

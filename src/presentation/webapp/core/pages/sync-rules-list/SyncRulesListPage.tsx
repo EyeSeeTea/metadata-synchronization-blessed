@@ -24,7 +24,7 @@ import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule, SynchronizationRuleData } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { promiseMap } from "../../../../../utils/common";
 import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { getValidationMessages } from "../../../../../utils/old-validations";
@@ -701,7 +701,9 @@ export const SyncRulesListPage: React.FC = () => {
                         title: false,
                         dataSharing: false,
                     }}
-                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    title={i18n.t("Sharing settings for {{name}}", {
+                        name: sharingSettingsObject.object.name,
+                    })}
                     meta={sharingSettingsObject}
                     onCancel={() => setSharingSettingsObject(null)}
                     onChange={onSharingChanged}

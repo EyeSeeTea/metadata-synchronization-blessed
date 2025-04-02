@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { MetadataPackageDiff, ModelDiff } from "../../../../../domain/packages/entities/MetadataPackageDiff";
 import { Store } from "../../../../../domain/stores/entities/Store";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 import SyncSummary from "../sync-summary/SyncSummary";
 import { getChange, getTitle, usePackageImporter } from "./utils";

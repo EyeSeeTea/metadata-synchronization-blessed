@@ -1,7 +1,7 @@
 import { CircularProgress, makeStyles, Typography } from "@material-ui/core";
 import { MultiSelector, useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { useEffect } from "react";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";

@@ -7,7 +7,7 @@ import semver from "semver";
 import { ValidationError } from "../../../../../domain/common/entities/Validations";
 import { Module } from "../../../../../domain/modules/entities/Module";
 import { Package } from "../../../../../domain/packages/entities/Package";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { Dictionary } from "../../../../../types/utils";
 import { useAppContext } from "../../contexts/AppContext";
 
