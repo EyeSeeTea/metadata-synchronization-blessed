@@ -23,6 +23,7 @@ export interface SyncWizardStep extends WizardStep {
 
 export interface SyncWizardStepProps {
     syncRule: SynchronizationRule;
+    originalSyncRule?: SynchronizationRule;
     onChange: (syncRule: SynchronizationRule) => void;
     onCancel: () => void;
 }

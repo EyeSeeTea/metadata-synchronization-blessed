@@ -10,6 +10,7 @@ import { aggregatedSteps, deletedSteps, eventsSteps, metadataSteps } from "./Ste
 
 interface SyncWizardProps {
     syncRule: SynchronizationRule;
+    originalSyncRule?: SynchronizationRule;
     isDialog?: boolean;
     onChange?(syncRule: SynchronizationRule): void;
     onCancel?(): void;
@@ -24,6 +25,7 @@ const config = {
 
 const SyncWizard: React.FC<SyncWizardProps> = ({
     syncRule,
+    originalSyncRule,
     isDialog = false,
     onChange = _.noop,
     onCancel = _.noop,
@@ -39,6 +41,7 @@ const SyncWizard: React.FC<SyncWizardProps> = ({
             ...step,
             props: {
                 syncRule,
+                originalSyncRule,
                 onCancel,
                 onChange,
             },
