@@ -834,9 +834,8 @@ msgstr ""
 msgid "Validating package"
 msgstr ""
 
-#, fuzzy
 msgid "Package is valid"
-msgstr "Paquetes"
+msgstr ""
 
 msgid "Generating module"
 msgstr ""
