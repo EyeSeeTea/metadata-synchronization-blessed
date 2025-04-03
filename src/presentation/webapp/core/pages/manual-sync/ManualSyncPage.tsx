@@ -9,7 +9,7 @@ import { SynchronizationReport } from "../../../../../domain/reports/entities/Sy
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../../domain/stores/entities/Store";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { D2Model } from "../../../../../models/dhis/default";
 import { metadataModels } from "../../../../../models/dhis/factory";
 import {

@@ -1,7 +1,7 @@
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import { useSchedulerInfo } from "./useSchedulerInfo";
 

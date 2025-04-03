@@ -2,7 +2,7 @@ import { Badge, Icon, IconButton, makeStyles, Tooltip } from "@material-ui/core"
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import {
     isAppConfigurator,
     isAppExecutor,

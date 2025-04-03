@@ -3,7 +3,7 @@ import { RowConfig, TableAction, useSnackbar } from "@eyeseetea/d2-ui-components
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { D2Model } from "../../../../../../models/dhis/default";
 import { metadataModels } from "../../../../../../models/dhis/factory";
 import {

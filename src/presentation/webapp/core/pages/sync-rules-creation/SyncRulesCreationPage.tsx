@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import SyncWizard from "../../../../react/core/components/sync-wizard/SyncWizard";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";

@@ -1,6 +1,6 @@
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 
 const useStyles = makeStyles(() => ({
     button: {

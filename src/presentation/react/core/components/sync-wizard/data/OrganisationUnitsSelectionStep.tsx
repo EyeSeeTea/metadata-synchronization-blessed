@@ -3,7 +3,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { OrgUnitsSelector, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { D2Api } from "../../../../../../types/d2-api";
 import { useAppContext } from "../../../contexts/AppContext";
 import { SyncWizardStepProps } from "../Steps";

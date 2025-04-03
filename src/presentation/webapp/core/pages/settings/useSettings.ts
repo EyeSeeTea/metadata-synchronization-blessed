@@ -2,7 +2,7 @@ import { ConfirmationDialogProps } from "@eyeseetea/d2-ui-components";
 import { useCallback, useEffect, useState } from "react";
 import { AppStorageType } from "../../../../../domain/storage-client-config/entities/StorageConfig";
 import { Settings, SettingsParams } from "../../../../../domain/settings/Settings";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 
 type ValidationForm<Form> = {

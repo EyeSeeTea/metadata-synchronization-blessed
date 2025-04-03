@@ -14,7 +14,7 @@ import {
 import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import { SynchronizationRule } from "../../../../../../domain/rules/entities/SynchronizationRule";
 import { cleanOrgUnitPaths } from "../../../../../../domain/synchronization/utils";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { getValidationMessages } from "../../../../../../utils/old-validations";
 import { availablePeriods } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";

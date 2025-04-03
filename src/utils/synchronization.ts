@@ -5,7 +5,7 @@ import { D2MetadataUtils } from "../data/metadata/D2MetadataUtils";
 import { MetadataMapping, MetadataMappingDictionary } from "../domain/mapping/entities/MetadataMapping";
 import { CategoryOptionCombo } from "../domain/metadata/entities/MetadataEntities";
 import { SynchronizationRule } from "../domain/rules/entities/SynchronizationRule";
-import i18n from "../locales";
+import i18n from "../utils/i18n";
 import { MAPPED_BY_VALUE_KEY } from "../presentation/react/core/components/mapping-table/utils";
 import { D2Api } from "../types/d2-api";
 import { buildObject } from "../types/utils";

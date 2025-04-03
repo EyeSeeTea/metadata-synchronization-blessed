@@ -2,7 +2,7 @@ import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import { makeStyles, TextField } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { Dropdown, DropdownOption } from "../dropdown/Dropdown";
 import { PackageItem } from "../package-list-table/PackageModuleItem";
 import { useGetSupportedVersions } from "../../hooks/useGetSupportedVersions";

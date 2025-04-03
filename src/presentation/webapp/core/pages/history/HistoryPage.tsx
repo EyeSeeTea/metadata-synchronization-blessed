@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { HistoryTable } from "../../../../react/core/components/history-table/HistoryTable";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 

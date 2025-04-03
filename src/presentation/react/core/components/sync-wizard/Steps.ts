@@ -1,6 +1,6 @@
 import { WizardStep } from "@eyeseetea/d2-ui-components";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import GeneralInfoStep from "./common/GeneralInfoStep";
 import InstanceSelectionStep from "./common/InstanceSelectionStep";
 import MetadataFilterRulesStep from "./common/MetadataFilterRulesStep";

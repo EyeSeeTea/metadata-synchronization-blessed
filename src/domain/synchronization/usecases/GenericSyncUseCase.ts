@@ -1,5 +1,5 @@
 import _ from "lodash";
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { D2Api } from "../../../types/d2-api";
 import { executeAnalytics } from "../../../utils/analytics";
 import { cache } from "../../../utils/cache";
