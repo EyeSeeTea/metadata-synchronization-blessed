@@ -8,7 +8,7 @@ import { Namespace } from "../storage/Namespaces";
 
 export class SettingsD2ApiRepository implements SettingsRepository {
     constructor(private storageClientFactory: StorageClientFactory) {}
-    
+
     get(): FutureData<Settings> {
         return this.getStorageClient().flatMap(storageClient => {
             return storageClient.getObjectFuture<SettingsData>(Namespace.SETTINGS).flatMap(settingsData => {

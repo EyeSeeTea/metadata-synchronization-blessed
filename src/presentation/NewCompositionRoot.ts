@@ -27,8 +27,8 @@ function getCompositionRoot(repositories: Repositories) {
         },
 
         settings: {
-            get: new GetSettingsUseCase(repositories.settingsRepository, repositories.storageClientRepository),
-            save: new SaveSettingsUseCase(repositories),
+            get: new GetSettingsUseCase(repositories.settingsRepository),
+            save: new SaveSettingsUseCase(repositories.settingsRepository),
         },
     };
 }
