@@ -27,16 +27,17 @@ function getCompositionRoot(repositories: Repositories) {
         },
 
         settings: {
-            get: new GetSettingsUseCase(repositories),
+            get: new GetSettingsUseCase(repositories.settingsRepository, repositories.storageClientRepository),
             save: new SaveSettingsUseCase(repositories),
         },
     };
 }
 
 export function getWebappCompositionRoot(instance: Instance) {
+    const storageClientRepository = new StorageClientD2Repository(instance);
     const repositories: Repositories = {
         storageClientRepository: new StorageClientD2Repository(instance),
-        settingsRepository: new SettingsD2ApiRepository(),
+        settingsRepository: new SettingsD2ApiRepository(storageClientRepository),
     };
 
     return getCompositionRoot(repositories);

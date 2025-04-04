@@ -351,8 +351,7 @@ export class CompositionRoot {
             delete: new DeleteSyncReportUseCase(this.repositoryFactory, this.localInstance),
             deleteOld: new DeleteOldSyncReportUseCase(
                 this.repositoryFactory.reportsRepository(this.localInstance),
-                this.repositoryFactory.settingsRepository(this.localInstance),
-                new StorageClientD2Repository(this.localInstance)
+                this.repositoryFactory.settingsRepository(this.localInstance)
             ),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),

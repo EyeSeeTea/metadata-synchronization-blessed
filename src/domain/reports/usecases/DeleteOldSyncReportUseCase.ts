@@ -1,19 +1,13 @@
 import { UseCase } from "../../common/entities/UseCase";
 import { SettingsRepository } from "../../settings/SettingsRepository";
-import { StorageClientRepository } from "../../storage-client-config/repositories/StorageClientRepository";
 import { ReportsRepository } from "../repositories/ReportsRepository";
 import moment from "moment";
 
 export class DeleteOldSyncReportUseCase implements UseCase {
-    constructor(
-        private reportsRepository: ReportsRepository,
-        private settingsRepository: SettingsRepository,
-        private storageClientRepository: StorageClientRepository
-    ) {}
+    constructor(private reportsRepository: ReportsRepository, private settingsRepository: SettingsRepository) {}
 
     public async execute(): Promise<void> {
-        const storageClient = await this.storageClientRepository.getStorageClientPromise();
-        const settings = await this.settingsRepository.get(storageClient).toPromise();
+        const settings = await this.settingsRepository.get().toPromise();
 
         if (!settings.historyRetentionDays) return;
 

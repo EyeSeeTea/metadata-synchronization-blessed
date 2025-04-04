@@ -9,8 +9,6 @@ export class SaveSettingsUseCase {
     ) {}
 
     public execute(settings: Settings): FutureData<void> {
-        return this.options.storageClientRepository.getStorageClient().flatMap(storageClient => {
-            return this.options.settingsRepository.save(settings, storageClient);
-        });
+        return this.options.settingsRepository.save(settings);
     }
 }

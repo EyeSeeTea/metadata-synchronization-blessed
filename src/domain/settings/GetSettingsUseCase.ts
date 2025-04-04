@@ -5,12 +5,11 @@ import { SettingsRepository } from "./SettingsRepository";
 
 export class GetSettingsUseCase {
     constructor(
-        private options: { settingsRepository: SettingsRepository; storageClientRepository: StorageClientRepository }
+        private settingsRepository: SettingsRepository,
+        private storageClientRepository: StorageClientRepository
     ) {}
 
     public execute(): FutureData<Settings> {
-        return this.options.storageClientRepository.getStorageClient().flatMap(storageClient => {
-            return this.options.settingsRepository.get(storageClient);
-        });
+        return this.settingsRepository.get();
     }
 }
