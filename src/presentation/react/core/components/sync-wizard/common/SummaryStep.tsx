@@ -440,8 +440,38 @@ export const SummaryStepContent = (props: SummaryStepContentProps) => {
                     </ul>
                     <ul>
                         <LiEntry
-                            label={i18n.t("Include user information and sharing settings")}
-                            value={syncRule.syncParams.includeSharingSettings ? i18n.t("Yes") : i18n.t("No")}
+                            label={i18n.t("Sharing settings")}
+                            value={
+                                syncRule.syncParams.includeSharingSettingsObjectsAndReferences
+                                    ? i18n.t("Include objects and references")
+                                    : syncRule.syncParams.includeOnlySharingSettingsReferences
+                                    ? i18n.t("Include only references")
+                                    : i18n.t("Remove objects and references")
+                            }
+                        />
+                    </ul>
+                    <ul>
+                        <LiEntry
+                            label={i18n.t("Users")}
+                            value={
+                                syncRule.syncParams.includeUsersObjectsAndReferences
+                                    ? i18n.t("Include objects and references")
+                                    : syncRule.syncParams.includeOnlyUsersReferences
+                                    ? i18n.t("Include only references")
+                                    : i18n.t("Remove objects and references")
+                            }
+                        />
+                    </ul>
+                    <ul>
+                        <LiEntry
+                            label={i18n.t("Organisation units")}
+                            value={
+                                syncRule.syncParams.includeOrgUnitsObjectsAndReferences
+                                    ? i18n.t("Include objects and references")
+                                    : syncRule.syncParams.includeOnlyOrgUnitsReferences
+                                    ? i18n.t("Include only references")
+                                    : i18n.t("Remove objects and references")
+                            }
                         />
                     </ul>
                     <ul>

@@ -11,6 +11,11 @@ import { defaultName, modelFactory } from "../../../../../../models/dhis/factory
 import { useAppContext } from "../../../contexts/AppContext";
 import { DropdownOption } from "../../dropdown/Dropdown";
 
+export type IncludeObjectsAndReferences =
+    | "includeObjectsAndReferences"
+    | "includeOnlyReferences"
+    | "removeObjectsAndReferences";
+
 export function useMetadataIncludeExcludeStep(
     syncRule: SynchronizationRule,
     onChange: (syncRule: SynchronizationRule) => void
@@ -169,50 +174,77 @@ export function useMetadataIncludeExcludeStep(
         [includeReferencesAndObjectsRules, onChange, selectedType, syncRule]
     );
 
-    const changeSharingSettings = useCallback(
-        (includeSharingSettings: boolean) => {
+    const includeObjectsAndReferencesOptions = useMemo(() => {
+        return [
+            {
+                id: "includeObjectsAndReferences" as const,
+                name: i18n.t("Include objects and references"),
+            },
+            {
+                id: "includeOnlyReferences" as const,
+                name: i18n.t("Include only references"),
+            },
+            {
+                id: "removeObjectsAndReferences" as const,
+                name: i18n.t("Remove objects and references"),
+            },
+        ];
+    }, []);
+
+    const sharingSettingsObjectsAndReferencesValue: IncludeObjectsAndReferences = useMemo(() => {
+        return getObjectsAndReferencesValue(
+            syncParams.includeSharingSettingsObjectsAndReferences,
+            syncParams.includeOnlySharingSettingsReferences
+        );
+    }, [syncParams.includeSharingSettingsObjectsAndReferences, syncParams.includeOnlySharingSettingsReferences]);
+
+    const usersObjectsAndReferencesValue: IncludeObjectsAndReferences = useMemo(() => {
+        return getObjectsAndReferencesValue(
+            syncParams.includeUsersObjectsAndReferences,
+            syncParams.includeOnlyUsersReferences
+        );
+    }, [syncParams.includeUsersObjectsAndReferences, syncParams.includeOnlyUsersReferences]);
+
+    const orgUnitsObjectsAndReferencesValue: IncludeObjectsAndReferences = useMemo(() => {
+        return getObjectsAndReferencesValue(
+            syncParams.includeOrgUnitsObjectsAndReferences,
+            syncParams.includeOnlyOrgUnitsReferences
+        );
+    }, [syncParams.includeOrgUnitsObjectsAndReferences, syncParams.includeOnlyOrgUnitsReferences]);
+
+    const changeSharingSettingsObjectsAndReferences = useCallback(
+        (value: IncludeObjectsAndReferences) => {
             onChange(
                 syncRule.updateSyncParams({
                     ...syncRule.syncParams,
-                    includeSharingSettings,
+                    includeSharingSettingsObjectsAndReferences: value === "includeObjectsAndReferences",
+                    includeOnlySharingSettingsReferences: value === "includeOnlyReferences",
                 })
             );
         },
         [onChange, syncRule]
     );
 
-    const changeOrgUnitReferences = useCallback(
-        (removeOrgUnitReferences: boolean) => {
-            onChange(syncRule.updateSyncParams({ ...syncRule.syncParams, removeOrgUnitReferences }));
-        },
-        [onChange, syncRule]
-    );
-
-    const changeRemoveUserObjects = useCallback(
-        (removeUserObjects: boolean) => {
+    const changeUsersObjectsAndReferences = useCallback(
+        (value: IncludeObjectsAndReferences) => {
             onChange(
                 syncRule.updateSyncParams({
                     ...syncRule.syncParams,
-                    removeUserObjects,
+                    includeUsersObjectsAndReferences: value === "includeObjectsAndReferences",
+                    includeOnlyUsersReferences: value === "includeOnlyReferences",
                 })
             );
         },
         [onChange, syncRule]
     );
 
-    const changeRemoveUserObjectsAndReferences = useCallback(
-        (removeUserObjectsAndReferences: boolean) => {
-            onChange(syncRule.updateSyncParams({ ...syncRule.syncParams, removeUserObjectsAndReferences }));
-        },
-        [onChange, syncRule]
-    );
-
-    const changeRemoveOrgUnitObjects = useCallback(
-        (removeOrgUnitObjects: boolean) => {
+    const changeOrgUnitsObjectsAndReferences = useCallback(
+        (value: IncludeObjectsAndReferences) => {
             onChange(
                 syncRule.updateSyncParams({
                     ...syncRule.syncParams,
-                    removeOrgUnitObjects,
+                    includeOrgUnitsObjectsAndReferences: value === "includeObjectsAndReferences",
+                    includeOnlyOrgUnitsReferences: value === "includeOnlyReferences",
                 })
             );
         },
@@ -222,7 +254,6 @@ export function useMetadataIncludeExcludeStep(
     return {
         error,
         d2,
-        syncParams,
         useDefaultIncludeExclude,
         changeUseDefaultIncludeExclude,
         changeModelName,
@@ -234,11 +265,13 @@ export function useMetadataIncludeExcludeStep(
         changeIncludeReferencesAndObjectsRules,
         includeRuleOptions,
         includeReferencesAndObjectsRules,
-        changeSharingSettings,
-        changeOrgUnitReferences,
-        changeRemoveOrgUnitObjects,
-        changeRemoveUserObjects,
-        changeRemoveUserObjectsAndReferences,
+        changeSharingSettingsObjectsAndReferences,
+        changeUsersObjectsAndReferences,
+        changeOrgUnitsObjectsAndReferences,
+        includeObjectsAndReferencesOptions,
+        sharingSettingsObjectsAndReferencesValue,
+        usersObjectsAndReferencesValue,
+        orgUnitsObjectsAndReferencesValue,
     };
 }
 
@@ -263,4 +296,17 @@ function getModels(metadata: MetadataPackage<MetadataEntity>, metadataModelsSync
         .uniq()
         .value()
         .map(type => modelFactory(type));
+}
+
+function getObjectsAndReferencesValue(
+    includeObjectsAndReferences: boolean,
+    includeOnlyReferences: boolean
+): IncludeObjectsAndReferences {
+    if (includeObjectsAndReferences) {
+        return "includeObjectsAndReferences";
+    }
+    if (includeOnlyReferences) {
+        return "includeOnlyReferences";
+    }
+    return "removeObjectsAndReferences";
 }

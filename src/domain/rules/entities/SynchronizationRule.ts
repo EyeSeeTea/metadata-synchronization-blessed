@@ -242,13 +242,14 @@ export class SynchronizationRule {
         const params = this.syncRule.builder?.syncParams ?? {};
         return {
             enableMapping: false,
-            includeSharingSettings: true,
-            removeOrgUnitReferences: false,
-            removeUserObjects: false,
-            removeUserObjectsAndReferences: false,
-            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             metadataModelsSyncAll: [],
+            includeSharingSettingsObjectsAndReferences: true,
+            includeOnlySharingSettingsReferences: false,
+            includeUsersObjectsAndReferences: true,
+            includeOnlyUsersReferences: false,
+            includeOrgUnitsObjectsAndReferences: true,
+            includeOnlyOrgUnitsReferences: false,
             ...params,
         };
     }
@@ -673,20 +674,20 @@ export class SynchronizationRule {
     public updateSyncParams(syncParams: Partial<MetadataSynchronizationParams>): SynchronizationRule {
         const params = this.syncRule.builder?.syncParams ?? {
             enableMapping: false,
-            includeSharingSettings: true,
-            removeOrgUnitReferences: false,
-            removeUserObjects: false,
-            removeUserObjectsAndReferences: false,
-            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             metadataModelsSyncAll: [],
+            includeSharingSettingsObjectsAndReferences: true,
+            includeOnlySharingSettingsReferences: false,
+            includeUsersObjectsAndReferences: true,
+            includeOnlyUsersReferences: false,
+            includeOrgUnitsObjectsAndReferences: true,
+            includeOnlyOrgUnitsReferences: false,
         };
 
         return this.updateBuilder({
             syncParams: {
                 ...params,
                 ...syncParams,
-                removeOrgUnitObjects: syncParams.removeOrgUnitReferences ? true : syncParams.removeOrgUnitObjects,
             },
         });
     }

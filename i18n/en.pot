@@ -1357,6 +1357,18 @@ msgstr ""
 msgid "Strategy"
 msgstr ""
 
+msgid "Include objects and references"
+msgstr ""
+
+msgid "Include only references"
+msgstr ""
+
+msgid "Remove objects and references"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
 msgid "No"
 msgstr ""
 
@@ -1458,16 +1470,10 @@ msgstr ""
 msgid "Include owner and sharing settings"
 msgstr ""
 
-msgid "Remove organisation units and references (UID)"
+msgid "Include users"
 msgstr ""
 
-msgid "Remove organisation units and keep organisation units references (UID)"
-msgstr ""
-
-msgid "Remove users and references (UID)"
-msgstr ""
-
-msgid "Remove users and keep user references (UID)"
+msgid "Include organisation units"
 msgstr ""
 
 msgid "Exclude objects and references ->"
