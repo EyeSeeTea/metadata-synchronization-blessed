@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { AppStorageType } from "../../../../../../domain/storage-client-config/entities/StorageConfig";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import Dropdown from "../../../../../react/core/components/dropdown/Dropdown";
 
 interface StorageSettingDropdownProps {

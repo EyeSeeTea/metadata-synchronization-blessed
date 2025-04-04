@@ -3,7 +3,7 @@ import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import React, { useEffect, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { AppNotification } from "../../../../../domain/notifications/entities/Notification";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { DashboardModel, DataSetModel, ProgramModel } from "../../../../../models/dhis/metadata";
 import { useAppContext } from "../../contexts/AppContext";
 import MetadataTable from "../metadata-table/MetadataTable";

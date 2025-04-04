@@ -1,12 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import isValidCronExpression from "../../../../../../utils/validCronExpression";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import TextFieldOnBlur from "../../text-field-on-blur/TextFieldOnBlur";
 import { SynchronizationRule } from "../../../../../../domain/rules/entities/SynchronizationRule";
+import { areCronExpressionsEqual } from "../../../../../../utils/areCronExpressionsEqual";
 
 const cronExpressions = [
     { name: i18n.t("Every day"), id: "0 0 0 ? * *" },
@@ -16,8 +17,8 @@ const cronExpressions = [
     { name: i18n.t("Every year"), id: "0 0 0 1 1 ?" },
 ];
 
-const SchedulerStep = ({ syncRule, onChange }: SyncWizardStepProps) => {
-    const form = useSchedulerForm({ syncRule, onChange });
+const SchedulerStep = ({ syncRule, onChange, originalSyncRule }: SyncWizardStepProps) => {
+    const form = useSchedulerForm({ syncRule, onChange, originalSyncRule });
     const selectedCron = cronExpressions.find(({ id }) => id === form.syncRuleForm.frequency);
 
     return (
@@ -47,18 +48,18 @@ const SchedulerStep = ({ syncRule, onChange }: SyncWizardStepProps) => {
 
 function useSchedulerForm(options: {
     syncRule: SynchronizationRule;
+    originalSyncRule?: SynchronizationRule;
     onChange: (syncRule: SynchronizationRule) => void;
 }) {
-    const { syncRule, onChange } = options;
+    const { syncRule, onChange, originalSyncRule } = options;
 
-    const [syncRuleForm, setsyncRuleForm] = React.useState(syncRule);
-
+    const [syncRuleForm, setSyncRuleForm] = React.useState(syncRule);
     const [errors, setErrors] = React.useState<{ frequency?: string }>({});
 
     const setEnabled = React.useCallback(
         (ev: { target: { value: boolean } }) => {
             const syncRuleUpdated = syncRule.updateEnabled(ev.target.value);
-            setsyncRuleForm(syncRuleUpdated);
+            setSyncRuleForm(syncRuleUpdated);
             onChange(syncRuleUpdated);
         },
         [syncRule, onChange]
@@ -66,28 +67,40 @@ function useSchedulerForm(options: {
 
     const setUpdateFrequency = React.useCallback(
         (value: string) => {
-            const syncRuleUpdated = syncRule.updateFrequency(value);
-            setsyncRuleForm(syncRuleUpdated);
-            onChange(syncRuleUpdated);
+            const hasFrequencyChanged =
+                !!originalSyncRule?.frequency && !areCronExpressionsEqual(value, originalSyncRule.frequency);
+
+            const syncRuleNewFrequencyUpdated = syncRule.updateFrequency(value);
+            const syncRuleAllUpdated =
+                syncRuleNewFrequencyUpdated.updateNeedsUpdateSchedulingFrequency(hasFrequencyChanged);
+            setSyncRuleForm(syncRuleAllUpdated);
+
+            setSyncRuleForm(syncRuleAllUpdated);
+            onChange(syncRuleAllUpdated);
             setErrors(prev => ({ ...prev, frequency: undefined }));
         },
-        [syncRule, onChange]
+        [originalSyncRule?.frequency, syncRule, onChange]
     );
 
     const setCronExpression = React.useCallback(
         (value: string) => {
             const isValid = !value || isValidCronExpression(value);
-            const syncRuleUpdated = syncRule.updateFrequency(value);
-            setsyncRuleForm(syncRuleUpdated);
+            const hasFrequencyChanged =
+                !!originalSyncRule?.frequency && !areCronExpressionsEqual(value, originalSyncRule.frequency);
+
+            const syncRuleNewFrequencyUpdated = syncRule.updateFrequency(value);
+            const syncRuleAllUpdated =
+                syncRuleNewFrequencyUpdated.updateNeedsUpdateSchedulingFrequency(hasFrequencyChanged);
+            setSyncRuleForm(syncRuleAllUpdated);
 
             if (isValid) {
-                onChange(syncRuleUpdated);
+                onChange(syncRuleAllUpdated);
                 setErrors(prev => ({ ...prev, frequency: undefined }));
             } else {
                 setErrors({ frequency: i18n.t("Cron expression must be valid") });
             }
         },
-        [syncRule, onChange]
+        [originalSyncRule?.frequency, syncRule, onChange]
     );
 
     return { errors, setErrors, syncRuleForm, setEnabled, setUpdateFrequency, setCronExpression };

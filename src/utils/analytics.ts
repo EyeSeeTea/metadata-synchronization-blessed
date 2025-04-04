@@ -1,5 +1,5 @@
 import { Instance } from "../domain/instance/entities/Instance";
-import i18n from "../locales";
+import i18n from "../utils/i18n";
 import { getD2APiFromInstance } from "./d2-utils";
 
 const timeout = (ms: number) => {

@@ -3,7 +3,7 @@ import React, { ReactNode, useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { Store } from "../../../../../domain/stores/entities/Store";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import {

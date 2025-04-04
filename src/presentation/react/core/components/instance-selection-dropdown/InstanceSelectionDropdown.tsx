@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { Maybe } from "../../../../../types/utils";
 import Dropdown, { DropdownViewOption } from "../dropdown/Dropdown";
 import { useAppContext } from "../../contexts/AppContext";

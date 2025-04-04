@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { MarkdownViewer } from "../../../../react/core/components/markdown/MarkdownViewer";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
-import i18n from "../../../../../types/i18n";
+import i18n from "../../../../../utils/i18n";
 
 export const AboutPage: React.FC = React.memo(() => {
     const history = useHistory();
