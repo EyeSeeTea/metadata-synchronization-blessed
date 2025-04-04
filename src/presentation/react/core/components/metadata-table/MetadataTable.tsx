@@ -21,7 +21,7 @@ import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { DataSource, isDhisInstance, isJSONDataSource } from "../../../../../domain/instance/entities/DataSource";
 import { MetadataResponsible } from "../../../../../domain/metadata/entities/MetadataResponsible";
 import { ListMetadataParams } from "../../../../../domain/metadata/repositories/MetadataRepository";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { D2Model } from "../../../../../models/dhis/default";
 import { DataElementModel } from "../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../utils/d2";

@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { MetadataPackage } from "../../../../../../domain/metadata/entities/MetadataEntities";
 import { includeExcludeRulesFriendlyNames } from "../../../../../../domain/metadata/entities/MetadataFriendlyNames";
 import { MetadataModule } from "../../../../../../domain/modules/entities/MetadataModule";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { D2Model } from "../../../../../../models/dhis/default";
 import { modelFactory } from "../../../../../../models/dhis/factory";
 import { getMetadata } from "../../../../../../utils/synchronization";

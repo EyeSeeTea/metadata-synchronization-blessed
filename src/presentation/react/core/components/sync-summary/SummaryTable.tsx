@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
 import _ from "lodash";
 import { SynchronizationStats } from "../../../../../domain/reports/entities/SynchronizationResult";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 
 export const SummaryTable: React.FC<{ stats: SynchronizationStats[] }> = props => {
     const { stats } = props;

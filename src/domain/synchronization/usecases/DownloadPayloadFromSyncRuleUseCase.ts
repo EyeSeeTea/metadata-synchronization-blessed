@@ -1,7 +1,7 @@
 import _ from "lodash";
 import moment from "moment";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { CompositionRoot } from "../../../presentation/CompositionRoot";
 import { promiseMap } from "../../../utils/common";
 import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";

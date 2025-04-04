@@ -1,4 +1,4 @@
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";

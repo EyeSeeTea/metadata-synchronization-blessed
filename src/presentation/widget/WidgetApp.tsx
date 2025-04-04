@@ -5,7 +5,7 @@ import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 //@ts-ignore
 import { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
-import i18n from "../../locales";
+import i18n from "../../utils/i18n";
 import { D2Api } from "../../types/d2-api";
 import { CompositionRoot } from "../CompositionRoot";
 import { useMigrations } from "../react/core/components/migrations/hooks";

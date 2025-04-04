@@ -1,4 +1,4 @@
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { debug } from "../../../utils/debug";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";

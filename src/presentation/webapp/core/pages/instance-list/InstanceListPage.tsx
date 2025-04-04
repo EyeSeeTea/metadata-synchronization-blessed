@@ -22,7 +22,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance, InstanceData } from "../../../../../domain/instance/entities/Instance";
 import { User } from "../../../../../domain/user/entities/User";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { executeAnalytics } from "../../../../../utils/analytics";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
@@ -375,7 +375,9 @@ const InstanceListPage = () => {
                         title: false,
                         dataSharing: false,
                     }}
-                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    title={i18n.t("Sharing settings for {{name}}", {
+                        name: sharingSettingsObject.object.name,
+                    })}
                     meta={sharingSettingsObject}
                     onCancel={() => setSharingSettingsObject(null)}
                     onChange={onSharingChanged}

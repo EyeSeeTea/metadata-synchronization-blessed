@@ -1,4 +1,4 @@
-import i18n from "../../../types/i18n";
+import i18n from "../../../utils/i18n";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { EmergencyType, getEmergencyResponseConfig } from "../../entities/EmergencyResponses";
 import { Instance } from "../../instance/entities/Instance";

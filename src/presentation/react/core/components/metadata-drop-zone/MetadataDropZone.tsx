@@ -1,7 +1,7 @@
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { useState } from "react";
 import Dropzone from "react-dropzone";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import CloudDoneIcon from "@material-ui/icons/CloudDone";
 import { makeStyles } from "@material-ui/core";

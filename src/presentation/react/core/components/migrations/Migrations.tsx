@@ -3,7 +3,7 @@ import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { Log } from "../../../../../domain/migrations/entities/Debug";
 import { MigrationVersions } from "../../../../../domain/migrations/entities/MigrationVersions";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 import { UseMigrationsResult } from "./hooks";
 

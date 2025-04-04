@@ -16,7 +16,7 @@ import {
     getInitialFilterRule,
     getStringMatchString,
 } from "../../../../../domain/metadata/entities/FilterRule";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { metadataModels } from "../../../../../models/dhis/factory";
 import { useOpenState } from "../../hooks/useOpenState";
 import { FilterRuleDialog, NewFilterRuleDialogProps } from "./FilterRuleDialog";

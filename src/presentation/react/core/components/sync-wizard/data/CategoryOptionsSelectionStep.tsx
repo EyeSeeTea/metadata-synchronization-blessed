@@ -2,7 +2,7 @@ import { MultiSelector, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { NamedRef } from "../../../../../../domain/common/entities/Ref";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { useAppContext } from "../../../contexts/AppContext";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";

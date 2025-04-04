@@ -834,9 +834,8 @@ msgstr ""
 msgid "Validating package"
 msgstr ""
 
-#, fuzzy
 msgid "Package is valid"
-msgstr "Paquetes"
+msgstr ""
 
 msgid "Generating module"
 msgstr ""
@@ -2162,7 +2161,7 @@ msgstr ""
 msgid "Finished aggregated data synchronization successfully"
 msgstr ""
 
-msgid "An error has ocurred retrieving the instance {{name}}"
+msgid "An error has occurred retrieving the instance {{name}}"
 msgstr ""
 
 msgid "Checking data values in previous periods ...."

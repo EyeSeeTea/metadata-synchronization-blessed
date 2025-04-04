@@ -34,6 +34,7 @@ export class SynchronizationRule {
             "builder",
             "targetInstances",
             "enabled",
+            "schedulingFrequencyNeedsUpdate",
             "frequency",
             "lastExecuted",
             "lastExecutedBy",
@@ -181,6 +182,10 @@ export class SynchronizationRule {
         return this.syncRule.enabled ?? false;
     }
 
+    public get schedulingFrequencyNeedsUpdate(): boolean {
+        return this.syncRule.schedulingFrequencyNeedsUpdate ?? false;
+    }
+
     public get frequency(): string | undefined {
         return this.syncRule.frequency;
     }
@@ -267,6 +272,7 @@ export class SynchronizationRule {
             builder: defaultSynchronizationBuilder,
             targetInstances: [],
             enabled: false,
+            schedulingFrequencyNeedsUpdate: false,
             lastUpdated: new Date(),
             lastUpdatedBy: {
                 id: "",
@@ -697,6 +703,10 @@ export class SynchronizationRule {
         return this.update({ enabled });
     }
 
+    public updateNeedsUpdateSchedulingFrequency(schedulingFrequencyNeedsUpdate: boolean): SynchronizationRule {
+        return this.update({ schedulingFrequencyNeedsUpdate });
+    }
+
     public updateFrequency(frequency: string): SynchronizationRule {
         return this.update({ frequency });
     }
@@ -863,6 +873,7 @@ export interface SynchronizationRuleData extends SharedRef {
     builder: SynchronizationBuilder;
     targetInstances: string[];
     enabled: boolean;
+    schedulingFrequencyNeedsUpdate?: boolean;
     lastExecuted?: Date;
     lastExecutedBy?: NamedRef;
     lastSuccessfulSync?: Date;

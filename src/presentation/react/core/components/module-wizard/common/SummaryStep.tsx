@@ -5,7 +5,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { NamedRef } from "../../../../../../domain/common/entities/Ref";
 import { MetadataModule } from "../../../../../../domain/modules/entities/MetadataModule";
 import { Module } from "../../../../../../domain/modules/entities/Module";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { Dictionary } from "../../../../../../types/utils";
 import { getMetadata } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";

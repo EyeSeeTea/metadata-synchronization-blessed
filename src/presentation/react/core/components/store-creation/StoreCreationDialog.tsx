@@ -10,7 +10,7 @@ import {
 import React, { useCallback, useMemo, useState } from "react";
 import { GitHubError } from "../../../../../domain/packages/entities/Errors";
 import { Store } from "../../../../../domain/stores/entities/Store";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 import Linkify from "react-linkify";
 import helpStoreGithub from "../../../../assets/img/help-store-github.png";

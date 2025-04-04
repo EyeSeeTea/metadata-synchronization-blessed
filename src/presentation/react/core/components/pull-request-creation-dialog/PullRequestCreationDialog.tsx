@@ -13,7 +13,7 @@ import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 
 export interface PullRequestCreation {

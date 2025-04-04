@@ -1,4 +1,4 @@
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import MetadataDropZone from "../metadata-drop-zone/MetadataDropZone";
 import { MetadataPackage } from "../../../../../domain/metadata/entities/MetadataEntities";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, TextField } from "@material-ui/core";
