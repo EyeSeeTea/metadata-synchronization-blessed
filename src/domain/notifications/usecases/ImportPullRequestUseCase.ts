@@ -22,7 +22,9 @@ export class ImportPullRequestUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(notificationId: string): Promise<Either<ImportPullRequestError, SynchronizationResult>> {
-        const localStorageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const localStorageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const notification = await this.getNotification(this.localInstance, notificationId);
         if (!notification) return Either.error("NOTIFICATION_NOT_FOUND");
@@ -31,7 +33,9 @@ export class ImportPullRequestUseCase implements UseCase {
         const remoteInstance = await this.getInstanceById(notification.instance.id);
         if (!remoteInstance) return Either.error("INSTANCE_NOT_FOUND");
 
-        const remoteStorageClient = await this.repositoryFactory.configRepository(remoteInstance).getStorageClient();
+        const remoteStorageClient = await this.repositoryFactory
+            .configRepository(remoteInstance)
+            .getStorageClientPromise();
 
         const remoteNotification = await this.getNotification(remoteInstance, notification.remoteNotification);
 
@@ -76,7 +80,7 @@ export class ImportPullRequestUseCase implements UseCase {
     }
 
     private async getNotification(instance: Instance, id: string): Promise<AppNotification | undefined> {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         return await storageClient.getObjectInCollection<AppNotification>(Namespace.NOTIFICATIONS, id);
     }
@@ -107,7 +111,7 @@ export class ImportPullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 

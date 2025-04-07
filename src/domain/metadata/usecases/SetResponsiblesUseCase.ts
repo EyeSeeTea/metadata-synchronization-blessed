@@ -13,7 +13,9 @@ export class SetResponsiblesUseCase implements UseCase {
     public async execute(responsible: MetadataResponsible): Promise<void> {
         const { id, users, userGroups } = responsible;
 
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         if (users.length === 0 && userGroups.length === 0) {
             await storageClient.removeObjectInCollection(Namespace.RESPONSIBLES, id);
@@ -25,7 +27,9 @@ export class SetResponsiblesUseCase implements UseCase {
     }
 
     private async updatePendingPullRequests({ id, users, userGroups }: MetadataResponsible): Promise<void> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const notifications = await storageClient.listObjectsInCollection<ReceivedPullRequestNotification>(
             Namespace.NOTIFICATIONS

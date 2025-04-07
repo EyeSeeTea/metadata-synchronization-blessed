@@ -46,7 +46,7 @@ const App = () => {
             const compositionRoot = new CompositionRoot(instance, encryptionKey);
             await compositionRoot.app.initialize();
 
-            const newCompositionRoot = getWebappCompositionRoot(api, instance);
+            const newCompositionRoot = getWebappCompositionRoot(instance);
 
             setAppContext({ d2: d2, api, compositionRoot, newCompositionRoot });
         };

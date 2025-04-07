@@ -10,7 +10,7 @@ export class ListPackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(bypassSharingSettings = false, instance = this.localInstance): Promise<Package[]> {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const { userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
         const { id: userId } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();

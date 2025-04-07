@@ -81,7 +81,9 @@ export class PrepareSyncUseCase implements UseCase {
         const instance = await this.getInstanceById(instanceId);
         if (instance.isError() || !instance.value.data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const storageClient = await this.repositoryFactory.configRepository(instance.value.data).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance.value.data)
+            .getStorageClientPromise();
 
         const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 

@@ -10,7 +10,7 @@ export class ValidatePackageContentsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string, instance = this.localInstance): Promise<ValidationPackageResult> {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const data = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, id);
 

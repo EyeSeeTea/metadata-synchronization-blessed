@@ -100,8 +100,6 @@ import { ReadSyncRuleFilesUseCase } from "../domain/rules/usecases/ReadSyncRuleF
 import { SaveSyncRuleUseCase } from "../domain/rules/usecases/SaveSyncRuleUseCase";
 import { GetLastSchedulerExecutionInfoUseCase } from "../domain/scheduler/usecases/GetLastSchedulerExecutionInfoUseCase";
 import { UpdateSchedulerExecutionInfoUseCase } from "../domain/scheduler/usecases/UpdateSchedulerExecutionInfoUseCase";
-import { GetSettingsUseCase } from "../domain/settings/GetSettingsUseCase";
-import { SaveSettingsUseCase } from "../domain/settings/SaveSettingsUseCase";
 import { DownloadFileUseCase } from "../domain/storage/usecases/DownloadFileUseCase";
 import { DeleteStoreUseCase } from "../domain/stores/usecases/DeleteStoreUseCase";
 import { GetStoreUseCase } from "../domain/stores/usecases/GetStoreUseCase";
@@ -415,14 +413,6 @@ export class CompositionRoot {
     public get emergencyResponses() {
         return getExecute({
             updateSyncRule: new UpdateEmergencyResponseSyncRuleUseCase(this.repositoryFactory, this.localInstance),
-        });
-    }
-
-    @cache()
-    public get settings() {
-        return getExecute({
-            get: new GetSettingsUseCase(this.repositoryFactory.settingsRepository(this.localInstance)),
-            save: new SaveSettingsUseCase(this.repositoryFactory.settingsRepository(this.localInstance)),
         });
     }
 

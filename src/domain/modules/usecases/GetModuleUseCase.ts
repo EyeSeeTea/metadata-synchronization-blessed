@@ -9,7 +9,7 @@ export class GetModuleUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string, instance = this.localInstance): Promise<Module | undefined> {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const module = await storageClient.getObjectInCollection<BaseModule>(Namespace.MODULES, id);
 

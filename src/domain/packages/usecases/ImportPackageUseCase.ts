@@ -147,6 +147,6 @@ export class ImportPackageUseCase implements UseCase {
     }
 
     private async getStorageClient(): Promise<StorageClient> {
-        return await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        return await this.repositoryFactory.configRepository(this.localInstance).getStorageClientPromise();
     }
 }

@@ -52,6 +52,6 @@ export class StoreD2ApiRepository implements StoreRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.storageClientFactory.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

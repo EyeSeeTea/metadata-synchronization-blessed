@@ -9,7 +9,7 @@ export class DeleteModuleUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string, instance = this.localInstance): Promise<boolean> {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         try {
             await storageClient.removeObjectInCollection(Namespace.MODULES, id);
@@ -22,7 +22,7 @@ export class DeleteModuleUseCase implements UseCase {
     }
 
     private async deletePackagesFromModule(id: string, instance: Instance): Promise<void> {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const packages = await storageClient.listObjectsInCollection<Package>(Namespace.PACKAGES);
 
