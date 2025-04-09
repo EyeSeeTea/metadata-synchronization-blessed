@@ -136,7 +136,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         const { trackedEntities } = payload as TEIsPackage;
 
         const downloadItemsByTEIS =
-        trackedEntities.length > 0
+            trackedEntities.length > 0
                 ? await this.mapToDownloadItems(
                       rule,
                       "trackedEntityInstances",
