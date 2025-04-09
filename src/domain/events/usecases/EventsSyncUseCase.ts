@@ -128,7 +128,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const mapping = await this.getMapping(instance);
         const mapper = await createTEIsToEventPayloadMapper(await this.getMetadataRepository(instance), mapping);
 
-        const payloadByTEIs = (await mapper.map({ trackedEntityInstances: teis })) as EventsPackage;
+        const payloadByTEIs = (await mapper.map({ trackedEntities: teis })) as EventsPackage;
 
         const finalEvents = await this.manageDataElementWithFileType(events, instance);
 
@@ -160,7 +160,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const mapper = await createTEIsPayloadMapper(await this.getMetadataRepository(instance), teis, mapping);
 
-        const payload = (await mapper.map({ trackedEntityInstances: teis })) as TEIsPackage;
+        const payload = (await mapper.map({ trackedEntities: teis })) as TEIsPackage;
 
         debug("TEIS package", { trackedEntityInstances, payload });
 

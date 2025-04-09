@@ -38,7 +38,7 @@ export const metadataTransformations: Transformation[] = [
 
             return {
                 ...rest,
-                eventVisualizations,
+                ...(eventVisualizations.length > 0 && { eventVisualizations }),
             };
         },
     },
