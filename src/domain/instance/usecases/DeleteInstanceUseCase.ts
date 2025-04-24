@@ -7,7 +7,9 @@ export class DeleteInstanceUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string): Promise<boolean> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         try {
             await storageClient.removeObjectInCollection(Namespace.INSTANCES, id);

@@ -50,11 +50,15 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             excludedIds: this.excludedIds,
             syncParams: {
                 enableMapping: true,
-                removeOrgUnitReferences: this.removeOrgUnitReferences,
-                includeSharingSettings: this.includeUserInformation,
                 useDefaultIncludeExclude: this.useDefaultIncludeExclude,
                 metadataIncludeExcludeRules: this.metadataIncludeExcludeRules,
                 metadataModelsSyncAll: [],
+                includeSharingSettingsObjectsAndReferences: this.includeUserInformation,
+                includeOnlySharingSettingsReferences: false,
+                includeUsersObjectsAndReferences: this.includeUserInformation,
+                includeOnlyUsersReferences: false,
+                includeOrgUnitsObjectsAndReferences: !this.removeOrgUnitReferences,
+                includeOnlyOrgUnitsReferences: false,
             },
         };
     }

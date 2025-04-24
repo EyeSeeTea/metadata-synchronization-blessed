@@ -17,6 +17,7 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
         [12, import("./12.metadata-models-sync-all")],
         [13, import("./13.dashboard-with-visualizations")],
         [14, import("./14.metadata-include-objects-and-references")],
+        [15, import("./15.sharing-settings-users-org-units-include-objects-and-references")],
     ];
 }
 

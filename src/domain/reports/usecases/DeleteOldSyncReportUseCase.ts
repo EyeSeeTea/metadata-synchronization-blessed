@@ -7,7 +7,7 @@ export class DeleteOldSyncReportUseCase implements UseCase {
     constructor(private reportsRepository: ReportsRepository, private settingsRepository: SettingsRepository) {}
 
     public async execute(): Promise<void> {
-        const settings = await this.settingsRepository.get();
+        const settings = await this.settingsRepository.get().toPromise();
 
         if (!settings.historyRetentionDays) return;
 

@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { AppStorageType } from "../../../../../../domain/storage-client-config/entities/StorageConfig";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import Dropdown from "../../../../../react/core/components/dropdown/Dropdown";
 
 interface StorageSettingDropdownProps {
-    selectedOption: AppStorageType;
+    selectedOption: AppStorageType | undefined;
     onChangeStorage: (storage: AppStorageType) => void;
 }
 
@@ -21,7 +21,7 @@ export const StorageSettingDropdown: React.FC<StorageSettingDropdownProps> = ({ 
         <React.Fragment>
             <Dropdown<AppStorageType>
                 items={options}
-                value={selectedOption}
+                value={selectedOption ?? ""}
                 onValueChange={onChangeStorage}
                 hideEmpty={true}
                 view={"full-width"}

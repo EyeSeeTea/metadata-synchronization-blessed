@@ -2,7 +2,7 @@ import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import { useCallback } from "react";
 import { MetadataModule } from "../../../../../../domain/modules/entities/MetadataModule";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import {
     DashboardModel,
     DataSetModel,

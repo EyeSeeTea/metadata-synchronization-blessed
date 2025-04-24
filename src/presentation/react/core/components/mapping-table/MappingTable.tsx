@@ -18,7 +18,7 @@ import {
     MetadataOverlap,
 } from "../../../../../domain/mapping/entities/MetadataMapping";
 import { cleanOrgUnitPath } from "../../../../../domain/synchronization/utils";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { D2Model } from "../../../../../models/dhis/default";
 import { DataElementModel, OrganisationUnitModel } from "../../../../../models/dhis/metadata";
 import { MetadataType } from "../../../../../utils/d2";

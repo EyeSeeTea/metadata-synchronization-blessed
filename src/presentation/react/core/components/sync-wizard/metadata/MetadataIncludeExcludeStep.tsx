@@ -1,12 +1,12 @@
 import { CircularProgress, makeStyles, Typography } from "@material-ui/core";
 import { MultiSelector, useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { useEffect } from "react";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import { styled } from "styled-components";
-import { useMetadataIncludeExcludeStep } from "./useMetadataIncludeExcludeStep";
+import { IncludeObjectsAndReferences, useMetadataIncludeExcludeStep } from "./useMetadataIncludeExcludeStep";
 
 const useStyles = makeStyles({
     includeExcludeContainer: {
@@ -32,7 +32,6 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
         changeModelName,
         selectedType,
         d2,
-        syncParams,
         useDefaultIncludeExclude,
         changeInclude,
         ruleOptions,
@@ -40,11 +39,13 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
         changeIncludeReferencesAndObjectsRules,
         includeRuleOptions,
         includeReferencesAndObjectsRules,
-        changeSharingSettings,
-        changeOrgUnitReferences,
-        changeRemoveOrgUnitObjects,
-        changeRemoveUserObjects,
-        changeRemoveUserObjectsAndReferences,
+        includeObjectsAndReferencesOptions,
+        changeSharingSettingsObjectsAndReferences,
+        changeUsersObjectsAndReferences,
+        changeOrgUnitsObjectsAndReferences,
+        sharingSettingsObjectsAndReferencesValue,
+        usersObjectsAndReferencesValue,
+        orgUnitsObjectsAndReferencesValue,
     } = useMetadataIncludeExcludeStep(syncRule, onChange);
 
     useEffect(() => {
@@ -58,46 +59,38 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     return modelSelectItems.length > 0 ? (
         <React.Fragment>
             <div>
-                <div>
-                    <Toggle
+                <DropdownContainer>
+                    <Dropdown<IncludeObjectsAndReferences>
+                        value={sharingSettingsObjectsAndReferencesValue}
+                        items={includeObjectsAndReferencesOptions}
                         label={i18n.t("Include owner and sharing settings")}
-                        onValueChange={changeSharingSettings}
-                        value={syncParams.includeSharingSettings}
+                        style={{ width: "100%", marginTop: 20, marginBottom: 20, marginLeft: -10 }}
+                        onValueChange={changeSharingSettingsObjectsAndReferences}
+                        hideEmpty
                     />
-                </div>
+                </DropdownContainer>
 
-                <div>
-                    <Toggle
-                        label={i18n.t("Remove organisation units and references (UID)")}
-                        onValueChange={changeOrgUnitReferences}
-                        value={syncParams.removeOrgUnitReferences}
+                <DropdownContainer>
+                    <Dropdown<IncludeObjectsAndReferences>
+                        value={usersObjectsAndReferencesValue}
+                        items={includeObjectsAndReferencesOptions}
+                        label={i18n.t("Include users")}
+                        style={{ width: "100%", marginTop: 20, marginBottom: 20, marginLeft: -10 }}
+                        onValueChange={changeUsersObjectsAndReferences}
+                        hideEmpty
                     />
-                </div>
+                </DropdownContainer>
 
-                <div>
-                    <Toggle
-                        disabled={syncParams.removeOrgUnitReferences}
-                        label={i18n.t("Remove organisation units and keep organisation units references (UID)")}
-                        onValueChange={changeRemoveOrgUnitObjects}
-                        value={syncParams.removeOrgUnitObjects || false}
+                <DropdownContainer>
+                    <Dropdown<IncludeObjectsAndReferences>
+                        value={orgUnitsObjectsAndReferencesValue}
+                        items={includeObjectsAndReferencesOptions}
+                        label={i18n.t("Include organisation units")}
+                        style={{ width: "100%", marginTop: 20, marginBottom: 20, marginLeft: -10 }}
+                        onValueChange={changeOrgUnitsObjectsAndReferences}
+                        hideEmpty
                     />
-                </div>
-
-                <div>
-                    <Toggle
-                        label={i18n.t("Remove users and references (UID)")}
-                        onValueChange={changeRemoveUserObjectsAndReferences}
-                        value={syncParams.removeUserObjectsAndReferences || false}
-                    />
-                </div>
-
-                <div>
-                    <Toggle
-                        label={i18n.t("Remove users and keep user references (UID)")}
-                        onValueChange={changeRemoveUserObjects}
-                        value={syncParams.removeUserObjects || false}
-                    />
-                </div>
+                </DropdownContainer>
             </div>
             <Toggle
                 label={i18n.t("Use default dependencies")}
@@ -168,4 +161,9 @@ const LoadingContainer = styled.div`
     align-items: center;
     height: 100%;
     width: 100%;
+`;
+
+const DropdownContainer = styled.div`
+    width: fit-content;
+    min-width: 350px;
 `;

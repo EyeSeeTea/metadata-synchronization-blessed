@@ -89,6 +89,6 @@ export class ReportsD2ApiRepository implements ReportsRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.storageClientFactory.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

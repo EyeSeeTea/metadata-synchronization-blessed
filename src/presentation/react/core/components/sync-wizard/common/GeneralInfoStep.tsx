@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
 import { SynchronizationRule } from "../../../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../../../domain/stores/entities/Store";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { Dictionary } from "../../../../../../types/utils";
 import { getValidationMessages } from "../../../../../../utils/old-validations";
 import {

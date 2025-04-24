@@ -57,7 +57,7 @@ const App = () => {
             const currentUser = await compositionRoot.user.current();
             if (!currentUser) throw new Error("User not logged in");
 
-            const newCompositionRoot = getWebappCompositionRoot(api, instance);
+            const newCompositionRoot = getWebappCompositionRoot(instance);
             setAppContext({ d2: d2, api, compositionRoot, newCompositionRoot });
 
             Object.assign(window, { api });

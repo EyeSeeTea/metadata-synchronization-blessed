@@ -34,12 +34,16 @@ export const defaultSynchronizationBuilder: SynchronizationBuilder = {
     syncParams: {
         importStrategy: "CREATE_AND_UPDATE",
         enableMapping: false,
-        includeSharingSettings: true,
-        removeOrgUnitReferences: false,
         useDefaultIncludeExclude: true,
         metadataModelsSyncAll: [],
         atomicMode: "ALL",
         mergeMode: "MERGE",
         importMode: "COMMIT",
+        includeSharingSettingsObjectsAndReferences: true,
+        includeOnlySharingSettingsReferences: false,
+        includeUsersObjectsAndReferences: true,
+        includeOnlyUsersReferences: false,
+        includeOrgUnitsObjectsAndReferences: true,
+        includeOnlyOrgUnitsReferences: false,
     },
 };

@@ -8,7 +8,7 @@ import AddIcon from "@material-ui/icons/Add";
 import ViewListIcon from "@material-ui/icons/ViewList";
 import _ from "lodash";
 import React, { ReactNode } from "react";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 
 export interface MenuCardProps {
     name: string;

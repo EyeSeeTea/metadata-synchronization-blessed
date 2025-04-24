@@ -35,7 +35,9 @@ export class ListNotificationsUseCase implements UseCase {
     }
 
     private async getInstanceNotifications(): Promise<AppNotification[]> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         return storageClient.listObjectsInCollection<AppNotification>(Namespace.NOTIFICATIONS);
     }
@@ -45,14 +47,18 @@ export class ListNotificationsUseCase implements UseCase {
     }
 
     private async updateSentPullRequest(notification: AppNotification): Promise<AppNotification | undefined> {
-        const localStorageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const localStorageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         if (notification.type !== "sent-pull-request" || notification.status !== "PENDING") return undefined;
 
         const remoteInstance = await this.getInstanceById(notification.instance.id);
         if (!remoteInstance) return undefined;
 
-        const remoteStorageClient = await this.repositoryFactory.configRepository(remoteInstance).getStorageClient();
+        const remoteStorageClient = await this.repositoryFactory
+            .configRepository(remoteInstance)
+            .getStorageClientPromise();
 
         const remoteNotification = await remoteStorageClient.getObjectInCollection<AppNotification>(
             Namespace.NOTIFICATIONS,

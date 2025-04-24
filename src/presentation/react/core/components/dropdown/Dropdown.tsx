@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, MuiThemeProvider, Select } from "@ma
 import { createTheme } from "@material-ui/core/styles";
 import _ from "lodash";
 import React from "react";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { muiTheme } from "../../themes/dhis2.theme";
 
 export interface DropdownOption<T extends string = string> {

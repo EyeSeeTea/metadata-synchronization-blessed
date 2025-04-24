@@ -24,7 +24,7 @@ import {
     SynchronizationResultType,
     SynchronizationType,
 } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { SummaryTable } from "./SummaryTable";

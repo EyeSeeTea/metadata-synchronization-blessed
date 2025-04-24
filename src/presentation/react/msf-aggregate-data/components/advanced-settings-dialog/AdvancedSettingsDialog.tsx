@@ -3,7 +3,7 @@ import { ConfirmationDialog, DatePicker, useSnackbar } from "@eyeseetea/d2-ui-co
 import { Moment } from "moment";
 import React, { useState } from "react";
 import { Period } from "../../../../../domain/common/entities/Period";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { AdvancedSettings } from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
 import { ObjectWithPeriod } from "../../../core/components/period-selection/PeriodSelection";
 

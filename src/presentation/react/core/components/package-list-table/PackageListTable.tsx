@@ -24,7 +24,7 @@ import { isInstance, isStore, PackageSource } from "../../../../../domain/packag
 import { mapToImportedPackage } from "../../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { ListPackage, Package } from "../../../../../domain/packages/entities/Package";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { isAppConfigurator, isGlobalAdmin } from "../../../../../utils/permissions";
 import { ModulePackageListPageProps } from "../../../../webapp/core/pages/module-package-list/ModulePackageListPage";
 import { useAppContext } from "../../contexts/AppContext";

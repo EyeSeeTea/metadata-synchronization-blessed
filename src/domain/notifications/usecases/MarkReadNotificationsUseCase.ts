@@ -9,7 +9,9 @@ export class MarkReadNotificationsUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(ids: string[], read: boolean): Promise<void> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const notifications = await storageClient.listObjectsInCollection<AppNotification>(Namespace.NOTIFICATIONS);
         if (!notifications) return;

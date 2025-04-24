@@ -226,6 +226,6 @@ export class InstanceD2ApiRepository implements InstanceRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.storageClientFactory.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

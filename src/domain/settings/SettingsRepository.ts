@@ -1,4 +1,5 @@
 import { StorageClientFactory } from "../../data/config/StorageClientFactory";
+import { FutureData } from "../common/entities/Future";
 import { Settings } from "./Settings";
 
 export interface SettingsRepositoryConstructor {
@@ -6,6 +7,6 @@ export interface SettingsRepositoryConstructor {
 }
 
 export interface SettingsRepository {
-    get(): Promise<Settings>;
-    save(settings: Settings): Promise<void>;
+    get(): FutureData<Settings>;
+    save(settings: Settings): FutureData<void>;
 }

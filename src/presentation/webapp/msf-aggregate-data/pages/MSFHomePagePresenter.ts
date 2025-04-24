@@ -10,7 +10,7 @@ import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { SynchronizationResultType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
-import i18n from "../../../../locales";
+import i18n from "../../../../utils/i18n";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
 import { formatDateLong } from "../../../../utils/date";
@@ -117,7 +117,9 @@ export async function executeAggregateData(
                 success: async instance => await runAnalytics(instance, addEventToProgress, msfSettings.analyticsYears),
                 error: () => {
                     addEventToProgress(
-                        i18n.t(`An error has ocurred retrieving the instance {{name}}`, instance),
+                        i18n.t(`An error has occurred retrieving the instance {{name}}`, {
+                            name: instance.value.data ? instance.value.data.name : undefined,
+                        }),
                         "admin"
                     );
                 },

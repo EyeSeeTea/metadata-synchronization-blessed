@@ -8,7 +8,7 @@ export class GetResponsiblesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(ids: string[], instance = this.localInstance): Promise<MetadataResponsible[]> {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const items = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 

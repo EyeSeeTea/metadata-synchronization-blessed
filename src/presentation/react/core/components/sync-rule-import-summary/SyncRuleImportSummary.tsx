@@ -13,7 +13,7 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import React from "react";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { SummaryStepContent } from "../sync-wizard/common/SummaryStep";
 
 export const SyncRuleImportSummary = (props: SyncRuleImportSummaryProps) => {

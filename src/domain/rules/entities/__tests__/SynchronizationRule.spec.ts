@@ -518,15 +518,15 @@ describe("SyncRule", () => {
 
             expect(errorFunction).toThrow(Error);
         });
-        it("should activate remove Org Units Objects if we activate remove OrgUnits Objects And References", () => {
+        it("should have includeOrgUnitsObjectsAndReferences equals true if we select include Organisation units Objects And References", () => {
             const syncRule = givenASyncRule();
 
             const editedSyncRule = syncRule.updateSyncParams({
                 ...syncRule.syncParams,
-                removeOrgUnitReferences: true,
+                includeOrgUnitsObjectsAndReferences: true,
             });
 
-            expect(editedSyncRule.syncParams.removeOrgUnitObjects).toEqual(true);
+            expect(editedSyncRule.syncParams.includeOrgUnitsObjectsAndReferences).toEqual(true);
         });
     });
 

@@ -11,7 +11,9 @@ export class SaveImportedPackagesUseCase implements UseCase {
     constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
 
     public async execute(importedPackages: ImportedPackage[]): Promise<Either<SavePackageError, void>> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         try {
             await storageClient.saveObjectsInCollection(Namespace.IMPORTEDPACKAGES, importedPackages);

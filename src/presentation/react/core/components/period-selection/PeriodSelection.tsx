@@ -4,7 +4,7 @@ import _ from "lodash";
 import moment, { Moment } from "moment";
 import React, { useCallback, useMemo } from "react";
 import { DataSyncPeriod } from "../../../../../domain/aggregated/entities/DataSyncPeriod";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { Maybe } from "../../../../../types/utils";
 import { availablePeriods, PeriodType } from "../../../../../utils/synchronization";
 import Dropdown from "../dropdown/Dropdown";

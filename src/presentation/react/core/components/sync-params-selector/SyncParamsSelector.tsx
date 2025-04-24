@@ -3,7 +3,7 @@ import React from "react";
 import { DataSynchronizationParams } from "../../../../../domain/aggregated/entities/DataSynchronizationParams";
 import { MetadataSynchronizationParams } from "../../../../../domain/metadata/entities/MetadataSynchronizationParams";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
 import { Toggle } from "../toggle/Toggle";
 

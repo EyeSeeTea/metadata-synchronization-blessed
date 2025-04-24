@@ -1,3 +1,4 @@
+import { FutureData } from "../../common/entities/Future";
 import { AppStorageType } from "../entities/StorageConfig";
 import { StorageClientRepository } from "../repositories/StorageClientRepository";
 /**
@@ -6,8 +7,7 @@ import { StorageClientRepository } from "../repositories/StorageClientRepository
 export class GetStorageClientUseCase {
     constructor(private storageClientRepository: StorageClientRepository) {}
 
-    public async execute(): Promise<AppStorageType> {
-        const client = await this.storageClientRepository.getStorageClient();
-        return client.type;
+    public execute(): FutureData<AppStorageType> {
+        return this.storageClientRepository.getStorageClient().map(client => client.type);
     }
 }

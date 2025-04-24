@@ -3,7 +3,7 @@ import _ from "lodash";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { PackageImportRule } from "../../../../../domain/package-import/entities/PackageImportRule";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { InstanceStoreSelectionStep } from "./steps/InstanceStoreSelectionStep";
 import { PackageMappingStep } from "./steps/PackageMappingStep";
 import { PackageSelectionStep } from "./steps/PackageSelectionStep";

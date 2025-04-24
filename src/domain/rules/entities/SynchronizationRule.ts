@@ -34,6 +34,7 @@ export class SynchronizationRule {
             "builder",
             "targetInstances",
             "enabled",
+            "schedulingFrequencyNeedsUpdate",
             "frequency",
             "lastExecuted",
             "lastExecutedBy",
@@ -181,6 +182,10 @@ export class SynchronizationRule {
         return this.syncRule.enabled ?? false;
     }
 
+    public get schedulingFrequencyNeedsUpdate(): boolean {
+        return this.syncRule.schedulingFrequencyNeedsUpdate ?? false;
+    }
+
     public get frequency(): string | undefined {
         return this.syncRule.frequency;
     }
@@ -237,15 +242,16 @@ export class SynchronizationRule {
         const params = this.syncRule.builder?.syncParams ?? {};
         return {
             enableMapping: false,
-            includeSharingSettings: true,
-            removeOrgUnitReferences: false,
-            removeUserObjects: false,
-            removeUserObjectsAndReferences: false,
-            removeDefaultCategoryObjects: false,
-            removeUserNonEssentialObjects: false,
-            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             metadataModelsSyncAll: [],
+            includeSharingSettingsObjectsAndReferences: true,
+            includeOnlySharingSettingsReferences: false,
+            includeUsersObjectsAndReferences: true,
+            includeOnlyUsersReferences: false,
+            includeOrgUnitsObjectsAndReferences: true,
+            includeOnlyOrgUnitsReferences: false,
+            removeDefaultCategoryObjects: false,
+            removeUserNonEssentialObjects: false,
             ...params,
         };
     }
@@ -269,6 +275,7 @@ export class SynchronizationRule {
             builder: defaultSynchronizationBuilder,
             targetInstances: [],
             enabled: false,
+            schedulingFrequencyNeedsUpdate: false,
             lastUpdated: new Date(),
             lastUpdatedBy: {
                 id: "",
@@ -669,22 +676,22 @@ export class SynchronizationRule {
     public updateSyncParams(syncParams: Partial<MetadataSynchronizationParams>): SynchronizationRule {
         const params = this.syncRule.builder?.syncParams ?? {
             enableMapping: false,
-            includeSharingSettings: true,
-            removeOrgUnitReferences: false,
-            removeUserObjects: false,
-            removeUserObjectsAndReferences: false,
-            removeDefaultCategoryObjects: false,
-            removeUserNonEssentialObjects: false,
-            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             metadataModelsSyncAll: [],
+            includeSharingSettingsObjectsAndReferences: true,
+            includeOnlySharingSettingsReferences: false,
+            includeUsersObjectsAndReferences: true,
+            includeOnlyUsersReferences: false,
+            includeOrgUnitsObjectsAndReferences: true,
+            includeOnlyOrgUnitsReferences: false,
+            removeDefaultCategoryObjects: false,
+            removeUserNonEssentialObjects: false,
         };
 
         return this.updateBuilder({
             syncParams: {
                 ...params,
                 ...syncParams,
-                removeOrgUnitObjects: syncParams.removeOrgUnitReferences ? true : syncParams.removeOrgUnitObjects,
             },
         });
     }
@@ -699,6 +706,10 @@ export class SynchronizationRule {
 
     public updateEnabled(enabled: boolean): SynchronizationRule {
         return this.update({ enabled });
+    }
+
+    public updateNeedsUpdateSchedulingFrequency(schedulingFrequencyNeedsUpdate: boolean): SynchronizationRule {
+        return this.update({ schedulingFrequencyNeedsUpdate });
     }
 
     public updateFrequency(frequency: string): SynchronizationRule {
@@ -867,6 +878,7 @@ export interface SynchronizationRuleData extends SharedRef {
     builder: SynchronizationBuilder;
     targetInstances: string[];
     enabled: boolean;
+    schedulingFrequencyNeedsUpdate?: boolean;
     lastExecuted?: Date;
     lastExecutedBy?: NamedRef;
     lastSuccessfulSync?: Date;

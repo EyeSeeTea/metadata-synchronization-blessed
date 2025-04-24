@@ -4,7 +4,7 @@ import _ from "lodash";
 import React, { useState } from "react";
 import { DataSource } from "../../../../../domain/instance/entities/DataSource";
 import { MetadataMapping, MetadataMappingDictionary } from "../../../../../domain/mapping/entities/MetadataMapping";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { MetadataType } from "../../../../../utils/d2";
 import { MappingTableProps } from "../mapping-table/MappingTable";
 import { cleanNestedMappedId } from "../mapping-table/utils";
