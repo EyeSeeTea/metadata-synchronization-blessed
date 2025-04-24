@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-04-04T07:49:24.882Z\n"
-"PO-Revision-Date: 2025-04-04T07:49:24.882Z\n"
+"POT-Creation-Date: 2025-04-24T05:27:13.891Z\n"
+"PO-Revision-Date: 2025-04-24T05:27:13.891Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1057,6 +1057,14 @@ msgid "Synchronize"
 msgstr ""
 
 msgid "Create and update"
+msgstr ""
+
+msgid ""
+"Remove default categories, categoryOptions, categoryCombos and "
+"categoryOptionCombos"
+msgstr ""
+
+msgid "Remove lastUpdated, lastUpdatedBy, created and createdBys"
 msgstr ""
 
 msgid "Disable atomic verification"

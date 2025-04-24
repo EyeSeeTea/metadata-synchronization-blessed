@@ -26,4 +26,6 @@ export interface MetadataSynchronizationParams extends MetadataImportParams {
     includeOnlyUsersReferences: boolean;
     includeOrgUnitsObjectsAndReferences: boolean;
     includeOnlyOrgUnitsReferences: boolean;
+    removeDefaultCategoryObjects?: boolean;
+    removeUserNonEssentialObjects?: boolean;
 }

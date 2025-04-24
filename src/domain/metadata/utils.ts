@@ -33,6 +33,7 @@ export function cleanObject(params: {
     includeOnlyUsersReferences: boolean;
     includeOrgUnitsObjectsAndReferences: boolean;
     includeOnlyOrgUnitsReferences: boolean;
+    removeNonEssentialObjects: boolean;
 }): any {
     const {
         api,
@@ -45,6 +46,7 @@ export function cleanObject(params: {
         includeOnlyUsersReferences,
         includeOrgUnitsObjectsAndReferences,
         includeOnlyOrgUnitsReferences,
+        removeNonEssentialObjects,
     } = params;
     const leafRules: string[] = _(excludeRules)
         .filter(path => path.length === 1)
@@ -67,7 +69,19 @@ export function cleanObject(params: {
     const organisationUnitFilter =
         includeOrgUnitsObjectsAndReferences || includeOnlyOrgUnitsReferences ? [] : ORG_UNITS_PROPERTIES;
     const userFilter = includeUsersObjectsAndReferences || includeOnlyUsersReferences ? [] : USER_PROPERTIES;
-    const propsToRemove = [...sharingSettingsFilter, ...organisationUnitFilter, ...userFilter];
+
+    const userNonEssentialObjectsFilter = removeNonEssentialObjects
+        ? ["lastUpdated", "created", "lastUpdatedBy", "createdBy"]
+        : [];
+
+    const propsToRemove = [
+        ...sharingSettingsFilter,
+        ...organisationUnitFilter,
+        ...userFilter,
+        ...userNonEssentialObjectsFilter,
+        ...cleanLeafRules,
+        ...blacklistedProperties,
+    ];
 
     return _.pick(element, _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove));
 }
