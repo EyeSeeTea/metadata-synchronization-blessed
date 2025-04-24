@@ -83,19 +83,7 @@ export function cleanObject(params: {
         ...blacklistedProperties,
     ];
 
-    const elementWithCleanedChildrenProperties = _(element)
-        .mapValues(children =>
-            _.isArray(children)
-                ? children.map(childElement => cleanPropertiesToSync(childElement, propsToRemove))
-                : children
-        )
-        .value();
-
-    return cleanPropertiesToSync(elementWithCleanedChildrenProperties, propsToRemove);
-}
-
-function cleanPropertiesToSync(element: Record<string, any>, propsToRemove: string[]): Record<string, any> {
-    return _.pick(element, _.difference(_.keys(element), propsToRemove));
+    return _.pick(element, _.difference(_.keys(element), cleanLeafRules, blacklistedProperties, propsToRemove));
 }
 
 export function cleanReferences(references: Record<string, string[]>, includeRules: string[][] = []): string[] {
