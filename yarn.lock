@@ -8932,6 +8932,11 @@ expand-brackets@^2.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+expect-type@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/expect-type/-/expect-type-0.15.0.tgz#89f75e22c88554844ea2b2faf4ef5fc2e579d3b5"
+  integrity sha512-yWnriYB4e8G54M5/fAFj7rCIBiKs1HAACaY13kCz6Ku0dezjS9aMcfcdVK2X8Tv2tEV1BPz/wKfQ7WA4S/d8aA==
+
 expect@^26.6.0, expect@^26.6.2:
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/expect/-/expect-26.6.2.tgz#c6b996bf26bf3fe18b67b2d0f51fc981ba934417"
@@ -17888,6 +17893,11 @@ type@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/type/-/type-2.5.0.tgz#0a2e78c2e77907b252abe5f298c1b01c63f0db3d"
   integrity sha512-180WMDQaIMm3+7hGXWf12GtdniDEy7nYcyFMKJn/eZz/6tSLXrUN9V0wKSbMjej0I1WHWbpREDEKHtqPQa9NNw==
+
+typed-immutable-map@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/typed-immutable-map/-/typed-immutable-map-0.1.1.tgz#4f7d67c6afa3daa2eaa09c0afa1b9d8ef35a6045"
+  integrity sha512-kqdpR/oGRyHHjnwRnRfLXu6YUDO9/spIljcbzmMyzgOfNJ5XH436TEWQXkmjhM/CdoclOuVMYgWM1ymrwnY9ng==
 
 typedarray-to-buffer@^3.1.5:
   version "3.1.5"
