@@ -11,10 +11,20 @@ import { defaultName, modelFactory } from "../../../../../../models/dhis/factory
 import { useAppContext } from "../../../contexts/AppContext";
 import { DropdownOption } from "../../dropdown/Dropdown";
 
-export type IncludeObjectsAndReferences =
-    | "includeObjectsAndReferences"
-    | "includeOnlyReferences"
-    | "removeObjectsAndReferences";
+export const includeObjectsAndReferencesMap = {
+    includeObjectsAndReferences: i18n.t("Include objects and references"),
+    includeOnlyReferences: i18n.t("Include only references"),
+    removeObjectsAndReferences: i18n.t("Remove objects and references"),
+} as const;
+
+export type IncludeObjectsAndReferences = keyof typeof includeObjectsAndReferencesMap;
+
+export const includeObjectsAndReferencesOptions: { id: IncludeObjectsAndReferences; name: string }[] = Object.entries(
+    includeObjectsAndReferencesMap
+).map(([id, name]) => ({
+    id: id as IncludeObjectsAndReferences,
+    name,
+}));
 
 export function useMetadataIncludeExcludeStep(
     syncRule: SynchronizationRule,
@@ -173,23 +183,6 @@ export function useMetadataIncludeExcludeStep(
         },
         [includeReferencesAndObjectsRules, onChange, selectedType, syncRule]
     );
-
-    const includeObjectsAndReferencesOptions = useMemo(() => {
-        return [
-            {
-                id: "includeObjectsAndReferences" as const,
-                name: i18n.t("Include objects and references"),
-            },
-            {
-                id: "includeOnlyReferences" as const,
-                name: i18n.t("Include only references"),
-            },
-            {
-                id: "removeObjectsAndReferences" as const,
-                name: i18n.t("Remove objects and references"),
-            },
-        ];
-    }, []);
 
     const sharingSettingsObjectsAndReferencesValue: IncludeObjectsAndReferences = useMemo(() => {
         return getObjectsAndReferencesValue(
