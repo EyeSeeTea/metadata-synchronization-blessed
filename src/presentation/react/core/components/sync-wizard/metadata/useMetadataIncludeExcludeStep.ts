@@ -136,7 +136,7 @@ export function useMetadataIncludeExcludeStep(
     }, []);
 
     const changeInclude = useCallback(
-        (currentIncludeRules: any) => {
+        (currentIncludeRules: string[]) => {
             const type: string = selectedType;
 
             const oldIncludeRules: string[] = includeRules;
