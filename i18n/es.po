@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-17T17:24:45.295Z\n"
+"POT-Creation-Date: 2025-04-25T05:42:22.532Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1061,14 +1061,6 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
-msgid ""
-"Remove default categories, categoryOptions, categoryCombos and "
-"categoryOptionCombos"
-msgstr ""
-
-msgid "Remove lastUpdated, lastUpdatedBy, created and createdBys"
-msgstr ""
-
 msgid "Disable atomic verification"
 msgstr ""
 
@@ -1486,6 +1478,14 @@ msgid "Include users"
 msgstr ""
 
 msgid "Include organisation units"
+msgstr ""
+
+msgid ""
+"Remove default categories, categoryOptions, categoryCombos and "
+"categoryOptionCombos"
+msgstr ""
+
+msgid "Remove lastUpdated, lastUpdatedBy, created and createdBys"
 msgstr ""
 
 msgid "Exclude objects and references ->"

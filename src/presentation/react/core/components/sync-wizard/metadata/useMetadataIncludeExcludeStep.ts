@@ -251,6 +251,38 @@ export function useMetadataIncludeExcludeStep(
         [onChange, syncRule]
     );
 
+    const removeDefaultCategoryObjects = useMemo(() => {
+        return syncParams.removeDefaultCategoryObjects;
+    }, [syncParams.removeDefaultCategoryObjects]);
+
+    const removeUserNonEssentialObjects = useMemo(() => {
+        return syncParams.removeUserNonEssentialObjects;
+    }, [syncParams.removeUserNonEssentialObjects]);
+
+    const changeRemoveDefaultCategoryObjects = useCallback(
+        (removeDefaultCategoryObjects: boolean) => {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncParams,
+                    removeDefaultCategoryObjects,
+                })
+            );
+        },
+        [syncParams, onChange, syncRule]
+    );
+
+    const changeRemoveNonEssentialUserObjects = useCallback(
+        (removeUserNonEssentialObjects: boolean) => {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncParams,
+                    removeUserNonEssentialObjects,
+                })
+            );
+        },
+        [syncParams, onChange, syncRule]
+    );
+
     return {
         error,
         d2,
@@ -272,6 +304,10 @@ export function useMetadataIncludeExcludeStep(
         sharingSettingsObjectsAndReferencesValue,
         usersObjectsAndReferencesValue,
         orgUnitsObjectsAndReferencesValue,
+        removeDefaultCategoryObjects,
+        removeUserNonEssentialObjects,
+        changeRemoveDefaultCategoryObjects,
+        changeRemoveNonEssentialUserObjects,
     };
 }
 
