@@ -252,7 +252,11 @@ export class CompositionRoot {
             save: new SaveModuleUseCase(this.repositoryFactory, this.localInstance),
             get: new GetModuleUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteModuleUseCase(this.repositoryFactory, this.localInstance),
-            download: new DownloadModuleSnapshotUseCase(this.repositoryFactory, this.localInstance),
+            download: new DownloadModuleSnapshotUseCase(
+                this.repositoryFactory,
+                this.localInstance,
+                this.metadataPayloadBuilder
+            ),
         });
     }
 

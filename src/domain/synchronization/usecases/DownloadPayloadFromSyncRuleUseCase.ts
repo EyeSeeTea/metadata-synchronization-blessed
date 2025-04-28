@@ -93,7 +93,6 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         rule: SynchronizationRule,
         metadataPayloadBuilder: MetadataPayloadBuilder
     ): Promise<SynchronizationPayload> {
-        debugger;
         if (sync.type === "metadata") {
             return metadataPayloadBuilder.build(rule.builder);
         } else {

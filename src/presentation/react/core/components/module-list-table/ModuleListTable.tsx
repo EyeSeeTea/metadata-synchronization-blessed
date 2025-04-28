@@ -77,13 +77,9 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 loading.show(true, i18n.t("Downloading snapshot for module {{name}}", module));
 
                 const originInstance = remoteInstance?.id ?? "LOCAL";
-                const contents = await compositionRoot.sync[module.type]({
-                    ...module.toSyncBuilder(),
-                    originInstance,
-                    targetInstances: [],
-                }).buildPayload();
 
-                await compositionRoot.modules.download(module, contents);
+                await compositionRoot.modules.download(module, originInstance);
+
                 loading.reset();
             }
         },
