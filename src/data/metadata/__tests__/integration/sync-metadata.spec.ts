@@ -169,14 +169,11 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const sync = new MetadataSyncUseCase(
-            builder,
-            repositoryFactory,
-            localInstance,
-            new MetadataPayloadBuilder(builder, repositoryFactory, localInstance)
-        );
+        const metadataPayloadBuilder = new MetadataPayloadBuilder(builder, repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, metadataPayloadBuilder);
+
+        const payload = await metadataPayloadBuilder.build();
         expect(payload.dataElements?.find(({ id }) => id === "id1")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -202,14 +199,12 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const sync = new MetadataSyncUseCase(
-            builder,
-            repositoryFactory,
-            localInstance,
-            new MetadataPayloadBuilder(builder, repositoryFactory, localInstance)
-        );
+        const metadataPayloadBuilder = new MetadataPayloadBuilder(builder, repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, metadataPayloadBuilder);
+
+        const payload = await metadataPayloadBuilder.build();
+
         expect(payload.dataElements?.find(({ id }) => id === "id2")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
