@@ -3,6 +3,7 @@ import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { MetadataPayloadBuilder } from "../../../../domain/metadata/builders/MetadataPayloadBuilder";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
@@ -168,7 +169,12 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
+        const sync = new MetadataSyncUseCase(
+            builder,
+            repositoryFactory,
+            localInstance,
+            new MetadataPayloadBuilder(builder, repositoryFactory, localInstance)
+        );
 
         const payload = await sync.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id1")).toBeDefined();
@@ -196,7 +202,12 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
+        const sync = new MetadataSyncUseCase(
+            builder,
+            repositoryFactory,
+            localInstance,
+            new MetadataPayloadBuilder(builder, repositoryFactory, localInstance)
+        );
 
         const payload = await sync.buildPayload();
         expect(payload.dataElements?.find(({ id }) => id === "id2")).toBeDefined();

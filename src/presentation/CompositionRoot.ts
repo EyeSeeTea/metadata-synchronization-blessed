@@ -125,6 +125,7 @@ import { getD2APiFromInstance } from "../utils/d2-utils";
 import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
+import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayloadBuilder";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -191,7 +192,12 @@ export class CompositionRoot {
             events: (builder: SynchronizationBuilder) =>
                 new EventsSyncUseCase(builder, this.repositoryFactory, this.localInstance),
             metadata: (builder: SynchronizationBuilder) =>
-                new MetadataSyncUseCase(builder, this.repositoryFactory, this.localInstance),
+                new MetadataSyncUseCase(
+                    builder,
+                    this.repositoryFactory,
+                    this.localInstance,
+                    new MetadataPayloadBuilder(builder, this.repositoryFactory, this.localInstance)
+                ),
             deleted: (builder: SynchronizationBuilder) =>
                 new DeletedMetadataSyncUseCase(builder, this.repositoryFactory, this.localInstance),
         };
