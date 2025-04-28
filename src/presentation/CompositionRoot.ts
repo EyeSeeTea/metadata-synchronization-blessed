@@ -255,20 +255,18 @@ export class CompositionRoot {
 
     @cache()
     public get packages() {
+        const metadataPayloadBuilder = new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance);
+
         return getExecute({
             list: new ListPackagesUseCase(this.repositoryFactory, this.localInstance),
             listStore: new ListStorePackagesUseCase(this.repositoryFactory, this.localInstance),
-            create: new CreatePackageUseCase(
-                new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance),
-                this.repositoryFactory,
-                this.localInstance
-            ),
+            create: new CreatePackageUseCase(metadataPayloadBuilder, this.repositoryFactory, this.localInstance),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
             getStore: new GetStorePackageUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
             download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
-            diff: new DiffPackageUseCase(this, this.repositoryFactory, this.localInstance),
+            diff: new DiffPackageUseCase(metadataPayloadBuilder, this.repositoryFactory, this.localInstance),
             import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
             extend: new ExtendsPackagesFromPackageUseCase(this.repositoryFactory, this.localInstance),
             validate: new ValidatePackageContentsUseCase(this.repositoryFactory, this.localInstance),
