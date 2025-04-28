@@ -181,7 +181,7 @@ export async function executeMetadataSync(
         builder,
         repositoryFactory,
         localInstance,
-        new MetadataPayloadBuilder(builder, repositoryFactory, localInstance)
+        new MetadataPayloadBuilder(repositoryFactory, localInstance)
     );
 
     let done = false;

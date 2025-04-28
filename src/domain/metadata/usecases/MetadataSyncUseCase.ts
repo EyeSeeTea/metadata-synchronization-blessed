@@ -30,7 +30,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
      * @deprecated This function should not be used, please use the MetadataPayloadBuilder
      */
     public buildPayload = memoize(async () => {
-        return this.metadataPayloadBuilder.build();
+        return this.metadataPayloadBuilder.build(this.builder);
     });
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {

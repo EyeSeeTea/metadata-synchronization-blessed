@@ -196,7 +196,7 @@ export class CompositionRoot {
                     builder,
                     this.repositoryFactory,
                     this.localInstance,
-                    new MetadataPayloadBuilder(builder, this.repositoryFactory, this.localInstance)
+                    new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance)
                 ),
             deleted: (builder: SynchronizationBuilder) =>
                 new DeletedMetadataSyncUseCase(builder, this.repositoryFactory, this.localInstance),
@@ -258,7 +258,11 @@ export class CompositionRoot {
         return getExecute({
             list: new ListPackagesUseCase(this.repositoryFactory, this.localInstance),
             listStore: new ListStorePackagesUseCase(this.repositoryFactory, this.localInstance),
-            create: new CreatePackageUseCase(this, this.repositoryFactory, this.localInstance),
+            create: new CreatePackageUseCase(
+                new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance),
+                this.repositoryFactory,
+                this.localInstance
+            ),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
             getStore: new GetStorePackageUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),

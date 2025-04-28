@@ -19,16 +19,12 @@ import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from
 export class MetadataPayloadBuilder {
     private api: D2Api;
 
-    constructor(
-        private syncBuilder: SynchronizationBuilder,
-        private repositoryFactory: RepositoryFactory,
-        private localInstance: Instance
-    ) {
+    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {
         this.api = getD2APiFromInstance(localInstance);
     }
 
-    public async build(): Promise<MetadataPackage> {
-        const { metadataIds, syncParams, filterRules = [] } = this.syncBuilder;
+    public async build(syncBuilder: SynchronizationBuilder): Promise<MetadataPackage> {
+        const { metadataIds, syncParams, filterRules = [], originInstance: originInstanceId } = syncBuilder;
         const {
             includeSharingSettingsObjectsAndReferences = true,
             includeOnlySharingSettingsReferences = false,
@@ -41,7 +37,7 @@ export class MetadataPayloadBuilder {
             useDefaultIncludeExclude = {},
         } = syncParams ?? {};
 
-        const originInstance = await this.getOriginInstance();
+        const originInstance = await this.getOriginInstance(originInstanceId);
         const metadataRepository = this.repositoryFactory.metadataRepository(originInstance);
 
         const filterRulesIds = await metadataRepository.getByFilterRules(filterRules);
@@ -80,25 +76,28 @@ export class MetadataPayloadBuilder {
                     ? userIncludeReferencesAndObjectsRules
                     : [];
 
-            return this.exportMetadata({
-                type: collectionName,
-                ids: metadataWithSyncAll[collectionName]?.map(e => e.id) || [],
-                excludeRules: useDefaultIncludeExclude
-                    ? myClass.getExcludeRules()
-                    : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
-                includeReferencesAndObjectsRules: useDefaultIncludeExclude
-                    ? myClass.getIncludeRules()
-                    : metadataIncludeExcludeRules[metadataType].includeReferencesAndObjectsRules.map(_.toPath),
-                includeSharingSettingsObjectsAndReferences,
-                includeOnlySharingSettingsReferences,
-                includeUsersObjectsAndReferences,
-                includeOnlyUsersReferences,
-                includeOrgUnitsObjectsAndReferences,
-                includeOnlyOrgUnitsReferences,
-                sharingSettingsIncludeReferencesAndObjectsRules,
-                usersIncludeReferencesAndObjectsRules,
-                removeUserNonEssentialObjects,
-            });
+            return this.exportMetadata(
+                {
+                    type: collectionName,
+                    ids: metadataWithSyncAll[collectionName]?.map(e => e.id) || [],
+                    excludeRules: useDefaultIncludeExclude
+                        ? myClass.getExcludeRules()
+                        : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
+                    includeReferencesAndObjectsRules: useDefaultIncludeExclude
+                        ? myClass.getIncludeRules()
+                        : metadataIncludeExcludeRules[metadataType].includeReferencesAndObjectsRules.map(_.toPath),
+                    includeSharingSettingsObjectsAndReferences,
+                    includeOnlySharingSettingsReferences,
+                    includeUsersObjectsAndReferences,
+                    includeOnlyUsersReferences,
+                    includeOrgUnitsObjectsAndReferences,
+                    includeOnlyOrgUnitsReferences,
+                    sharingSettingsIncludeReferencesAndObjectsRules,
+                    usersIncludeReferencesAndObjectsRules,
+                    removeUserNonEssentialObjects,
+                },
+                originInstanceId
+            );
         });
 
         const metadataPackage: MetadataPackage = _.deepMerge({}, ...exportResults);
@@ -143,8 +142,8 @@ export class MetadataPayloadBuilder {
     }
 
     @cache()
-    public async getOriginInstance(): Promise<Instance> {
-        const instance = await this.getInstanceById(this.syncBuilder.originInstance);
+    public async getOriginInstance(originInstanceId: string): Promise<Instance> {
+        const instance = await this.getInstanceById(originInstanceId);
 
         if (!instance) throw new Error("Unable to read origin instance");
         return instance;
@@ -162,7 +161,7 @@ export class MetadataPayloadBuilder {
         }
     }
 
-    public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
+    public async exportMetadata(originalBuilder: ExportBuilder, originInstanceId: string): Promise<MetadataPackage> {
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const {
                 type,
@@ -192,7 +191,7 @@ export class MetadataPayloadBuilder {
             );
 
             // Get all the required metadata
-            const originInstance = await this.getOriginInstance();
+            const originInstance = await this.getOriginInstance(originInstanceId);
             const metadataRepository = this.repositoryFactory.metadataRepository(originInstance);
             const syncMetadata = await metadataRepository.getMetadataByIds(ids);
             const elements = syncMetadata[collectionName] || [];
@@ -201,7 +200,9 @@ export class MetadataPayloadBuilder {
                 //ProgramRules is not included in programs items in the response by the dhis2 API
                 //we request it manually and insert it in the element
                 const fixedElement =
-                    type === "programs" ? await this.requestAndIncludeProgramRules(element as Program) : element;
+                    type === "programs"
+                        ? await this.requestAndIncludeProgramRules(element as Program, originInstanceId)
+                        : element;
 
                 // Store metadata object in result
                 const object = cleanObject({
@@ -296,8 +297,8 @@ export class MetadataPayloadBuilder {
             : metadata;
     }
 
-    private async requestAndIncludeProgramRules(program: Program) {
-        const defaultInstance = await this.getOriginInstance();
+    private async requestAndIncludeProgramRules(program: Program, originInstanceId: string) {
+        const defaultInstance = await this.getOriginInstance(originInstanceId);
         const metadataRepository = this.repositoryFactory.metadataRepository(defaultInstance);
         const programRules = await metadataRepository.listAllMetadata({
             type: "programRules",
