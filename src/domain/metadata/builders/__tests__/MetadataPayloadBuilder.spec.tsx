@@ -30,9 +30,9 @@ import {
 } from "./data/data-set-metadata-type";
 import { MetadataPayloadBuilder } from "../MetadataPayloadBuilder";
 
-// TODO: Notice these tests are fragile and can break easily if MetadataSyncUseCase or the metadata structure changes.
-// It is necesary a refactor of MetadataSyncUseCase and the tests to make them more robust.
-describe("MetadataSyncUseCase", () => {
+// TODO: Notice these tests are fragile and can break easily if MetadataPayloadBuilder or the metadata structure changes.
+// It is necesary a refactor of MetadataPayloadBuilder and the tests to make them more robust.
+describe("MetadataPayloadBuilder", () => {
     describe("executing build method for a Category metadata type with default dependencies", () => {
         it("should return expected payload when option include objects and references of sharing settings, users and organisation units is selected", async () => {
             const includeObjectsAndReferencesOptions = {
@@ -42,9 +42,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithCategoryType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfCategory(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfCategory(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getCategoryTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -61,9 +61,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithCategoryType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfCategory(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfCategory(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getCategoryTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -80,9 +80,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithCategoryType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfCategory(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfCategory(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getCategoryTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -91,7 +91,7 @@ describe("MetadataSyncUseCase", () => {
             expect(payload).toEqual(expectedPayload);
         });
 
-        function givenMetadataSyncUseCaseOfCategory(options: {
+        function givenMetadataPayloadBuilderOfCategory(options: {
             includeObjectsAndReferences: boolean;
             includeOnlyReferences: boolean;
         }): MetadataPayloadBuilder {
@@ -155,9 +155,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithProgramType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfProgram(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfProgram(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getProgramTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -174,9 +174,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithProgramType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfProgram(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfProgram(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getProgramTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -193,9 +193,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithProgramType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfProgram(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfProgram(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getProgramTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -204,7 +204,7 @@ describe("MetadataSyncUseCase", () => {
             expect(payload).toEqual(expectedPayload);
         });
 
-        function givenMetadataSyncUseCaseOfProgram(options: {
+        function givenMetadataPayloadBuilderOfProgram(options: {
             includeObjectsAndReferences: boolean;
             includeOnlyReferences: boolean;
         }): MetadataPayloadBuilder {
@@ -280,9 +280,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithProgramType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfDataSet(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfDataSet(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getDataSetTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -299,9 +299,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithProgramType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfDataSet(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfDataSet(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getDataSetTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -318,9 +318,9 @@ describe("MetadataSyncUseCase", () => {
 
             const builder = givenABuilderWithProgramType(includeObjectsAndReferencesOptions);
 
-            const metadataSyncUseCase = givenMetadataSyncUseCaseOfDataSet(includeObjectsAndReferencesOptions);
+            const metadataPayloadBuilder = givenMetadataPayloadBuilderOfDataSet(includeObjectsAndReferencesOptions);
 
-            const payload: SynchronizationPayload = await metadataSyncUseCase.build(builder);
+            const payload: SynchronizationPayload = await metadataPayloadBuilder.build(builder);
 
             const expectedPayload: SynchronizationPayload = getDataSetTypeExpectedPayload(
                 includeObjectsAndReferencesOptions
@@ -329,7 +329,7 @@ describe("MetadataSyncUseCase", () => {
             expect(payload).toEqual(expectedPayload);
         });
 
-        function givenMetadataSyncUseCaseOfDataSet(options: {
+        function givenMetadataPayloadBuilderOfDataSet(options: {
             includeObjectsAndReferences: boolean;
             includeOnlyReferences: boolean;
         }): MetadataPayloadBuilder {
