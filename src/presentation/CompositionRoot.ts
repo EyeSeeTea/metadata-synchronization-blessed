@@ -188,7 +188,11 @@ export class CompositionRoot {
         return {
             ...getExecute({
                 prepare: new PrepareSyncUseCase(this.repositoryFactory, this.localInstance),
-                createPullRequest: new CreatePullRequestUseCase(this.repositoryFactory, this.localInstance),
+                createPullRequest: new CreatePullRequestUseCase(
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.metadataPayloadBuilder
+                ),
             }),
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(builder, this.repositoryFactory, this.localInstance),
