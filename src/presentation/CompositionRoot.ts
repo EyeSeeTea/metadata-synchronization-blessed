@@ -126,6 +126,7 @@ import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayloadBuilder";
+import { DefaultRepositoryFactory } from "../data/common/factories/DefaultRepositoryFactory";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -137,7 +138,7 @@ export class CompositionRoot {
     private metadataPayloadBuilder: MetadataPayloadBuilder;
 
     constructor(public readonly localInstance: Instance, encryptionKey: string) {
-        this.repositoryFactory = new RepositoryFactory(encryptionKey);
+        this.repositoryFactory = new DefaultRepositoryFactory(encryptionKey);
         this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
         this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
         this.repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);

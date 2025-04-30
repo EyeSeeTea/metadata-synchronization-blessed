@@ -15,6 +15,7 @@ import { TransformationD2ApiRepository } from "../../../transformations/Transfor
 import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 import { MappingD2ApiRepository } from "../../../mapping/MappingD2ApiRepository";
 import { InstanceFileD2Repository } from "../../../instance/InstanceFileD2Repository";
+import { DefaultRepositoryFactory } from "../../../common/factories/DefaultRepositoryFactory";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -386,7 +387,7 @@ describe("Sync events", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
+    const repositoryFactory: RepositoryFactory = new DefaultRepositoryFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
     repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
