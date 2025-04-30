@@ -2,11 +2,11 @@ import i18n from "../../../utils/i18n";
 import { debug } from "../../../utils/debug";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { DataSource, isJSONDataSource } from "../entities/DataSource";
 
 export class ValidateInstanceUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory) {}
 
     public async execute(instance: DataSource): Promise<Either<string, void>> {
         if (isJSONDataSource(instance)) return Either.success(undefined);

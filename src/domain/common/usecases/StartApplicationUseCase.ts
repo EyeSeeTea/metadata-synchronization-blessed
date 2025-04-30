@@ -1,10 +1,10 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../entities/UseCase";
-import { RepositoryFactory } from "../factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../factories/RepositoryFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 
 export class StartApplicationUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<void> {
         await this.verifyLocalInstanceExists();

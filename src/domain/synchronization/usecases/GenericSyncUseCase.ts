@@ -7,7 +7,7 @@ import { promiseMap } from "../../../utils/common";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
@@ -38,7 +38,7 @@ export abstract class GenericSyncUseCase {
 
     constructor(
         protected readonly builder: SynchronizationBuilder,
-        protected readonly repositoryFactory: RepositoryFactory,
+        protected readonly repositoryFactory: RepositoryByInstanceFactory,
         protected readonly localInstance: Instance
     ) {
         this.api = getD2APiFromInstance(localInstance);

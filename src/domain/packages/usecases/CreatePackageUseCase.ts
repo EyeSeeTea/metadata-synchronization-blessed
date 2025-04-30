@@ -3,7 +3,7 @@ import { metadataTransformations } from "../../../data/transformations/PackageTr
 import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
@@ -13,7 +13,7 @@ import { Package } from "../entities/Package";
 export class CreatePackageUseCase implements UseCase {
     constructor(
         private metadataPayloadBuilder: MetadataPayloadBuilder,
-        private repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryByInstanceFactory,
         private localInstance: Instance
     ) {}
 

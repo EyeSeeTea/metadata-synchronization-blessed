@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
@@ -24,7 +24,7 @@ export interface ListSyncReportUseCaseResult {
 }
 
 export class ListSyncReportUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
 
     public async execute({
         paging = true,

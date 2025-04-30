@@ -2,12 +2,12 @@ import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { AppNotification } from "../entities/Notification";
 
 export class ListNotificationsUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<AppNotification[]> {
         const { id, userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();

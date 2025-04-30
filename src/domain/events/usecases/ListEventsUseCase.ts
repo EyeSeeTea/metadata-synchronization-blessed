@@ -1,11 +1,11 @@
 import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { ProgramEvent } from "../entities/ProgramEvent";
 
 export class ListEventsUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, protected localInstance: Instance) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory, protected localInstance: Instance) {}
 
     public async execute(
         instance: Instance,

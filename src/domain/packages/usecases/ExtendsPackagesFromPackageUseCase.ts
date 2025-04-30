@@ -3,12 +3,12 @@ import { Namespace } from "../../../data/storage/Namespaces";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
 import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ExtendsPackagesFromPackageUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
 
     public async execute(packageSourceId: string, dhisVersions: string[]): Promise<void> {
         const storageClient = await this.repositoryFactory

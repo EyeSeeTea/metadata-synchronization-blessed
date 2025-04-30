@@ -2,12 +2,12 @@ import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import { Repositories, RepositoryByInstanceFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
 import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
-import { DefaultRepositoryFactory } from "../../../common/factories/DefaultRepositoryFactory";
+import { DefaultRepositoryByInstanceFactory } from "../../../common/factories/DefaultRepositoryByInstanceFactory";
 import { StorageClientD2Repository } from "../../../config/StorageClientD2Repository";
 import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
 import { InstanceFileD2Repository } from "../../../instance/InstanceFileD2Repository";
@@ -337,7 +337,7 @@ describe("Sync aggregated", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new DefaultRepositoryFactory("");
+    const repositoryFactory: RepositoryByInstanceFactory = new DefaultRepositoryByInstanceFactory("");
     repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
     repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
     repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);

@@ -5,7 +5,7 @@ import {
 import {
     ClassType,
     Repositories,
-    RepositoryFactory,
+    RepositoryByInstanceFactory,
     RepositoryKeys,
 } from "../../../domain/common/factories/RepositoryFactory";
 import { CustomDataRepositoryConstructor } from "../../../domain/custom-data/repository/CustomDataRepository";
@@ -45,7 +45,7 @@ import {
 import { UserRepositoryConstructor } from "../../../domain/user/repositories/UserRepository";
 import { cache } from "../../../utils/cache";
 
-export class DefaultRepositoryFactory implements RepositoryFactory {
+export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceFactory {
     constructor(private encryptionKey: string) {}
 
     private repositories: Map<string, ClassType> = new Map(); // TODO: TS 4.1 `${RepositoryKeys}-${string}`

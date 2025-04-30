@@ -2,7 +2,7 @@ import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
@@ -26,7 +26,7 @@ interface CreatePullRequestParams {
 
 export class CreatePullRequestUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryByInstanceFactory,
         private localInstance: Instance,
         private metadataPayloadBuilder: MetadataPayloadBuilder
     ) {}

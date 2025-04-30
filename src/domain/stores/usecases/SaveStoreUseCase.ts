@@ -1,7 +1,7 @@
 import { generateUid } from "d2/uid";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { GitHubError } from "../../packages/entities/Errors";
 import { GitHubRepository } from "../../packages/repositories/GitHubRepository";
@@ -9,7 +9,7 @@ import { Store } from "../entities/Store";
 
 export class SaveStoreUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryByInstanceFactory,
         private gitHubRepository: GitHubRepository,
         private localInstance: Instance
     ) {}

@@ -4,13 +4,13 @@ import { metadataTransformations } from "../../../data/transformations/PackageTr
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 
 export class DownloadPayloadUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
 
     public async execute(reports: SynchronizationReport[]): Promise<void> {
         const date = moment().format("YYYYMMDDHHmm");

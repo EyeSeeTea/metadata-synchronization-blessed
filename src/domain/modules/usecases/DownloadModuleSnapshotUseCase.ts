@@ -1,7 +1,7 @@
 import _ from "lodash";
 import moment from "moment";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { Package } from "../../packages/entities/Package";
@@ -9,7 +9,7 @@ import { Module } from "../entities/Module";
 
 export class DownloadModuleSnapshotUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryByInstanceFactory,
         private localInstance: Instance,
         private metadataPayloadBuilder: MetadataPayloadBuilder
     ) {}

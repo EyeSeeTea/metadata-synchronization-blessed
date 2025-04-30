@@ -1,12 +1,12 @@
 import { cache } from "../../../utils/cache";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { AggregatedRepository } from "../repositories/AggregatedRepository";
 
 export class DeleteAggregatedUseCase {
-    constructor(private repositoryFactory: RepositoryFactory) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory) {}
 
     async execute(instance: Instance, dataValues: AggregatedPackage): Promise<SynchronizationResult> {
         return this.getAggregatedRepository(instance).delete(dataValues);

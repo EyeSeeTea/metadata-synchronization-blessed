@@ -25,7 +25,7 @@ import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedS
 import { DeleteAggregatedUseCase } from "../domain/aggregated/usecases/DeleteAggregatedUseCase";
 import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggregatedUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
-import { Repositories, RepositoryFactory } from "../domain/common/factories/RepositoryFactory";
+import { Repositories, RepositoryByInstanceFactory } from "../domain/common/factories/RepositoryFactory";
 import { StartApplicationUseCase } from "../domain/common/usecases/StartApplicationUseCase";
 import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDataUseCase";
 import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
@@ -126,7 +126,7 @@ import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayloadBuilder";
-import { DefaultRepositoryFactory } from "../data/common/factories/DefaultRepositoryFactory";
+import { DefaultRepositoryByInstanceFactory } from "../data/common/factories/DefaultRepositoryByInstanceFactory";
 import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
 
 /**
@@ -135,12 +135,12 @@ import { GitHubRepository } from "../domain/packages/repositories/GitHubReposito
  */
 
 export class CompositionRoot {
-    private repositoryFactory: RepositoryFactory;
+    private repositoryFactory: RepositoryByInstanceFactory;
     private metadataPayloadBuilder: MetadataPayloadBuilder;
     private gitHubRepository: GitHubRepository;
 
     constructor(public readonly localInstance: Instance, encryptionKey: string) {
-        this.repositoryFactory = new DefaultRepositoryFactory(encryptionKey);
+        this.repositoryFactory = new DefaultRepositoryByInstanceFactory(encryptionKey);
         this.gitHubRepository = new GitHubOctokitRepository();
 
         this.registerDynamicRepositoriesInFactory();

@@ -1,5 +1,5 @@
 import i18n from "../../../utils/i18n";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { EmergencyType, getEmergencyResponseConfig } from "../../entities/EmergencyResponses";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataRepository } from "../../metadata/repositories/MetadataRepository";
@@ -10,7 +10,7 @@ export class UpdateEmergencyResponseSyncRuleUseCase {
     metadataRepository: MetadataRepository;
     teiRepository: TEIRepository;
 
-    constructor(repositoryFactory: RepositoryFactory, instance: Instance) {
+    constructor(repositoryFactory: RepositoryByInstanceFactory, instance: Instance) {
         this.metadataRepository = repositoryFactory.metadataRepository(instance);
         this.teiRepository = repositoryFactory.teisRepository(instance);
     }

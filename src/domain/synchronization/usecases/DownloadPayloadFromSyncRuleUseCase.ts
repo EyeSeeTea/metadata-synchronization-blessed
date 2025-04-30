@@ -8,7 +8,7 @@ import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { EventsPackage } from "../../events/entities/EventsPackage";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
@@ -39,7 +39,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
         private metadataPayloadBuilder: MetadataPayloadBuilder,
-        private repositoryFactory: RepositoryFactory,
+        private repositoryFactory: RepositoryByInstanceFactory,
         private localInstance: Instance
     ) {}
 

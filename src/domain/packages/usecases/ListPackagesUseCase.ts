@@ -1,13 +1,13 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ListPackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
 
     public async execute(bypassSharingSettings = false, instance = this.localInstance): Promise<Package[]> {
         const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();

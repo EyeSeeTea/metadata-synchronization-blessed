@@ -24,7 +24,7 @@ import { TransformationRepository } from "../../transformations/repositories/Tra
 import { UserRepository } from "../../user/repositories/UserRepository";
 
 export type ClassType = new (...args: any[]) => any;
-export interface RepositoryFactory {
+export interface RepositoryByInstanceFactory {
     bind(repository: RepositoryKeys, implementation: ClassType, tag?: string): void;
 
     configRepository(instance: Instance): StorageClientRepository;
