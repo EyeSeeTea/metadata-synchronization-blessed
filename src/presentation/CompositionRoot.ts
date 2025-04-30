@@ -25,7 +25,7 @@ import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedS
 import { DeleteAggregatedUseCase } from "../domain/aggregated/usecases/DeleteAggregatedUseCase";
 import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggregatedUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
-import { Repositories, RepositoryByInstanceFactory } from "../domain/common/factories/RepositoryFactory";
+import { Repositories, RepositoryByInstanceFactory } from "../domain/common/factories/RepositoryByInstanceFactory";
 import { StartApplicationUseCase } from "../domain/common/usecases/StartApplicationUseCase";
 import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDataUseCase";
 import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
@@ -128,6 +128,7 @@ import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayloadBuilder";
 import { DefaultRepositoryByInstanceFactory } from "../data/common/factories/DefaultRepositoryByInstanceFactory";
 import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
+import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -138,10 +139,12 @@ export class CompositionRoot {
     private repositoryFactory: RepositoryByInstanceFactory;
     private metadataPayloadBuilder: MetadataPayloadBuilder;
     private gitHubRepository: GitHubRepository;
+    private downloadRepository: DownloadRepository;
 
     constructor(public readonly localInstance: Instance, encryptionKey: string) {
         this.repositoryFactory = new DefaultRepositoryByInstanceFactory(encryptionKey);
         this.gitHubRepository = new GitHubOctokitRepository();
+        this.downloadRepository = new DownloadWebRepository();
 
         this.registerDynamicRepositoriesInFactory();
 
@@ -240,6 +243,7 @@ export class CompositionRoot {
             download: new DownloadModuleSnapshotUseCase(
                 this.repositoryFactory,
                 this.localInstance,
+                this.downloadRepository,
                 this.metadataPayloadBuilder
             ),
         });
@@ -258,7 +262,12 @@ export class CompositionRoot {
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
             getStore: new GetStorePackageUseCase(this.repositoryFactory, this.gitHubRepository, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
-            download: new DownloadPackageUseCase(this.repositoryFactory, this.gitHubRepository, this.localInstance),
+            download: new DownloadPackageUseCase(
+                this.repositoryFactory,
+                this.gitHubRepository,
+                this.downloadRepository,
+                this.localInstance
+            ),
             publish: new PublishStorePackageUseCase(this.repositoryFactory, this.gitHubRepository, this.localInstance),
             diff: new DiffPackageUseCase(
                 this.metadataPayloadBuilder,
@@ -283,7 +292,7 @@ export class CompositionRoot {
     @cache()
     public get storage() {
         return getExecute({
-            downloadFile: new DownloadFileUseCase(this.repositoryFactory),
+            downloadFile: new DownloadFileUseCase(this.downloadRepository),
         });
     }
 
@@ -362,7 +371,11 @@ export class CompositionRoot {
             ),
             get: new GetSyncReportUseCase(this.repositoryFactory, this.localInstance),
             getSyncResults: new GetSyncResultsUseCase(this.repositoryFactory, this.localInstance),
-            downloadPayloads: new DownloadPayloadUseCase(this.repositoryFactory, this.localInstance),
+            downloadPayloads: new DownloadPayloadUseCase(
+                this.repositoryFactory,
+                this.downloadRepository,
+                this.localInstance
+            ),
         });
     }
 
@@ -374,11 +387,12 @@ export class CompositionRoot {
             delete: new DeleteSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             get: new GetSyncRuleUseCase(this.repositoryFactory, this.localInstance),
             readFiles: new ReadSyncRuleFilesUseCase(this.repositoryFactory, this.localInstance),
-            export: new ExportSyncRuleUseCase(this.repositoryFactory, this.localInstance),
+            export: new ExportSyncRuleUseCase(this.repositoryFactory, this.downloadRepository, this.localInstance),
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(
                 this,
                 this.metadataPayloadBuilder,
                 this.repositoryFactory,
+                this.downloadRepository,
                 this.localInstance
             ),
         });
@@ -451,7 +465,6 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
         this.repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
         this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
         this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
         this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);

@@ -2,7 +2,7 @@ import { mock, instance, when, verify, anything, deepEqual } from "ts-mockito";
 import { SaveSyncRuleUseCase } from "../SaveSyncRuleUseCase";
 import { SynchronizationRule } from "../../entities/SynchronizationRule";
 import { Instance } from "../../../instance/entities/Instance";
-import { RepositoryByInstanceFactory } from "../../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../../common/factories/RepositoryByInstanceFactory";
 import { MetadataRepository } from "../../../metadata/repositories/MetadataRepository";
 import { InstanceRepository } from "../../../instance/repositories/InstanceRepository";
 import { RulesRepository } from "../../repositories/RulesRepository";

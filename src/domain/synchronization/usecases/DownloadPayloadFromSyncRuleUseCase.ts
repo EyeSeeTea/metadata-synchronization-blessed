@@ -8,7 +8,7 @@ import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { EventsPackage } from "../../events/entities/EventsPackage";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
@@ -19,6 +19,7 @@ import { SynchronizationResultType } from "../entities/SynchronizationType";
 import { PayloadMapper } from "../mapper/PayloadMapper";
 import { GenericSyncUseCase } from "./GenericSyncUseCase";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
+import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 
 type DownloadErrors = string[];
 
@@ -40,6 +41,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         private compositionRoot: CompositionRoot,
         private metadataPayloadBuilder: MetadataPayloadBuilder,
         private repositoryFactory: RepositoryByInstanceFactory,
+        private downloadRepository: DownloadRepository,
         private localInstance: Instance
     ) {}
 
@@ -76,9 +78,9 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         );
 
         if (files.length === 1) {
-            this.repositoryFactory.downloadRepository().downloadFile(files[0].name, files[0].content);
+            this.downloadRepository.downloadFile(files[0].name, files[0].content);
         } else if (files.length > 1) {
-            await this.repositoryFactory.downloadRepository().downloadZippedFiles(`synchronization-${date}`, files);
+            await this.downloadRepository.downloadZippedFiles(`synchronization-${date}`, files);
         }
 
         if (errors.length === 0) {

@@ -3,7 +3,7 @@ import moment from "moment";
 import { promiseMap } from "../../../utils/common";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";

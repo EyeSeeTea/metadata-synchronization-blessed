@@ -4,13 +4,18 @@ import { metadataTransformations } from "../../../data/transformations/PackageTr
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
+import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 
 export class DownloadPayloadUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: RepositoryByInstanceFactory,
+        private downloadRepository: DownloadRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(reports: SynchronizationReport[]): Promise<void> {
         const date = moment().format("YYYYMMDDHHmm");
@@ -48,11 +53,12 @@ export class DownloadPayloadUseCase implements UseCase {
             .value();
 
         if (files.length === 1) {
-            this.repositoryFactory.downloadRepository().downloadFile(files[0].name, files[0].content);
+            this.downloadRepository.downloadFile(files[0].name, files[0].content);
         } else {
-            await this.repositoryFactory
-                .downloadRepository()
-                .downloadZippedFiles(`synchronization-${moment().format("YYYYMMDDHHmm")}`, files);
+            await this.downloadRepository.downloadZippedFiles(
+                `synchronization-${moment().format("YYYYMMDDHHmm")}`,
+                files
+            );
         }
     }
 

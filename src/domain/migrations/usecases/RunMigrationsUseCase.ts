@@ -1,7 +1,7 @@
 import i18n from "../../../utils/i18n";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { Debug } from "../entities/Debug";
 

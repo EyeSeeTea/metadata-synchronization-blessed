@@ -1,5 +1,5 @@
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { User } from "../entities/User";
 import { Instance } from "../../instance/entities/Instance";
 

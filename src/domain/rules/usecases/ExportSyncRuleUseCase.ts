@@ -2,11 +2,16 @@ import _ from "lodash";
 import moment from "moment";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 
 export class ExportSyncRuleUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: RepositoryByInstanceFactory,
+        private downloadRepository: DownloadRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(ids: string[]): Promise<void> {
         const rules = await promiseMap(ids, id =>
@@ -21,9 +26,9 @@ export class ExportSyncRuleUseCase implements UseCase {
         });
 
         if (exportRules.length === 1) {
-            this.repositoryFactory.downloadRepository().downloadFile(exportRules[0].name, exportRules[0].content);
+            this.downloadRepository.downloadFile(exportRules[0].name, exportRules[0].content);
         } else {
-            await this.repositoryFactory.downloadRepository().downloadZippedFiles(`sync-rules-${date}`, exportRules);
+            await this.downloadRepository.downloadZippedFiles(`sync-rules-${date}`, exportRules);
         }
     }
 }

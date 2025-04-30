@@ -1,5 +1,5 @@
 import { cache } from "../../../utils/cache";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { AggregatedPackage } from "../entities/AggregatedPackage";

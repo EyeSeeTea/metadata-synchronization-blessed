@@ -7,7 +7,7 @@ import {
 } from "../../../presentation/react/core/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { IdentifiableRef, NamedRef } from "../../common/entities/Ref";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";

@@ -3,7 +3,7 @@ import moment from "moment";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { getUserInfo, isGlobalAdmin } from "../../../utils/permissions";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { SynchronizationRule } from "../entities/SynchronizationRule";

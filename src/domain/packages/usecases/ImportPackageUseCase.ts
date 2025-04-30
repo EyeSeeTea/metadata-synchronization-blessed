@@ -1,7 +1,7 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { debug } from "../../../utils/debug";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";

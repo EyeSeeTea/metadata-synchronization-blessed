@@ -1,5 +1,5 @@
 import i18n from "../../../utils/i18n";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { EmergencyType, getEmergencyResponseConfig } from "../../entities/EmergencyResponses";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataRepository } from "../../metadata/repositories/MetadataRepository";

@@ -1,5 +1,5 @@
 import { anything, instance, mock, when } from "ts-mockito";
-import { RepositoryByInstanceFactory } from "../../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../../instance/entities/Instance";
 import { MetadataRepository } from "../../repositories/MetadataRepository";
 import { InstanceRepository } from "../../../instance/repositories/InstanceRepository";

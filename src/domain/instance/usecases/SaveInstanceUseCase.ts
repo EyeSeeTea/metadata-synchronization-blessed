@@ -1,7 +1,7 @@
 import i18n from "../../../utils/i18n";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../entities/Instance";
 
 export class SaveInstanceUseCase implements UseCase {

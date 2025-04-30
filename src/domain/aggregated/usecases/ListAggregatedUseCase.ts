@@ -1,5 +1,5 @@
 import { cache } from "../../../utils/cache";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { AggregatedRepository } from "../repositories/AggregatedRepository";

@@ -1,6 +1,6 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../entities/UseCase";
-import { RepositoryByInstanceFactory } from "../factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../factories/RepositoryByInstanceFactory";
 import { Instance, InstanceData } from "../../instance/entities/Instance";
 
 export class StartApplicationUseCase implements UseCase {

@@ -16,7 +16,6 @@ import { ReportsRepository } from "../../reports/repositories/ReportsRepository"
 import { FileRulesRepository } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepository } from "../../rules/repositories/RulesRepository";
 import { SettingsRepository } from "../../settings/SettingsRepository";
-import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 import { StoreRepository } from "../../stores/repositories/StoreRepository";
 import { TableColumnsRepository } from "../../table-columns/repositories/TableColumnsRepository";
 import { TEIRepository } from "../../tracked-entity-instances/repositories/TEIRepository";
@@ -28,7 +27,6 @@ export interface RepositoryByInstanceFactory {
     bind(repository: RepositoryKeys, implementation: ClassType, tag?: string): void;
 
     configRepository(instance: Instance): StorageClientRepository;
-    downloadRepository(): DownloadRepository;
     storeRepository(instance: Instance): StoreRepository;
     instanceRepository(instance: Instance): InstanceRepository;
     instanceFileRepository(instance: Instance): InstanceFileRepository;
@@ -59,7 +57,6 @@ export const Repositories = {
     StoreRepository: "storeRepository",
     ConfigRepository: "configRepository",
     CustomDataRepository: "customDataRepository",
-    DownloadRepository: "downloadRepository",
     GitHubRepository: "githubRepository",
     AggregatedRepository: "aggregatedRepository",
     EventsRepository: "eventsRepository",

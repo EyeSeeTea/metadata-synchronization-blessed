@@ -1,4 +1,4 @@
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
 import { MetadataEntities, MetadataEntity, MetadataPackage, Program } from "../entities/MetadataEntities";

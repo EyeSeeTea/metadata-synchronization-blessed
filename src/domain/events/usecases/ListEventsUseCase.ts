@@ -1,6 +1,6 @@
 import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { ProgramEvent } from "../entities/ProgramEvent";
 

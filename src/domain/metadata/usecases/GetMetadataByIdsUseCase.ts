@@ -1,5 +1,5 @@
 import { Id } from "../../common/entities/Schemas";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";

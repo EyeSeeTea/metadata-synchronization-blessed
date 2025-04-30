@@ -2,7 +2,10 @@ import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import { Repositories, RepositoryByInstanceFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import {
+    Repositories,
+    RepositoryByInstanceFactory,
+} from "../../../../domain/common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";

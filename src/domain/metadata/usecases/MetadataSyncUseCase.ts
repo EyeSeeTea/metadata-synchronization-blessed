@@ -3,7 +3,7 @@ import memoize from "nano-memoize";
 import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";

@@ -7,7 +7,7 @@ import {
     Repositories,
     RepositoryByInstanceFactory,
     RepositoryKeys,
-} from "../../../domain/common/factories/RepositoryFactory";
+} from "../../../domain/common/factories/RepositoryByInstanceFactory";
 import { CustomDataRepositoryConstructor } from "../../../domain/custom-data/repository/CustomDataRepository";
 import { DataStoreMetadataRepositoryConstructor } from "../../../domain/data-store/DataStoreMetadataRepository";
 import { DhisReleasesRepositoryConstructor } from "../../../domain/dhis-releases/repository/DhisReleasesRepository";
@@ -28,7 +28,6 @@ import { FileRulesRepositoryConstructor } from "../../../domain/rules/repositori
 import { RulesRepositoryConstructor } from "../../../domain/rules/repositories/RulesRepository";
 import { SettingsRepositoryConstructor } from "../../../domain/settings/SettingsRepository";
 import { StorageClientRepositoryConstructor } from "../../../domain/storage-client-config/repositories/StorageClientRepository";
-import { DownloadRepositoryConstructor } from "../../../domain/storage/repositories/DownloadRepository";
 import { StoreRepositoryConstructor } from "../../../domain/stores/repositories/StoreRepository";
 import {
     TableColumnsRepository,
@@ -69,11 +68,6 @@ export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceF
     @cache()
     public configRepository(instance: Instance) {
         return this.get<StorageClientRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
-    }
-
-    @cache()
-    public downloadRepository() {
-        return this.get<DownloadRepositoryConstructor>(Repositories.DownloadRepository, []);
     }
 
     @cache()

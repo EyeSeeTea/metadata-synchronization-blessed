@@ -2,9 +2,10 @@ import _ from "lodash";
 import moment from "moment";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryFactory";
+import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
+import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 import { BasePackage } from "../entities/Package";
 import { GitHubRepository } from "../repositories/GitHubRepository";
 
@@ -12,6 +13,7 @@ export class DownloadPackageUseCase implements UseCase {
     constructor(
         private repositoryFactory: RepositoryByInstanceFactory,
         private githubRepository: GitHubRepository,
+        private downloadRepository: DownloadRepository,
         private localInstance: Instance
     ) {}
 
@@ -27,7 +29,7 @@ export class DownloadPackageUseCase implements UseCase {
         const name = `package-${ruleName}-${date}`;
         const payload = { package: item, ...contents };
 
-        this.repositoryFactory.downloadRepository().downloadFile(name, payload);
+        this.downloadRepository.downloadFile(name, payload);
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
