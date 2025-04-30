@@ -10,18 +10,22 @@ import { BaseModule } from "../../modules/entities/Module";
 import { Store } from "../../stores/entities/Store";
 import { GitHubError, GitHubListError } from "../entities/Errors";
 import { ListPackage, Package } from "../entities/Package";
-import { moduleFile } from "../repositories/GitHubRepository";
+import { GitHubRepository, moduleFile } from "../repositories/GitHubRepository";
 
 export type ListStorePackagesError = GitHubError | "STORE_NOT_FOUND";
 
 export class ListStorePackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: RepositoryFactory,
+        private githubRepository: GitHubRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(storeId: string): Promise<Either<ListStorePackagesError, ListPackage[]>> {
         const store = await this.repositoryFactory.storeRepository(this.localInstance).getById(storeId);
         if (!store) return Either.error("STORE_NOT_FOUND");
 
-        const validation = await this.repositoryFactory.gitRepository().listBranches(store);
+        const validation = await this.githubRepository.listBranches(store);
         if (validation.isError()) return Either.error(validation.value.error);
 
         const branches = validation.value.data?.flatMap(({ name }) => name) ?? [];
@@ -33,7 +37,7 @@ export class ListStorePackagesUseCase implements UseCase {
     }
 
     private async getPackages(store: Store, userGroup: string): Promise<Either<GitHubListError, Package[]>> {
-        const validation = await this.repositoryFactory.gitRepository().listFiles(store, userGroup);
+        const validation = await this.githubRepository.listFiles(store, userGroup);
 
         if (validation.isError()) return Either.error(validation.value.error);
 
@@ -66,12 +70,12 @@ export class ListStorePackagesUseCase implements UseCase {
 
         if (!moduleFileUrl) return unknownModule;
 
-        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
+        const { encoding, content } = await this.githubRepository.request<{
             encoding: string;
             content: string;
         }>(store, moduleFileUrl);
 
-        const readFileResult = this.repositoryFactory.gitRepository().readFileContents<BaseModule>(encoding, content);
+        const readFileResult = this.githubRepository.readFileContents<BaseModule>(encoding, content);
 
         return readFileResult.matchWith({
             success: module => module,

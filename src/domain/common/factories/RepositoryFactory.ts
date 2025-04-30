@@ -12,7 +12,6 @@ import { InstanceRepository } from "../../instance/repositories/InstanceReposito
 import { MappingRepository } from "../../mapping/repositories/MappingRepository";
 import { MetadataRepository } from "../../metadata/repositories/MetadataRepository";
 import { MigrationsRepository } from "../../migrations/repositories/MigrationsRepository";
-import { GitHubRepository } from "../../packages/repositories/GitHubRepository";
 import { ReportsRepository } from "../../reports/repositories/ReportsRepository";
 import { FileRulesRepository } from "../../rules/repositories/FileRulesRepository";
 import { RulesRepository } from "../../rules/repositories/RulesRepository";
@@ -28,7 +27,6 @@ export type ClassType = new (...args: any[]) => any;
 export interface RepositoryFactory {
     bind(repository: RepositoryKeys, implementation: ClassType, tag?: string): void;
 
-    gitRepository(): GitHubRepository;
     configRepository(instance: Instance): StorageClientRepository;
     downloadRepository(): DownloadRepository;
     storeRepository(instance: Instance): StoreRepository;

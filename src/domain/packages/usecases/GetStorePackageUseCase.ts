@@ -5,22 +5,28 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { BasePackage, Package } from "../entities/Package";
+import { GitHubRepository } from "../repositories/GitHubRepository";
 
 export class GetStorePackageUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: RepositoryFactory,
+        private gitHubRepository: GitHubRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(storeId: string, packageId: string): Promise<Either<"NOT_FOUND", Package>> {
         const store = await this.repositoryFactory.storeRepository(this.localInstance).getById(storeId);
         if (!store) return Either.error("NOT_FOUND");
 
-        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
+        const { encoding, content } = await this.gitHubRepository.request<{
             encoding: string;
             content: string;
         }>(store, packageId);
 
-        const readFileResult = this.repositoryFactory
-            .gitRepository()
-            .readFileContents<MetadataPackage & { package: BasePackage }>(encoding, content);
+        const readFileResult = this.gitHubRepository.readFileContents<MetadataPackage & { package: BasePackage }>(
+            encoding,
+            content
+        );
 
         if (readFileResult.isError()) return Either.error("NOT_FOUND");
 

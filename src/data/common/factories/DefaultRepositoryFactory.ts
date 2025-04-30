@@ -23,7 +23,6 @@ import {
     MetadataRepositoryConstructor,
 } from "../../../domain/metadata/repositories/MetadataRepository";
 import { MigrationsRepositoryConstructor } from "../../../domain/migrations/repositories/MigrationsRepository";
-import { GitHubRepositoryConstructor } from "../../../domain/packages/repositories/GitHubRepository";
 import { ReportsRepositoryConstructor } from "../../../domain/reports/repositories/ReportsRepository";
 import { FileRulesRepositoryConstructor } from "../../../domain/rules/repositories/FileRulesRepository";
 import { RulesRepositoryConstructor } from "../../../domain/rules/repositories/RulesRepository";
@@ -46,9 +45,6 @@ import {
 import { UserRepositoryConstructor } from "../../../domain/user/repositories/UserRepository";
 import { cache } from "../../../utils/cache";
 
-/**
- * @todo We need to think how to refactor RepositoryFactory concept
- */
 export class DefaultRepositoryFactory implements RepositoryFactory {
     constructor(private encryptionKey: string) {}
 
@@ -68,11 +64,6 @@ export class DefaultRepositoryFactory implements RepositoryFactory {
         const Implementation = this.repositories.get(repositoryName);
         if (!Implementation) throw new Error(`Repository ${repositoryName} not found`);
         return new Implementation(...params);
-    }
-
-    @cache()
-    public gitRepository() {
-        return this.get<GitHubRepositoryConstructor>(Repositories.GitHubRepository, []);
     }
 
     @cache()

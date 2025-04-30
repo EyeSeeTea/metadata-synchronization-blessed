@@ -127,6 +127,7 @@ import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayloadBuilder";
 import { DefaultRepositoryFactory } from "../data/common/factories/DefaultRepositoryFactory";
+import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -136,34 +137,13 @@ import { DefaultRepositoryFactory } from "../data/common/factories/DefaultReposi
 export class CompositionRoot {
     private repositoryFactory: RepositoryFactory;
     private metadataPayloadBuilder: MetadataPayloadBuilder;
+    private gitHubRepository: GitHubRepository;
 
     constructor(public readonly localInstance: Instance, encryptionKey: string) {
         this.repositoryFactory = new DefaultRepositoryFactory(encryptionKey);
-        this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
-        this.repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
-        this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
-        this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
-        this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.FileRepository, FileDataRepository);
-        this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.FileRulesRepository, FileRulesDefaultRepository);
-        this.repositoryFactory.bind(Repositories.StoreRepository, StoreD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
-        this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
-        this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
-        this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
-        this.repositoryFactory.bind(Repositories.DhisReleasesRepository, DhisReleasesLocalRepository);
-        this.repositoryFactory.bind(Repositories.TableColumnsRepository, TableColumnsDataStoreRepository);
+        this.gitHubRepository = new GitHubOctokitRepository();
+
+        this.registerDynamicRepositoriesInFactory();
 
         this.metadataPayloadBuilder = new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance);
     }
@@ -242,8 +222,8 @@ export class CompositionRoot {
     public get store() {
         return getExecute({
             get: new GetStoreUseCase(this.repositoryFactory, this.localInstance),
-            update: new SaveStoreUseCase(this.repositoryFactory, this.localInstance),
-            validate: new ValidateStoreUseCase(this.repositoryFactory),
+            update: new SaveStoreUseCase(this.repositoryFactory, this.gitHubRepository, this.localInstance),
+            validate: new ValidateStoreUseCase(this.gitHubRepository),
             list: new ListStoresUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteStoreUseCase(this.repositoryFactory, this.localInstance),
             setAsDefault: new SetStoreAsDefaultUseCase(this.repositoryFactory, this.localInstance),
@@ -269,14 +249,23 @@ export class CompositionRoot {
     public get packages() {
         return getExecute({
             list: new ListPackagesUseCase(this.repositoryFactory, this.localInstance),
-            listStore: new ListStorePackagesUseCase(this.repositoryFactory, this.localInstance),
+            listStore: new ListStorePackagesUseCase(
+                this.repositoryFactory,
+                new GitHubOctokitRepository(),
+                this.localInstance
+            ),
             create: new CreatePackageUseCase(this.metadataPayloadBuilder, this.repositoryFactory, this.localInstance),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
-            getStore: new GetStorePackageUseCase(this.repositoryFactory, this.localInstance),
+            getStore: new GetStorePackageUseCase(this.repositoryFactory, this.gitHubRepository, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
-            download: new DownloadPackageUseCase(this.repositoryFactory, this.localInstance),
-            publish: new PublishStorePackageUseCase(this.repositoryFactory, this.localInstance),
-            diff: new DiffPackageUseCase(this.metadataPayloadBuilder, this.repositoryFactory, this.localInstance),
+            download: new DownloadPackageUseCase(this.repositoryFactory, this.gitHubRepository, this.localInstance),
+            publish: new PublishStorePackageUseCase(this.repositoryFactory, this.gitHubRepository, this.localInstance),
+            diff: new DiffPackageUseCase(
+                this.metadataPayloadBuilder,
+                this.repositoryFactory,
+                this.gitHubRepository,
+                this.localInstance
+            ),
             import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
             extend: new ExtendsPackagesFromPackageUseCase(this.repositoryFactory, this.localInstance),
             validate: new ValidatePackageContentsUseCase(this.repositoryFactory, this.localInstance),
@@ -455,6 +444,34 @@ export class CompositionRoot {
                 this.repositoryFactory.dhisReleasesRepository()
             ),
         });
+    }
+
+    private registerDynamicRepositoriesInFactory() {
+        this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
+        this.repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
+        this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.DownloadRepository, DownloadWebRepository);
+        this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
+        this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.FileRepository, FileDataRepository);
+        this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.FileRulesRepository, FileRulesDefaultRepository);
+        this.repositoryFactory.bind(Repositories.StoreRepository, StoreD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
+        this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
+        this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
+        this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
+        this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
+        this.repositoryFactory.bind(Repositories.DhisReleasesRepository, DhisReleasesLocalRepository);
+        this.repositoryFactory.bind(Repositories.TableColumnsRepository, TableColumnsDataStoreRepository);
     }
 }
 

@@ -6,9 +6,14 @@ import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { BasePackage } from "../entities/Package";
+import { GitHubRepository } from "../repositories/GitHubRepository";
 
 export class DownloadPackageUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: RepositoryFactory,
+        private githubRepository: GitHubRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(storeId: string | undefined, id: string, instance = this.localInstance) {
         const element = storeId
@@ -35,14 +40,16 @@ export class DownloadPackageUseCase implements UseCase {
         const store = await this.repositoryFactory.storeRepository(this.localInstance).getById(storeId);
         if (!store) return undefined;
 
-        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
+        const { encoding, content } = await this.githubRepository.request<{
             encoding: string;
             content: string;
         }>(store, url);
 
-        const validation = this.repositoryFactory
-            .gitRepository()
-            .readFileContents<MetadataPackage & { package: BasePackage }>(encoding, content);
+        const validation = this.githubRepository.readFileContents<MetadataPackage & { package: BasePackage }>(
+            encoding,
+            content
+        );
+
         if (!validation.value.data) return undefined;
 
         const { package: basePackage, ...contents } = validation.value.data;
