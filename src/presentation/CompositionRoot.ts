@@ -468,9 +468,7 @@ export class CompositionRoot {
     @cache()
     public get dhisReleases() {
         return getExecute({
-            getSupportedDhisVersions: new GetSupportedDhisVersionsUseCase(
-                this.repositoryFactory.dhisReleasesRepository()
-            ),
+            getSupportedDhisVersions: new GetSupportedDhisVersionsUseCase(new DhisReleasesLocalRepository()),
         });
     }
 
@@ -479,7 +477,6 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
         this.repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
         this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.GitHubRepository, GitHubOctokitRepository);
         this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
         this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
@@ -493,11 +490,9 @@ export class CompositionRoot {
         this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
         this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
-        this.repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
         this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
         this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
         this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
-        this.repositoryFactory.bind(Repositories.DhisReleasesRepository, DhisReleasesLocalRepository);
         this.repositoryFactory.bind(Repositories.TableColumnsRepository, TableColumnsDataStoreRepository);
     }
 }

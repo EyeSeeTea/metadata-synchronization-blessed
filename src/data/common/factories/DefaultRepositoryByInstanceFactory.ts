@@ -10,7 +10,6 @@ import {
 } from "../../../domain/common/factories/RepositoryByInstanceFactory";
 import { CustomDataRepositoryConstructor } from "../../../domain/custom-data/repository/CustomDataRepository";
 import { DataStoreMetadataRepositoryConstructor } from "../../../domain/data-store/DataStoreMetadataRepository";
-import { DhisReleasesRepositoryConstructor } from "../../../domain/dhis-releases/repository/DhisReleasesRepository";
 import { EventsRepository, EventsRepositoryConstructor } from "../../../domain/events/repositories/EventsRepository";
 import { DataSource } from "../../../domain/instance/entities/DataSource";
 import { Instance } from "../../../domain/instance/entities/Instance";
@@ -177,10 +176,5 @@ export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceF
     public settingsRepository(instance: Instance) {
         const config = this.configRepository(instance);
         return this.get<SettingsRepositoryConstructor>(Repositories.SettingsRepository, [config]);
-    }
-
-    @cache()
-    public dhisReleasesRepository() {
-        return this.get<DhisReleasesRepositoryConstructor>(Repositories.DhisReleasesRepository, []);
     }
 }

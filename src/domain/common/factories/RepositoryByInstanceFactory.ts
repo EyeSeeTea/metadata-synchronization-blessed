@@ -2,7 +2,6 @@ import { AggregatedRepository } from "../../aggregated/repositories/AggregatedRe
 import { StorageClientRepository } from "../../storage-client-config/repositories/StorageClientRepository";
 import { CustomDataRepository } from "../../custom-data/repository/CustomDataRepository";
 import { DataStoreMetadataRepository } from "../../data-store/DataStoreMetadataRepository";
-import { DhisReleasesRepository } from "../../dhis-releases/repository/DhisReleasesRepository";
 import { EventsRepository } from "../../events/repositories/EventsRepository";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
@@ -42,7 +41,6 @@ export interface RepositoryByInstanceFactory {
     migrationsRepository(instance: Instance): MigrationsRepository;
     mappingRepository(instance: Instance): MappingRepository;
     settingsRepository(instance: Instance): SettingsRepository;
-    dhisReleasesRepository(): DhisReleasesRepository;
 }
 
 export type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
