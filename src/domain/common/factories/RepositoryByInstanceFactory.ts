@@ -4,7 +4,6 @@ import { CustomDataRepository } from "../../custom-data/repository/CustomDataRep
 import { DataStoreMetadataRepository } from "../../data-store/DataStoreMetadataRepository";
 import { DhisReleasesRepository } from "../../dhis-releases/repository/DhisReleasesRepository";
 import { EventsRepository } from "../../events/repositories/EventsRepository";
-import { FileRepository } from "../../file/repositories/FileRepository";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceFileRepository } from "../../instance/repositories/InstanceFileRepository";
@@ -37,7 +36,6 @@ export interface RepositoryByInstanceFactory {
     dataStoreMetadataRepository(instance: Instance): DataStoreMetadataRepository;
     teisRepository(instance: Instance): TEIRepository;
     reportsRepository(instance: Instance): ReportsRepository;
-    fileRepository(): FileRepository;
     rulesRepository(instance: Instance): RulesRepository;
     fileRulesRepository(instance: Instance): FileRulesRepository;
     customDataRepository(instance: Instance): CustomDataRepository;

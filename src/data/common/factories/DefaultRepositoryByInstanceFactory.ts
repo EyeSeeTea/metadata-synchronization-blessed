@@ -12,7 +12,6 @@ import { CustomDataRepositoryConstructor } from "../../../domain/custom-data/rep
 import { DataStoreMetadataRepositoryConstructor } from "../../../domain/data-store/DataStoreMetadataRepository";
 import { DhisReleasesRepositoryConstructor } from "../../../domain/dhis-releases/repository/DhisReleasesRepository";
 import { EventsRepository, EventsRepositoryConstructor } from "../../../domain/events/repositories/EventsRepository";
-import { FileRepositoryConstructor } from "../../../domain/file/repositories/FileRepository";
 import { DataSource } from "../../../domain/instance/entities/DataSource";
 import { Instance } from "../../../domain/instance/entities/Instance";
 import { InstanceFileRepositoryConstructor } from "../../../domain/instance/repositories/InstanceFileRepository";
@@ -39,6 +38,7 @@ import {
 } from "../../../domain/tracked-entity-instances/repositories/TEIRepository";
 import { UserRepositoryConstructor } from "../../../domain/user/repositories/UserRepository";
 import { cache } from "../../../utils/cache";
+import { FileDataRepository } from "../../file/FileDataRepository";
 import { TransformationD2ApiRepository } from "../../transformations/TransformationD2ApiRepository";
 
 export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceFactory {
@@ -139,11 +139,6 @@ export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceF
     }
 
     @cache()
-    public fileRepository() {
-        return this.get<FileRepositoryConstructor>(Repositories.FileRepository, []);
-    }
-
-    @cache()
     public rulesRepository(instance: Instance) {
         const config = this.configRepository(instance);
         const user = this.userRepository(instance);
@@ -154,7 +149,7 @@ export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceF
     @cache()
     public fileRulesRepository(instance: Instance) {
         const user = this.userRepository(instance);
-        const file = this.fileRepository();
+        const file = new FileDataRepository();
 
         return this.get<FileRulesRepositoryConstructor>(Repositories.FileRulesRepository, [user, file]);
     }
