@@ -20,6 +20,7 @@ import { PayloadMapper } from "../mapper/PayloadMapper";
 import { GenericSyncUseCase } from "./GenericSyncUseCase";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 
 type DownloadErrors = string[];
 
@@ -42,6 +43,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         private metadataPayloadBuilder: MetadataPayloadBuilder,
         private repositoryFactory: RepositoryByInstanceFactory,
         private downloadRepository: DownloadRepository,
+        private transformationRepository: TransformationRepository,
         private localInstance: Instance
     ) {}
 
@@ -69,9 +71,11 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         const files = _.compact(
             mappedData.map(item => {
                 if (typeof item === "string") return undefined;
-                const payload = this.repositoryFactory
-                    .transformationRepository()
-                    .mapPackageTo(item.apiVersion, item.content, metadataTransformations);
+                const payload = this.transformationRepository.mapPackageTo(
+                    item.apiVersion,
+                    item.content,
+                    metadataTransformations
+                );
 
                 return { name: item.name, content: payload };
             })

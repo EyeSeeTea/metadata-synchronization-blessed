@@ -68,11 +68,6 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected getTransformationRepository() {
-        return this.repositoryFactory.transformationRepository();
-    }
-
-    @cache()
     protected async getMetadataRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
         return this.repositoryFactory.metadataRepository(remoteInstance ?? defaultInstance);

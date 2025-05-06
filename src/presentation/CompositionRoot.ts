@@ -129,6 +129,7 @@ import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayl
 import { DefaultRepositoryByInstanceFactory } from "../data/common/factories/DefaultRepositoryByInstanceFactory";
 import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
 import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
+import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -140,11 +141,13 @@ export class CompositionRoot {
     private metadataPayloadBuilder: MetadataPayloadBuilder;
     private gitHubRepository: GitHubRepository;
     private downloadRepository: DownloadRepository;
+    private transformationRepository: TransformationRepository;
 
     constructor(public readonly localInstance: Instance, encryptionKey: string) {
         this.repositoryFactory = new DefaultRepositoryByInstanceFactory(encryptionKey);
         this.gitHubRepository = new GitHubOctokitRepository();
         this.downloadRepository = new DownloadWebRepository();
+        this.transformationRepository = new TransformationD2ApiRepository();
 
         this.registerDynamicRepositoriesInFactory();
 
@@ -258,7 +261,12 @@ export class CompositionRoot {
                 new GitHubOctokitRepository(),
                 this.localInstance
             ),
-            create: new CreatePackageUseCase(this.metadataPayloadBuilder, this.repositoryFactory, this.localInstance),
+            create: new CreatePackageUseCase(
+                this.metadataPayloadBuilder,
+                this.repositoryFactory,
+                this.transformationRepository,
+                this.localInstance
+            ),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
             getStore: new GetStorePackageUseCase(this.repositoryFactory, this.gitHubRepository, this.localInstance),
             delete: new DeletePackageUseCase(this.repositoryFactory, this.localInstance),
@@ -276,7 +284,11 @@ export class CompositionRoot {
                 this.localInstance
             ),
             import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
-            extend: new ExtendsPackagesFromPackageUseCase(this.repositoryFactory, this.localInstance),
+            extend: new ExtendsPackagesFromPackageUseCase(
+                this.repositoryFactory,
+                this.transformationRepository,
+                this.localInstance
+            ),
             validate: new ValidatePackageContentsUseCase(this.repositoryFactory, this.localInstance),
         });
     }
@@ -374,6 +386,7 @@ export class CompositionRoot {
             downloadPayloads: new DownloadPayloadUseCase(
                 this.repositoryFactory,
                 this.downloadRepository,
+                this.transformationRepository,
                 this.localInstance
             ),
         });
@@ -393,6 +406,7 @@ export class CompositionRoot {
                 this.metadataPayloadBuilder,
                 this.repositoryFactory,
                 this.downloadRepository,
+                this.transformationRepository,
                 this.localInstance
             ),
         });

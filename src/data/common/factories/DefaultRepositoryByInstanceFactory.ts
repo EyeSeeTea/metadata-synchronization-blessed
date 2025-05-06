@@ -37,12 +37,9 @@ import {
     TEIRepository,
     TEIRepositoryConstructor,
 } from "../../../domain/tracked-entity-instances/repositories/TEIRepository";
-import {
-    TransformationRepository,
-    TransformationRepositoryConstructor,
-} from "../../../domain/transformations/repositories/TransformationRepository";
 import { UserRepositoryConstructor } from "../../../domain/user/repositories/UserRepository";
 import { cache } from "../../../utils/cache";
+import { TransformationD2ApiRepository } from "../../transformations/TransformationD2ApiRepository";
 
 export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceFactory {
     constructor(private encryptionKey: string) {}
@@ -98,17 +95,12 @@ export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceF
     }
 
     @cache()
-    public transformationRepository(): TransformationRepository {
-        return this.get<TransformationRepositoryConstructor>(Repositories.TransformationRepository, []);
-    }
-
-    @cache()
     public metadataRepository(instance: DataSource): MetadataRepository {
         const tag = instance.type === "json" ? "json" : undefined;
 
         return this.get<MetadataRepositoryConstructor>(
             Repositories.MetadataRepository,
-            [instance, this.transformationRepository()],
+            [instance, new TransformationD2ApiRepository()],
             tag
         );
     }

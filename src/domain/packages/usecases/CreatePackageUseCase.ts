@@ -8,12 +8,14 @@ import { Instance } from "../../instance/entities/Instance";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "../../modules/entities/Module";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {
     constructor(
         private metadataPayloadBuilder: MetadataPayloadBuilder,
         private repositoryFactory: RepositoryByInstanceFactory,
+        private transformationRepository: TransformationRepository,
         private localInstance: Instance
     ) {}
 
@@ -38,9 +40,11 @@ export class CreatePackageUseCase implements UseCase {
 
         const basePayload = contents ? contents : this.metadataPayloadBuilder.build(syncBuilder);
 
-        const versionedPayload = this.repositoryFactory
-            .transformationRepository()
-            .mapPackageTo(apiVersion, basePayload, metadataTransformations);
+        const versionedPayload = this.transformationRepository.mapPackageTo(
+            apiVersion,
+            basePayload,
+            metadataTransformations
+        );
 
         const payload = sourcePackage.update({ contents: versionedPayload, dhisVersion });
 

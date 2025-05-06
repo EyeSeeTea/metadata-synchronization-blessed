@@ -19,7 +19,6 @@ import { SettingsRepository } from "../../settings/SettingsRepository";
 import { StoreRepository } from "../../stores/repositories/StoreRepository";
 import { TableColumnsRepository } from "../../table-columns/repositories/TableColumnsRepository";
 import { TEIRepository } from "../../tracked-entity-instances/repositories/TEIRepository";
-import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { UserRepository } from "../../user/repositories/UserRepository";
 
 export type ClassType = new (...args: any[]) => any;
@@ -31,7 +30,6 @@ export interface RepositoryByInstanceFactory {
     instanceRepository(instance: Instance): InstanceRepository;
     instanceFileRepository(instance: Instance): InstanceFileRepository;
     userRepository(instance: Instance): UserRepository;
-    transformationRepository(): TransformationRepository;
     metadataRepository(instance: DataSource): MetadataRepository;
     aggregatedRepository(instance: Instance): AggregatedRepository;
     eventsRepository(instance: Instance): EventsRepository;

@@ -8,12 +8,14 @@ import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryBy
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 
 export class DownloadPayloadUseCase implements UseCase {
     constructor(
         private repositoryFactory: RepositoryByInstanceFactory,
         private downloadRepository: DownloadRepository,
+        private transformationRepository: TransformationRepository,
         private localInstance: Instance
     ) {}
 
@@ -31,9 +33,7 @@ export class DownloadPayloadUseCase implements UseCase {
                 const apiVersion = instance?.apiVersion;
 
                 const payload = apiVersion
-                    ? this.repositoryFactory
-                          .transformationRepository()
-                          .mapPackageTo(apiVersion, result.payload, metadataTransformations)
+                    ? this.transformationRepository.mapPackageTo(apiVersion, result.payload, metadataTransformations)
                     : result.payload;
 
                 const downloadItem = {
