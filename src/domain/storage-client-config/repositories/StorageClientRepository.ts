@@ -1,11 +1,6 @@
 import { FutureData } from "../../common/entities/Future";
-import { Instance } from "../../instance/entities/Instance";
 import { StorageClient } from "../../storage/repositories/StorageClient";
 import { AppStorageType } from "../entities/StorageConfig";
-
-export interface StorageClientRepositoryConstructor {
-    new (instance: Instance): StorageClientRepository;
-}
 
 export interface StorageClientRepository {
     getStorageClient(): FutureData<StorageClient>; //This returns the default storage client

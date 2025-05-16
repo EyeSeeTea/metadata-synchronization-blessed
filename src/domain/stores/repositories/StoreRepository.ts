@@ -1,9 +1,4 @@
-import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 import { Store } from "../entities/Store";
-
-export interface StoreRepositoryConstructor {
-    new (storageClientFactory: StorageClientFactory): StoreRepository;
-}
 
 export interface StoreRepository {
     list(): Promise<Store[]>;

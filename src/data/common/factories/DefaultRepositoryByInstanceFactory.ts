@@ -1,180 +1,143 @@
+import { AggregatedRepository } from "../../../domain/aggregated/repositories/AggregatedRepository";
 import {
-    AggregatedRepository,
-    AggregatedRepositoryConstructor,
-} from "../../../domain/aggregated/repositories/AggregatedRepository";
-import {
-    ClassType,
     Repositories,
     RepositoryByInstanceFactory,
+    RepositoryByInstanceCreator,
     RepositoryKeys,
+    RepositoryByDataSourceCreator,
 } from "../../../domain/common/factories/RepositoryByInstanceFactory";
-import { CustomDataRepositoryConstructor } from "../../../domain/custom-data/repository/CustomDataRepository";
-import { DataStoreMetadataRepositoryConstructor } from "../../../domain/data-store/DataStoreMetadataRepository";
-import { EventsRepository, EventsRepositoryConstructor } from "../../../domain/events/repositories/EventsRepository";
+import { CustomDataRepository } from "../../../domain/custom-data/repository/CustomDataRepository";
+import { DataStoreMetadataRepository } from "../../../domain/data-store/DataStoreMetadataRepository";
+import { EventsRepository } from "../../../domain/events/repositories/EventsRepository";
 import { DataSource } from "../../../domain/instance/entities/DataSource";
 import { Instance } from "../../../domain/instance/entities/Instance";
-import { InstanceFileRepositoryConstructor } from "../../../domain/instance/repositories/InstanceFileRepository";
-import { InstanceRepositoryConstructor } from "../../../domain/instance/repositories/InstanceRepository";
-import { MappingRepositoryConstructor } from "../../../domain/mapping/repositories/MappingRepository";
-import {
-    MetadataRepository,
-    MetadataRepositoryConstructor,
-} from "../../../domain/metadata/repositories/MetadataRepository";
-import { MigrationsRepositoryConstructor } from "../../../domain/migrations/repositories/MigrationsRepository";
-import { ReportsRepositoryConstructor } from "../../../domain/reports/repositories/ReportsRepository";
-import { FileRulesRepositoryConstructor } from "../../../domain/rules/repositories/FileRulesRepository";
-import { RulesRepositoryConstructor } from "../../../domain/rules/repositories/RulesRepository";
-import { SettingsRepositoryConstructor } from "../../../domain/settings/SettingsRepository";
-import { StorageClientRepositoryConstructor } from "../../../domain/storage-client-config/repositories/StorageClientRepository";
-import { StoreRepositoryConstructor } from "../../../domain/stores/repositories/StoreRepository";
-import {
-    TableColumnsRepository,
-    TableColumnsRepositoryConstructor,
-} from "../../../domain/table-columns/repositories/TableColumnsRepository";
-import {
-    TEIRepository,
-    TEIRepositoryConstructor,
-} from "../../../domain/tracked-entity-instances/repositories/TEIRepository";
-import { UserRepositoryConstructor } from "../../../domain/user/repositories/UserRepository";
-import { cache } from "../../../utils/cache";
-import { FileDataRepository } from "../../file/FileDataRepository";
-import { TransformationD2ApiRepository } from "../../transformations/TransformationD2ApiRepository";
-
+import { InstanceFileRepository } from "../../../domain/instance/repositories/InstanceFileRepository";
+import { InstanceRepository } from "../../../domain/instance/repositories/InstanceRepository";
+import { MappingRepository } from "../../../domain/mapping/repositories/MappingRepository";
+import { MetadataRepository } from "../../../domain/metadata/repositories/MetadataRepository";
+import { MigrationsRepository } from "../../../domain/migrations/repositories/MigrationsRepository";
+import { ReportsRepository } from "../../../domain/reports/repositories/ReportsRepository";
+import { FileRulesRepository } from "../../../domain/rules/repositories/FileRulesRepository";
+import { RulesRepository } from "../../../domain/rules/repositories/RulesRepository";
+import { SettingsRepository } from "../../../domain/settings/SettingsRepository";
+import { StorageClientRepository } from "../../../domain/storage-client-config/repositories/StorageClientRepository";
+import { StoreRepository } from "../../../domain/stores/repositories/StoreRepository";
+import { TableColumnsRepository } from "../../../domain/table-columns/repositories/TableColumnsRepository";
+import { TEIRepository } from "../../../domain/tracked-entity-instances/repositories/TEIRepository";
+import { UserRepository } from "../../../domain/user/repositories/UserRepository";
 export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceFactory {
-    constructor(private encryptionKey: string) {}
+    private repositoryCreators = new Map<string, RepositoryByInstanceCreator<unknown>>();
 
-    private repositories: Map<string, ClassType> = new Map(); // TODO: TS 4.1 `${RepositoryKeys}-${string}`
+    private repositoryCreatorsByDataSource = new Map<string, RepositoryByDataSourceCreator<unknown>>();
+    private createdReposities = new Map<string, unknown>();
 
-    public bind(repository: RepositoryKeys, implementation: ClassType, tag = "default") {
-        this.repositories.set(`${repository}-${tag}`, implementation);
+    public bind<T>(key: RepositoryKeys, creator: RepositoryByInstanceCreator<T>, tag = "default") {
+        this.repositoryCreators.set(`${key}-${tag}`, creator);
     }
 
-    @cache()
-    public get<Constructor extends ClassType, Key extends string = string>(
-        repository: RepositoryKeys,
-        params: ConstructorParameters<Constructor>,
-        tag?: Key
-    ): InstanceType<Constructor> {
-        const repositoryName = `${repository}-${tag ?? "default"}`;
-        const Implementation = this.repositories.get(repositoryName);
-        if (!Implementation) throw new Error(`Repository ${repositoryName} not found`);
-        return new Implementation(...params);
+    public bindByDataSource<T>(key: RepositoryKeys, creator: RepositoryByDataSourceCreator<T>, tag = "default") {
+        this.repositoryCreatorsByDataSource.set(`${key}-${tag}`, creator);
     }
 
-    @cache()
-    public configRepository(instance: Instance) {
-        return this.get<StorageClientRepositoryConstructor>(Repositories.ConfigRepository, [instance]);
+    public configRepository(instance: Instance): StorageClientRepository {
+        return this.get(Repositories.ConfigRepository, instance);
     }
 
-    @cache()
-    public storeRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-        return this.get<StoreRepositoryConstructor>(Repositories.StoreRepository, [config]);
+    public storeRepository(instance: Instance): StoreRepository {
+        return this.get(Repositories.StoreRepository, instance);
     }
 
-    @cache()
-    public instanceRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-
-        return this.get<InstanceRepositoryConstructor>(Repositories.InstanceRepository, [
-            config,
-            instance,
-            this.encryptionKey,
-        ]);
+    public instanceRepository(instance: Instance): InstanceRepository {
+        return this.get(Repositories.InstanceRepository, instance);
     }
 
-    @cache()
-    public instanceFileRepository(instance: Instance) {
-        return this.get<InstanceFileRepositoryConstructor>(Repositories.InstanceFileRepository, [instance]);
+    public instanceFileRepository(instance: Instance): InstanceFileRepository {
+        return this.get(Repositories.InstanceFileRepository, instance);
     }
 
-    @cache()
-    public userRepository(instance: Instance) {
-        return this.get<UserRepositoryConstructor>(Repositories.UserRepository, [instance]);
+    public userRepository(instance: Instance): UserRepository {
+        return this.get(Repositories.UserRepository, instance);
     }
 
-    @cache()
     public metadataRepository(instance: DataSource): MetadataRepository {
         const tag = instance.type === "json" ? "json" : undefined;
 
-        return this.get<MetadataRepositoryConstructor>(
-            Repositories.MetadataRepository,
-            [instance, new TransformationD2ApiRepository()],
-            tag
-        );
+        return this.getByDataSource(Repositories.MetadataRepository, instance, tag);
     }
 
-    @cache()
     public aggregatedRepository(instance: Instance): AggregatedRepository {
-        return this.get<AggregatedRepositoryConstructor>(Repositories.AggregatedRepository, [instance]);
+        return this.get(Repositories.AggregatedRepository, instance);
     }
 
-    @cache()
     public eventsRepository(instance: Instance): EventsRepository {
-        return this.get<EventsRepositoryConstructor>(Repositories.EventsRepository, [instance]);
+        return this.get(Repositories.EventsRepository, instance);
     }
 
-    @cache()
     public tableColumnsRepository(instance: Instance): TableColumnsRepository {
-        const config = this.configRepository(instance);
-
-        return this.get<TableColumnsRepositoryConstructor>(Repositories.TableColumnsRepository, [config]);
+        return this.get(Repositories.TableColumnsRepository, instance);
     }
 
-    @cache()
-    public dataStoreMetadataRepository(instance: Instance) {
-        return this.get<DataStoreMetadataRepositoryConstructor>(Repositories.DataStoreMetadataRepository, [instance]);
+    public dataStoreMetadataRepository(instance: Instance): DataStoreMetadataRepository {
+        return this.get(Repositories.DataStoreMetadataRepository, instance);
     }
 
-    @cache()
     public teisRepository(instance: Instance): TEIRepository {
-        return this.get<TEIRepositoryConstructor>(Repositories.TEIsRepository, [instance]);
+        return this.get(Repositories.TEIsRepository, instance);
     }
 
-    @cache()
-    public reportsRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-        return this.get<ReportsRepositoryConstructor>(Repositories.ReportsRepository, [config]);
+    public reportsRepository(instance: Instance): ReportsRepository {
+        return this.get(Repositories.ReportsRepository, instance);
     }
 
-    @cache()
-    public rulesRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-        const user = this.userRepository(instance);
-
-        return this.get<RulesRepositoryConstructor>(Repositories.RulesRepository, [config, user]);
+    public rulesRepository(instance: Instance): RulesRepository {
+        return this.get(Repositories.RulesRepository, instance);
     }
 
-    @cache()
-    public fileRulesRepository(instance: Instance) {
-        const user = this.userRepository(instance);
-        const file = new FileDataRepository();
-
-        return this.get<FileRulesRepositoryConstructor>(Repositories.FileRulesRepository, [user, file]);
+    public fileRulesRepository(instance: Instance): FileRulesRepository {
+        return this.get(Repositories.FileRulesRepository, instance);
     }
 
-    @cache()
-    public customDataRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-        return this.get<CustomDataRepositoryConstructor>(Repositories.CustomDataRepository, [config]);
+    public customDataRepository(instance: Instance): CustomDataRepository {
+        return this.get(Repositories.CustomDataRepository, instance);
     }
 
-    @cache()
-    public migrationsRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-        return this.get<MigrationsRepositoryConstructor>(Repositories.MigrationsRepository, [config, instance]);
+    public migrationsRepository(instance: Instance): MigrationsRepository {
+        return this.get(Repositories.MigrationsRepository, instance);
     }
 
-    @cache()
-    public mappingRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-
-        return this.get<MappingRepositoryConstructor>(Repositories.MappingRepository, [config]);
+    public mappingRepository(instance: Instance): MappingRepository {
+        return this.get(Repositories.MappingRepository, instance);
     }
 
-    @cache()
-    public settingsRepository(instance: Instance) {
-        const config = this.configRepository(instance);
-        return this.get<SettingsRepositoryConstructor>(Repositories.SettingsRepository, [config]);
+    public settingsRepository(instance: Instance): SettingsRepository {
+        return this.get(Repositories.SettingsRepository, instance);
+    }
+
+    private get<T>(key: RepositoryKeys, instance: Instance, tag = "default"): T {
+        const creator = this.repositoryCreators.get(`${key}-${tag}`);
+
+        if (!creator) {
+            throw new Error(`Dependency ${key} is not registered`);
+        }
+
+        const createdRepository = this.createdReposities.get(`${key}-${tag}`) || creator(instance);
+
+        this.createdReposities.set(key, createdRepository);
+
+        return createdRepository as T;
+    }
+
+    private getByDataSource<T>(key: RepositoryKeys, instance: DataSource, tag = "default"): T {
+        const creator = this.repositoryCreatorsByDataSource.get(`${key}-${tag}`);
+
+        if (!creator) {
+            throw new Error(`Dependency ${key} is not registered`);
+        }
+
+        const createdRepository = this.createdReposities.get(`${key}-${tag}`) || creator(instance);
+
+        this.createdReposities.set(key, createdRepository);
+
+        return createdRepository as T;
     }
 }

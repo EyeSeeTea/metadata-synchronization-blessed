@@ -2,21 +2,12 @@ import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import {
-    Repositories,
-    RepositoryByInstanceFactory,
-} from "../../../../domain/common/factories/RepositoryByInstanceFactory";
+import { RepositoryByInstanceFactory } from "../../../../domain/common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
+import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
-import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
 import { DefaultRepositoryByInstanceFactory } from "../../../common/factories/DefaultRepositoryByInstanceFactory";
-import { StorageClientD2Repository } from "../../../config/StorageClientD2Repository";
-import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { InstanceFileD2Repository } from "../../../instance/InstanceFileD2Repository";
-import { MappingD2ApiRepository } from "../../../mapping/MappingD2ApiRepository";
-import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
-import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -340,14 +331,10 @@ describe("Sync aggregated", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryByInstanceFactory = new DefaultRepositoryByInstanceFactory("");
-    repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
-    repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-    repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
-    repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
-    repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
-    repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
+    const repositoryFactory: RepositoryByInstanceFactory = new DefaultRepositoryByInstanceFactory();
+
+    registerDynamicRepositoriesInFactory(repositoryFactory);
+
     return repositoryFactory;
 }
 

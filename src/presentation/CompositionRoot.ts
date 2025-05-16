@@ -130,6 +130,7 @@ import { DefaultRepositoryByInstanceFactory } from "../data/common/factories/Def
 import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
 import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
 import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
+import { DataSource } from "../domain/instance/entities/DataSource";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -143,13 +144,13 @@ export class CompositionRoot {
     private downloadRepository: DownloadRepository;
     private transformationRepository: TransformationRepository;
 
-    constructor(public readonly localInstance: Instance, encryptionKey: string) {
-        this.repositoryFactory = new DefaultRepositoryByInstanceFactory(encryptionKey);
+    constructor(public readonly localInstance: Instance, private encryptionKey: string) {
+        this.repositoryFactory = new DefaultRepositoryByInstanceFactory();
         this.gitHubRepository = new GitHubOctokitRepository();
         this.downloadRepository = new DownloadWebRepository();
         this.transformationRepository = new TransformationD2ApiRepository();
 
-        this.registerDynamicRepositoriesInFactory();
+        registerDynamicRepositoriesInFactory(this.repositoryFactory, encryptionKey);
 
         this.metadataPayloadBuilder = new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance);
     }
@@ -471,30 +472,6 @@ export class CompositionRoot {
             getSupportedDhisVersions: new GetSupportedDhisVersionsUseCase(new DhisReleasesLocalRepository()),
         });
     }
-
-    private registerDynamicRepositoriesInFactory() {
-        this.repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
-        this.repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
-        this.repositoryFactory.bind(Repositories.CustomDataRepository, CustomDataD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.FileRepository, FileDataRepository);
-        this.repositoryFactory.bind(Repositories.ReportsRepository, ReportsD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.RulesRepository, RulesD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.FileRulesRepository, FileRulesDefaultRepository);
-        this.repositoryFactory.bind(Repositories.StoreRepository, StoreD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.SystemInfoRepository, SystemInfoD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.MigrationsRepository, MigrationsAppRepository);
-        this.repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
-        this.repositoryFactory.bind(Repositories.UserRepository, UserD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.MetadataRepository, MetadataJSONRepository, "json");
-        this.repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.SettingsRepository, SettingsD2ApiRepository);
-        this.repositoryFactory.bind(Repositories.DataStoreMetadataRepository, DataStoreMetadataD2Repository);
-        this.repositoryFactory.bind(Repositories.TableColumnsRepository, TableColumnsDataStoreRepository);
-    }
 }
 
 function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof UseCases>(
@@ -509,4 +486,108 @@ function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof Use
         output[key] = execute;
         return output;
     }, initialOutput);
+}
+
+export function registerDynamicRepositoriesInFactory(
+    repositoryFactory: RepositoryByInstanceFactory,
+    encryptionKey = ""
+) {
+    repositoryFactory.bind(
+        Repositories.ConfigRepository,
+        (instance: Instance) => new StorageClientD2Repository(instance)
+    );
+
+    repositoryFactory.bind(Repositories.StoreRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+
+        return new StoreD2ApiRepository(storageClient);
+    });
+
+    repositoryFactory.bind(Repositories.InstanceRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+
+        return new InstanceD2ApiRepository(storageClient, instance, encryptionKey);
+    });
+
+    repositoryFactory.bind(
+        Repositories.InstanceFileRepository,
+        (instance: Instance) => new InstanceFileD2Repository(instance)
+    );
+
+    repositoryFactory.bind(Repositories.UserRepository, (instance: Instance) => new UserD2ApiRepository(instance));
+
+    repositoryFactory.bindByDataSource(
+        Repositories.MetadataRepository,
+        (instance: DataSource) => new MetadataD2ApiRepository(instance, new TransformationD2ApiRepository())
+    );
+
+    repositoryFactory.bindByDataSource(
+        Repositories.MetadataRepository,
+        (instance: DataSource) => new MetadataJSONRepository(instance, new TransformationD2ApiRepository()),
+        "json"
+    );
+
+    repositoryFactory.bind(
+        Repositories.AggregatedRepository,
+        (instance: Instance) => new AggregatedD2ApiRepository(instance)
+    );
+
+    repositoryFactory.bind(Repositories.EventsRepository, (instance: Instance) => new EventsD2ApiRepository(instance));
+
+    repositoryFactory.bind(Repositories.TableColumnsRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+
+        return new TableColumnsDataStoreRepository(storageClient);
+    });
+
+    repositoryFactory.bind(Repositories.TEIsRepository, (instance: Instance) => new TEID2ApiRepository(instance));
+
+    repositoryFactory.bind(Repositories.ReportsRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+
+        return new ReportsD2ApiRepository(storageClient);
+    });
+
+    repositoryFactory.bind(Repositories.RulesRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+        const user = repositoryFactory.userRepository(instance);
+
+        return new RulesD2ApiRepository(storageClient, user);
+    });
+
+    repositoryFactory.bind(Repositories.FileRulesRepository, (instance: Instance) => {
+        const file = new FileDataRepository();
+        const user = repositoryFactory.userRepository(instance);
+
+        return new FileRulesDefaultRepository(user, file);
+    });
+
+    repositoryFactory.bind(Repositories.CustomDataRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+
+        return new CustomDataD2ApiRepository(storageClient);
+    });
+
+    repositoryFactory.bind(Repositories.MigrationsRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+
+        return new MigrationsAppRepository(storageClient, instance);
+    });
+
+    repositoryFactory.bind(Repositories.MappingRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+
+        return new MappingD2ApiRepository(storageClient);
+    });
+
+    repositoryFactory.bind(Repositories.SettingsRepository, (instance: Instance) => {
+        const storageClient = repositoryFactory.configRepository(instance);
+
+        return new SettingsD2ApiRepository(storageClient);
+    });
+
+    repositoryFactory.bind(
+        Repositories.DataStoreMetadataRepository,
+        (instance: Instance) => new DataStoreMetadataD2Repository(instance)
+    );
 }

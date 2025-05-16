@@ -1,20 +1,14 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import {
-    Repositories,
-    RepositoryByInstanceFactory,
-} from "../../../../domain/common/factories/RepositoryByInstanceFactory";
+import { RepositoryByInstanceFactory } from "../../../../domain/common/factories/RepositoryByInstanceFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataPayloadBuilder } from "../../../../domain/metadata/builders/MetadataPayloadBuilder";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
+import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
 import { DefaultRepositoryByInstanceFactory } from "../../../common/factories/DefaultRepositoryByInstanceFactory";
-import { StorageClientD2Repository } from "../../../config/StorageClientD2Repository";
-import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
-import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -222,11 +216,10 @@ describe("Sync metadata", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryByInstanceFactory = new DefaultRepositoryByInstanceFactory("");
-    repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.ConfigRepository, StorageClientD2Repository);
-    repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-    repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
+    const repositoryFactory: RepositoryByInstanceFactory = new DefaultRepositoryByInstanceFactory();
+
+    registerDynamicRepositoriesInFactory(repositoryFactory);
+
     return repositoryFactory;
 }
 

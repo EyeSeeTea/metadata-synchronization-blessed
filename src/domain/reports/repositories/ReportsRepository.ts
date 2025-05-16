@@ -1,10 +1,5 @@
-import { StorageClientFactory } from "../../../data/config/StorageClientFactory";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 import { SynchronizationResult } from "../entities/SynchronizationResult";
-
-export interface ReportsRepositoryConstructor {
-    new (storageClientFactory: StorageClientFactory): ReportsRepository;
-}
 
 export interface ReportsRepository {
     getById(id: string): Promise<SynchronizationReport | undefined>;

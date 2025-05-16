@@ -20,8 +20,16 @@ import { TEIRepository } from "../../tracked-entity-instances/repositories/TEIRe
 import { UserRepository } from "../../user/repositories/UserRepository";
 
 export type ClassType = new (...args: any[]) => any;
+export type RepositoryByInstanceCreator<T> = (instance: Instance) => T;
+export type RepositoryByDataSourceCreator<T> = (instance: DataSource) => T;
+
 export interface RepositoryByInstanceFactory {
-    bind(repository: RepositoryKeys, implementation: ClassType, tag?: string): void;
+    bind<T>(repository: RepositoryKeys, implementation: RepositoryByInstanceCreator<T>, tag?: string): void;
+    bindByDataSource<T>(
+        repository: RepositoryKeys,
+        implementation: RepositoryByDataSourceCreator<T>,
+        tag?: string
+    ): void;
 
     configRepository(instance: Instance): StorageClientRepository;
     storeRepository(instance: Instance): StoreRepository;
@@ -56,11 +64,9 @@ export const Repositories = {
     EventsRepository: "eventsRepository",
     MetadataRepository: "metadataRepository",
     TransformationRepository: "transformationsRepository",
-    FileRepository: "fileRepository",
     ReportsRepository: "reportsRepository",
     RulesRepository: "rulesRepository",
     FileRulesRepository: "fileRulesRepository",
-    SystemInfoRepository: "systemInfoRepository",
     MigrationsRepository: "migrationsRepository",
     TEIsRepository: "teisRepository",
     UserRepository: "userRepository",
