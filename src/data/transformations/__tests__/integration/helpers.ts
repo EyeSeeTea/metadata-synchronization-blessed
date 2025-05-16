@@ -9,10 +9,9 @@ import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/Metada
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
-import { DefaultDynamicRepositoryFactory } from "../../../common/factories/DefaultDynamicRepositoryFactory";
 
 export function buildRepositoryFactory() {
-    const repositoryFactory: DynamicRepositoryFactory = new DefaultDynamicRepositoryFactory();
+    const repositoryFactory: DynamicRepositoryFactory = new DynamicRepositoryFactory();
 
     registerDynamicRepositoriesInFactory(repositoryFactory);
 

@@ -6,7 +6,6 @@ import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSync
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
-import { DefaultDynamicRepositoryFactory } from "../../../common/factories/DefaultDynamicRepositoryFactory";
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 
 const repositoryFactory = buildRepositoryFactory();
@@ -379,7 +378,7 @@ describe("Sync events", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: DynamicRepositoryFactory = new DefaultDynamicRepositoryFactory();
+    const repositoryFactory: DynamicRepositoryFactory = new DynamicRepositoryFactory();
 
     registerDynamicRepositoriesInFactory(repositoryFactory);
 

@@ -126,7 +126,6 @@ import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayloadBuilder";
-import { DefaultDynamicRepositoryFactory } from "../data/common/factories/DefaultDynamicRepositoryFactory";
 import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
 import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
 import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
@@ -145,7 +144,7 @@ export class CompositionRoot {
     private transformationRepository: TransformationRepository;
 
     constructor(public readonly localInstance: Instance, private encryptionKey: string) {
-        this.repositoryFactory = new DefaultDynamicRepositoryFactory();
+        this.repositoryFactory = new DynamicRepositoryFactory();
         this.gitHubRepository = new GitHubOctokitRepository();
         this.downloadRepository = new DownloadWebRepository();
         this.transformationRepository = new TransformationD2ApiRepository();

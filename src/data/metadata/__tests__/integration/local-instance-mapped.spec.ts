@@ -7,7 +7,6 @@ import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
-import { DefaultDynamicRepositoryFactory } from "../../../common/factories/DefaultDynamicRepositoryFactory";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -214,7 +213,7 @@ describe("Sync local instance mapped", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: DynamicRepositoryFactory = new DefaultDynamicRepositoryFactory();
+    const repositoryFactory: DynamicRepositoryFactory = new DynamicRepositoryFactory();
 
     registerDynamicRepositoriesInFactory(repositoryFactory);
 

@@ -19,36 +19,124 @@ import { TableColumnsRepository } from "../../table-columns/repositories/TableCo
 import { TEIRepository } from "../../tracked-entity-instances/repositories/TEIRepository";
 import { UserRepository } from "../../user/repositories/UserRepository";
 
-export type ClassType = new (...args: any[]) => any;
 export type RepositoryByInstanceCreator<T> = (instance: Instance) => T;
 export type RepositoryByDataSourceCreator<T> = (instance: DataSource) => T;
 
-export interface DynamicRepositoryFactory {
-    bind<T>(repository: RepositoryKeys, implementation: RepositoryByInstanceCreator<T>, tag?: string): void;
-    bindByDataSource<T>(
-        repository: RepositoryKeys,
-        implementation: RepositoryByDataSourceCreator<T>,
-        tag?: string
-    ): void;
+export class DynamicRepositoryFactory {
+    private repositoryCreators = new Map<string, RepositoryByInstanceCreator<unknown>>();
 
-    configRepository(instance: Instance): StorageClientRepository;
-    storeRepository(instance: Instance): StoreRepository;
-    instanceRepository(instance: Instance): InstanceRepository;
-    instanceFileRepository(instance: Instance): InstanceFileRepository;
-    userRepository(instance: Instance): UserRepository;
-    metadataRepository(instance: DataSource): MetadataRepository;
-    aggregatedRepository(instance: Instance): AggregatedRepository;
-    eventsRepository(instance: Instance): EventsRepository;
-    tableColumnsRepository(instance: Instance): TableColumnsRepository;
-    dataStoreMetadataRepository(instance: Instance): DataStoreMetadataRepository;
-    teisRepository(instance: Instance): TEIRepository;
-    reportsRepository(instance: Instance): ReportsRepository;
-    rulesRepository(instance: Instance): RulesRepository;
-    fileRulesRepository(instance: Instance): FileRulesRepository;
-    customDataRepository(instance: Instance): CustomDataRepository;
-    migrationsRepository(instance: Instance): MigrationsRepository;
-    mappingRepository(instance: Instance): MappingRepository;
-    settingsRepository(instance: Instance): SettingsRepository;
+    private repositoryCreatorsByDataSource = new Map<string, RepositoryByDataSourceCreator<unknown>>();
+    private createdReposities = new Map<string, unknown>();
+
+    public bind<T>(key: RepositoryKeys, creator: RepositoryByInstanceCreator<T>, tag = "default") {
+        this.repositoryCreators.set(`${key}-${tag}`, creator);
+    }
+
+    public bindByDataSource<T>(key: RepositoryKeys, creator: RepositoryByDataSourceCreator<T>, tag = "default") {
+        this.repositoryCreatorsByDataSource.set(`${key}-${tag}`, creator);
+    }
+
+    public configRepository(instance: Instance): StorageClientRepository {
+        return this.get(Repositories.ConfigRepository, instance);
+    }
+
+    public storeRepository(instance: Instance): StoreRepository {
+        return this.get(Repositories.StoreRepository, instance);
+    }
+
+    public instanceRepository(instance: Instance): InstanceRepository {
+        return this.get(Repositories.InstanceRepository, instance);
+    }
+
+    public instanceFileRepository(instance: Instance): InstanceFileRepository {
+        return this.get(Repositories.InstanceFileRepository, instance);
+    }
+
+    public userRepository(instance: Instance): UserRepository {
+        return this.get(Repositories.UserRepository, instance);
+    }
+
+    public metadataRepository(instance: DataSource): MetadataRepository {
+        const tag = instance.type === "json" ? "json" : undefined;
+
+        return this.getByDataSource(Repositories.MetadataRepository, instance, tag);
+    }
+
+    public aggregatedRepository(instance: Instance): AggregatedRepository {
+        return this.get(Repositories.AggregatedRepository, instance);
+    }
+
+    public eventsRepository(instance: Instance): EventsRepository {
+        return this.get(Repositories.EventsRepository, instance);
+    }
+
+    public tableColumnsRepository(instance: Instance): TableColumnsRepository {
+        return this.get(Repositories.TableColumnsRepository, instance);
+    }
+
+    public dataStoreMetadataRepository(instance: Instance): DataStoreMetadataRepository {
+        return this.get(Repositories.DataStoreMetadataRepository, instance);
+    }
+
+    public teisRepository(instance: Instance): TEIRepository {
+        return this.get(Repositories.TEIsRepository, instance);
+    }
+
+    public reportsRepository(instance: Instance): ReportsRepository {
+        return this.get(Repositories.ReportsRepository, instance);
+    }
+
+    public rulesRepository(instance: Instance): RulesRepository {
+        return this.get(Repositories.RulesRepository, instance);
+    }
+
+    public fileRulesRepository(instance: Instance): FileRulesRepository {
+        return this.get(Repositories.FileRulesRepository, instance);
+    }
+
+    public customDataRepository(instance: Instance): CustomDataRepository {
+        return this.get(Repositories.CustomDataRepository, instance);
+    }
+
+    public migrationsRepository(instance: Instance): MigrationsRepository {
+        return this.get(Repositories.MigrationsRepository, instance);
+    }
+
+    public mappingRepository(instance: Instance): MappingRepository {
+        return this.get(Repositories.MappingRepository, instance);
+    }
+
+    public settingsRepository(instance: Instance): SettingsRepository {
+        return this.get(Repositories.SettingsRepository, instance);
+    }
+
+    private get<T>(key: RepositoryKeys, instance: Instance, tag = "default"): T {
+        const creator = this.repositoryCreators.get(`${key}-${tag}`);
+
+        if (!creator) {
+            throw new Error(`Dependency ${key} is not registered`);
+        }
+
+        const createdRepository = this.createdReposities.get(`${key}-${tag}`) || creator(instance);
+
+        this.createdReposities.set(key, createdRepository);
+
+        return createdRepository as T;
+    }
+
+    private getByDataSource<T>(key: RepositoryKeys, instance: DataSource, tag = "default"): T {
+        const creator = this.repositoryCreatorsByDataSource.get(`${key}-${tag}`);
+
+        if (!creator) {
+            throw new Error(`Dependency ${key} is not registered`);
+        }
+
+        const createdRepository = this.createdReposities.get(`${key}-${tag}`) || creator(instance);
+
+        this.createdReposities.set(key, createdRepository);
+
+        return createdRepository as T;
+    }
 }
 
 export type RepositoryKeys = typeof Repositories[keyof typeof Repositories];
