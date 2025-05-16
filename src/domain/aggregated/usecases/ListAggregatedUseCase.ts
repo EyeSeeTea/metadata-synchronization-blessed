@@ -1,5 +1,5 @@
 import { cache } from "../../../utils/cache";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { AggregatedRepository } from "../repositories/AggregatedRepository";
@@ -12,7 +12,7 @@ export interface ListAggregatedFilters {
 }
 
 export class ListAggregatedUseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory) {}
 
     async execute(
         instance: Instance,

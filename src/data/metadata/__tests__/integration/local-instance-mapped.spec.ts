@@ -2,12 +2,12 @@ import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import { RepositoryByInstanceFactory } from "../../../../domain/common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../../../domain/common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
-import { DefaultRepositoryByInstanceFactory } from "../../../common/factories/DefaultRepositoryByInstanceFactory";
+import { DefaultDynamicRepositoryFactory } from "../../../common/factories/DefaultDynamicRepositoryFactory";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -214,7 +214,7 @@ describe("Sync local instance mapped", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryByInstanceFactory = new DefaultRepositoryByInstanceFactory();
+    const repositoryFactory: DynamicRepositoryFactory = new DefaultDynamicRepositoryFactory();
 
     registerDynamicRepositoriesInFactory(repositoryFactory);
 

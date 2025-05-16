@@ -1,12 +1,12 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { RepositoryByInstanceFactory } from "../../../../domain/common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../../../domain/common/factories/DynamicRepositoryFactory";
 import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSyncUseCase";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
-import { DefaultRepositoryByInstanceFactory } from "../../../common/factories/DefaultRepositoryByInstanceFactory";
+import { DefaultDynamicRepositoryFactory } from "../../../common/factories/DefaultDynamicRepositoryFactory";
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 
 const repositoryFactory = buildRepositoryFactory();
@@ -379,7 +379,7 @@ describe("Sync events", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryByInstanceFactory = new DefaultRepositoryByInstanceFactory();
+    const repositoryFactory: DynamicRepositoryFactory = new DefaultDynamicRepositoryFactory();
 
     registerDynamicRepositoriesInFactory(repositoryFactory);
 

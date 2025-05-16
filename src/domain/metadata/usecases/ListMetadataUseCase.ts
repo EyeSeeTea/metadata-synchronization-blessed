@@ -1,11 +1,11 @@
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { ListMetadataParams, ListMetadataResponse } from "../repositories/MetadataRepository";
 
 export class ListMetadataUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
         params: ListMetadataParams,

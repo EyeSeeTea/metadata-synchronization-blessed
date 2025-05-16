@@ -1,11 +1,11 @@
 import i18n from "../../../utils/i18n";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../entities/Instance";
 
 export class SaveInstanceUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance: Instance): Promise<ValidationError[]> {
         const instanceRepository = this.repositoryFactory.instanceRepository(this.localInstance);

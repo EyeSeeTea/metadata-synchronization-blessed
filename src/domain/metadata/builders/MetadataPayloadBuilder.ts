@@ -1,4 +1,4 @@
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
 import { MetadataEntities, MetadataEntity, MetadataPackage, Program } from "../entities/MetadataEntities";
@@ -19,7 +19,7 @@ import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from
 export class MetadataPayloadBuilder {
     private api: D2Api;
 
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {
         this.api = getD2APiFromInstance(localInstance);
     }
 

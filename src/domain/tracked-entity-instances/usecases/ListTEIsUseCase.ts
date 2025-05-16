@@ -1,11 +1,11 @@
 import { DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { TEIsResponse } from "../repositories/TEIRepository";
 
 export class ListTEIsUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, protected localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, protected localInstance: Instance) {}
 
     public async execute(
         params: DataSynchronizationParams,

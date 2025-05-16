@@ -3,7 +3,7 @@ import memoize from "nano-memoize";
 import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
@@ -19,7 +19,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
     constructor(
         readonly builder: SynchronizationBuilder,
-        readonly repositoryFactory: RepositoryByInstanceFactory,
+        readonly repositoryFactory: DynamicRepositoryFactory,
         readonly localInstance: Instance,
         private metadataPayloadBuilder: MetadataPayloadBuilder
     ) {

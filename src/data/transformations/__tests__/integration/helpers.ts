@@ -2,17 +2,17 @@ import _ from "lodash";
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { RepositoryByInstanceFactory } from "../../../../domain/common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../../../domain/common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { MetadataPayloadBuilder } from "../../../../domain/metadata/builders/MetadataPayloadBuilder";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
-import { DefaultRepositoryByInstanceFactory } from "../../../common/factories/DefaultRepositoryByInstanceFactory";
+import { DefaultDynamicRepositoryFactory } from "../../../common/factories/DefaultDynamicRepositoryFactory";
 
 export function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryByInstanceFactory = new DefaultRepositoryByInstanceFactory();
+    const repositoryFactory: DynamicRepositoryFactory = new DefaultDynamicRepositoryFactory();
 
     registerDynamicRepositoriesInFactory(repositoryFactory);
 

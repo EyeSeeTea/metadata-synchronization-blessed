@@ -2,12 +2,12 @@ import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { Module } from "../entities/Module";
 
 export class SaveModuleUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(module: Module): Promise<ValidationError[]> {
         const storageClient = await this.repositoryFactory

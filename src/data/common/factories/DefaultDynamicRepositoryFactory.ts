@@ -1,11 +1,11 @@
 import { AggregatedRepository } from "../../../domain/aggregated/repositories/AggregatedRepository";
 import {
     Repositories,
-    RepositoryByInstanceFactory,
+    DynamicRepositoryFactory,
     RepositoryByInstanceCreator,
     RepositoryKeys,
     RepositoryByDataSourceCreator,
-} from "../../../domain/common/factories/RepositoryByInstanceFactory";
+} from "../../../domain/common/factories/DynamicRepositoryFactory";
 import { CustomDataRepository } from "../../../domain/custom-data/repository/CustomDataRepository";
 import { DataStoreMetadataRepository } from "../../../domain/data-store/DataStoreMetadataRepository";
 import { EventsRepository } from "../../../domain/events/repositories/EventsRepository";
@@ -25,7 +25,8 @@ import { StoreRepository } from "../../../domain/stores/repositories/StoreReposi
 import { TableColumnsRepository } from "../../../domain/table-columns/repositories/TableColumnsRepository";
 import { TEIRepository } from "../../../domain/tracked-entity-instances/repositories/TEIRepository";
 import { UserRepository } from "../../../domain/user/repositories/UserRepository";
-export class DefaultRepositoryByInstanceFactory implements RepositoryByInstanceFactory {
+
+export class DefaultDynamicRepositoryFactory implements DynamicRepositoryFactory {
     private repositoryCreators = new Map<string, RepositoryByInstanceCreator<unknown>>();
 
     private repositoryCreatorsByDataSource = new Map<string, RepositoryByDataSourceCreator<unknown>>();

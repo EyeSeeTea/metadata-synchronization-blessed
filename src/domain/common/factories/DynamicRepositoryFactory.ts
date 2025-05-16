@@ -23,7 +23,7 @@ export type ClassType = new (...args: any[]) => any;
 export type RepositoryByInstanceCreator<T> = (instance: Instance) => T;
 export type RepositoryByDataSourceCreator<T> = (instance: DataSource) => T;
 
-export interface RepositoryByInstanceFactory {
+export interface DynamicRepositoryFactory {
     bind<T>(repository: RepositoryKeys, implementation: RepositoryByInstanceCreator<T>, tag?: string): void;
     bindByDataSource<T>(
         repository: RepositoryKeys,

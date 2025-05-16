@@ -1,11 +1,11 @@
 import { Id } from "../../common/entities/Schemas";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
 
 export class GetMetadataByIdsUseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
         ids: Id[],

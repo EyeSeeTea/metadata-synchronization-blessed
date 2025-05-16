@@ -3,14 +3,14 @@ import { Namespace } from "../../../data/storage/Namespaces";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
 import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ExtendsPackagesFromPackageUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryByInstanceFactory,
+        private repositoryFactory: DynamicRepositoryFactory,
         private transformationRepository: TransformationRepository,
         private localInstance: Instance
     ) {}

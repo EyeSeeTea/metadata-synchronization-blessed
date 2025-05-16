@@ -1,12 +1,12 @@
 import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../entities/MetadataResponsible";
 
 export class ListResponsiblesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryByInstanceFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance = this.localInstance): Promise<MetadataResponsible[]> {
         const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();

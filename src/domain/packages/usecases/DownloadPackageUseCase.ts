@@ -2,7 +2,7 @@ import _ from "lodash";
 import moment from "moment";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
@@ -11,7 +11,7 @@ import { GitHubRepository } from "../repositories/GitHubRepository";
 
 export class DownloadPackageUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryByInstanceFactory,
+        private repositoryFactory: DynamicRepositoryFactory,
         private githubRepository: GitHubRepository,
         private downloadRepository: DownloadRepository,
         private localInstance: Instance

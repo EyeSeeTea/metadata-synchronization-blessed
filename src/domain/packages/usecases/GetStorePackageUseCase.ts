@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { BasePackage, Package } from "../entities/Package";
@@ -9,7 +9,7 @@ import { GitHubRepository } from "../repositories/GitHubRepository";
 
 export class GetStorePackageUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryByInstanceFactory,
+        private repositoryFactory: DynamicRepositoryFactory,
         private gitHubRepository: GitHubRepository,
         private localInstance: Instance
     ) {}

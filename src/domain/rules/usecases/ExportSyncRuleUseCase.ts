@@ -2,13 +2,13 @@ import _ from "lodash";
 import moment from "moment";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 
 export class ExportSyncRuleUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryByInstanceFactory,
+        private repositoryFactory: DynamicRepositoryFactory,
         private downloadRepository: DownloadRepository,
         private localInstance: Instance
     ) {}

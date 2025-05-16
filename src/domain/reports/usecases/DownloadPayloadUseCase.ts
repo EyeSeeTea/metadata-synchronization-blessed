@@ -4,7 +4,7 @@ import { metadataTransformations } from "../../../data/transformations/PackageTr
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryByInstanceFactory } from "../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
@@ -13,7 +13,7 @@ import { SynchronizationReport } from "../entities/SynchronizationReport";
 
 export class DownloadPayloadUseCase implements UseCase {
     constructor(
-        private repositoryFactory: RepositoryByInstanceFactory,
+        private repositoryFactory: DynamicRepositoryFactory,
         private downloadRepository: DownloadRepository,
         private transformationRepository: TransformationRepository,
         private localInstance: Instance

@@ -1,5 +1,5 @@
 import { anything, instance, mock, when } from "ts-mockito";
-import { RepositoryByInstanceFactory } from "../../../common/factories/RepositoryByInstanceFactory";
+import { DynamicRepositoryFactory } from "../../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../../instance/entities/Instance";
 import { MetadataRepository } from "../../repositories/MetadataRepository";
 import { InstanceRepository } from "../../../instance/repositories/InstanceRepository";
@@ -136,7 +136,7 @@ describe("MetadataPayloadBuilder", () => {
 
             when(mockedMetadataRepository.listAllMetadata(anything())).thenResolve([]);
 
-            const mockedRepositoryFactory = mock<RepositoryByInstanceFactory>();
+            const mockedRepositoryFactory = mock<DynamicRepositoryFactory>();
             when(mockedRepositoryFactory.instanceRepository(anything())).thenReturn(instance(mockedInstanceRepository));
             when(mockedRepositoryFactory.metadataRepository(anything())).thenReturn(instance(mockedMetadataRepository));
 
@@ -261,7 +261,7 @@ describe("MetadataPayloadBuilder", () => {
 
             when(mockedMetadataRepository.listAllMetadata(anything())).thenResolve([]);
 
-            const mockedRepositoryFactory = mock<RepositoryByInstanceFactory>();
+            const mockedRepositoryFactory = mock<DynamicRepositoryFactory>();
             when(mockedRepositoryFactory.instanceRepository(anything())).thenReturn(instance(mockedInstanceRepository));
             when(mockedRepositoryFactory.metadataRepository(anything())).thenReturn(instance(mockedMetadataRepository));
 
@@ -381,7 +381,7 @@ describe("MetadataPayloadBuilder", () => {
 
             when(mockedMetadataRepository.listAllMetadata(anything())).thenResolve([]);
 
-            const mockedRepositoryFactory = mock<RepositoryByInstanceFactory>();
+            const mockedRepositoryFactory = mock<DynamicRepositoryFactory>();
             when(mockedRepositoryFactory.instanceRepository(anything())).thenReturn(instance(mockedInstanceRepository));
             when(mockedRepositoryFactory.metadataRepository(anything())).thenReturn(instance(mockedMetadataRepository));
 

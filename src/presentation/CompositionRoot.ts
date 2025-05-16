@@ -25,7 +25,7 @@ import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedS
 import { DeleteAggregatedUseCase } from "../domain/aggregated/usecases/DeleteAggregatedUseCase";
 import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggregatedUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
-import { Repositories, RepositoryByInstanceFactory } from "../domain/common/factories/RepositoryByInstanceFactory";
+import { Repositories, DynamicRepositoryFactory } from "../domain/common/factories/DynamicRepositoryFactory";
 import { StartApplicationUseCase } from "../domain/common/usecases/StartApplicationUseCase";
 import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDataUseCase";
 import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
@@ -126,7 +126,7 @@ import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
 import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayloadBuilder";
-import { DefaultRepositoryByInstanceFactory } from "../data/common/factories/DefaultRepositoryByInstanceFactory";
+import { DefaultDynamicRepositoryFactory } from "../data/common/factories/DefaultDynamicRepositoryFactory";
 import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
 import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
 import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
@@ -138,14 +138,14 @@ import { DataSource } from "../domain/instance/entities/DataSource";
  */
 
 export class CompositionRoot {
-    private repositoryFactory: RepositoryByInstanceFactory;
+    private repositoryFactory: DynamicRepositoryFactory;
     private metadataPayloadBuilder: MetadataPayloadBuilder;
     private gitHubRepository: GitHubRepository;
     private downloadRepository: DownloadRepository;
     private transformationRepository: TransformationRepository;
 
     constructor(public readonly localInstance: Instance, private encryptionKey: string) {
-        this.repositoryFactory = new DefaultRepositoryByInstanceFactory();
+        this.repositoryFactory = new DefaultDynamicRepositoryFactory();
         this.gitHubRepository = new GitHubOctokitRepository();
         this.downloadRepository = new DownloadWebRepository();
         this.transformationRepository = new TransformationD2ApiRepository();
@@ -488,10 +488,7 @@ function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof Use
     }, initialOutput);
 }
 
-export function registerDynamicRepositoriesInFactory(
-    repositoryFactory: RepositoryByInstanceFactory,
-    encryptionKey = ""
-) {
+export function registerDynamicRepositoriesInFactory(repositoryFactory: DynamicRepositoryFactory, encryptionKey = "") {
     repositoryFactory.bind(
         Repositories.ConfigRepository,
         (instance: Instance) => new StorageClientD2Repository(instance)
