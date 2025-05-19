@@ -24,8 +24,13 @@ import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { createEventsPayloadMapper } from "../mapper/EventsPayloadMapperFactory";
 
+export const eventsFields =
+    "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name],program";
 export class EventsSyncUseCase extends GenericSyncUseCase {
     public readonly type = "events";
+
+    // Used to exytract metadata from the origin instance
+    public readonly fields = eventsFields;
 
     constructor(
         readonly builder: SynchronizationBuilder,

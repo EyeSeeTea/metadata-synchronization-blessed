@@ -11,6 +11,7 @@ import _ from "lodash";
 import { ProgramEvent } from "../entities/ProgramEvent";
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { TrackedEntityInstance } from "../../tracked-entity-instances/entities/TrackedEntityInstance";
+import { eventsFields } from "../usecases/EventsSyncUseCase";
 
 type EventsPayload = {
     events: ProgramEvent[];
@@ -19,9 +20,6 @@ type EventsPayload = {
 };
 
 export class EventsPayloadBuilder {
-    public readonly fields =
-        "id,name,programType,programStages[id,displayFormName,programStageDataElements[dataElement[id,displayFormName,name]]],programIndicators[id,name],program";
-
     constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async build(syncBuilder: SynchronizationBuilder): Promise<EventsPayload> {
@@ -121,7 +119,7 @@ export class EventsPayloadBuilder {
         const onlyMetadataIds = metadataIds.filter(id => !DataStoreMetadata.isDataStoreId(id));
         const cleanIds = onlyMetadataIds.map(id => _.last(id.split("-")) ?? id);
         const metadataRepository = await this.getMetadataRepository(instance);
-        return metadataRepository.getMetadataByIds<T>(cleanIds, this.fields);
+        return metadataRepository.getMetadataByIds<T>(cleanIds, eventsFields);
     }
 
     @cache()
