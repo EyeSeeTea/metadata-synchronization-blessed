@@ -7,6 +7,7 @@ import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
+import { EventsPayloadBuilder } from "../../../../domain/events/builders/EventsPayloadBuilder";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -330,9 +331,12 @@ describe("Sync events", () => {
             },
         };
 
-        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance);
+        const eventsPayloadBuilder = new EventsPayloadBuilder(repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance, eventsPayloadBuilder);
+
+        const payload = await eventsPayloadBuilder.build(builder);
+
         expect(payload.events?.find(({ id }) => id === "test-event-1")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -361,10 +365,12 @@ describe("Sync events", () => {
                 orgUnitPaths: ["/Global"],
             },
         };
+        const eventsPayloadBuilder = new EventsPayloadBuilder(repositoryFactory, localInstance);
 
-        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance);
+        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance, eventsPayloadBuilder);
 
-        const payload = await sync.buildPayload();
+        const payload = await eventsPayloadBuilder.build(builder);
+
         expect(payload.events?.find(({ id }) => id === "test-event-2")).toBeDefined();
 
         for await (const _sync of sync.execute()) {

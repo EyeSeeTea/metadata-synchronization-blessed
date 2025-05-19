@@ -21,6 +21,7 @@ import { GenericSyncUseCase } from "./GenericSyncUseCase";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
+import { EventsPayloadBuilder } from "../../events/builders/EventsPayloadBuilder";
 
 type DownloadErrors = string[];
 
@@ -41,6 +42,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
         private metadataPayloadBuilder: MetadataPayloadBuilder,
+        private eventsPayloadBuilder: EventsPayloadBuilder,
         private repositoryFactory: DynamicRepositoryFactory,
         private downloadRepository: DownloadRepository,
         private transformationRepository: TransformationRepository,
@@ -53,7 +55,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
 
         const sync: GenericSyncUseCase = this.compositionRoot.sync[rule.type](rule.toBuilder());
 
-        const payload: SynchronizationPayload = await this.buildPayload(sync, rule, this.metadataPayloadBuilder);
+        const payload: SynchronizationPayload = await this.buildPayload(sync, rule);
 
         const date = moment().format("YYYYMMDDHHmm");
 
@@ -94,13 +96,11 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         }
     }
 
-    private async buildPayload(
-        sync: GenericSyncUseCase,
-        rule: SynchronizationRule,
-        metadataPayloadBuilder: MetadataPayloadBuilder
-    ): Promise<SynchronizationPayload> {
+    private async buildPayload(sync: GenericSyncUseCase, rule: SynchronizationRule): Promise<SynchronizationPayload> {
         if (sync.type === "metadata") {
-            return metadataPayloadBuilder.build(rule.builder);
+            return this.metadataPayloadBuilder.build(rule.builder);
+        } else if (sync.type === "events") {
+            return this.eventsPayloadBuilder.build(rule.builder);
         } else {
             return sync.buildPayload();
         }

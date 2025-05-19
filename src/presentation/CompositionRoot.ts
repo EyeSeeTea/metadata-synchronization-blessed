@@ -130,6 +130,7 @@ import { GitHubRepository } from "../domain/packages/repositories/GitHubReposito
 import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
 import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
 import { DataSource } from "../domain/instance/entities/DataSource";
+import { EventsPayloadBuilder } from "../domain/events/builders/EventsPayloadBuilder";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -137,8 +138,9 @@ import { DataSource } from "../domain/instance/entities/DataSource";
  */
 
 export class CompositionRoot {
-    private repositoryFactory: DynamicRepositoryFactory;
     private metadataPayloadBuilder: MetadataPayloadBuilder;
+    private eventsPayloadBuilder: EventsPayloadBuilder;
+    private repositoryFactory: DynamicRepositoryFactory;
     private gitHubRepository: GitHubRepository;
     private downloadRepository: DownloadRepository;
     private transformationRepository: TransformationRepository;
@@ -152,6 +154,7 @@ export class CompositionRoot {
         registerDynamicRepositoriesInFactory(this.repositoryFactory, encryptionKey);
 
         this.metadataPayloadBuilder = new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance);
+        this.eventsPayloadBuilder = new EventsPayloadBuilder(this.repositoryFactory, this.localInstance);
     }
 
     @cache()
@@ -184,7 +187,7 @@ export class CompositionRoot {
             aggregated: (builder: SynchronizationBuilder) =>
                 new AggregatedSyncUseCase(builder, this.repositoryFactory, this.localInstance),
             events: (builder: SynchronizationBuilder) =>
-                new EventsSyncUseCase(builder, this.repositoryFactory, this.localInstance),
+                new EventsSyncUseCase(builder, this.repositoryFactory, this.localInstance, this.eventsPayloadBuilder),
             metadata: (builder: SynchronizationBuilder) =>
                 new MetadataSyncUseCase(
                     builder,
@@ -404,6 +407,7 @@ export class CompositionRoot {
             downloadPayloads: new DownloadPayloadFromSyncRuleUseCase(
                 this,
                 this.metadataPayloadBuilder,
+                this.eventsPayloadBuilder,
                 this.repositoryFactory,
                 this.downloadRepository,
                 this.transformationRepository,
