@@ -44,7 +44,7 @@ export abstract class GenericSyncUseCase {
         this.api = getD2APiFromInstance(localInstance);
     }
 
-    public abstract buildPayload(): Promise<SynchronizationPayload>;
+    protected abstract buildPayload(): Promise<SynchronizationPayload>;
     public abstract mapPayload(instance: Instance, payload: SynchronizationPayload): Promise<SynchronizationPayload>;
 
     // We start to use domain concepts:
