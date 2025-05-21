@@ -440,7 +440,7 @@ async function deletePreviousDataValues(
 
                 const { startDate, endDate } = buildPeriodFromParams(builder.dataParams ?? { period: "ALL" });
 
-                const sync = compositionRoot.sync.aggregated({
+                const syncBuilder: SynchronizationBuilder = {
                     originInstance: builder.originInstance,
                     targetInstances: builder.targetInstances,
                     metadataIds: dataElements,
@@ -456,9 +456,12 @@ async function deletePreviousDataValues(
                         orgUnitPaths: builder.dataParams?.orgUnitPaths,
                         allAttributeCategoryOptions: true,
                     },
-                });
+                };
 
-                const payload = await sync.buildPayload();
+                const sync = compositionRoot.sync.aggregated(syncBuilder);
+
+                const payload = await compositionRoot.aggregatedPayloadBuilder.build(syncBuilder);
+
                 const mappedPayload = await sync.mapPayload(instance, payload);
 
                 const dataSourceMapping = await compositionRoot.mapping.get({ type: "instance", id: instance.id });

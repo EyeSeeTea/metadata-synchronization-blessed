@@ -1,6 +1,7 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
+import { AggregatedPayloadBuilder } from "../../../../domain/aggregated/builders/AggregatedPayloadBuilder";
 import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { DynamicRepositoryFactory } from "../../../../domain/common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
@@ -283,9 +284,12 @@ describe("Sync aggregated", () => {
             dataParams: { orgUnitPaths: ["/Global"] },
         };
 
-        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance);
+        const aggregatedPayloadBuilder = new AggregatedPayloadBuilder(repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, aggregatedPayloadBuilder);
+
+        const payload = await aggregatedPayloadBuilder.build(builder);
+
         expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -313,9 +317,12 @@ describe("Sync aggregated", () => {
             dataParams: { orgUnitPaths: ["/Global"] },
         };
 
-        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance);
+        const aggregatedPayloadBuilder = new AggregatedPayloadBuilder(repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, aggregatedPayloadBuilder);
+
+        const payload = await aggregatedPayloadBuilder.build(builder);
+
         expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();
 
         for await (const _sync of sync.execute()) {

@@ -131,6 +131,7 @@ import { DownloadRepository } from "../domain/storage/repositories/DownloadRepos
 import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
 import { DataSource } from "../domain/instance/entities/DataSource";
 import { EventsPayloadBuilder } from "../domain/events/builders/EventsPayloadBuilder";
+import { AggregatedPayloadBuilder } from "../domain/aggregated/builders/AggregatedPayloadBuilder";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -140,12 +141,13 @@ import { EventsPayloadBuilder } from "../domain/events/builders/EventsPayloadBui
 export class CompositionRoot {
     private metadataPayloadBuilder: MetadataPayloadBuilder;
     private eventsPayloadBuilder: EventsPayloadBuilder;
+    public readonly aggregatedPayloadBuilder: AggregatedPayloadBuilder;
     private repositoryFactory: DynamicRepositoryFactory;
     private gitHubRepository: GitHubRepository;
     private downloadRepository: DownloadRepository;
     private transformationRepository: TransformationRepository;
 
-    constructor(public readonly localInstance: Instance, private encryptionKey: string) {
+    constructor(public readonly localInstance: Instance, encryptionKey: string) {
         this.repositoryFactory = new DynamicRepositoryFactory();
         this.gitHubRepository = new GitHubOctokitRepository();
         this.downloadRepository = new DownloadWebRepository();
@@ -155,6 +157,7 @@ export class CompositionRoot {
 
         this.metadataPayloadBuilder = new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance);
         this.eventsPayloadBuilder = new EventsPayloadBuilder(this.repositoryFactory, this.localInstance);
+        this.aggregatedPayloadBuilder = new AggregatedPayloadBuilder(this.repositoryFactory, this.localInstance);
     }
 
     @cache()
@@ -185,9 +188,20 @@ export class CompositionRoot {
                 ),
             }),
             aggregated: (builder: SynchronizationBuilder) =>
-                new AggregatedSyncUseCase(builder, this.repositoryFactory, this.localInstance),
+                new AggregatedSyncUseCase(
+                    builder,
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.aggregatedPayloadBuilder
+                ),
             events: (builder: SynchronizationBuilder) =>
-                new EventsSyncUseCase(builder, this.repositoryFactory, this.localInstance, this.eventsPayloadBuilder),
+                new EventsSyncUseCase(
+                    builder,
+                    this.repositoryFactory,
+                    this.localInstance,
+                    this.eventsPayloadBuilder,
+                    this.aggregatedPayloadBuilder
+                ),
             metadata: (builder: SynchronizationBuilder) =>
                 new MetadataSyncUseCase(
                     builder,
@@ -408,6 +422,7 @@ export class CompositionRoot {
                 this,
                 this.metadataPayloadBuilder,
                 this.eventsPayloadBuilder,
+                this.aggregatedPayloadBuilder,
                 this.repositoryFactory,
                 this.downloadRepository,
                 this.transformationRepository,

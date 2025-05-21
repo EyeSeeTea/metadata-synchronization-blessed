@@ -3,6 +3,7 @@ import memoize from "nano-memoize";
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
+import { AggregatedPayloadBuilder } from "../../aggregated/builders/AggregatedPayloadBuilder";
 import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
@@ -36,7 +37,8 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         readonly builder: SynchronizationBuilder,
         readonly repositoryFactory: DynamicRepositoryFactory,
         readonly localInstance: Instance,
-        private eventsPayloadBuilder: EventsPayloadBuilder
+        private eventsPayloadBuilder: EventsPayloadBuilder,
+        private aggregatedPayloadBuilder: AggregatedPayloadBuilder
     ) {
         super(builder, repositoryFactory, localInstance);
     }
@@ -124,7 +126,12 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         if (!enableAggregation) return undefined;
 
         // TODO: This is an external action and should be called by user
-        const aggregatedSync = new AggregatedSyncUseCase(this.builder, this.repositoryFactory, this.localInstance);
+        const aggregatedSync = new AggregatedSyncUseCase(
+            this.builder,
+            this.repositoryFactory,
+            this.localInstance,
+            this.aggregatedPayloadBuilder
+        );
 
         const mappedPayload = await aggregatedSync.mapPayload(instance, { dataValues });
 
