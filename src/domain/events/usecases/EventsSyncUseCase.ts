@@ -46,7 +46,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
     /**
      * @deprecated This function should not be used, please use the MetadataPayloadBuilder
      */
-    public buildPayload = memoize(async () => {
+    protected buildPayload = memoize(async () => {
         return this.eventsPayloadBuilder.build(this.builder);
     });
 
@@ -136,7 +136,10 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const mappedPayload = await aggregatedSync.mapPayload(instance, { dataValues });
 
         const existingPayload = dataParams.ignoreDuplicateExistingValues
-            ? await aggregatedSync.mapPayload(instance, await aggregatedSync.buildPayload(instance))
+            ? await aggregatedSync.mapPayload(
+                  instance,
+                  await this.aggregatedPayloadBuilder.build(this.builder, instance)
+              )
             : { dataValues: [] };
 
         const payload = aggregatedSync.filterPayload(mappedPayload, existingPayload);

@@ -30,7 +30,7 @@ export class AggregatedSyncUseCase extends GenericSyncUseCase {
         super(builder, repositoryFactory, localInstance);
     }
 
-    public buildPayload = memoize(async (remoteInstance?: Instance) => {
+    protected buildPayload = memoize(async (remoteInstance?: Instance) => {
         return this.aggregatedPayloadBuilder.build(this.builder, remoteInstance);
     });
 

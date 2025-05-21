@@ -26,10 +26,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
         super(builder, repositoryFactory, localInstance);
     }
 
-    /**
-     * @deprecated This function should not be used, please use the MetadataPayloadBuilder
-     */
-    public buildPayload = memoize(async () => {
+    protected buildPayload = memoize(async () => {
         return this.metadataPayloadBuilder.build(this.builder);
     });
 

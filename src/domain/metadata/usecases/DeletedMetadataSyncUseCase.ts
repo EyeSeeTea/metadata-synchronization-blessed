@@ -8,7 +8,7 @@ import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUs
 export class DeletedMetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "deleted";
 
-    public buildPayload = memoize(async () => {
+    protected buildPayload = memoize(async () => {
         return {};
     });
 
