@@ -62,7 +62,12 @@ const InstanceMappingLandingPage: React.FC = () => {
     };
 
     const mainTitle = i18n.t("Instance mapping");
-    const instanceTitle = instance ? i18n.t("Between this instance and {{name}}", instance) : null;
+    const instanceTitle = instance
+        ? i18n.t("Between this instance and {{name}}", {
+              name: instance.name,
+              interpolation: { escapeValue: false },
+          })
+        : null;
     const title = _.compact([mainTitle, instanceTitle]).join(" - ");
 
     return (
