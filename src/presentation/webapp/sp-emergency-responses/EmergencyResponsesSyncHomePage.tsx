@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _, { indexOf } from "lodash";
 import moment from "moment";
 import React from "react";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
@@ -30,8 +30,12 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
     const executeRules = React.useCallback(
         (rules: SynchronizationRule[]) =>
             promiseMap(rules, rule => {
+                const currentRule = indexOf(rules, rule) + 1;
+                const totalRules = rules.length;
+
                 console.debug("Running: " + rule.name);
-                return runSyncRule(rule);
+
+                return runSyncRule(rule, currentRule, totalRules);
             }),
         [runSyncRule]
     );
@@ -107,12 +111,18 @@ const LinkDownloadOutput: React.FC<{ syncReport: SynchronizationReport }> = prop
     );
 };
 
-const executeRule = async (
-    compositionRoot: CompositionRoot,
-    emergencyType: EmergencyType,
-    id: string,
-    log: (msg: Message) => void
-) => {
+type ExecuteRuleProps = {
+    compositionRoot: CompositionRoot;
+    emergencyType: EmergencyType;
+    id: string;
+    currentRule: number;
+    totalRules: number;
+    log: (msg: Message) => void;
+};
+
+const executeRule = async (props: ExecuteRuleProps) => {
+    const { compositionRoot, emergencyType, id, currentRule, totalRules, log } = props;
+
     const synchronize = async () => {
         for await (const { message, syncReport, done } of sync.execute()) {
             if (message) log(message);
@@ -144,7 +154,14 @@ const executeRule = async (
 
     const { builder, id: syncRule, type } = rule;
     const dateStart = formatDateLong(new Date());
-    log(i18n.t("Synchronizing rule {{name}} - {{dateStart}}", { name: rule.name, dateStart }));
+    log(
+        i18n.t("Synchronizing rule {{currentRule}} out of {{totalRules}} {{name}} - {{dateStart}}", {
+            name: rule.name,
+            dateStart,
+            currentRule,
+            totalRules,
+        })
+    );
 
     const prepareSyncResult = await compositionRoot.sync.prepare(type, builder);
     const sync = compositionRoot.sync[type]({ ...builder, syncRule });
@@ -177,6 +194,7 @@ function useSyncRulesList(emergencyType: EmergencyType) {
 
     React.useEffect(() => {
         async function run() {
+            debugger;
             const { syncRules } = getEmergencyResponseConfig(emergencyType);
 
             try {
@@ -211,11 +229,18 @@ function useSyncRulesExecuter(options: { logs: Logs; emergencyType: EmergencyTyp
     const snackbar = useSnackbar();
 
     const execute = React.useCallback(
-        async rule => {
+        async (rule: SynchronizationRule, currentRule: number, totalRules: number) => {
             setRunning(running => (running ? { ...running, [rule.id]: true } : { [rule.id]: true }));
 
             try {
-                await executeRule(compositionRoot, emergencyType, rule.id, logs.log);
+                await executeRule({
+                    compositionRoot,
+                    emergencyType,
+                    id: rule.id,
+                    log: logs.log,
+                    currentRule,
+                    totalRules,
+                });
             } catch (err: any) {
                 logs.log(`Error: ${err.message}`);
                 snackbar.error(err.message);
