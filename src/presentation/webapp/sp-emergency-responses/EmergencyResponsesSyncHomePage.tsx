@@ -2,7 +2,7 @@ import _, { indexOf } from "lodash";
 import moment from "moment";
 import React from "react";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
-import { Box, Button, LinearProgress, List, makeStyles, Paper, Typography } from "@material-ui/core";
+import { Box, Button, Divider, LinearProgress, List, makeStyles, Paper, Typography } from "@material-ui/core";
 import { SynchronizationRule } from "../../../domain/rules/entities/SynchronizationRule";
 import { useAppContext } from "../../react/core/contexts/AppContext";
 import { CompositionRoot } from "../../CompositionRoot";
@@ -139,6 +139,7 @@ const executeRule = async (props: ExecuteRuleProps) => {
                 );
                 log(<LinkDownloadOutput syncReport={syncReport} />);
                 log(i18n.t("Status: {{status}}", { status: syncReport.status, nsSeparator: false }));
+                log(<Divider style={{ marginTop: 10, marginBottom: 10 }} />);
             }
         }
     };
@@ -194,7 +195,6 @@ function useSyncRulesList(emergencyType: EmergencyType) {
 
     React.useEffect(() => {
         async function run() {
-            debugger;
             const { syncRules } = getEmergencyResponseConfig(emergencyType);
 
             try {
