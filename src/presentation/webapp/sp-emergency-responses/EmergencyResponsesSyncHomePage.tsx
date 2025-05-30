@@ -14,6 +14,7 @@ import { SynchronizationResult, SynchronizationStats } from "../../../domain/rep
 import { EmergencyType, getEmergencyResponseConfig } from "../../../domain/entities/EmergencyResponses";
 import i18n from "../../../utils/i18n";
 import { promiseMap } from "../../../utils/common";
+import { styled } from "styled-components";
 
 interface EmergencyResponsesSyncHomePageProps {
     emergencyType: EmergencyType;
@@ -138,7 +139,15 @@ const executeRule = async (props: ExecuteRuleProps) => {
                     </div>
                 );
                 log(<LinkDownloadOutput syncReport={syncReport} />);
-                log(i18n.t("Status: {{status}}", { status: syncReport.status, nsSeparator: false }));
+                log(
+                    <Typography>
+                        {i18n.t("Status: ", { nsSeparator: false })}
+                        <Status color={syncReport.status === "FAILURE" ? "error" : "success"}>
+                            {syncReport.status}
+                        </Status>
+                    </Typography>
+                );
+
                 log(<Divider style={{ marginTop: 10, marginBottom: 10 }} />);
             }
         }
@@ -292,3 +301,10 @@ function getSynchronizationResultStats(result: SynchronizationResult): Synchroni
 
     return _.concat(typeStats, totalStats);
 }
+
+type ColorStatus = "success" | "error" | "info";
+
+export const Status = styled.span<{ color: ColorStatus }>`
+    color: ${props => (props.color === "error" ? "#d60f0f" : props.color === "success" ? "#0e9825" : "#000000")};
+    font-weight: bold;
+`;
