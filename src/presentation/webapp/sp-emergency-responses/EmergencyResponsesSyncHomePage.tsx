@@ -1,39 +1,20 @@
-import _, { indexOf } from "lodash";
-import moment from "moment";
+import { indexOf } from "lodash";
 import React, { useEffect } from "react";
-import { ConfirmationDialog, useSnackbar } from "@eyeseetea/d2-ui-components";
-import {
-    Box,
-    Button,
-    DialogContent,
-    Divider,
-    LinearProgress,
-    List,
-    makeStyles,
-    Paper,
-    Typography,
-} from "@material-ui/core";
+import { Box, Button, LinearProgress, List, makeStyles, Paper, Typography } from "@material-ui/core";
 import { SynchronizationRule } from "../../../domain/rules/entities/SynchronizationRule";
-import { useAppContext } from "../../react/core/contexts/AppContext";
-import { CompositionRoot } from "../../CompositionRoot";
-import { formatDateLong } from "../../../utils/date";
-import { downloadFile } from "../../utils/download";
-import { SynchronizationReport } from "../../../domain/reports/entities/SynchronizationReport";
-import { SummaryTable } from "../../react/core/components/sync-summary/SummaryTable";
-import { SynchronizationResult, SynchronizationStats } from "../../../domain/reports/entities/SynchronizationResult";
-import { EmergencyType, getEmergencyResponseConfig } from "../../../domain/entities/EmergencyResponses";
+
+import { EmergencyType } from "../../../domain/entities/EmergencyResponses";
 import i18n from "../../../utils/i18n";
 import { promiseMap } from "../../../utils/common";
 import { styled } from "styled-components";
+import { useLogs } from "./hooks/useLogs";
+import { useSyncRulesList } from "./hooks/useSyncRulesList";
+import { useSyncRulesExecuter } from "./hooks/useSyncRulesExecuter";
+import { FinishData, FinishDialog } from "./components/FinishDialog";
 
 interface EmergencyResponsesSyncHomePageProps {
     emergencyType: EmergencyType;
 }
-
-type FinishData = {
-    type: "getConfiguration" | "pushData";
-    isFailed: boolean;
-};
 
 export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHomePageProps> = React.memo(props => {
     const { emergencyType } = props;
@@ -70,7 +51,8 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
     useEffect(() => {
         if (!isRunning && syncRuleResults.length > 0) {
             const isFailed = syncRuleResults.some(result => result.status === "FAILURE");
-            const type = syncRuleResults[0].type === "metadata" ? "getConfiguration" : "pushData";
+            const lastSyncRuleResult = syncRuleResults[syncRuleResults.length - 1];
+            const type = lastSyncRuleResult.type === "metadata" ? "getConfiguration" : "pushData";
 
             setFinishData({
                 type,
@@ -117,257 +99,10 @@ export const EmergencyResponsesSyncHomePage: React.FC<EmergencyResponsesSyncHome
                     </List>
                 </Paper>
             </Paper>
-            <ConfirmationDialog
-                isOpen={finishData !== undefined}
-                onCancel={hideConfirmationDialog}
-                maxWidth={"sm"}
-                fullWidth={true}
-                cancelText={i18n.t("Close")}
-            >
-                <DialogContent>
-                    {finishData?.type === "getConfiguration" && !finishData.isFailed && (
-                        <>
-                            <Typography gutterBottom>
-                                <Status color="success">{i18n.t("SYNCHRONIZATION SUCCESSFUL")}</Status>
-                            </Typography>
-                            <Typography gutterBottom>
-                                {i18n.t("The synchronization has been completed successfully.")}
-                            </Typography>
-                            <Typography gutterBottom>
-                                {i18n.t("Do not forget to perform the following actions:", { nsSeparator: false })}
-                            </Typography>
-                            <ul>
-                                <li>
-                                    {i18n.t("Set up passwords manually for all users intended to use this instance")}
-                                </li>
-                                <li>{i18n.t("Clear the application cache")}</li>
-                            </ul>
-                        </>
-                    )}
-                    {finishData?.type === "getConfiguration" && finishData.isFailed && (
-                        <>
-                            <Typography gutterBottom>
-                                <Status color="error">{i18n.t("SYNCHRONIZATION FAILED")}</Status>
-                            </Typography>
-                            <Typography gutterBottom>
-                                {i18n.t(
-                                    "The synchronization and metadata import failed. Please, reach out an administrator and share the JSON Response obtained as an output for the synchronization rule that failed."
-                                )}
-                            </Typography>
-                        </>
-                    )}
-                    {finishData?.type === "pushData" && !finishData.isFailed && (
-                        <>
-                            <Typography gutterBottom>
-                                <Status color="success">{i18n.t("DATA PUSHED SUCCESSFULLY")}</Status>
-                            </Typography>
-                            <Typography gutterBottom>
-                                {i18n.t("The data was pushed successfully to the HQ server.")}
-                            </Typography>
-                        </>
-                    )}
-                    {finishData?.type === "pushData" && finishData.isFailed && (
-                        <>
-                            <Typography gutterBottom>
-                                <Status color="error">{i18n.t("ERROR PUSHING DATA")}</Status>
-                            </Typography>
-                            <Typography gutterBottom>
-                                {i18n.t(
-                                    "There was an error pushing the data to the HQ server. Please, reach out an administrator and share the JSON Response obtained as an output for the synchronization rule that failed."
-                                )}
-                            </Typography>
-                        </>
-                    )}
-                </DialogContent>
-            </ConfirmationDialog>
+            {finishData && <FinishDialog data={finishData} onCancel={hideConfirmationDialog} />}
         </>
     );
 });
-
-const LinkDownloadOutput: React.FC<{ syncReport: SynchronizationReport }> = props => {
-    const { syncReport } = props;
-
-    const downloadJson = React.useCallback(
-        (ev: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-            ev.preventDefault();
-            downloadFile({
-                filename: "sync-response" + moment().toISOString() + ".json",
-                buffer: JSON.stringify(syncReport),
-            });
-        },
-        [syncReport]
-    );
-
-    return (
-        <>
-            {i18n.t("Output: ", { nsSeparator: false })}
-
-            <a href="/download" onClick={downloadJson}>
-                {i18n.t("JSON Response")}
-            </a>
-        </>
-    );
-};
-
-type ExecuteRuleProps = {
-    compositionRoot: CompositionRoot;
-    emergencyType: EmergencyType;
-    id: string;
-    currentRule: number;
-    totalRules: number;
-    log: (msg: Message) => void;
-    syncRuleDone: (syncReport: SynchronizationReport) => void;
-};
-
-const executeRule = async (props: ExecuteRuleProps) => {
-    const { compositionRoot, emergencyType, id, currentRule, totalRules, log, syncRuleDone } = props;
-
-    const synchronize = async () => {
-        for await (const { message, syncReport, done } of sync.execute()) {
-            if (message) log(message);
-            if (syncReport) await compositionRoot.reports.save(syncReport);
-            if (done && syncReport) {
-                const stats = _(syncReport.getResults()).flatMap(getSynchronizationResultStats).value();
-
-                const dateEnd = formatDateLong(new Date());
-                log(i18n.t("Sync finished - {{dateEnd}}", { dateEnd }));
-                log(
-                    <div style={{ marginBottom: 20 }}>
-                        <SummaryTable stats={stats} />
-                    </div>
-                );
-                log(<LinkDownloadOutput syncReport={syncReport} />);
-                log(
-                    <Typography>
-                        {i18n.t("Status: ", { nsSeparator: false })}
-                        <Status color={syncReport.status === "FAILURE" ? "error" : "success"}>
-                            {syncReport.status}
-                        </Status>
-                    </Typography>
-                );
-
-                log(<Divider style={{ marginTop: 10, marginBottom: 10 }} />);
-
-                syncRuleDone(syncReport);
-            }
-        }
-    };
-
-    const persistedRule = await compositionRoot.rules.get(id);
-    if (!persistedRule) throw new Error(`Rule not found: ${id}`);
-
-    /* Select org units and TEIs in persisted rule */
-    const rule =
-        persistedRule.type === "events"
-            ? await compositionRoot.emergencyResponses.updateSyncRule(persistedRule, emergencyType)
-            : persistedRule;
-
-    const { builder, id: syncRule, type } = rule;
-    const dateStart = formatDateLong(new Date());
-    log(
-        i18n.t("Synchronizing rule {{currentRule}} out of {{totalRules}} {{name}} - {{dateStart}}", {
-            name: rule.name,
-            dateStart,
-            currentRule,
-            totalRules,
-        })
-    );
-
-    const prepareSyncResult = await compositionRoot.sync.prepare(type, builder);
-    const sync = compositionRoot.sync[type]({ ...builder, syncRule });
-
-    await prepareSyncResult.match({
-        success: async () => synchronize(),
-        error: async code => log(i18n.t("Error: {{code}}", { code, nsSeparator: false })),
-    });
-};
-
-type Message = React.ReactNode;
-
-interface Logs {
-    messages: Message[];
-    log(msg: Message): void;
-    clear(): void;
-}
-
-function useLogs(): Logs {
-    const [messages, setMessages] = React.useState<Message[]>([]);
-    const log = React.useCallback((msg: Message) => setMessages(msgs => [...msgs, msg]), []);
-    const clear = React.useCallback(() => setMessages([]), []);
-    return { messages, log, clear };
-}
-
-function useSyncRulesList(emergencyType: EmergencyType) {
-    const { compositionRoot } = useAppContext();
-    const snackbar = useSnackbar();
-    const [rules, setRules] = React.useState<SynchronizationRule[]>([]);
-
-    React.useEffect(() => {
-        async function run() {
-            const { syncRules } = getEmergencyResponseConfig(emergencyType);
-
-            try {
-                const { rows: rules } = await compositionRoot.rules.list({
-                    paging: false,
-                    sorting: { field: "name", order: "asc" },
-                });
-
-                const emergencyResponsesRules = _(rules)
-                    .keyBy(rule => rule.code || "")
-                    .at([...syncRules.metadata, ...syncRules.data])
-                    .compact()
-                    .value();
-
-                setRules(emergencyResponsesRules);
-            } catch (err: any) {
-                snackbar.error(err.message);
-            }
-        }
-
-        run();
-    }, [compositionRoot, snackbar, emergencyType]);
-
-    return rules;
-}
-
-function useSyncRulesExecuter(options: { logs: Logs; emergencyType: EmergencyType }) {
-    const { emergencyType, logs } = options;
-
-    const [running, setRunning] = React.useState<Record<string, boolean>>();
-    const [syncRuleResults, setSyncRuleResults] = React.useState<SynchronizationReport[]>([]);
-    const { compositionRoot } = useAppContext();
-    const snackbar = useSnackbar();
-
-    const execute = React.useCallback(
-        async (rule: SynchronizationRule, currentRule: number, totalRules: number) => {
-            setRunning(running => (running ? { ...running, [rule.id]: true } : { [rule.id]: true }));
-
-            try {
-                await executeRule({
-                    compositionRoot,
-                    emergencyType,
-                    id: rule.id,
-                    log: logs.log,
-                    currentRule,
-                    totalRules,
-                    syncRuleDone: (syncReport: SynchronizationReport) => {
-                        setSyncRuleResults(results => [...results, syncReport]);
-                    },
-                });
-            } catch (err: any) {
-                logs.log(`Error: ${err.message}`);
-                snackbar.error(err.message);
-            } finally {
-                setRunning(running => (running ? { ...running, [rule.id]: false } : { [rule.id]: false }));
-            }
-        },
-        [compositionRoot, snackbar, logs, emergencyType]
-    );
-
-    const isRunning = React.useMemo(() => Boolean(running && Object.values(running).some(Boolean)), [running]);
-
-    return [isRunning, execute, syncRuleResults] as const;
-}
 
 export const useStyles = makeStyles(theme => ({
     root: {
@@ -388,23 +123,6 @@ export const useStyles = makeStyles(theme => ({
         margin: "0 auto",
     },
 }));
-
-function getSynchronizationResultStats(result: SynchronizationResult): SynchronizationStats[] {
-    const typeStats = result.typeStats || [];
-    const { payload } = result;
-    const isEvents = payload && "events" in payload;
-    const isTeis = payload && "trackedEntityInstances" in payload;
-
-    const type = isEvents
-        ? i18n.t("Consultations and Surgery (Events)")
-        : isTeis
-        ? i18n.t("Patients (Tracked Entity Instances)")
-        : i18n.t("Total");
-
-    const totalStats = result.stats ? [{ ...result.stats, type }] : [];
-
-    return _.concat(typeStats, totalStats);
-}
 
 type ColorStatus = "success" | "error" | "info";
 
