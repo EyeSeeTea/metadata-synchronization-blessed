@@ -1,7 +1,9 @@
 import { SharingSetting } from "./SharingSetting";
 
+export type Id = string;
+
 export interface Ref {
-    id: string;
+    id: Id;
 }
 
 export interface NamedRef extends Ref {

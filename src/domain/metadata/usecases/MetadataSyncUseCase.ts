@@ -5,7 +5,7 @@ import { ExportBuilder } from "../../../types/synchronization";
 import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
-import { Ref } from "../../common/entities/Ref";
+import { Id, Ref } from "../../common/entities/Ref";
 import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
@@ -19,7 +19,10 @@ import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
 
-    public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
+    public async exportMetadata(
+        originalBuilder: ExportBuilder,
+        idsAlreadyRequested: Set<Id>
+    ): Promise<MetadataPackage> {
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const {
                 type,
@@ -36,7 +39,11 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 usersIncludeReferencesAndObjectsRules,
                 removeUserNonEssentialObjects,
             } = builder;
+            const newIds = ids.filter(id => !idsAlreadyRequested.has(id));
 
+            if (newIds.length === 0) {
+                return {};
+            }
             //TODO: when metadata entities schema exists on domain, move this factory to domain
             const collectionName = modelFactory(type).getCollectionName();
             const schema = this.api.models[collectionName].schema;
@@ -51,8 +58,9 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             // Get all the required metadata
             const originInstance = await this.getOriginInstance();
             const metadataRepository = this.repositoryFactory.metadataRepository(originInstance);
-            const syncMetadata = await metadataRepository.getMetadataByIds(ids);
+            const syncMetadata = await metadataRepository.getMetadataByIds(newIds);
             const elements = syncMetadata[collectionName] || [];
+            newIds.forEach(id => idsAlreadyRequested.add(id));
 
             for (const element of elements) {
                 //ProgramRules is not included in programs items in the response by the dhis2 API
@@ -101,7 +109,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
 
                     return recursiveExport({
                         type: type as keyof MetadataEntities,
-                        ids: references[type],
+                        ids: [...new Set(references[type])],
                         excludeRules: nestedExcludeRules[type],
                         includeReferencesAndObjectsRules: nextIncludeReferencesAndObjectsRules,
                         includeSharingSettingsObjectsAndReferences,
@@ -179,6 +187,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             )
         ).then(syncAllMetadata => _.deepMerge(metadata, ...syncAllMetadata)); //TODO: don't mix async/.then 963#discussion_r1682376524
 
+        const globalIdsAlreadyRequested = new Set<Id>();
+
         const exportResults = await promiseMap(_.keys(metadataWithSyncAll), type => {
             const myClass = modelFactory(type);
             const metadataType = myClass.getMetadataType();
@@ -198,25 +208,28 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     ? userIncludeReferencesAndObjectsRules
                     : [];
 
-            return this.exportMetadata({
-                type: collectionName,
-                ids: metadataWithSyncAll[collectionName]?.map(e => e.id) || [],
-                excludeRules: useDefaultIncludeExclude
-                    ? myClass.getExcludeRules()
-                    : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
-                includeReferencesAndObjectsRules: useDefaultIncludeExclude
-                    ? myClass.getIncludeRules()
-                    : metadataIncludeExcludeRules[metadataType].includeReferencesAndObjectsRules.map(_.toPath),
-                includeSharingSettingsObjectsAndReferences,
-                includeOnlySharingSettingsReferences,
-                includeUsersObjectsAndReferences,
-                includeOnlyUsersReferences,
-                includeOrgUnitsObjectsAndReferences,
-                includeOnlyOrgUnitsReferences,
-                sharingSettingsIncludeReferencesAndObjectsRules,
-                usersIncludeReferencesAndObjectsRules,
-                removeUserNonEssentialObjects,
-            });
+            return this.exportMetadata(
+                {
+                    type: collectionName,
+                    ids: metadataWithSyncAll[collectionName]?.map(e => e.id) || [],
+                    excludeRules: useDefaultIncludeExclude
+                        ? myClass.getExcludeRules()
+                        : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
+                    includeReferencesAndObjectsRules: useDefaultIncludeExclude
+                        ? myClass.getIncludeRules()
+                        : metadataIncludeExcludeRules[metadataType].includeReferencesAndObjectsRules.map(_.toPath),
+                    includeSharingSettingsObjectsAndReferences,
+                    includeOnlySharingSettingsReferences,
+                    includeUsersObjectsAndReferences,
+                    includeOnlyUsersReferences,
+                    includeOrgUnitsObjectsAndReferences,
+                    includeOnlyOrgUnitsReferences,
+                    sharingSettingsIncludeReferencesAndObjectsRules,
+                    usersIncludeReferencesAndObjectsRules,
+                    removeUserNonEssentialObjects,
+                },
+                globalIdsAlreadyRequested
+            );
         });
 
         const metadataPackage: MetadataPackage = _.deepMerge({}, ...exportResults);
