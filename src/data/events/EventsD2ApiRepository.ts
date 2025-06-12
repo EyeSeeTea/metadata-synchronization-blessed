@@ -10,10 +10,7 @@ import { EventsPackage } from "../../domain/events/entities/EventsPackage";
 import { ProgramEvent } from "../../domain/events/entities/ProgramEvent";
 import { EventsRepository } from "../../domain/events/repositories/EventsRepository";
 import { Instance } from "../../domain/instance/entities/Instance";
-import {
-    getSuccessDefaultSyncReportByType,
-    SynchronizationResult,
-} from "../../domain/reports/entities/SynchronizationResult";
+import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { cleanObjectDefault, cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { D2Api } from "../../types/d2-api";
 import { promiseMap } from "../../utils/common";
@@ -226,11 +223,7 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async save(data: EventsPackage, params: DataImportParams = {}): Promise<SynchronizationResult> {
         try {
-            if (data.events.length === 0) {
-                return getSuccessDefaultSyncReportByType("events", this.instance);
-            } else {
-                return this.push(params, data.events);
-            }
+            return this.push(params, data.events);
         } catch (error: any) {
             if (error?.response?.data) {
                 return this.cleanEventsImportResponse(error.response.data);

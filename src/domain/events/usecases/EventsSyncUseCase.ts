@@ -118,7 +118,16 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
                 ? getSuccessDefaultSyncReportByType("trackedEntityInstances", instance)
                 : undefined;
 
-        const eventsResponse = await this.postEventsPayload(instance, events, trackedEntityInstances);
+        const wasAnyEventSelectedToSync =
+            !!dataParams.allEvents || (!dataParams.allEvents && dataParams.events && dataParams.events.length > 0);
+
+        const eventsResponse =
+            events?.length > 0 || trackedEntityInstances?.length > 0
+                ? await this.postEventsPayload(instance, events, trackedEntityInstances)
+                : wasAnyEventSelectedToSync
+                ? getSuccessDefaultSyncReportByType("events", instance)
+                : undefined;
+
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse, teisResponse]);
