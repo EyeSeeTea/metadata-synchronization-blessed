@@ -5,7 +5,7 @@ import { ExportBuilder } from "../../../types/synchronization";
 import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";
 import { debug } from "../../../utils/debug";
-import { Id, Ref } from "../../common/entities/Ref";
+import { Ref } from "../../common/entities/Ref";
 import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { Instance } from "../../instance/entities/Instance";
 import { MappingMapper } from "../../mapping/helpers/MappingMapper";
@@ -15,6 +15,7 @@ import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUs
 import { Document, MetadataEntities, MetadataEntity, MetadataPackage, Program } from "../entities/MetadataEntities";
 import { NestedRules } from "../entities/MetadataExcludeIncludeRules";
 import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from "../utils";
+import { Id } from "../../common/entities/Schemas";
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";

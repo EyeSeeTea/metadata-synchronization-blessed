@@ -1,6 +1,5 @@
+import { Id } from "./Schemas";
 import { SharingSetting } from "./SharingSetting";
-
-export type Id = string;
 
 export interface Ref {
     id: Id;
