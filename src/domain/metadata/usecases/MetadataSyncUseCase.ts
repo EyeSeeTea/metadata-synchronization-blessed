@@ -18,11 +18,10 @@ import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from
 
 export class MetadataSyncUseCase extends GenericSyncUseCase {
     public readonly type = "metadata";
+    private idsAlreadyRequested = new Set<Id>();
 
-    public async exportMetadata(
-        originalBuilder: ExportBuilder,
-        idsAlreadyRequested: Set<Id>
-    ): Promise<MetadataPackage> {
+    public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
+        this.idsAlreadyRequested.clear();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const {
                 type,
@@ -39,7 +38,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                 usersIncludeReferencesAndObjectsRules,
                 removeUserNonEssentialObjects,
             } = builder;
-            const newIds = ids.filter(id => !idsAlreadyRequested.has(id));
+            const newIds = ids.filter(id => !this.idsAlreadyRequested.has(id));
 
             if (newIds.length === 0) {
                 return {};
@@ -60,7 +59,7 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             const metadataRepository = this.repositoryFactory.metadataRepository(originInstance);
             const syncMetadata = await metadataRepository.getMetadataByIds(newIds);
             const elements = syncMetadata[collectionName] || [];
-            newIds.forEach(id => idsAlreadyRequested.add(id));
+            newIds.forEach(id => this.idsAlreadyRequested.add(id));
 
             for (const element of elements) {
                 //ProgramRules is not included in programs items in the response by the dhis2 API
@@ -187,8 +186,6 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             )
         ).then(syncAllMetadata => _.deepMerge(metadata, ...syncAllMetadata)); //TODO: don't mix async/.then 963#discussion_r1682376524
 
-        const globalIdsAlreadyRequested = new Set<Id>();
-
         const exportResults = await promiseMap(_.keys(metadataWithSyncAll), type => {
             const myClass = modelFactory(type);
             const metadataType = myClass.getMetadataType();
@@ -208,28 +205,25 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                     ? userIncludeReferencesAndObjectsRules
                     : [];
 
-            return this.exportMetadata(
-                {
-                    type: collectionName,
-                    ids: metadataWithSyncAll[collectionName]?.map(e => e.id) || [],
-                    excludeRules: useDefaultIncludeExclude
-                        ? myClass.getExcludeRules()
-                        : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
-                    includeReferencesAndObjectsRules: useDefaultIncludeExclude
-                        ? myClass.getIncludeRules()
-                        : metadataIncludeExcludeRules[metadataType].includeReferencesAndObjectsRules.map(_.toPath),
-                    includeSharingSettingsObjectsAndReferences,
-                    includeOnlySharingSettingsReferences,
-                    includeUsersObjectsAndReferences,
-                    includeOnlyUsersReferences,
-                    includeOrgUnitsObjectsAndReferences,
-                    includeOnlyOrgUnitsReferences,
-                    sharingSettingsIncludeReferencesAndObjectsRules,
-                    usersIncludeReferencesAndObjectsRules,
-                    removeUserNonEssentialObjects,
-                },
-                globalIdsAlreadyRequested
-            );
+            return this.exportMetadata({
+                type: collectionName,
+                ids: metadataWithSyncAll[collectionName]?.map(e => e.id) || [],
+                excludeRules: useDefaultIncludeExclude
+                    ? myClass.getExcludeRules()
+                    : metadataIncludeExcludeRules[metadataType].excludeRules.map(_.toPath),
+                includeReferencesAndObjectsRules: useDefaultIncludeExclude
+                    ? myClass.getIncludeRules()
+                    : metadataIncludeExcludeRules[metadataType].includeReferencesAndObjectsRules.map(_.toPath),
+                includeSharingSettingsObjectsAndReferences,
+                includeOnlySharingSettingsReferences,
+                includeUsersObjectsAndReferences,
+                includeOnlyUsersReferences,
+                includeOrgUnitsObjectsAndReferences,
+                includeOnlyOrgUnitsReferences,
+                sharingSettingsIncludeReferencesAndObjectsRules,
+                usersIncludeReferencesAndObjectsRules,
+                removeUserNonEssentialObjects,
+            });
         });
 
         const metadataPackage: MetadataPackage = _.deepMerge({}, ...exportResults);
