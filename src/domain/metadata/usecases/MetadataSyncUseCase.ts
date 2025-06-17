@@ -22,7 +22,6 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
     private idsAlreadyRequested = new Set<Id>();
 
     public async exportMetadata(originalBuilder: ExportBuilder): Promise<MetadataPackage> {
-        this.idsAlreadyRequested.clear();
         const recursiveExport = async (builder: ExportBuilder): Promise<MetadataPackage> => {
             const {
                 type,
@@ -186,6 +185,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
                         }))
             )
         ).then(syncAllMetadata => _.deepMerge(metadata, ...syncAllMetadata)); //TODO: don't mix async/.then 963#discussion_r1682376524
+
+        this.idsAlreadyRequested.clear();
 
         const exportResults = await promiseMap(_.keys(metadataWithSyncAll), type => {
             const myClass = modelFactory(type);
