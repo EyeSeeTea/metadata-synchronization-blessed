@@ -186,8 +186,6 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             )
         ).then(syncAllMetadata => _.deepMerge(metadata, ...syncAllMetadata)); //TODO: don't mix async/.then 963#discussion_r1682376524
 
-        this.idsAlreadyRequested.clear();
-
         const exportResults = await promiseMap(_.keys(metadataWithSyncAll), type => {
             const myClass = modelFactory(type);
             const metadataType = myClass.getMetadataType();
@@ -264,6 +262,8 @@ export class MetadataSyncUseCase extends GenericSyncUseCase {
             userRoles: includeSharingSettingsObjectsAndReferences ? userRoles : undefined,
             ...rest,
         };
+
+        this.idsAlreadyRequested.clear();
 
         debug("Metadata package", finalMetadataPackage);
         return finalMetadataPackage;
