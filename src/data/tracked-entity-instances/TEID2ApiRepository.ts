@@ -123,7 +123,7 @@ export class TEID2ApiRepository implements TEIRepository {
             };
 
             const trackerPostRequest: TrackerPostRequest = {
-                trackedEntities: data.trackedEntityInstances.map(tei => this.buildD2TrackerTrackedEntity(tei)),
+                trackedEntities: data.trackedEntities.map(tei => this.buildD2TrackerTrackedEntity(tei)),
             };
 
             const response = await this.api.tracker.post(teiPostParams, trackerPostRequest).getData();
