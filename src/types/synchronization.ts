@@ -14,6 +14,7 @@ export interface ExportBuilder {
     includeOnlyOrgUnitsReferences: boolean;
     sharingSettingsIncludeReferencesAndObjectsRules: string[][];
     usersIncludeReferencesAndObjectsRules: string[][];
+    removeUserNonEssentialObjects: boolean;
 }
 
 export interface SynchronizationState {

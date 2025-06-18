@@ -250,6 +250,8 @@ export class SynchronizationRule {
             includeOnlyUsersReferences: false,
             includeOrgUnitsObjectsAndReferences: true,
             includeOnlyOrgUnitsReferences: false,
+            removeDefaultCategoryObjects: false,
+            removeUserNonEssentialObjects: false,
             ...params,
         };
     }
@@ -682,6 +684,8 @@ export class SynchronizationRule {
             includeOnlyUsersReferences: false,
             includeOrgUnitsObjectsAndReferences: true,
             includeOnlyOrgUnitsReferences: false,
+            removeDefaultCategoryObjects: false,
+            removeUserNonEssentialObjects: false,
         };
 
         return this.updateBuilder({

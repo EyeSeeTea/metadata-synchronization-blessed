@@ -44,5 +44,7 @@ export const MetadataSynchronizationParamsModel: Codec<MetadataSynchronizationPa
         includeOnlyUsersReferences: Schema.optionalSafe(Schema.boolean, false),
         includeOrgUnitsObjectsAndReferences: Schema.optionalSafe(Schema.boolean, true),
         includeOnlyOrgUnitsReferences: Schema.optionalSafe(Schema.boolean, false),
+        removeDefaultCategoryObjects: Schema.optional(Schema.boolean),
+        removeUserNonEssentialObjects: Schema.optional(Schema.boolean),
     })
 );

@@ -112,6 +112,24 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
         );
     };
 
+    const changeRemoveDefaultCategoryObjects = (removeDefaultCategoryObjects: boolean) => {
+        onChange(
+            syncRule.updateSyncParams({
+                ...syncParams,
+                removeDefaultCategoryObjects,
+            })
+        );
+    };
+
+    const changeRemoveNonEssentialUserObjects = (removeUserNonEssentialObjects: boolean) => {
+        onChange(
+            syncRule.updateSyncParams({
+                ...syncParams,
+                removeUserNonEssentialObjects,
+            })
+        );
+    };
+
     return (
         <React.Fragment>
             <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
@@ -128,6 +146,28 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                     ]}
                     onValueChange={changeMetadataStrategy}
                 />
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t(
+                            "Remove default categories, categoryOptions, categoryCombos and categoryOptionCombos"
+                        )}
+                        onValueChange={changeRemoveDefaultCategoryObjects}
+                        value={syncParams.removeDefaultCategoryObjects || false}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "metadata" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Remove lastUpdated, lastUpdatedBy, created and createdBys")}
+                        onValueChange={changeRemoveNonEssentialUserObjects}
+                        value={syncParams.removeUserNonEssentialObjects || false}
+                    />
+                </div>
             )}
 
             {syncRule.type === "metadata" && (
