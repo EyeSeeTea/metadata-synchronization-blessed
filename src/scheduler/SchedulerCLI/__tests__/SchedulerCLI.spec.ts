@@ -23,6 +23,9 @@ describe("SchedulerCLI", () => {
     let mockLogger: Logger;
 
     beforeEach(() => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date("2025-06-12T08:12:50.777Z"));
+
         jest.clearAllMocks();
         mockScheduler = new MockScheduler();
         mockCompositionRoot = new MockCompositionRoot() as unknown as CompositionRoot;
@@ -33,6 +36,10 @@ describe("SchedulerCLI", () => {
             compositionRoot: mockCompositionRoot as unknown as CompositionRoot,
             logger: mockLogger,
         });
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     describe("initialize", () => {
