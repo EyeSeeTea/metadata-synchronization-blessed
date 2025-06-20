@@ -8,7 +8,7 @@ import { DataValue } from "../../aggregated/entities/DataValue";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
 import { DataElement, Program } from "../../metadata/entities/MetadataEntities";
-import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
+import { getSuccessDefaultSyncReportByType, SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { SynchronizationPayload } from "../../synchronization/entities/SynchronizationPayload";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary } from "../../synchronization/utils";
@@ -106,13 +106,28 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { events, dataValues, trackedEntityInstances } = await this.buildPayload();
+        const { dataParams = {} } = this.builder;
+
+        const wasAnyTeiSelectedToSync =
+            !!dataParams.allTEIs || (!dataParams.allTEIs && dataParams.teis && dataParams.teis.length > 0);
 
         const teisResponse =
             trackedEntityInstances && trackedEntityInstances.length > 0
                 ? await this.postTEIsPayload(instance, trackedEntityInstances)
+                : wasAnyTeiSelectedToSync
+                ? getSuccessDefaultSyncReportByType("trackedEntityInstances", instance)
                 : undefined;
 
-        const eventsResponse = await this.postEventsPayload(instance, events, trackedEntityInstances);
+        const wasAnyEventSelectedToSync =
+            !!dataParams.allEvents || (!dataParams.allEvents && dataParams.events && dataParams.events.length > 0);
+
+        const eventsResponse =
+            events?.length > 0 || trackedEntityInstances?.length > 0
+                ? await this.postEventsPayload(instance, events, trackedEntityInstances)
+                : wasAnyEventSelectedToSync
+                ? getSuccessDefaultSyncReportByType("events", instance)
+                : undefined;
+
         const indicatorsResponse = await this.postIndicatorPayload(instance, dataValues);
 
         return _.compact([eventsResponse, indicatorsResponse, teisResponse]);
@@ -128,7 +143,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
         const mapping = await this.getMapping(instance);
         const mapper = await createTEIsToEventPayloadMapper(await this.getMetadataRepository(instance), mapping);
 
-        const payloadByTEIs = (await mapper.map({ trackedEntityInstances: teis })) as EventsPackage;
+        const payloadByTEIs = (await mapper.map({ trackedEntities: teis })) as EventsPackage;
 
         const finalEvents = await this.manageDataElementWithFileType(events, instance);
 
@@ -160,7 +175,7 @@ export class EventsSyncUseCase extends GenericSyncUseCase {
 
         const mapper = await createTEIsPayloadMapper(await this.getMetadataRepository(instance), teis, mapping);
 
-        const payload = (await mapper.map({ trackedEntityInstances: teis })) as TEIsPackage;
+        const payload = (await mapper.map({ trackedEntities: teis })) as TEIsPackage;
 
         debug("TEIS package", { trackedEntityInstances, payload });
 
