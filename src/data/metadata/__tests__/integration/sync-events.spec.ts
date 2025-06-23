@@ -8,6 +8,7 @@ import { SynchronizationBuilder } from "../../../../domain/synchronization/entit
 import { startDhis } from "../../../../utils/dhisServer";
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { EventsPayloadBuilder } from "../../../../domain/events/builders/EventsPayloadBuilder";
+import { AggregatedPayloadBuilder } from "../../../../domain/aggregated/builders/AggregatedPayloadBuilder";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -332,8 +333,15 @@ describe("Sync events", () => {
         };
 
         const eventsPayloadBuilder = new EventsPayloadBuilder(repositoryFactory, localInstance);
+        const aggregatedPayloadBuilder = new AggregatedPayloadBuilder(repositoryFactory, localInstance);
 
-        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance, eventsPayloadBuilder);
+        const sync = new EventsSyncUseCase(
+            builder,
+            repositoryFactory,
+            localInstance,
+            eventsPayloadBuilder,
+            aggregatedPayloadBuilder
+        );
 
         const payload = await eventsPayloadBuilder.build(builder);
 
@@ -366,8 +374,15 @@ describe("Sync events", () => {
             },
         };
         const eventsPayloadBuilder = new EventsPayloadBuilder(repositoryFactory, localInstance);
+        const aggregatedPayloadBuilder = new AggregatedPayloadBuilder(repositoryFactory, localInstance);
 
-        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance, eventsPayloadBuilder);
+        const sync = new EventsSyncUseCase(
+            builder,
+            repositoryFactory,
+            localInstance,
+            eventsPayloadBuilder,
+            aggregatedPayloadBuilder
+        );
 
         const payload = await eventsPayloadBuilder.build(builder);
 
