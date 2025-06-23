@@ -59,14 +59,12 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
 
         try {
             loading.show(true, i18n.t("Creating pull request"));
-            const sync = compositionRoot.sync[type](builder);
-            const payload = await sync.buildPayload();
 
             await compositionRoot.sync.createPullRequest({
                 instance,
                 type,
                 ids: builder.metadataIds,
-                payload,
+                syncBuilder: builder,
                 subject,
                 description,
                 notificationUsers: {

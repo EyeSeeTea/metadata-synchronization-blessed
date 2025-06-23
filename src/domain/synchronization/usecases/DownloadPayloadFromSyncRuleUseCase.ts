@@ -18,6 +18,7 @@ import { SynchronizationPayload } from "../entities/SynchronizationPayload";
 import { SynchronizationResultType } from "../entities/SynchronizationType";
 import { PayloadMapper } from "../mapper/PayloadMapper";
 import { GenericSyncUseCase } from "./GenericSyncUseCase";
+import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 
 type DownloadErrors = string[];
 
@@ -33,9 +34,11 @@ type SynRuleParam = {
 
 type DownloadPayloadParams = SynRuleIdParam | SynRuleParam;
 
+//TODO: Avoid  code smell: Call use case from another use case
 export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
+        private metadataPayloadBuilder: MetadataPayloadBuilder,
         private repositoryFactory: RepositoryFactory,
         private localInstance: Instance
     ) {}
@@ -45,7 +48,8 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         if (!rule) return Either.success(true);
 
         const sync: GenericSyncUseCase = this.compositionRoot.sync[rule.type](rule.toBuilder());
-        const payload: SynchronizationPayload = await sync.buildPayload();
+
+        const payload: SynchronizationPayload = await this.buildPayload(sync, rule, this.metadataPayloadBuilder);
 
         const date = moment().format("YYYYMMDDHHmm");
 
@@ -81,6 +85,18 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
             return Either.success(true);
         } else {
             return Either.error(errors);
+        }
+    }
+
+    private async buildPayload(
+        sync: GenericSyncUseCase,
+        rule: SynchronizationRule,
+        metadataPayloadBuilder: MetadataPayloadBuilder
+    ): Promise<SynchronizationPayload> {
+        if (sync.type === "metadata") {
+            return metadataPayloadBuilder.build(rule.builder);
+        } else {
+            return sync.buildPayload();
         }
     }
 

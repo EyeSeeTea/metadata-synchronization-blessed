@@ -2,9 +2,9 @@ import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { getMetadataPackageDiff, MetadataPackageDiff } from "../entities/MetadataPackageDiff";
-import { CompositionRoot } from "./../../../presentation/CompositionRoot";
 import { Either } from "./../../common/entities/Either";
 import { MetadataModule } from "./../../modules/entities/MetadataModule";
 import { BaseModule } from "./../../modules/entities/Module";
@@ -14,7 +14,7 @@ type DiffPackageUseCaseError = "PACKAGE_NOT_FOUND" | "MODULE_NOT_FOUND" | "NETWO
 
 export class DiffPackageUseCase implements UseCase {
     constructor(
-        private compositionRoot: CompositionRoot,
+        private metadataPayloadBuilder: MetadataPayloadBuilder,
         private repositoryFactory: RepositoryFactory,
         private localInstance: Instance
     ) {}
@@ -47,11 +47,11 @@ export class DiffPackageUseCase implements UseCase {
             if (!moduleDataMerge) return Either.error("MODULE_NOT_FOUND");
             const moduleMerge = MetadataModule.build(moduleDataMerge);
 
-            contentsBase = await this.compositionRoot.sync[moduleMerge.type]({
+            contentsBase = await this.metadataPayloadBuilder.build({
                 ...moduleMerge.toSyncBuilder(),
                 originInstance: "LOCAL",
                 targetInstances: [],
-            }).buildPayload();
+            });
         }
 
         return Either.success(getMetadataPackageDiff(contentsBase, contentsMerge));

@@ -3,14 +3,24 @@ import moment from "moment";
 import { UseCase } from "../../common/entities/UseCase";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
+import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { Package } from "../../packages/entities/Package";
 import { Module } from "../entities/Module";
 
 export class DownloadModuleSnapshotUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: RepositoryFactory,
+        private localInstance: Instance,
+        private metadataPayloadBuilder: MetadataPayloadBuilder
+    ) {}
 
-    public async execute(module: Module, contents: MetadataPackage) {
+    public async execute(module: Module, originInstance: string) {
+        const contents = await this.metadataPayloadBuilder.build({
+            ...module.toSyncBuilder(),
+            originInstance,
+            targetInstances: [],
+        });
+
         const user = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
         const item = Package.build({
             module,

@@ -1,18 +1,18 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
-import { CompositionRoot } from "../../../presentation/CompositionRoot";
 import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
 import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "../../modules/entities/Module";
 import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {
     constructor(
-        private compositionRoot: CompositionRoot,
+        private metadataPayloadBuilder: MetadataPayloadBuilder,
         private repositoryFactory: RepositoryFactory,
         private localInstance: Instance
     ) {}
@@ -30,13 +30,13 @@ export class CreatePackageUseCase implements UseCase {
 
         const apiVersion = getMajorVersion(dhisVersion);
 
-        const basePayload = contents
-            ? contents
-            : await this.compositionRoot.sync[module.type]({
-                  ...module.toSyncBuilder(),
-                  originInstance,
-                  targetInstances: [],
-              }).buildPayload();
+        const syncBuilder = {
+            ...module.toSyncBuilder(),
+            originInstance,
+            targetInstances: [],
+        };
+
+        const basePayload = contents ? contents : this.metadataPayloadBuilder.build(syncBuilder);
 
         const versionedPayload = this.repositoryFactory
             .transformationRepository()

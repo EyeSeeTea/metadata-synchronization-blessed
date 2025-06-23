@@ -4,6 +4,7 @@ import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
 import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { MetadataPayloadBuilder } from "../../../../domain/metadata/builders/MetadataPayloadBuilder";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
@@ -176,7 +177,12 @@ export async function executeMetadataSync(
         excludedIds: [],
     };
 
-    const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
+    const useCase = new MetadataSyncUseCase(
+        builder,
+        repositoryFactory,
+        localInstance,
+        new MetadataPayloadBuilder(repositoryFactory, localInstance)
+    );
 
     let done = false;
     for await (const sync of useCase.execute()) {
