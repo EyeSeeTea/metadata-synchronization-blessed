@@ -3,7 +3,7 @@ import moment from "moment";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { getUserInfo, isGlobalAdmin } from "../../../utils/permissions";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
@@ -28,7 +28,7 @@ export interface ListSyncRuleUseCaseResult {
 }
 
 export class ListSyncRuleUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute({
         paging = true,

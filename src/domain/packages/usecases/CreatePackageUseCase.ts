@@ -3,17 +3,19 @@ import { metadataTransformations } from "../../../data/transformations/PackageTr
 import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "../../modules/entities/Module";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {
     constructor(
         private metadataPayloadBuilder: MetadataPayloadBuilder,
-        private repositoryFactory: RepositoryFactory,
+        private repositoryFactory: DynamicRepositoryFactory,
+        private transformationRepository: TransformationRepository,
         private localInstance: Instance
     ) {}
 
@@ -38,9 +40,11 @@ export class CreatePackageUseCase implements UseCase {
 
         const basePayload = contents ? contents : this.metadataPayloadBuilder.build(syncBuilder);
 
-        const versionedPayload = this.repositoryFactory
-            .transformationRepository()
-            .mapPackageTo(apiVersion, basePayload, metadataTransformations);
+        const versionedPayload = this.transformationRepository.mapPackageTo(
+            apiVersion,
+            basePayload,
+            metadataTransformations
+        );
 
         const payload = sourcePackage.update({ contents: versionedPayload, dhisVersion });
 

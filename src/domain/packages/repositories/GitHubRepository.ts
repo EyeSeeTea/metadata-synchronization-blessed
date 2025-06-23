@@ -5,10 +5,6 @@ import { GithubFile } from "../entities/GithubFile";
 import { Store } from "../../stores/entities/Store";
 import { StorePermissions } from "../../stores/entities/StorePermissions";
 
-export interface GitHubRepositoryConstructor {
-    new (): GitHubRepository;
-}
-
 export const moduleFile = ".module.json";
 
 export interface GitHubRepository {

@@ -2,13 +2,20 @@ import _ from "lodash";
 import moment from "moment";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
+import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 import { BasePackage } from "../entities/Package";
+import { GitHubRepository } from "../repositories/GitHubRepository";
 
 export class DownloadPackageUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private githubRepository: GitHubRepository,
+        private downloadRepository: DownloadRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(storeId: string | undefined, id: string, instance = this.localInstance) {
         const element = storeId
@@ -22,7 +29,7 @@ export class DownloadPackageUseCase implements UseCase {
         const name = `package-${ruleName}-${date}`;
         const payload = { package: item, ...contents };
 
-        this.repositoryFactory.downloadRepository().downloadFile(name, payload);
+        this.downloadRepository.downloadFile(name, payload);
     }
 
     private async getDataStorePackage(id: string, instance: Instance) {
@@ -35,14 +42,16 @@ export class DownloadPackageUseCase implements UseCase {
         const store = await this.repositoryFactory.storeRepository(this.localInstance).getById(storeId);
         if (!store) return undefined;
 
-        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
+        const { encoding, content } = await this.githubRepository.request<{
             encoding: string;
             content: string;
         }>(store, url);
 
-        const validation = this.repositoryFactory
-            .gitRepository()
-            .readFileContents<MetadataPackage & { package: BasePackage }>(encoding, content);
+        const validation = this.githubRepository.readFileContents<MetadataPackage & { package: BasePackage }>(
+            encoding,
+            content
+        );
+
         if (!validation.value.data) return undefined;
 
         const { package: basePackage, ...contents } = validation.value.data;

@@ -2,7 +2,7 @@ import { mock, instance, when, verify, anything, deepEqual } from "ts-mockito";
 import { SaveSyncRuleUseCase } from "../SaveSyncRuleUseCase";
 import { SynchronizationRule } from "../../entities/SynchronizationRule";
 import { Instance } from "../../../instance/entities/Instance";
-import { RepositoryFactory } from "../../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../../common/factories/DynamicRepositoryFactory";
 import { MetadataRepository } from "../../../metadata/repositories/MetadataRepository";
 import { InstanceRepository } from "../../../instance/repositories/InstanceRepository";
 import { RulesRepository } from "../../repositories/RulesRepository";
@@ -105,7 +105,7 @@ describe("SaveSyncRuleUseCase", () => {
             Promise.resolve(metadataInRule)
         );
 
-        const mockedRepositoryFactory = mock<RepositoryFactory>();
+        const mockedRepositoryFactory = mock<DynamicRepositoryFactory>();
         when(mockedRepositoryFactory.instanceRepository(anything())).thenReturn(instance(mockedInstanceRepository));
         when(mockedRepositoryFactory.metadataRepository(anything())).thenReturn(instance(mockedMetadataRepository));
         when(mockedRepositoryFactory.rulesRepository(anything())).thenReturn(instance(mockedRulesRepository));

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataIncludeExcludeRules } from "../../metadata/entities/MetadataExcludeIncludeRules";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
@@ -8,7 +8,7 @@ import { MetadataEntity, MetadataPackage } from "../../metadata/entities/Metadat
 import { getModelsByMetadataAndSyncAll } from "../getModels";
 
 export class SaveSyncRuleUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(rules: SynchronizationRule[]): Promise<void> {
         const updatedRules = await Promise.all(rules.map(rule => this.fixSyncRule(rule)));

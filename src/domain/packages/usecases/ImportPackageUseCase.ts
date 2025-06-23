@@ -1,7 +1,7 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { debug } from "../../../utils/debug";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { InstanceRepository } from "../../instance/repositories/InstanceRepository";
@@ -20,7 +20,7 @@ export class ImportPackageUseCase implements UseCase {
     instanceRepository: InstanceRepository;
     userRepository: UserRepository;
 
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {
         this.instanceRepository = this.repositoryFactory.instanceRepository(this.localInstance);
         this.userRepository = this.repositoryFactory.userRepository(this.localInstance);
     }

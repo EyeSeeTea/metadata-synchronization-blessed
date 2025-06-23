@@ -1,14 +1,14 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { ImportedPackage } from "../entities/ImportedPackage";
 
 type SavePackageError = "UNEXPECTED_ERROR";
 
 export class SaveImportedPackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(importedPackages: ImportedPackage[]): Promise<Either<SavePackageError, void>> {
         const storageClient = await this.repositoryFactory

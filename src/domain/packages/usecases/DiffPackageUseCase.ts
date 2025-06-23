@@ -1,10 +1,11 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { getMetadataPackageDiff, MetadataPackageDiff } from "../entities/MetadataPackageDiff";
+import { GitHubRepository } from "../repositories/GitHubRepository";
 import { Either } from "./../../common/entities/Either";
 import { MetadataModule } from "./../../modules/entities/MetadataModule";
 import { BaseModule } from "./../../modules/entities/Module";
@@ -15,7 +16,8 @@ type DiffPackageUseCaseError = "PACKAGE_NOT_FOUND" | "MODULE_NOT_FOUND" | "NETWO
 export class DiffPackageUseCase implements UseCase {
     constructor(
         private metadataPayloadBuilder: MetadataPayloadBuilder,
-        private repositoryFactory: RepositoryFactory,
+        private repositoryFactory: DynamicRepositoryFactory,
+        private gitHubRepository: GitHubRepository,
         private localInstance: Instance
     ) {}
 
@@ -75,14 +77,16 @@ export class DiffPackageUseCase implements UseCase {
         const store = await this.repositoryFactory.storeRepository(this.localInstance).getById(storeId);
         if (!store) return undefined;
 
-        const { encoding, content } = await this.repositoryFactory.gitRepository().request<{
+        const { encoding, content } = await this.gitHubRepository.request<{
             encoding: string;
             content: string;
         }>(store, url);
 
-        const validation = this.repositoryFactory
-            .gitRepository()
-            .readFileContents<MetadataPackage & { package: BasePackage }>(encoding, content);
+        const validation = this.gitHubRepository.readFileContents<MetadataPackage & { package: BasePackage }>(
+            encoding,
+            content
+        );
+
         if (!validation.value.data) return undefined;
 
         const { package: basePackage, ...contents } = validation.value.data;

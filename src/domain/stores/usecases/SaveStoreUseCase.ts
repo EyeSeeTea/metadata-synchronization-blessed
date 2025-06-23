@@ -1,17 +1,22 @@
 import { generateUid } from "d2/uid";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { GitHubError } from "../../packages/entities/Errors";
+import { GitHubRepository } from "../../packages/repositories/GitHubRepository";
 import { Store } from "../entities/Store";
 
 export class SaveStoreUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private gitHubRepository: GitHubRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(store: Store, validate = true): Promise<Either<GitHubError, Store>> {
         if (validate) {
-            const validation = await this.repositoryFactory.gitRepository().validateStore(store);
+            const validation = await this.gitHubRepository.validateStore(store);
             if (validation.isError()) return Either.error(validation.value.error ?? "UNKNOWN");
         }
 
