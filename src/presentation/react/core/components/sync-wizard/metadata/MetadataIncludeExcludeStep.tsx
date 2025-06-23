@@ -46,6 +46,10 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
         sharingSettingsObjectsAndReferencesValue,
         usersObjectsAndReferencesValue,
         orgUnitsObjectsAndReferencesValue,
+        removeDefaultCategoryObjects,
+        changeRemoveDefaultCategoryObjects,
+        removeUserNonEssentialObjects,
+        changeRemoveNonEssentialUserObjects,
     } = useMetadataIncludeExcludeStep(syncRule, onChange);
 
     useEffect(() => {
@@ -91,6 +95,28 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
                         hideEmpty
                     />
                 </DropdownContainer>
+
+                {syncRule.type === "metadata" && (
+                    <div>
+                        <Toggle
+                            label={i18n.t(
+                                "Remove default categories, categoryOptions, categoryCombos and categoryOptionCombos"
+                            )}
+                            onValueChange={changeRemoveDefaultCategoryObjects}
+                            value={removeDefaultCategoryObjects || false}
+                        />
+                    </div>
+                )}
+
+                {syncRule.type === "metadata" && (
+                    <div>
+                        <Toggle
+                            label={i18n.t("Remove lastUpdated, lastUpdatedBy, created and createdBys")}
+                            onValueChange={changeRemoveNonEssentialUserObjects}
+                            value={removeUserNonEssentialObjects || false}
+                        />
+                    </div>
+                )}
             </div>
             <Toggle
                 label={i18n.t("Use default dependencies")}

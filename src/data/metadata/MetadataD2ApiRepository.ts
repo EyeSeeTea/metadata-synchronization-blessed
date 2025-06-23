@@ -3,7 +3,6 @@ import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
 import { IdentifiableRef, Ref } from "../../domain/common/entities/Ref";
-import { DataSource, isDhisInstance } from "../../domain/instance/entities/DataSource";
 import { Instance } from "../../domain/instance/entities/Instance";
 import {
     DateFilter,
@@ -40,12 +39,13 @@ import { metadataTransformations } from "../transformations/PackageTransformatio
 import { D2MetadataUtils } from "./D2MetadataUtils";
 import { D2ApiDataStore } from "../common/D2ApiDataStore";
 import { DataStoreMetadata } from "../../domain/data-store/DataStoreMetadata";
+import { isDhisInstance } from "../../domain/instance/entities/DataSource";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
     private instance: Instance;
 
-    constructor(instance: DataSource, private transformationRepository: TransformationRepository) {
+    constructor(instance: Instance, private transformationRepository: TransformationRepository) {
         if (!isDhisInstance(instance)) {
             throw new Error("Invalid instance type for MetadataD2ApiRepository");
         }
@@ -552,31 +552,36 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         fields = ":all",
         includeDefaults: boolean
     ): Promise<Record<string, T[]>> {
-        const promises = [];
-        const chunkSize = 50;
+        try {
+            const promises = [];
+            const chunkSize = 50;
 
-        for (let i = 0; i < elements.length; i += chunkSize) {
-            const requestElements = elements.slice(i, i + chunkSize).toString();
-            promises.push(
-                this.api
-                    .get("/metadata", {
-                        fields,
-                        filter: "id:in:[" + requestElements + "]",
-                        defaults: includeDefaults ? undefined : "EXCLUDE",
-                    })
-                    .getData()
-            );
+            for (let i = 0; i < elements.length; i += chunkSize) {
+                const requestElements = elements.slice(i, i + chunkSize).toString();
+                promises.push(
+                    this.api
+                        .get("/metadata", {
+                            fields,
+                            filter: "id:in:[" + requestElements + "]",
+                            defaults: includeDefaults ? undefined : "EXCLUDE",
+                        })
+                        .getData()
+                );
+            }
+
+            const response = await Promise.all(promises);
+            const results = _.deepMerge({}, ...response);
+            if (results.system) delete results.system;
+
+            const metadata = await this.validateEventVisualizationsByIds(results);
+            const defaultIds = await this.getDefaultIds();
+            const metadataExcludeDefaults = includeDefaults
+                ? metadata
+                : await D2MetadataUtils.excludeDefaults(metadata, defaultIds);
+            return metadataExcludeDefaults;
+        } catch (error) {
+            throw new Error(`Failed to fetch metadata by ids ${elements.join(", ")}`);
         }
-        const response = await Promise.all(promises);
-        const results = _.deepMerge({}, ...response);
-        if (results.system) delete results.system;
-
-        const metadata = await this.validateEventVisualizationsByIds(results);
-        const defaultIds = await this.getDefaultIds();
-        const metadataExcludeDefaults = includeDefaults
-            ? metadata
-            : await D2MetadataUtils.excludeDefaults(metadata, defaultIds);
-        return metadataExcludeDefaults;
     }
 
     private async validateEventVisualizationsByIds(metadata: any) {

@@ -11,10 +11,20 @@ import { defaultName, modelFactory } from "../../../../../../models/dhis/factory
 import { useAppContext } from "../../../contexts/AppContext";
 import { DropdownOption } from "../../dropdown/Dropdown";
 
-export type IncludeObjectsAndReferences =
-    | "includeObjectsAndReferences"
-    | "includeOnlyReferences"
-    | "removeObjectsAndReferences";
+export const includeObjectsAndReferencesMap = {
+    includeObjectsAndReferences: i18n.t("Include objects and references"),
+    includeOnlyReferences: i18n.t("Include only references"),
+    removeObjectsAndReferences: i18n.t("Remove objects and references"),
+} as const;
+
+export type IncludeObjectsAndReferences = keyof typeof includeObjectsAndReferencesMap;
+
+export const includeObjectsAndReferencesOptions: { id: IncludeObjectsAndReferences; name: string }[] = Object.entries(
+    includeObjectsAndReferencesMap
+).map(([id, name]) => ({
+    id: id as IncludeObjectsAndReferences,
+    name,
+}));
 
 export function useMetadataIncludeExcludeStep(
     syncRule: SynchronizationRule,
@@ -126,7 +136,7 @@ export function useMetadataIncludeExcludeStep(
     }, []);
 
     const changeInclude = useCallback(
-        (currentIncludeRules: any) => {
+        (currentIncludeRules: string[]) => {
             const type: string = selectedType;
 
             const oldIncludeRules: string[] = includeRules;
@@ -173,23 +183,6 @@ export function useMetadataIncludeExcludeStep(
         },
         [includeReferencesAndObjectsRules, onChange, selectedType, syncRule]
     );
-
-    const includeObjectsAndReferencesOptions = useMemo(() => {
-        return [
-            {
-                id: "includeObjectsAndReferences" as const,
-                name: i18n.t("Include objects and references"),
-            },
-            {
-                id: "includeOnlyReferences" as const,
-                name: i18n.t("Include only references"),
-            },
-            {
-                id: "removeObjectsAndReferences" as const,
-                name: i18n.t("Remove objects and references"),
-            },
-        ];
-    }, []);
 
     const sharingSettingsObjectsAndReferencesValue: IncludeObjectsAndReferences = useMemo(() => {
         return getObjectsAndReferencesValue(
@@ -251,6 +244,38 @@ export function useMetadataIncludeExcludeStep(
         [onChange, syncRule]
     );
 
+    const removeDefaultCategoryObjects = useMemo(() => {
+        return syncParams.removeDefaultCategoryObjects;
+    }, [syncParams.removeDefaultCategoryObjects]);
+
+    const removeUserNonEssentialObjects = useMemo(() => {
+        return syncParams.removeUserNonEssentialObjects;
+    }, [syncParams.removeUserNonEssentialObjects]);
+
+    const changeRemoveDefaultCategoryObjects = useCallback(
+        (removeDefaultCategoryObjects: boolean) => {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncParams,
+                    removeDefaultCategoryObjects,
+                })
+            );
+        },
+        [syncParams, onChange, syncRule]
+    );
+
+    const changeRemoveNonEssentialUserObjects = useCallback(
+        (removeUserNonEssentialObjects: boolean) => {
+            onChange(
+                syncRule.updateSyncParams({
+                    ...syncParams,
+                    removeUserNonEssentialObjects,
+                })
+            );
+        },
+        [syncParams, onChange, syncRule]
+    );
+
     return {
         error,
         d2,
@@ -272,6 +297,10 @@ export function useMetadataIncludeExcludeStep(
         sharingSettingsObjectsAndReferencesValue,
         usersObjectsAndReferencesValue,
         orgUnitsObjectsAndReferencesValue,
+        removeDefaultCategoryObjects,
+        removeUserNonEssentialObjects,
+        changeRemoveDefaultCategoryObjects,
+        changeRemoveNonEssentialUserObjects,
     };
 }
 

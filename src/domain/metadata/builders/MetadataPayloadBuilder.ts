@@ -10,7 +10,7 @@ import { promiseMap } from "../../../utils/common";
 import { defaultName, modelFactory } from "../../../models/dhis/factory";
 import { cache } from "../../../utils/cache";
 import { ExportBuilder } from "../../../types/synchronization";
-import { D2Api } from "../../../types/d2-api";
+import { D2Api, Id } from "../../../types/d2-api";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import _ from "lodash";
 import { NestedRules } from "../entities/MetadataExcludeIncludeRules";
@@ -18,6 +18,7 @@ import { buildNestedRules, cleanObject, cleanReferences, getAllReferences } from
 
 export class MetadataPayloadBuilder {
     private api: D2Api;
+    private idsAlreadyRequested = new Set<Id>();
 
     constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {
         this.api = getD2APiFromInstance(localInstance);
@@ -137,6 +138,8 @@ export class MetadataPayloadBuilder {
             ...rest,
         };
 
+        this.idsAlreadyRequested.clear();
+
         debug("Metadata package", finalMetadataPackage);
         return finalMetadataPackage;
     }
@@ -179,6 +182,12 @@ export class MetadataPayloadBuilder {
                 removeUserNonEssentialObjects,
             } = builder;
 
+            const newIds = ids.filter(id => !this.idsAlreadyRequested.has(id));
+
+            if (newIds.length === 0) {
+                return {};
+            }
+
             //TODO: when metadata entities schema exists on domain, move this factory to domain
             const collectionName = modelFactory(type).getCollectionName();
             const schema = this.api.models[collectionName].schema;
@@ -193,8 +202,9 @@ export class MetadataPayloadBuilder {
             // Get all the required metadata
             const originInstance = await this.getOriginInstance(originInstanceId);
             const metadataRepository = this.repositoryFactory.metadataRepository(originInstance);
-            const syncMetadata = await metadataRepository.getMetadataByIds(ids);
+            const syncMetadata = await metadataRepository.getMetadataByIds(newIds);
             const elements = syncMetadata[collectionName] || [];
+            newIds.forEach(id => this.idsAlreadyRequested.add(id));
 
             for (const element of elements) {
                 //ProgramRules is not included in programs items in the response by the dhis2 API
@@ -245,7 +255,7 @@ export class MetadataPayloadBuilder {
 
                     return recursiveExport({
                         type: type as keyof MetadataEntities,
-                        ids: references[type],
+                        ids: [...new Set(references[type])],
                         excludeRules: nestedExcludeRules[type],
                         includeReferencesAndObjectsRules: nextIncludeReferencesAndObjectsRules,
                         includeSharingSettingsObjectsAndReferences,

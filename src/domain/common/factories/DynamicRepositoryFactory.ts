@@ -18,99 +18,102 @@ import { StoreRepository } from "../../stores/repositories/StoreRepository";
 import { TableColumnsRepository } from "../../table-columns/repositories/TableColumnsRepository";
 import { TEIRepository } from "../../tracked-entity-instances/repositories/TEIRepository";
 import { UserRepository } from "../../user/repositories/UserRepository";
+import { JSONDataSource } from "../../instance/entities/JSONDataSource";
 
 export type RepositoryByInstanceCreator<T> = (instance: Instance) => T;
-export type RepositoryByDataSourceCreator<T> = (instance: DataSource) => T;
+export type RepositoryByJsonSourceCreator<T> = (instance: JSONDataSource) => T;
 
 export class DynamicRepositoryFactory {
     private repositoryCreators = new Map<string, RepositoryByInstanceCreator<unknown>>();
 
-    private repositoryCreatorsByDataSource = new Map<string, RepositoryByDataSourceCreator<unknown>>();
+    private repositoryCreatorsByDataSource = new Map<string, RepositoryByJsonSourceCreator<unknown>>();
     private createdReposities = new Map<string, unknown>();
 
-    public bind<T>(key: RepositoryKeys, creator: RepositoryByInstanceCreator<T>, tag = "default") {
+    public bindByInstance<T>(key: RepositoryKeys, creator: RepositoryByInstanceCreator<T>, tag = "default") {
         this.repositoryCreators.set(`${key}-${tag}`, creator);
     }
 
-    public bindByDataSource<T>(key: RepositoryKeys, creator: RepositoryByDataSourceCreator<T>, tag = "default") {
+    public bindByJsonDataSource<T>(key: RepositoryKeys, creator: RepositoryByJsonSourceCreator<T>, tag = "default") {
         this.repositoryCreatorsByDataSource.set(`${key}-${tag}`, creator);
     }
 
     public configRepository(instance: Instance): StorageClientRepository {
-        return this.get(Repositories.ConfigRepository, instance);
+        return this.getbyInstance(Repositories.ConfigRepository, instance);
     }
 
     public storeRepository(instance: Instance): StoreRepository {
-        return this.get(Repositories.StoreRepository, instance);
+        return this.getbyInstance(Repositories.StoreRepository, instance);
     }
 
     public instanceRepository(instance: Instance): InstanceRepository {
-        return this.get(Repositories.InstanceRepository, instance);
+        return this.getbyInstance(Repositories.InstanceRepository, instance);
     }
 
     public instanceFileRepository(instance: Instance): InstanceFileRepository {
-        return this.get(Repositories.InstanceFileRepository, instance);
+        return this.getbyInstance(Repositories.InstanceFileRepository, instance);
     }
 
     public userRepository(instance: Instance): UserRepository {
-        return this.get(Repositories.UserRepository, instance);
+        return this.getbyInstance(Repositories.UserRepository, instance);
     }
 
     public metadataRepository(instance: DataSource): MetadataRepository {
-        const tag = instance.type === "json" ? "json" : undefined;
-
-        return this.getByDataSource(Repositories.MetadataRepository, instance, tag);
+        if (instance.type === "json") {
+            return this.getByJsonDataSource(Repositories.MetadataRepository, instance as JSONDataSource, "json");
+        } else {
+            return this.getbyInstance(Repositories.MetadataRepository, instance);
+        }
     }
 
     public aggregatedRepository(instance: Instance): AggregatedRepository {
-        return this.get(Repositories.AggregatedRepository, instance);
+        return this.getbyInstance(Repositories.AggregatedRepository, instance);
     }
 
     public eventsRepository(instance: Instance): EventsRepository {
-        return this.get(Repositories.EventsRepository, instance);
+        return this.getbyInstance(Repositories.EventsRepository, instance);
     }
 
     public tableColumnsRepository(instance: Instance): TableColumnsRepository {
-        return this.get(Repositories.TableColumnsRepository, instance);
+        return this.getbyInstance(Repositories.TableColumnsRepository, instance);
     }
 
     public dataStoreMetadataRepository(instance: Instance): DataStoreMetadataRepository {
-        return this.get(Repositories.DataStoreMetadataRepository, instance);
+        return this.getbyInstance(Repositories.DataStoreMetadataRepository, instance);
     }
 
     public teisRepository(instance: Instance): TEIRepository {
-        return this.get(Repositories.TEIsRepository, instance);
+        return this.getbyInstance(Repositories.TEIsRepository, instance);
     }
 
     public reportsRepository(instance: Instance): ReportsRepository {
-        return this.get(Repositories.ReportsRepository, instance);
+        return this.getbyInstance(Repositories.ReportsRepository, instance);
     }
 
     public rulesRepository(instance: Instance): RulesRepository {
-        return this.get(Repositories.RulesRepository, instance);
+        return this.getbyInstance(Repositories.RulesRepository, instance);
     }
 
     public fileRulesRepository(instance: Instance): FileRulesRepository {
-        return this.get(Repositories.FileRulesRepository, instance);
+        return this.getbyInstance(Repositories.FileRulesRepository, instance);
     }
 
     public customDataRepository(instance: Instance): CustomDataRepository {
-        return this.get(Repositories.CustomDataRepository, instance);
+        return this.getbyInstance(Repositories.CustomDataRepository, instance);
     }
 
     public migrationsRepository(instance: Instance): MigrationsRepository {
-        return this.get(Repositories.MigrationsRepository, instance);
+        return this.getbyInstance(Repositories.MigrationsRepository, instance);
     }
 
     public mappingRepository(instance: Instance): MappingRepository {
-        return this.get(Repositories.MappingRepository, instance);
+        return this.getbyInstance(Repositories.MappingRepository, instance);
     }
 
     public settingsRepository(instance: Instance): SettingsRepository {
-        return this.get(Repositories.SettingsRepository, instance);
+        return this.getbyInstance(Repositories.SettingsRepository, instance);
     }
 
-    private get<T>(key: RepositoryKeys, instance: Instance, tag = "default"): T {
+    private getbyInstance<T>(key: RepositoryKeys, instance: Instance, tag = "default"): T {
         const creator = this.repositoryCreators.get(`${key}-${tag}`);
 
         if (!creator) {
@@ -124,7 +127,7 @@ export class DynamicRepositoryFactory {
         return createdRepository as T;
     }
 
-    private getByDataSource<T>(key: RepositoryKeys, instance: DataSource, tag = "default"): T {
+    private getByJsonDataSource<T>(key: RepositoryKeys, instance: JSONDataSource, tag = "default"): T {
         const creator = this.repositoryCreatorsByDataSource.get(`${key}-${tag}`);
 
         if (!creator) {

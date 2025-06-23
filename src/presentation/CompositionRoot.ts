@@ -129,9 +129,9 @@ import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayl
 import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
 import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
 import { TransformationRepository } from "../domain/transformations/repositories/TransformationRepository";
-import { DataSource } from "../domain/instance/entities/DataSource";
 import { EventsPayloadBuilder } from "../domain/events/builders/EventsPayloadBuilder";
 import { AggregatedPayloadBuilder } from "../domain/aggregated/builders/AggregatedPayloadBuilder";
+import { JSONDataSource } from "../domain/instance/entities/JSONDataSource";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -507,101 +507,109 @@ function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof Use
 }
 
 export function registerDynamicRepositoriesInFactory(repositoryFactory: DynamicRepositoryFactory, encryptionKey = "") {
-    repositoryFactory.bind(
+    repositoryFactory.bindByInstance(
         Repositories.ConfigRepository,
         (instance: Instance) => new StorageClientD2Repository(instance)
     );
 
-    repositoryFactory.bind(Repositories.StoreRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.StoreRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
         return new StoreD2ApiRepository(storageClient);
     });
 
-    repositoryFactory.bind(Repositories.InstanceRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.InstanceRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
         return new InstanceD2ApiRepository(storageClient, instance, encryptionKey);
     });
 
-    repositoryFactory.bind(
+    repositoryFactory.bindByInstance(
         Repositories.InstanceFileRepository,
         (instance: Instance) => new InstanceFileD2Repository(instance)
     );
 
-    repositoryFactory.bind(Repositories.UserRepository, (instance: Instance) => new UserD2ApiRepository(instance));
-
-    repositoryFactory.bindByDataSource(
-        Repositories.MetadataRepository,
-        (instance: DataSource) => new MetadataD2ApiRepository(instance, new TransformationD2ApiRepository())
+    repositoryFactory.bindByInstance(
+        Repositories.UserRepository,
+        (instance: Instance) => new UserD2ApiRepository(instance)
     );
 
-    repositoryFactory.bindByDataSource(
+    repositoryFactory.bindByInstance(
         Repositories.MetadataRepository,
-        (instance: DataSource) => new MetadataJSONRepository(instance, new TransformationD2ApiRepository()),
-        "json"
+        (instance: Instance) => new MetadataD2ApiRepository(instance, new TransformationD2ApiRepository())
     );
 
-    repositoryFactory.bind(
+    repositoryFactory.bindByJsonDataSource(
+        Repositories.MetadataRepository,
+        (instance: JSONDataSource) => new MetadataJSONRepository(instance, new TransformationD2ApiRepository())
+    );
+
+    repositoryFactory.bindByInstance(
         Repositories.AggregatedRepository,
         (instance: Instance) => new AggregatedD2ApiRepository(instance)
     );
 
-    repositoryFactory.bind(Repositories.EventsRepository, (instance: Instance) => new EventsD2ApiRepository(instance));
+    repositoryFactory.bindByInstance(
+        Repositories.EventsRepository,
+        (instance: Instance) => new EventsD2ApiRepository(instance)
+    );
 
-    repositoryFactory.bind(Repositories.TableColumnsRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.TableColumnsRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
         return new TableColumnsDataStoreRepository(storageClient);
     });
 
-    repositoryFactory.bind(Repositories.TEIsRepository, (instance: Instance) => new TEID2ApiRepository(instance));
+    repositoryFactory.bindByInstance(
+        Repositories.TEIsRepository,
+        (instance: Instance) => new TEID2ApiRepository(instance)
+    );
 
-    repositoryFactory.bind(Repositories.ReportsRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.ReportsRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
         return new ReportsD2ApiRepository(storageClient);
     });
 
-    repositoryFactory.bind(Repositories.RulesRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.RulesRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
         const user = repositoryFactory.userRepository(instance);
 
         return new RulesD2ApiRepository(storageClient, user);
     });
 
-    repositoryFactory.bind(Repositories.FileRulesRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.FileRulesRepository, (instance: Instance) => {
         const file = new FileDataRepository();
         const user = repositoryFactory.userRepository(instance);
 
         return new FileRulesDefaultRepository(user, file);
     });
 
-    repositoryFactory.bind(Repositories.CustomDataRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.CustomDataRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
         return new CustomDataD2ApiRepository(storageClient);
     });
 
-    repositoryFactory.bind(Repositories.MigrationsRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.MigrationsRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
         return new MigrationsAppRepository(storageClient, instance);
     });
 
-    repositoryFactory.bind(Repositories.MappingRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.MappingRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
         return new MappingD2ApiRepository(storageClient);
     });
 
-    repositoryFactory.bind(Repositories.SettingsRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.SettingsRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
         return new SettingsD2ApiRepository(storageClient);
     });
 
-    repositoryFactory.bind(
+    repositoryFactory.bindByInstance(
         Repositories.DataStoreMetadataRepository,
         (instance: Instance) => new DataStoreMetadataD2Repository(instance)
     );

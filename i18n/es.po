@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-17T17:24:45.295Z\n"
+"POT-Creation-Date: 2025-06-02T07:06:35.778Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1061,14 +1061,6 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
-msgid ""
-"Remove default categories, categoryOptions, categoryCombos and "
-"categoryOptionCombos"
-msgstr ""
-
-msgid "Remove lastUpdated, lastUpdatedBy, created and createdBys"
-msgstr ""
-
 msgid "Disable atomic verification"
 msgstr ""
 
@@ -1486,6 +1478,14 @@ msgid "Include users"
 msgstr ""
 
 msgid "Include organisation units"
+msgstr ""
+
+msgid ""
+"Remove default categories, categoryOptions, categoryCombos and "
+"categoryOptionCombos"
+msgstr ""
+
+msgid "Remove lastUpdated, lastUpdatedBy, created and createdBys"
 msgstr ""
 
 msgid "Exclude objects and references ->"
@@ -2213,16 +2213,57 @@ msgstr ""
 msgid "Push data to HQ server"
 msgstr ""
 
+msgid "SYNCHRONIZATION SUCCESSFUL"
+msgstr ""
+
+msgid "The synchronization has been completed successfully."
+msgstr ""
+
+msgid "Do not forget to perform the following actions:"
+msgstr ""
+
+msgid "Set up passwords manually for all users intended to use this instance"
+msgstr ""
+
+msgid "Clear the application cache"
+msgstr ""
+
+msgid "SYNCHRONIZATION FAILED"
+msgstr ""
+
+msgid ""
+"The synchronization and metadata import failed. Please, reach out an "
+"administrator and share the JSON Response obtained as an output for the "
+"synchronization rule that failed."
+msgstr ""
+
+msgid "DATA PUSHED SUCCESSFULLY"
+msgstr ""
+
+msgid "The data was pushed successfully to the HQ server."
+msgstr ""
+
+msgid "ERROR PUSHING DATA"
+msgstr ""
+
+msgid ""
+"There was an error pushing the data to the HQ server. Please, reach out an "
+"administrator and share the JSON Response obtained as an output for the "
+"synchronization rule that failed."
+msgstr ""
+
 msgid "Output: "
 msgstr ""
 
 msgid "Sync finished - {{dateEnd}}"
 msgstr ""
 
-msgid "Status: {{status}}"
+msgid "Status: "
 msgstr ""
 
-msgid "Synchronizing rule {{name}} - {{dateStart}}"
+msgid ""
+"Synchronizing rule {{currentRule}} out of {{totalRules}} {{name}} - "
+"{{dateStart}}"
 msgstr ""
 
 msgid "Error: {{code}}"
