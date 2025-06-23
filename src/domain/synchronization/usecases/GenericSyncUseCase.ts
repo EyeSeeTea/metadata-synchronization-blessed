@@ -44,7 +44,7 @@ export abstract class GenericSyncUseCase {
         this.api = getD2APiFromInstance(localInstance);
     }
 
-    public abstract buildPayload(): Promise<SynchronizationPayload>;
+    protected abstract buildPayload(): Promise<SynchronizationPayload>;
     public abstract mapPayload(instance: Instance, payload: SynchronizationPayload): Promise<SynchronizationPayload>;
 
     // We start to use domain concepts:
@@ -86,27 +86,9 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getEventsRepository(remoteInstance?: Instance) {
-        const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.eventsRepository(remoteInstance ?? defaultInstance);
-    }
-
-    @cache()
     protected async getDataStoreMetadataRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
         return this.repositoryFactory.dataStoreMetadataRepository(remoteInstance ?? defaultInstance);
-    }
-
-    @cache()
-    protected async getTeisRepository(remoteInstance?: Instance) {
-        const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.teisRepository(remoteInstance ?? defaultInstance);
-    }
-
-    @cache()
-    protected async getMappingRepository(remoteInstance?: Instance) {
-        const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.mappingRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
@@ -152,6 +134,12 @@ export abstract class GenericSyncUseCase {
         };
 
         return transformMapping(remoteDsMapping?.mappingDictionary ?? {});
+    }
+
+    @cache()
+    private async getMappingRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.mappingRepository(remoteInstance ?? defaultInstance);
     }
 
     private async buildSyncReport() {

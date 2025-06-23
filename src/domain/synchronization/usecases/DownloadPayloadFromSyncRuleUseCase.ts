@@ -15,12 +15,14 @@ import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
 import { createTEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapperFactory";
 import { SynchronizationPayload } from "../entities/SynchronizationPayload";
-import { SynchronizationResultType } from "../entities/SynchronizationType";
+import { SynchronizationResultType, SynchronizationType } from "../entities/SynchronizationType";
 import { PayloadMapper } from "../mapper/PayloadMapper";
 import { GenericSyncUseCase } from "./GenericSyncUseCase";
 import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
+import { EventsPayloadBuilder } from "../../events/builders/EventsPayloadBuilder";
+import { AggregatedPayloadBuilder } from "../../aggregated/builders/AggregatedPayloadBuilder";
 
 type DownloadErrors = string[];
 
@@ -41,6 +43,8 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
         private metadataPayloadBuilder: MetadataPayloadBuilder,
+        private eventsPayloadBuilder: EventsPayloadBuilder,
+        private aggregatePayloadBuilder: AggregatedPayloadBuilder,
         private repositoryFactory: DynamicRepositoryFactory,
         private downloadRepository: DownloadRepository,
         private transformationRepository: TransformationRepository,
@@ -53,7 +57,7 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
 
         const sync: GenericSyncUseCase = this.compositionRoot.sync[rule.type](rule.toBuilder());
 
-        const payload: SynchronizationPayload = await this.buildPayload(sync, rule, this.metadataPayloadBuilder);
+        const payload: SynchronizationPayload = await this.buildPayload(rule.type, rule);
 
         const date = moment().format("YYYYMMDDHHmm");
 
@@ -94,15 +98,13 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         }
     }
 
-    private async buildPayload(
-        sync: GenericSyncUseCase,
-        rule: SynchronizationRule,
-        metadataPayloadBuilder: MetadataPayloadBuilder
-    ): Promise<SynchronizationPayload> {
-        if (sync.type === "metadata") {
-            return metadataPayloadBuilder.build(rule.builder);
+    private async buildPayload(type: SynchronizationType, rule: SynchronizationRule): Promise<SynchronizationPayload> {
+        if (type === "metadata") {
+            return this.metadataPayloadBuilder.build(rule.builder);
+        } else if (type === "events") {
+            return this.eventsPayloadBuilder.build(rule.builder);
         } else {
-            return sync.buildPayload();
+            return this.aggregatePayloadBuilder.build(rule.builder);
         }
     }
 
@@ -178,7 +180,12 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         const { dataValues } = payload as AggregatedPackage;
 
         //TODO: we should create AggregatedMapper to don't use this use case here
-        const aggregatedSync = new AggregatedSyncUseCase(rule.builder, this.repositoryFactory, this.localInstance);
+        const aggregatedSync = new AggregatedSyncUseCase(
+            rule.builder,
+            this.repositoryFactory,
+            this.localInstance,
+            this.aggregatePayloadBuilder
+        );
 
         const downloadItemsByAggregated =
             dataValues && dataValues.length > 0
