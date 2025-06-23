@@ -155,10 +155,10 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                   )
                 : [];
 
-        const { trackedEntityInstances } = payload as TEIsPackage;
+        const { trackedEntities } = payload as TEIsPackage;
 
         const downloadItemsByTEIS =
-            trackedEntityInstances.length > 0
+            trackedEntities.length > 0
                 ? await this.mapToDownloadItems(
                       rule,
                       "trackedEntityInstances",
@@ -167,11 +167,11 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
 
                           return await createTEIsPayloadMapper(
                               await this.getMetadataRepository(instance),
-                              trackedEntityInstances,
+                              trackedEntities,
                               mapping
                           );
                       },
-                      { trackedEntityInstances }
+                      { trackedEntities }
                   )
                 : [];
 

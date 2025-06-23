@@ -17,7 +17,7 @@ export class TEIsPayloadMapper implements PayloadMapper {
     map(payload: SynchronizationPayload): Promise<SynchronizationPayload> {
         const teiPackage = payload as TEIsPackage;
 
-        const teis = teiPackage.trackedEntityInstances.map(tei => {
+        const teis = teiPackage.trackedEntities.map(tei => {
             const {
                 relationshipTypes = {},
                 organisationUnits = {},
@@ -80,9 +80,9 @@ export class TEIsPayloadMapper implements PayloadMapper {
 
         const TeisWithoutDisabled = this.removeDisabledItems(TeisWithoutDuplicates);
 
-        const trackedEntityInstances = this.removeMappedEventProgramReferences(TeisWithoutDisabled);
+        const trackedEntities = this.removeMappedEventProgramReferences(TeisWithoutDisabled);
 
-        return Promise.resolve({ trackedEntityInstances });
+        return Promise.resolve({ trackedEntities });
     }
 
     private removeDisabledItems(teis: TrackedEntityInstance[]): TrackedEntityInstance[] {

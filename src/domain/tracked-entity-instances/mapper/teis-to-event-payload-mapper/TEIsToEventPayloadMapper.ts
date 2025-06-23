@@ -27,7 +27,7 @@ export class TEIsToEventPayloadMapper implements PayloadMapper {
             program => program.programType === "WITHOUT_REGISTRATION"
         );
 
-        const events = teiPackage.trackedEntityInstances.reduce((acc: ProgramEvent[], tei: TrackedEntityInstance) => {
+        const events = teiPackage.trackedEntities.reduce((acc: ProgramEvent[], tei: TrackedEntityInstance) => {
             const eventsByEnrollments = tei.enrollments.reduce((acc: ProgramEvent[], enrollment: Enrollment) => {
                 const { organisationUnits = {}, trackerPrograms = {}, trackedEntityAttributesToDE = {} } = this.mapping;
 

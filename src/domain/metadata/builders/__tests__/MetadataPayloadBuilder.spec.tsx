@@ -240,13 +240,7 @@ describe("MetadataPayloadBuilder", () => {
                     .thenResolve(metadataByIdsResponses.eighth)
                     .thenResolve(metadataByIdsResponses.ninth)
                     .thenResolve(metadataByIdsResponses.tenth)
-                    .thenResolve(metadataByIdsResponses.eleventh)
-                    .thenResolve(metadataByIdsResponses.twelfth)
-                    .thenResolve(metadataByIdsResponses.thirteenth)
-                    .thenResolve(metadataByIdsResponses.fourteenth)
-                    .thenResolve(metadataByIdsResponses.fifteenth)
-                    .thenResolve(metadataByIdsResponses.sixteenth)
-                    .thenResolve(metadataByIdsResponses.seventeenth);
+                    .thenResolve(metadataByIdsResponses.eleventh);
             } else {
                 when(mockedMetadataRepository.getMetadataByIds(anything()))
                     .thenResolve({ programs: [getProgramMetadata()] })
@@ -362,11 +356,7 @@ describe("MetadataPayloadBuilder", () => {
                     .thenResolve(metadataByIdsResponses.fifth)
                     .thenResolve(metadataByIdsResponses.sixth)
                     .thenResolve(metadataByIdsResponses.seventh)
-                    .thenResolve(metadataByIdsResponses.eighth)
-                    .thenResolve(metadataByIdsResponses.ninth)
-                    .thenResolve(metadataByIdsResponses.tenth)
-                    .thenResolve(metadataByIdsResponses.eleventh)
-                    .thenResolve(metadataByIdsResponses.twelfth);
+                    .thenResolve(metadataByIdsResponses.eighth);
             } else {
                 when(mockedMetadataRepository.getMetadataByIds(anything()))
                     .thenResolve({ dataSets: [getDataSetMetadata()] })
