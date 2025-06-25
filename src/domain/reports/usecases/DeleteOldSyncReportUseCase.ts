@@ -9,7 +9,9 @@ export class DeleteOldSyncReportUseCase implements UseCase {
     public async execute(): Promise<void> {
         const settings = await this.settingsRepository.get().toPromise();
 
-        if (!settings.historyRetentionDays) return;
+        const retentionDays = settings.historyRetentionDays;
+
+        if (!retentionDays) return;
 
         const history = await this.reportsRepository.list();
 
@@ -18,7 +20,7 @@ export class DeleteOldSyncReportUseCase implements UseCase {
             const end = moment(new Date());
             const daysDifference = end.diff(start, "days");
 
-            return settings.historyRetentionDays === undefined || daysDifference <= settings.historyRetentionDays;
+            return daysDifference > retentionDays;
         });
 
         const historyIdsToRemove = historyToRemove.map(historyObj => historyObj.id);

@@ -15,9 +15,11 @@ export function useDeleteHistory(appContext: AppContextState | null) {
                         .deleteOld()
                         .then(() => setDeletingHistory(false))
                         .catch(error => {
-                            console.debug(error);
+                            console.debug(`Error deleting old history: ${error}`);
                             setDeletingHistory(false);
                         });
+                } else {
+                    console.error(`No history retention days set in settings, cannot delete history.`);
                 }
             },
             error => {
