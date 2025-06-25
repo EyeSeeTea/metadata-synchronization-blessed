@@ -27,7 +27,7 @@ export async function* executeAnalytics(instance: Instance, options?: AnalyticsO
         await timeout(1500);
     }
 
-    return i18n.t("Updating analytics done`for instance {{name}}", instance);
+    return i18n.t("Updating analytics done for instance {{name}}", instance);
 }
 
 type AnalyticsMessage = { message: string; completed: boolean };
