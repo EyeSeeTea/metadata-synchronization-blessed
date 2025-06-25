@@ -1,5 +1,5 @@
 import { Future, FutureData } from "../../domain/common/entities/Future";
-import { Settings, SettingsData } from "../../domain/settings/Settings";
+import { DEFAULT_SETTINGS, Settings, SettingsData } from "../../domain/settings/Settings";
 import { SettingsRepository } from "../../domain/settings/SettingsRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { StorageClientFactory } from "../config/StorageClientFactory";
@@ -13,15 +13,12 @@ export class SettingsD2ApiRepository implements SettingsRepository {
         return this.getStorageClient().flatMap(storageClient => {
             return storageClient.getObjectFuture<SettingsData>(Namespace.SETTINGS).flatMap(settingsData => {
                 if (!settingsData) {
-                    const defaultSettings = {
-                        historyRetentionDays: 30,
-                    }; //Set default history retention days to 30 days
                     return storageClient
-                        .saveObjectFuture<SettingsData>(Namespace.SETTINGS, defaultSettings)
+                        .saveObjectFuture<SettingsData>(Namespace.SETTINGS, DEFAULT_SETTINGS)
                         .flatMap(() => {
                             return Future.success(
                                 Settings.create({
-                                    historyRetentionDays: defaultSettings.historyRetentionDays?.toString(),
+                                    historyRetentionDays: DEFAULT_SETTINGS.historyRetentionDays?.toString(),
                                 }).getOrThrow()
                             );
                         });

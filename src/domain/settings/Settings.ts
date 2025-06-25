@@ -1,6 +1,12 @@
 import { Either } from "../common/entities/Either";
 import { ModelValidation, validateModel, ValidationError } from "../common/entities/Validations";
 
+export const DEFAULT_HISTORY_RETENTION_DAYS = 30; // Default value for history retention days
+
+export const DEFAULT_SETTINGS: SettingsData = {
+    historyRetentionDays: DEFAULT_HISTORY_RETENTION_DAYS,
+};
+
 export interface SettingsData {
     historyRetentionDays: number | undefined;
 }
