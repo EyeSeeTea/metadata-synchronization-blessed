@@ -19,6 +19,7 @@ export interface ListSyncRuleUseCaseParams {
         lastExecutedFilter?: Date | null;
         types?: SynchronizationType[];
         search?: string;
+        allProperties?: boolean;
     };
 }
 
@@ -37,15 +38,16 @@ export class ListSyncRuleUseCase implements UseCase {
         sorting = { field: "id", order: "asc" },
         filters = {},
     }: ListSyncRuleUseCaseParams): Promise<ListSyncRuleUseCaseResult> {
-        const rawData = await this.repositoryFactory.rulesRepository(this.localInstance).list();
-
         const {
             targetInstanceFilter = null,
             schedulerEnabledFilter = null,
             lastExecutedFilter = null,
             types,
             search,
+            allProperties = false,
         } = filters;
+
+        const rawData = await this.repositoryFactory.rulesRepository(this.localInstance).list(allProperties);
 
         const filteredData = search
             ? _.filter(rawData, item =>

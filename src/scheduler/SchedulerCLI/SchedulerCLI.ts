@@ -149,7 +149,7 @@ export class SchedulerCLI {
 
         const { rows: rulesWithSchedulerEnabled } = await compositionRoot.rules.list({
             paging: false,
-            filters: { schedulerEnabledFilter: "enabled" },
+            filters: { schedulerEnabledFilter: "enabled", allProperties: true },
         });
 
         return rulesWithSchedulerEnabled;
