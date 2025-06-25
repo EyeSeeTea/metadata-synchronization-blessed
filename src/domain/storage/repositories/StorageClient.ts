@@ -59,6 +59,24 @@ export abstract class StorageClient {
         return baseElement;
     }
 
+    public async getObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
+        const rawData = (await this.getObject<T[]>(key)) ?? [];
+        const advancedProperties = NamespaceProperties[key];
+
+        if (!advancedProperties || advancedProperties.length === 0) {
+            return rawData;
+        }
+
+        const results = await Promise.all(
+            rawData.map(async base => {
+                const advanced = (await this.getObject<Partial<T>>(`${key}-${base.id}`)) ?? {};
+                return { ...base, ...advanced } as T;
+            })
+        );
+
+        return results;
+    }
+
     public async saveObjectsInCollection<T extends Ref>(key: string, elements: T[]): Promise<void> {
         const oldData: Ref[] = (await this.getObject(key)) ?? [];
         const cleanData = oldData.filter(item => !elements.some(element => item.id === element.id));
