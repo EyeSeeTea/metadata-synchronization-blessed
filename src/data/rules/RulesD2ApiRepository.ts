@@ -22,15 +22,15 @@ export class RulesD2ApiRepository implements RulesRepository {
         return data ?? [];
     }
 
-    public async list(addBuilder?: boolean): Promise<SynchronizationRule[]> {
-        const rulesData = await this.getRulesData(addBuilder);
+    public async list(allProperties?: boolean): Promise<SynchronizationRule[]> {
+        const rulesData = await this.getRulesData(allProperties);
         return rulesData.map(ruleData => SynchronizationRule.build(ruleData));
     }
 
-    private async getRulesData(addBuilder?: boolean): Promise<SynchronizationRuleData[]> {
+    private async getRulesData(allProperties?: boolean): Promise<SynchronizationRuleData[]> {
         const storageClient = await this.getStorageClient();
 
-        if (addBuilder) {
+        if (allProperties) {
             return storageClient.getObjectsInCollection<SynchronizationRuleData>(Namespace.RULES);
         } else {
             return storageClient.listObjectsInCollection<SynchronizationRuleData>(Namespace.RULES);

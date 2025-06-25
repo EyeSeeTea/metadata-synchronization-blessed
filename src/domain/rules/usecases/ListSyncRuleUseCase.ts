@@ -19,7 +19,7 @@ export interface ListSyncRuleUseCaseParams {
         lastExecutedFilter?: Date | null;
         types?: SynchronizationType[];
         search?: string;
-        addBuilder?: boolean;
+        allProperties?: boolean;
     };
 }
 
@@ -44,10 +44,10 @@ export class ListSyncRuleUseCase implements UseCase {
             lastExecutedFilter = null,
             types,
             search,
-            addBuilder = false,
+            allProperties = false,
         } = filters;
 
-        const rawData = await this.repositoryFactory.rulesRepository(this.localInstance).list(addBuilder);
+        const rawData = await this.repositoryFactory.rulesRepository(this.localInstance).list(allProperties);
 
         const filteredData = search
             ? _.filter(rawData, item =>
