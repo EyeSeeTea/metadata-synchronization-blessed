@@ -1,15 +1,13 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../../../domain/common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { MetadataPayloadBuilder } from "../../../../domain/metadata/builders/MetadataPayloadBuilder";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
+import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
-import { ConfigAppRepository } from "../../../config/ConfigAppRepository";
-import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
-import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -168,9 +166,11 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
+        const metadataPayloadBuilder = new MetadataPayloadBuilder(repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, metadataPayloadBuilder);
+
+        const payload = await metadataPayloadBuilder.build(builder);
         expect(payload.dataElements?.find(({ id }) => id === "id1")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -196,9 +196,12 @@ describe("Sync metadata", () => {
             excludedIds: [],
         };
 
-        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
+        const metadataPayloadBuilder = new MetadataPayloadBuilder(repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new MetadataSyncUseCase(builder, repositoryFactory, localInstance, metadataPayloadBuilder);
+
+        const payload = await metadataPayloadBuilder.build(builder);
+
         expect(payload.dataElements?.find(({ id }) => id === "id2")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -212,11 +215,10 @@ describe("Sync metadata", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
-    repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
-    repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-    repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
+    const repositoryFactory: DynamicRepositoryFactory = new DynamicRepositoryFactory();
+
+    registerDynamicRepositoriesInFactory(repositoryFactory);
+
     return repositoryFactory;
 }
 

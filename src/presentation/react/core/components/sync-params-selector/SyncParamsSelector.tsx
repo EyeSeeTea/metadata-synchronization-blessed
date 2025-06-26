@@ -3,7 +3,7 @@ import React from "react";
 import { DataSynchronizationParams } from "../../../../../domain/aggregated/entities/DataSynchronizationParams";
 import { MetadataSynchronizationParams } from "../../../../../domain/metadata/entities/MetadataSynchronizationParams";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import RadioButtonGroup from "../radio-button-group/RadioButtonGroup";
 import { Toggle } from "../toggle/Toggle";
 
@@ -23,18 +23,6 @@ const useStyles = makeStyles({
 const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onChange, generateNewUidDisabled }) => {
     const classes = useStyles();
     const { syncParams, dataParams } = syncRule;
-    const changeSharingSettings = (includeSharingSettings: boolean) => {
-        onChange(
-            syncRule.updateSyncParams({
-                ...syncParams,
-                includeSharingSettings,
-            })
-        );
-    };
-
-    const changeOrgUnitReferences = (removeOrgUnitReferences: boolean) => {
-        onChange(syncRule.updateSyncParams({ ...syncParams, removeOrgUnitReferences }));
-    };
 
     const changeAtomic = (value: boolean) => {
         onChange(
@@ -124,28 +112,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
         );
     };
 
-    const changeRemoveUserObjects = (removeUserObjects: boolean) => {
-        onChange(
-            syncRule.updateSyncParams({
-                ...syncParams,
-                removeUserObjects,
-            })
-        );
-    };
-
-    const changeRemoveUserObjectsAndReferences = (removeUserObjectsAndReferences: boolean) => {
-        onChange(syncRule.updateSyncParams({ ...syncParams, removeUserObjectsAndReferences }));
-    };
-
-    const changeRemoveOrgUnitObjects = (removeOrgUnitObjects: boolean) => {
-        onChange(
-            syncRule.updateSyncParams({
-                ...syncParams,
-                removeOrgUnitObjects,
-            })
-        );
-    };
-
     return (
         <React.Fragment>
             <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
@@ -162,57 +128,6 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                     ]}
                     onValueChange={changeMetadataStrategy}
                 />
-            )}
-
-            {syncRule.type === "metadata" && (
-                <div>
-                    <Toggle
-                        label={i18n.t("Include owner and sharing settings")}
-                        onValueChange={changeSharingSettings}
-                        value={!!syncParams.includeSharingSettings}
-                    />
-                </div>
-            )}
-
-            {syncRule.type === "metadata" && (
-                <div>
-                    <Toggle
-                        label={i18n.t("Remove organisation units and references (UID)")}
-                        onValueChange={changeOrgUnitReferences}
-                        value={!!syncParams.removeOrgUnitReferences}
-                    />
-                </div>
-            )}
-
-            {syncRule.type === "metadata" && (
-                <div>
-                    <Toggle
-                        disabled={syncParams.removeOrgUnitReferences}
-                        label={i18n.t("Remove organisation units and keep organisation units references (UID)")}
-                        onValueChange={changeRemoveOrgUnitObjects}
-                        value={syncParams.removeOrgUnitObjects || false}
-                    />
-                </div>
-            )}
-
-            {syncRule.type === "metadata" && (
-                <div>
-                    <Toggle
-                        label={i18n.t("Remove users and references (UID)")}
-                        onValueChange={changeRemoveUserObjectsAndReferences}
-                        value={syncParams.removeUserObjectsAndReferences || false}
-                    />
-                </div>
-            )}
-
-            {syncRule.type === "metadata" && (
-                <div>
-                    <Toggle
-                        label={i18n.t("Remove users and keep user references (UID)")}
-                        onValueChange={changeRemoveUserObjects}
-                        value={syncParams.removeUserObjects || false}
-                    />
-                </div>
             )}
 
             {syncRule.type === "metadata" && (

@@ -3,7 +3,7 @@ import _ from "lodash";
 import React, { ReactNode, useEffect, useState } from "react";
 import { isInstance } from "../../../../../../domain/package-import/entities/PackageSource";
 import { ListPackage } from "../../../../../../domain/packages/entities/Package";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { isGlobalAdmin } from "../../../../../../utils/permissions";
 import { useAppContext } from "../../../contexts/AppContext";
 import { PackageImportWizardProps } from "../PackageImportWizard";

@@ -3,8 +3,9 @@ import { NamespaceProperties } from "../../../data/storage/Namespaces";
 import { Dictionary } from "../../../types/utils";
 import { Ref } from "../../common/entities/Ref";
 import { SharingSetting } from "../../common/entities/SharingSetting";
-import { StorageType } from "../../config/entities/Config";
+import { AppStorageType } from "../../storage-client-config/entities/StorageConfig";
 import { Instance } from "../../instance/entities/Instance";
+import { FutureData } from "../../common/entities/Future";
 
 export interface StorageClientConstructor {
     new (instance: Instance): StorageClient;
@@ -22,12 +23,14 @@ export interface ObjectSharing {
 }
 
 export abstract class StorageClient {
-    public abstract type: StorageType;
+    public abstract type: AppStorageType;
 
     // Object operations
-    public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
+
+    public abstract getObjectFuture<T extends object>(key: string): FutureData<T | undefined>;
+    public abstract saveObjectFuture<T extends object>(key: string, value: T): FutureData<void>;
+
     public abstract getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T>;
-    public abstract saveObject<T extends object>(key: string, value: T): Promise<void>;
     public abstract removeObject(key: string): Promise<void>;
     public abstract clearStorage(): Promise<void>;
     public abstract clone(): Promise<Dictionary<unknown>>;
@@ -54,6 +57,24 @@ export abstract class StorageClient {
         }
 
         return baseElement;
+    }
+
+    public async getObjectsInCollection<T extends Ref>(key: string): Promise<T[]> {
+        const rawData = (await this.getObject<T[]>(key)) ?? [];
+        const advancedProperties = NamespaceProperties[key];
+
+        if (!advancedProperties || advancedProperties.length === 0) {
+            return rawData;
+        }
+
+        const results = await Promise.all(
+            rawData.map(async base => {
+                const advanced = (await this.getObject<Partial<T>>(`${key}-${base.id}`)) ?? {};
+                return { ...base, ...advanced } as T;
+            })
+        );
+
+        return results;
     }
 
     public async saveObjectsInCollection<T extends Ref>(key: string, elements: T[]): Promise<void> {
@@ -117,4 +138,15 @@ export abstract class StorageClient {
             }
         }
     }
+
+    /**
+     * @deprecated : we are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getObjectFuture instead
+     */
+    public abstract getObject<T extends object>(key: string): Promise<T | undefined>;
+    /**
+     * @deprecated : we are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getObjectFuture instead
+     */
+    public abstract saveObject<T extends object>(key: string, value: T): Promise<void>;
 }

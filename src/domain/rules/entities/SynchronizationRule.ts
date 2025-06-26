@@ -34,6 +34,7 @@ export class SynchronizationRule {
             "builder",
             "targetInstances",
             "enabled",
+            "schedulingFrequencyNeedsUpdate",
             "frequency",
             "lastExecuted",
             "lastExecutedBy",
@@ -181,6 +182,10 @@ export class SynchronizationRule {
         return this.syncRule.enabled ?? false;
     }
 
+    public get schedulingFrequencyNeedsUpdate(): boolean {
+        return this.syncRule.schedulingFrequencyNeedsUpdate ?? false;
+    }
+
     public get frequency(): string | undefined {
         return this.syncRule.frequency;
     }
@@ -237,13 +242,16 @@ export class SynchronizationRule {
         const params = this.syncRule.builder?.syncParams ?? {};
         return {
             enableMapping: false,
-            includeSharingSettings: true,
-            removeOrgUnitReferences: false,
-            removeUserObjects: false,
-            removeUserObjectsAndReferences: false,
-            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             metadataModelsSyncAll: [],
+            includeSharingSettingsObjectsAndReferences: true,
+            includeOnlySharingSettingsReferences: false,
+            includeUsersObjectsAndReferences: true,
+            includeOnlyUsersReferences: false,
+            includeOrgUnitsObjectsAndReferences: true,
+            includeOnlyOrgUnitsReferences: false,
+            removeDefaultCategoryObjects: false,
+            removeUserNonEssentialObjects: false,
             ...params,
         };
     }
@@ -267,6 +275,7 @@ export class SynchronizationRule {
             builder: defaultSynchronizationBuilder,
             targetInstances: [],
             enabled: false,
+            schedulingFrequencyNeedsUpdate: false,
             lastUpdated: new Date(),
             lastUpdatedBy: {
                 id: "",
@@ -380,6 +389,8 @@ export class SynchronizationRule {
                 [model.getMetadataType()]: {
                     includeRules: model.getIncludeRules().map(array => array.join(".")),
                     excludeRules: model.getExcludeRules().map(array => array.join(".")),
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: model.getIncludeRules().map(array => array.join(".")),
                 },
             }),
             {}
@@ -394,7 +405,12 @@ export class SynchronizationRule {
     }
 
     public moveRuleFromExcludeToInclude(type: string, rulesToInclude: string[]): SynchronizationRule {
-        const { includeRules: oldIncludeRules, excludeRules: oldExcludeRules } = this.metadataIncludeExcludeRules[type];
+        const {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+            includeOnlyReferencesRules: oldIncludeOnlyReferencesRules,
+            includeReferencesAndObjectsRules: oldIncludeReferencesAndObjectsRules,
+        } = this.metadataIncludeExcludeRules[type];
 
         if (_.difference(rulesToInclude, oldExcludeRules).length > 0) {
             throw Error("Rules error: It's not possible move rules that do not exist in exclude to include");
@@ -410,13 +426,23 @@ export class SynchronizationRule {
         const excludeIncludeRules = {
             includeRules: _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]),
             excludeRules: oldExcludeRules.filter(rule => !rulesToIncludeWithParents.includes(rule)),
+            includeOnlyReferencesRules: oldIncludeOnlyReferencesRules,
+            includeReferencesAndObjectsRules: _.uniq([
+                ...oldIncludeReferencesAndObjectsRules,
+                ...rulesToIncludeWithParents,
+            ]),
         };
 
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);
     }
 
     public moveRuleFromIncludeToExclude(type: string, rulesToExclude: string[]): SynchronizationRule {
-        const { includeRules: oldIncludeRules, excludeRules: oldExcludeRules } = this.metadataIncludeExcludeRules[type];
+        const {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+            includeOnlyReferencesRules: oldIncludeOnlyReferencesRules,
+            includeReferencesAndObjectsRules: oldIncludeReferencesAndObjectsRules,
+        } = this.metadataIncludeExcludeRules[type];
 
         if (_.difference(rulesToExclude, oldIncludeRules).length > 0) {
             throw Error("Rules error: It's not possible move rules that do not exist in include to exclude");
@@ -432,6 +458,87 @@ export class SynchronizationRule {
         const excludeIncludeRules = {
             includeRules: oldIncludeRules.filter(rule => !rulesToExcludeWithChildren.includes(rule)),
             excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
+            includeOnlyReferencesRules: oldIncludeOnlyReferencesRules.filter(
+                rule => !rulesToExcludeWithChildren.includes(rule)
+            ),
+            includeReferencesAndObjectsRules: oldIncludeReferencesAndObjectsRules.filter(
+                rule => !rulesToExcludeWithChildren.includes(rule)
+            ),
+        };
+
+        return this.updateIncludeExcludeRules(type, excludeIncludeRules);
+    }
+
+    public moveFromIncludeOnlyReferencesToReferencesAndObjects(
+        type: string,
+        rulesToIncludeRefsAndObjects: string[]
+    ): SynchronizationRule {
+        const {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+            includeOnlyReferencesRules: oldIncludeOnlyReferencesRules,
+            includeReferencesAndObjectsRules: oldIncludeReferencesAndObjectsRules,
+        } = this.metadataIncludeExcludeRules[type];
+
+        if (_.difference(rulesToIncludeRefsAndObjects, oldIncludeOnlyReferencesRules).length > 0) {
+            throw Error(
+                "Rules error: It's not possible to move rules that do not exist in includeOnlyReferencesRules to includeReferencesAndObjectsRules"
+            );
+        }
+
+        const rulesToIncludeWithParents = _(rulesToIncludeRefsAndObjects)
+            .map(extractParentsFromRule)
+            .flatten()
+            .union(rulesToIncludeRefsAndObjects)
+            .uniq()
+            .value();
+
+        const excludeIncludeRules = {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+            includeOnlyReferencesRules: oldIncludeOnlyReferencesRules.filter(
+                rule => !rulesToIncludeWithParents.includes(rule)
+            ),
+            includeReferencesAndObjectsRules: _.uniq([
+                ...oldIncludeReferencesAndObjectsRules,
+                ...rulesToIncludeWithParents,
+            ]),
+        };
+
+        return this.updateIncludeExcludeRules(type, excludeIncludeRules);
+    }
+
+    public moveRuleFromIncludeReferencesAndObjectsToOnlyReferences(
+        type: string,
+        rulesToIncludeOnlyReferences: string[]
+    ): SynchronizationRule {
+        const {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+            includeOnlyReferencesRules: oldIncludeOnlyReferencesRules,
+            includeReferencesAndObjectsRules: oldIncludeReferencesAndObjectsRules,
+        } = this.metadataIncludeExcludeRules[type];
+
+        if (_.difference(rulesToIncludeOnlyReferences, oldIncludeReferencesAndObjectsRules).length > 0) {
+            throw Error(
+                "Rules error: It's not possible move rules that do not exist in includeReferencesAndObjectsRule to includeOnlyReferencesRules"
+            );
+        }
+
+        const rulesToExcludeWithChildren = _(rulesToIncludeOnlyReferences)
+            .map(rule => extractChildrenFromRules(rule, oldIncludeRules))
+            .flatten()
+            .union(rulesToIncludeOnlyReferences)
+            .uniq()
+            .value();
+
+        const excludeIncludeRules = {
+            includeRules: oldIncludeRules,
+            excludeRules: oldExcludeRules,
+            includeOnlyReferencesRules: [...oldIncludeOnlyReferencesRules, ...rulesToExcludeWithChildren],
+            includeReferencesAndObjectsRules: oldIncludeReferencesAndObjectsRules.filter(
+                rule => !rulesToExcludeWithChildren.includes(rule)
+            ),
         };
 
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);
@@ -569,20 +676,22 @@ export class SynchronizationRule {
     public updateSyncParams(syncParams: Partial<MetadataSynchronizationParams>): SynchronizationRule {
         const params = this.syncRule.builder?.syncParams ?? {
             enableMapping: false,
-            includeSharingSettings: true,
-            removeOrgUnitReferences: false,
-            removeUserObjects: false,
-            removeUserObjectsAndReferences: false,
-            removeOrgUnitObjects: false,
             useDefaultIncludeExclude: true,
             metadataModelsSyncAll: [],
+            includeSharingSettingsObjectsAndReferences: true,
+            includeOnlySharingSettingsReferences: false,
+            includeUsersObjectsAndReferences: true,
+            includeOnlyUsersReferences: false,
+            includeOrgUnitsObjectsAndReferences: true,
+            includeOnlyOrgUnitsReferences: false,
+            removeDefaultCategoryObjects: false,
+            removeUserNonEssentialObjects: false,
         };
 
         return this.updateBuilder({
             syncParams: {
                 ...params,
                 ...syncParams,
-                removeOrgUnitObjects: syncParams.removeOrgUnitReferences ? true : syncParams.removeOrgUnitObjects,
             },
         });
     }
@@ -597,6 +706,10 @@ export class SynchronizationRule {
 
     public updateEnabled(enabled: boolean): SynchronizationRule {
         return this.update({ enabled });
+    }
+
+    public updateNeedsUpdateSchedulingFrequency(schedulingFrequencyNeedsUpdate: boolean): SynchronizationRule {
+        return this.update({ schedulingFrequencyNeedsUpdate });
     }
 
     public updateFrequency(frequency: string): SynchronizationRule {
@@ -765,6 +878,7 @@ export interface SynchronizationRuleData extends SharedRef {
     builder: SynchronizationBuilder;
     targetInstances: string[];
     enabled: boolean;
+    schedulingFrequencyNeedsUpdate?: boolean;
     lastExecuted?: Date;
     lastExecutedBy?: NamedRef;
     lastSuccessfulSync?: Date;

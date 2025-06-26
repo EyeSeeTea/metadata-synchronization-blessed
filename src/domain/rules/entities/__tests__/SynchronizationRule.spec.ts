@@ -1,16 +1,20 @@
 import { DataElementModel, IndicatorModel, OrganisationUnitModel } from "../../../../models/dhis/metadata";
 import { SynchronizationRule } from "../SynchronizationRule";
 
+const indicatorIncludeRules = [
+    "attributes",
+    "legendSets",
+    "indicatorTypes",
+    "indicatorGroups",
+    "indicatorGroups.attributes",
+    "indicatorGroups.indicatorGroupSets",
+];
+
 const indicatorIncludeExcludeRules = {
-    includeRules: [
-        "attributes",
-        "legendSets",
-        "indicatorTypes",
-        "indicatorGroups",
-        "indicatorGroups.attributes",
-        "indicatorGroups.indicatorGroupSets",
-    ],
+    includeRules: indicatorIncludeRules,
     excludeRules: ["dataSets", "programs"],
+    includeOnlyReferencesRules: [],
+    includeReferencesAndObjectsRules: indicatorIncludeRules,
 };
 
 describe("SyncRule", () => {
@@ -100,40 +104,48 @@ describe("SyncRule", () => {
 
             const editedSyncRule = syncRule.markToNotUseDefaultIncludeExclude([DataElementModel, IndicatorModel]);
 
+            const expectedIndicatorIncludeRules = [
+                "attributes",
+                "legendSets",
+                "indicatorTypes",
+                "indicatorGroups",
+                "indicatorGroups.attributes",
+                "indicatorGroups.indicatorGroupSets",
+            ];
+
+            const expectedDEIncludeRules = [
+                "attributes",
+                "dataSets",
+                "legendSets",
+                "optionSets",
+                "optionSets.options",
+                "categoryCombos",
+                "categoryCombos.attributes",
+                "categoryCombos.categoryOptionCombos",
+                "categoryCombos.categoryOptionCombos.categoryOptions",
+                "categoryCombos.categories",
+                "dataElementGroups",
+                "dataElementGroups.attributes",
+                "dataElementGroups.dataElementGroupSets",
+                "dataElementGroups.dataElementGroupSets.attributes",
+            ];
+
             expect(editedSyncRule.useDefaultIncludeExclude).toEqual(false);
             expect(editedSyncRule.metadataIncludeExcludeRules).toEqual({
                 indicator: {
-                    includeRules: [
-                        "attributes",
-                        "legendSets",
-                        "indicatorTypes",
-                        "indicatorGroups",
-                        "indicatorGroups.attributes",
-                        "indicatorGroups.indicatorGroupSets",
-                    ],
+                    includeRules: expectedIndicatorIncludeRules,
                     excludeRules: ["dataSets", "programs"],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: expectedIndicatorIncludeRules,
                 },
                 dataElement: {
-                    includeRules: [
-                        "attributes",
-                        "dataSets",
-                        "legendSets",
-                        "optionSets",
-                        "optionSets.options",
-                        "categoryCombos",
-                        "categoryCombos.attributes",
-                        "categoryCombos.categoryOptionCombos",
-                        "categoryCombos.categoryOptionCombos.categoryOptions",
-                        "categoryCombos.categories",
-                        "dataElementGroups",
-                        "dataElementGroups.attributes",
-                        "dataElementGroups.dataElementGroupSets",
-                        "dataElementGroups.dataElementGroupSets.attributes",
-                    ],
+                    includeRules: expectedDEIncludeRules,
                     excludeRules: [
                         "dataElementGroups.dataElements",
                         "dataElementGroups.dataElementGroupSets.dataElementGroups",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: expectedDEIncludeRules,
                 },
             });
         });
@@ -156,15 +168,19 @@ describe("SyncRule", () => {
                 "attributes",
             ]);
 
+            const orgUnitIncludeRules = ["legendSets", "dataSets", "programs", "users", "attributes"];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: ["legendSets", "dataSets", "programs", "users", "attributes"],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "organisationUnitGroups.attributes",
                         "organisationUnitGroups.organisationUnitGroupSets",
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                         "organisationUnitGroups",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -178,21 +194,25 @@ describe("SyncRule", () => {
                 "organisationUnitGroups.attributes",
             ]);
 
+            const orgUnitIncludeRules = [
+                "legendSets",
+                "dataSets",
+                "programs",
+                "users",
+                "organisationUnitGroups",
+                "organisationUnitGroups.attributes",
+            ];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: [
-                        "legendSets",
-                        "dataSets",
-                        "programs",
-                        "users",
-                        "organisationUnitGroups",
-                        "organisationUnitGroups.attributes",
-                    ],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "organisationUnitGroups.organisationUnitGroupSets",
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                         "attributes",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -206,18 +226,22 @@ describe("SyncRule", () => {
                 "organisationUnitGroups.organisationUnitGroupSets.attributes",
             ]);
 
+            const orgUnitIncludeRules = [
+                "legendSets",
+                "dataSets",
+                "programs",
+                "users",
+                "organisationUnitGroups.organisationUnitGroupSets",
+                "organisationUnitGroups",
+                "organisationUnitGroups.organisationUnitGroupSets.attributes",
+            ];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: [
-                        "legendSets",
-                        "dataSets",
-                        "programs",
-                        "users",
-                        "organisationUnitGroups.organisationUnitGroupSets",
-                        "organisationUnitGroups",
-                        "organisationUnitGroups.organisationUnitGroupSets.attributes",
-                    ],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: ["organisationUnitGroups.attributes", "attributes"],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -232,21 +256,25 @@ describe("SyncRule", () => {
                 "organisationUnitGroups",
             ]);
 
+            const orgUnitIncludeRules = [
+                "legendSets",
+                "dataSets",
+                "programs",
+                "users",
+                "attributes",
+                "organisationUnitGroups",
+            ];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: [
-                        "legendSets",
-                        "dataSets",
-                        "programs",
-                        "users",
-                        "attributes",
-                        "organisationUnitGroups",
-                    ],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "organisationUnitGroups.attributes",
                         "organisationUnitGroups.organisationUnitGroupSets",
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -262,18 +290,22 @@ describe("SyncRule", () => {
                 "organisationUnitGroups.organisationUnitGroupSets.attributes",
             ]);
 
+            const orgUnitIncludeRules = [
+                "legendSets",
+                "dataSets",
+                "programs",
+                "users",
+                "organisationUnitGroups",
+                "organisationUnitGroups.organisationUnitGroupSets",
+                "organisationUnitGroups.organisationUnitGroupSets.attributes",
+            ];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: [
-                        "legendSets",
-                        "dataSets",
-                        "programs",
-                        "users",
-                        "organisationUnitGroups",
-                        "organisationUnitGroups.organisationUnitGroupSets",
-                        "organisationUnitGroups.organisationUnitGroupSets.attributes",
-                    ],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: ["organisationUnitGroups.attributes", "attributes"],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -291,21 +323,25 @@ describe("SyncRule", () => {
                 ["organisationUnitGroups.attributes"]
             );
 
+            const orgUnitIncludeRules = [
+                "legendSets",
+                "dataSets",
+                "programs",
+                "users",
+                "organisationUnitGroups",
+                "organisationUnitGroups.attributes",
+            ];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: [
-                        "legendSets",
-                        "dataSets",
-                        "programs",
-                        "users",
-                        "organisationUnitGroups",
-                        "organisationUnitGroups.attributes",
-                    ],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "organisationUnitGroups.organisationUnitGroupSets",
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                         "attributes",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -322,9 +358,11 @@ describe("SyncRule", () => {
                 "legendSets",
             ]);
 
+            const orgUnitIncludeRules = ["dataSets", "programs", "users"];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: ["dataSets", "programs", "users"],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "organisationUnitGroups.attributes",
                         "organisationUnitGroups.organisationUnitGroupSets",
@@ -333,6 +371,8 @@ describe("SyncRule", () => {
                         "organisationUnitGroups",
                         "legendSets",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -346,9 +386,11 @@ describe("SyncRule", () => {
                 "organisationUnitGroups.organisationUnitGroupSets",
             ]);
 
+            const orgUnitIncludeRules = ["attributes", "organisationUnitGroups", "organisationUnitGroups.attributes"];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: ["attributes", "organisationUnitGroups", "organisationUnitGroups.attributes"],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "legendSets",
                         "dataSets",
@@ -357,6 +399,8 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                         "organisationUnitGroups.organisationUnitGroupSets",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -370,9 +414,11 @@ describe("SyncRule", () => {
                 "organisationUnitGroups",
             ]);
 
+            const orgUnitIncludeRules = ["attributes"];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: ["attributes"],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "legendSets",
                         "dataSets",
@@ -383,6 +429,8 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                         "organisationUnitGroups",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -397,9 +445,11 @@ describe("SyncRule", () => {
                 "dataSets",
             ]);
 
+            const orgUnitIncludeRules = ["programs", "users"];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: ["programs", "users"],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "organisationUnitGroups.attributes",
                         "organisationUnitGroups.organisationUnitGroupSets",
@@ -409,6 +459,8 @@ describe("SyncRule", () => {
                         "legendSets",
                         "dataSets",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -425,9 +477,11 @@ describe("SyncRule", () => {
                 "organisationUnitGroups.organisationUnitGroupSets.attributes",
             ]);
 
+            const orgUnitIncludeRules = ["attributes"];
+
             const expectedMetadataIncludeExcludeRules = {
                 organisationUnit: {
-                    includeRules: ["attributes"],
+                    includeRules: orgUnitIncludeRules,
                     excludeRules: [
                         "legendSets",
                         "dataSets",
@@ -438,6 +492,8 @@ describe("SyncRule", () => {
                         "organisationUnitGroups.organisationUnitGroupSets.attributes",
                         "organisationUnitGroups",
                     ],
+                    includeOnlyReferencesRules: [],
+                    includeReferencesAndObjectsRules: orgUnitIncludeRules,
                 },
                 indicator: indicatorIncludeExcludeRules,
             };
@@ -462,15 +518,15 @@ describe("SyncRule", () => {
 
             expect(errorFunction).toThrow(Error);
         });
-        it("should activate remove Org Units Objects if we activate remove OrgUnits Objects And References", () => {
+        it("should have includeOrgUnitsObjectsAndReferences equals true if we select include Organisation units Objects And References", () => {
             const syncRule = givenASyncRule();
 
             const editedSyncRule = syncRule.updateSyncParams({
                 ...syncRule.syncParams,
-                removeOrgUnitReferences: true,
+                includeOrgUnitsObjectsAndReferences: true,
             });
 
-            expect(editedSyncRule.syncParams.removeOrgUnitObjects).toEqual(true);
+            expect(editedSyncRule.syncParams.includeOrgUnitsObjectsAndReferences).toEqual(true);
         });
     });
 

@@ -1,5 +1,5 @@
 import _ from "lodash";
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { D2Api } from "../../../types/d2-api";
 import { executeAnalytics } from "../../../utils/analytics";
 import { cache } from "../../../utils/cache";
@@ -7,7 +7,7 @@ import { promiseMap } from "../../../utils/common";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { debug } from "../../../utils/debug";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import { EventsSyncUseCase } from "../../events/usecases/EventsSyncUseCase";
 import { Instance } from "../../instance/entities/Instance";
@@ -38,13 +38,13 @@ export abstract class GenericSyncUseCase {
 
     constructor(
         protected readonly builder: SynchronizationBuilder,
-        protected readonly repositoryFactory: RepositoryFactory,
+        protected readonly repositoryFactory: DynamicRepositoryFactory,
         protected readonly localInstance: Instance
     ) {
         this.api = getD2APiFromInstance(localInstance);
     }
 
-    public abstract buildPayload(): Promise<SynchronizationPayload>;
+    protected abstract buildPayload(): Promise<SynchronizationPayload>;
     public abstract mapPayload(instance: Instance, payload: SynchronizationPayload): Promise<SynchronizationPayload>;
 
     // We start to use domain concepts:
@@ -68,11 +68,6 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected getTransformationRepository() {
-        return this.repositoryFactory.transformationRepository();
-    }
-
-    @cache()
     protected async getMetadataRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
         return this.repositoryFactory.metadataRepository(remoteInstance ?? defaultInstance);
@@ -91,27 +86,9 @@ export abstract class GenericSyncUseCase {
     }
 
     @cache()
-    protected async getEventsRepository(remoteInstance?: Instance) {
-        const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.eventsRepository(remoteInstance ?? defaultInstance);
-    }
-
-    @cache()
     protected async getDataStoreMetadataRepository(remoteInstance?: Instance) {
         const defaultInstance = await this.getOriginInstance();
         return this.repositoryFactory.dataStoreMetadataRepository(remoteInstance ?? defaultInstance);
-    }
-
-    @cache()
-    protected async getTeisRepository(remoteInstance?: Instance) {
-        const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.teisRepository(remoteInstance ?? defaultInstance);
-    }
-
-    @cache()
-    protected async getMappingRepository(remoteInstance?: Instance) {
-        const defaultInstance = await this.getOriginInstance();
-        return this.repositoryFactory.mappingRepository(remoteInstance ?? defaultInstance);
     }
 
     @cache()
@@ -159,6 +136,12 @@ export abstract class GenericSyncUseCase {
         return transformMapping(remoteDsMapping?.mappingDictionary ?? {});
     }
 
+    @cache()
+    private async getMappingRepository(remoteInstance?: Instance) {
+        const defaultInstance = await this.getOriginInstance();
+        return this.repositoryFactory.mappingRepository(remoteInstance ?? defaultInstance);
+    }
+
     private async buildSyncReport() {
         const { syncRule } = this.builder;
         const metadataPackage = await this.extractMetadata();
@@ -191,6 +174,10 @@ export abstract class GenericSyncUseCase {
 
     public async *execute() {
         const { targetInstances: targetInstanceIds, syncRule, dataParams } = this.builder;
+
+        // NOTICE: The date is stored in a variable at the beginning of execution and save it at the end
+        // to ensure no items created/updated during the sync process are missed
+        const executionDate = new Date();
 
         const origin = await this.getOriginInstance();
 
@@ -265,7 +252,8 @@ export abstract class GenericSyncUseCase {
                 const currentUser = await this.api.currentUser
                     .get({ fields: { userCredentials: { name: true }, id: true } })
                     .getData();
-                const updatedRule = oldRule.updateLastExecuted(new Date(), {
+
+                const updatedRule = oldRule.updateLastExecuted(executionDate, {
                     id: currentUser.id,
                     name: currentUser.userCredentials.name,
                 });
@@ -282,7 +270,7 @@ export abstract class GenericSyncUseCase {
             const rule = await syncRulesRepository.getById(syncRule);
 
             if (rule) {
-                const updatedRule = rule.updateLastSuccessfulSync(new Date());
+                const updatedRule = rule.updateLastSuccessfulSync(executionDate);
                 await syncRulesRepository.save([updatedRule]);
             }
         }

@@ -1,4 +1,3 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { Debug } from "../../domain/migrations/entities/Debug";
 import { MigrationVersions } from "../../domain/migrations/entities/MigrationVersions";
 import { MigrationsRepository } from "../../domain/migrations/repositories/MigrationsRepository";
@@ -10,11 +9,12 @@ import { promiseMap } from "../../utils/common";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
 import { D2Api } from "../../types/d2-api";
+import { StorageClientFactory } from "../config/StorageClientFactory";
 
 export class MigrationsAppRepository implements MigrationsRepository {
     private d2Api: D2Api;
 
-    constructor(private configRepository: ConfigRepository, localInstance: Instance) {
+    constructor(private storageClientFactory: StorageClientFactory, localInstance: Instance) {
         this.d2Api = getD2APiFromInstance(localInstance);
     }
 
@@ -49,7 +49,7 @@ export class MigrationsAppRepository implements MigrationsRepository {
     }
 
     private async getStorageClient(): Promise<AppStorage> {
-        const storageClient = await this.configRepository.getStorageClient();
+        const storageClient = await this.storageClientFactory.getStorageClientPromise();
 
         return {
             get: <T extends object>(key: string) => storageClient.getObject<T>(key),

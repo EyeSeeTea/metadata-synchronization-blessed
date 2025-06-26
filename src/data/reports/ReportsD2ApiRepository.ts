@@ -1,12 +1,12 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { SynchronizationReport, SynchronizationReportData } from "../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationResult } from "../../domain/reports/entities/SynchronizationResult";
 import { ReportsRepository } from "../../domain/reports/repositories/ReportsRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
+import { StorageClientFactory } from "../config/StorageClientFactory";
 import { Namespace } from "../storage/Namespaces";
 
 export class ReportsD2ApiRepository implements ReportsRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private storageClientFactory: StorageClientFactory) {}
 
     public async getById(id: string): Promise<SynchronizationReport | undefined> {
         try {
@@ -89,6 +89,6 @@ export class ReportsD2ApiRepository implements ReportsRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.configRepository.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

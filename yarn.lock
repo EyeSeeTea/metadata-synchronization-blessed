@@ -2924,14 +2924,6 @@
     moment "^2.22.1"
     rimraf "^2.6.2"
 
-"@dhis2/d2-i18n@1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@dhis2/d2-i18n/-/d2-i18n-1.0.6.tgz#2914be8acf296f3a6bf7b51c76c46da6a120b0ff"
-  integrity sha512-7YdA4ppFosjuyf7ZMm47BrdsA5TWLM9lmS0lUPgjcCVeeWfUgagqzf4W5JGB9XQ3w1vzK+yy5zH2Ij8IgRAGhA==
-  dependencies:
-    i18next "^10.3"
-    moment "^2.24.0"
-
 "@dhis2/d2-i18n@1.1.3", "@dhis2/d2-i18n@^1.0.5":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@dhis2/d2-i18n/-/d2-i18n-1.1.3.tgz#ad73030f7cfceeed1b5bcaad86a9b336130bdfb1"
@@ -3348,14 +3340,14 @@
     side-channel "^1.0.4"
     yargs "^14.0.0"
 
-"@eyeseetea/d2-ui-components@2.10.1":
-  version "2.10.1"
-  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-ui-components/-/d2-ui-components-2.10.1.tgz#bc83a431ae72a796f46b4a129ed4a5946777a7d1"
-  integrity sha512-Luu+2nbmAMbVXrsoX9v2y6HvbUt2JvWQoyy5t1eMeDdutxGx0Wo3sM/7CyqNpFikNIxwPh3azGc6OinCfov+sg==
+"@eyeseetea/d2-ui-components@2.11.0-beta.1":
+  version "2.11.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@eyeseetea/d2-ui-components/-/d2-ui-components-2.11.0-beta.1.tgz#b4b4c76285a03f4f99d2645d8c7476122da8f289"
+  integrity sha512-OLBphENbEUQjVe94rqKqaw9vClPLXeYSIAD0Zpx7etnY2Out2lh5DOl97muff13mKJmvN6u35BApp7DLnX0X0g==
   dependencies:
     "@date-io/core" "1.3.6"
     "@date-io/moment" "1.0.2"
-    "@dhis2/d2-i18n" "1.0.6"
+    "@dhis2/d2-i18n" "1.1.3"
     "@dhis2/d2-ui-core" "7.4.3"
     "@dhis2/ui" "6.15.2"
     "@material-ui/pickers" "3.2.10"
@@ -3368,10 +3360,10 @@
     rxjs-compat "6.6.3"
     throttle-debounce "2.1.0"
 
-"@eyeseetea/feedback-component@0.1.3-beta.1":
-  version "0.1.3-beta.1"
-  resolved "https://registry.yarnpkg.com/@eyeseetea/feedback-component/-/feedback-component-0.1.3-beta.1.tgz#f4788b6bb81141e42003868f77325f6a3df3fbaf"
-  integrity sha512-6P87zyAtRJl3MUWbWk6hlDL97CWw8wDJfWhIVreubMSocGDNSBBnOPrSosZN7O02+Le+uHEBE0XkNCle3jA99g==
+"@eyeseetea/feedback-component@0.1.3-beta.3":
+  version "0.1.3-beta.3"
+  resolved "https://registry.yarnpkg.com/@eyeseetea/feedback-component/-/feedback-component-0.1.3-beta.3.tgz#01f51622c91b2f8e2132dc50942f120dc4ee90e6"
+  integrity sha512-YovqvxXuK/y/zJX4gGqbcEZMzqeUF9v7wcqUVxjPDQyjnKR60vp5qBdMXdqEnwEr+OMMw4t41G2kWFb29LiVbA==
   dependencies:
     "@date-io/core" "2.13.1"
     "@date-io/moment" "2.13.1"
@@ -9314,7 +9306,7 @@ flush-write-stream@^1.0.0, flush-write-stream@^1.0.2:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-fluture@14.0.0, fluture@^14.0.0:
+fluture@^14.0.0:
   version "14.0.0"
   resolved "https://registry.yarnpkg.com/fluture/-/fluture-14.0.0.tgz#81e1cae996a262e214aa2a8d7845fe1359018e3b"
   integrity sha512-pENtLF948a8DfduVKugT8edTAbFi4rBS94xjHwzLanQqIu5PYtLGl+xqs6H8TaIRL7z/B0cDpswdINzH/HRUGA==
@@ -15842,6 +15834,11 @@ readline-sync@^1.4.1:
   resolved "https://registry.yarnpkg.com/readline-sync/-/readline-sync-1.4.10.tgz#41df7fbb4b6312d673011594145705bf56d8873b"
   integrity sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==
 
+real-cancellable-promise@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/real-cancellable-promise/-/real-cancellable-promise-1.2.1.tgz#a6cc6c887597e44426c157534ca739ae148cbc30"
+  integrity sha512-JwhiWJTMMyzFYfpKsiSb8CyQktCi1MZ8ZBn3wXvq28qXDh8Y5dM7RYzgW3r6SV22JTEcof8pRsvDp4GxLmGIxg==
+
 recompose@^0.26.0:
   version "0.26.0"
   resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.26.0.tgz#9babff039cb72ba5bd17366d55d7232fbdfb2d30"
@@ -17739,6 +17736,13 @@ ts-jest@27.0.7:
     make-error "1.x"
     semver "7.x"
     yargs-parser "20.x"
+
+ts-mockito@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/ts-mockito/-/ts-mockito-2.6.1.tgz#bc9ee2619033934e6fad1c4455aca5b5ace34e73"
+  integrity sha512-qU9m/oEBQrKq5hwfbJ7MgmVN5Gu6lFnIGWvpxSjrqq6YYEVv+RwVFWySbZMBgazsWqv6ctAyVBpo9TmAxnOEKw==
+  dependencies:
+    lodash "^4.17.5"
 
 ts-node@^10.8.2:
   version "10.8.2"

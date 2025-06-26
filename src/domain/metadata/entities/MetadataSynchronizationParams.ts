@@ -17,12 +17,15 @@ export interface MetadataImportParams {
 
 export interface MetadataSynchronizationParams extends MetadataImportParams {
     enableMapping: boolean;
-    includeSharingSettings: boolean;
-    removeOrgUnitReferences: boolean;
-    removeUserObjects?: boolean;
-    removeUserObjectsAndReferences?: boolean;
-    removeOrgUnitObjects?: boolean;
     useDefaultIncludeExclude: boolean;
     metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
     metadataModelsSyncAll: string[]; //TODO: keyof MetadataEntities 963#discussion_r1682370900
+    includeSharingSettingsObjectsAndReferences: boolean;
+    includeOnlySharingSettingsReferences: boolean;
+    includeUsersObjectsAndReferences: boolean;
+    includeOnlyUsersReferences: boolean;
+    includeOrgUnitsObjectsAndReferences: boolean;
+    includeOnlyOrgUnitsReferences: boolean;
+    removeDefaultCategoryObjects?: boolean;
+    removeUserNonEssentialObjects?: boolean;
 }

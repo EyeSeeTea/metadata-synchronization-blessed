@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { MetadataEntities } from "../../../../../domain/metadata/entities/MetadataEntities";
 import { MetadataResponsible } from "../../../../../domain/metadata/entities/MetadataResponsible";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 import { SharingDialog } from "../sharing-dialog/SharingDialog";
 
@@ -80,7 +80,9 @@ export const ResponsibleDialog: React.FC<ResponsibleDialogProps> = ({
                 externalSharing: false,
                 permissionPicker: false,
             }}
-            title={i18n.t("Custodians for {{name}}", sharingSettingsElement)}
+            title={i18n.t("Custodians for {{name}}", {
+                name: sharingSettingsElement ? sharingSettingsElement.name : undefined,
+            })}
             meta={sharingObject}
             onCancel={onClose}
             onChange={onSharingChanged}

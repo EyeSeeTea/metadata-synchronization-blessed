@@ -1,7 +1,3 @@
-export interface DownloadRepositoryConstructor {
-    new (): DownloadRepository;
-}
-
 export interface DownloadItem {
     name: string;
     content: unknown;

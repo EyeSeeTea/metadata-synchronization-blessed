@@ -1,10 +1,10 @@
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DownloadRepository } from "../repositories/DownloadRepository";
 
 export class DownloadFileUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory) {}
+    constructor(private downloadRepository: DownloadRepository) {}
 
     public async execute(name: string, file: unknown) {
-        return this.repositoryFactory.downloadRepository().downloadFile(name, file);
+        return this.downloadRepository.downloadFile(name, file);
     }
 }

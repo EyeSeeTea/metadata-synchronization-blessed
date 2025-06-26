@@ -2,7 +2,7 @@ import { MetadataModule } from "../../../../../domain/modules/entities/MetadataM
 import _ from "lodash";
 import { ValidationError } from "../../../../../domain/common/entities/Validations";
 import { SnackbarLevel } from "@eyeseetea/d2-ui-components";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 
 export function getValidationsByVersionFeedback(
     module: MetadataModule,

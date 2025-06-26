@@ -1,24 +1,19 @@
 import { command, option, run, string } from "cmd-ts";
 import "dotenv/config";
 import fs from "fs";
-import { configure, getLogger } from "log4js";
 import path from "path";
-import { Future, FutureData } from "../domain/common/entities/Future";
 import { Instance } from "../domain/instance/entities/Instance";
 import { CompositionRoot } from "../presentation/CompositionRoot";
 import { D2Api } from "../types/d2-api";
-import { ConfigModel, SchedulerConfig } from "./entities/SchedulerConfig";
-import Scheduler from "./scheduler";
+import { ConfigModel, SchedulerConfig } from "../domain/scheduler/entities/SchedulerConfig";
+import Scheduler from "./Scheduler";
+import LoggerLog4js from "./LoggerLog4js";
+import { SchedulerCLI } from "./SchedulerCLI/SchedulerCLI";
+import { Future, FutureData } from "../domain/common/entities/Future";
 
-const development = process.env.NODE_ENV === "development";
+// NOTICE: This file is refactored
 
-configure({
-    appenders: {
-        out: { type: "stdout" },
-        file: { type: "file", filename: "debug.log" },
-    },
-    categories: { default: { appenders: ["file", "out"], level: development ? "all" : "debug" } },
-});
+const isDevelopment = process.env.NODE_ENV === "development";
 
 const checkMigrations = (compositionRoot: CompositionRoot): FutureData<boolean> => {
     return Future.fromPromise(compositionRoot.migrations.hasPending())
@@ -27,7 +22,9 @@ const checkMigrations = (compositionRoot: CompositionRoot): FutureData<boolean> 
         })
         .flatMap(pendingMigrations => {
             if (pendingMigrations) {
-                return Future.error<string, boolean>("There are pending migrations, unable to continue");
+                return Future.error<Error, boolean>(
+                    new Error("There are pending migrations. Please run them before starting the script")
+                );
             }
 
             return Future.success(pendingMigrations);
@@ -47,14 +44,17 @@ async function main() {
             }),
         },
         handler: async args => {
+            const logger = new LoggerLog4js(isDevelopment);
+
             try {
                 const text = fs.readFileSync(args.config, "utf8");
                 const contents = JSON.parse(text);
                 const config = ConfigModel.unsafeDecode(contents);
 
-                await start(config);
-            } catch (err) {
-                getLogger("main").fatal(err);
+                await start(config, logger);
+            } catch (error) {
+                const errorMessage = typeof error === "string" ? error : JSON.stringify(error, null, 2);
+                logger.fatal("main", `${errorMessage}`);
                 process.exit(1);
             }
         },
@@ -63,10 +63,10 @@ async function main() {
     run(cmd, process.argv.slice(2));
 }
 
-const start = async (config: SchedulerConfig): Promise<void> => {
+const start = async (config: SchedulerConfig, logger: LoggerLog4js): Promise<void> => {
     const { baseUrl, username, password, encryptionKey } = config;
     if (!baseUrl || !username || !password || !encryptionKey) {
-        getLogger("main").fatal("Missing fields from configuration file");
+        logger.fatal("main", "Missing fields from configuration file");
         return;
     }
 
@@ -87,10 +87,18 @@ const start = async (config: SchedulerConfig): Promise<void> => {
     await checkMigrations(compositionRoot).toPromise();
 
     const welcomeMessage = `Script initialized on ${baseUrl} with user ${username}`;
-    getLogger("main").info("-".repeat(welcomeMessage.length));
-    getLogger("main").info(welcomeMessage);
+    logger.info("main", "-".repeat(welcomeMessage.length));
+    logger.info("main", welcomeMessage);
 
-    new Scheduler(api, compositionRoot).initialize();
+    const scheduler = new Scheduler();
+
+    const schedulerCLI = new SchedulerCLI({
+        scheduler: scheduler,
+        logger: logger,
+        compositionRoot: compositionRoot,
+    });
+
+    schedulerCLI.initialize(api.apiPath);
 };
 
 main();

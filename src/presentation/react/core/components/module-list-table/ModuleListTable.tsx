@@ -19,7 +19,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Module } from "../../../../../domain/modules/entities/Module";
 import { Package } from "../../../../../domain/packages/entities/Package";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { promiseMap } from "../../../../../utils/common";
 import { getUserInfo, isGlobalAdmin, UserInfo } from "../../../../../utils/permissions";
 import { ModulePackageListPageProps } from "../../../../webapp/core/pages/module-package-list/ModulePackageListPage";
@@ -77,13 +77,9 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                 loading.show(true, i18n.t("Downloading snapshot for module {{name}}", module));
 
                 const originInstance = remoteInstance?.id ?? "LOCAL";
-                const contents = await compositionRoot.sync[module.type]({
-                    ...module.toSyncBuilder(),
-                    originInstance,
-                    targetInstances: [],
-                }).buildPayload();
 
-                await compositionRoot.modules.download(module, contents);
+                await compositionRoot.modules.download(module, originInstance);
+
                 loading.reset();
             }
         },
@@ -531,7 +527,9 @@ export const ModulesListTable: React.FC<ModulePackageListPageProps> = ({
                         title: false,
                         dataSharing: false,
                     }}
-                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    title={i18n.t("Sharing settings for {{name}}", {
+                        name: sharingSettingsObject.object.name,
+                    })}
                     meta={sharingSettingsObject}
                     onCancel={closeSharingSettingsDialog}
                     onChange={onSharingChanged}

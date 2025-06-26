@@ -1,20 +1,14 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../../../domain/common/factories/DynamicRepositoryFactory";
 import { EventsSyncUseCase } from "../../../../domain/events/usecases/EventsSyncUseCase";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { startDhis } from "../../../../utils/dhisServer";
-import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
-import { ConfigAppRepository } from "../../../config/ConfigAppRepository";
-import { EventsD2ApiRepository } from "../../../events/EventsD2ApiRepository";
-import { TEID2ApiRepository } from "../../../tracked-entity-instances/TEID2ApiRepository";
-import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
-import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
-import { MappingD2ApiRepository } from "../../../mapping/MappingD2ApiRepository";
-import { InstanceFileD2Repository } from "../../../instance/InstanceFileD2Repository";
+import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
+import { EventsPayloadBuilder } from "../../../../domain/events/builders/EventsPayloadBuilder";
+import { AggregatedPayloadBuilder } from "../../../../domain/aggregated/builders/AggregatedPayloadBuilder";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -338,9 +332,19 @@ describe("Sync events", () => {
             },
         };
 
-        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance);
+        const eventsPayloadBuilder = new EventsPayloadBuilder(repositoryFactory, localInstance);
+        const aggregatedPayloadBuilder = new AggregatedPayloadBuilder(repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new EventsSyncUseCase(
+            builder,
+            repositoryFactory,
+            localInstance,
+            eventsPayloadBuilder,
+            aggregatedPayloadBuilder
+        );
+
+        const payload = await eventsPayloadBuilder.build(builder);
+
         expect(payload.events?.find(({ id }) => id === "test-event-1")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -369,10 +373,19 @@ describe("Sync events", () => {
                 orgUnitPaths: ["/Global"],
             },
         };
+        const eventsPayloadBuilder = new EventsPayloadBuilder(repositoryFactory, localInstance);
+        const aggregatedPayloadBuilder = new AggregatedPayloadBuilder(repositoryFactory, localInstance);
 
-        const sync = new EventsSyncUseCase(builder, repositoryFactory, localInstance);
+        const sync = new EventsSyncUseCase(
+            builder,
+            repositoryFactory,
+            localInstance,
+            eventsPayloadBuilder,
+            aggregatedPayloadBuilder
+        );
 
-        const payload = await sync.buildPayload();
+        const payload = await eventsPayloadBuilder.build(builder);
+
         expect(payload.events?.find(({ id }) => id === "test-event-2")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -386,16 +399,10 @@ describe("Sync events", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
-    repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
-    repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-    repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
-    repositoryFactory.bind(Repositories.EventsRepository, EventsD2ApiRepository);
-    repositoryFactory.bind(Repositories.TEIsRepository, TEID2ApiRepository);
-    repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
-    repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
-    repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
+    const repositoryFactory: DynamicRepositoryFactory = new DynamicRepositoryFactory();
+
+    registerDynamicRepositoriesInFactory(repositoryFactory);
+
     return repositoryFactory;
 }
 

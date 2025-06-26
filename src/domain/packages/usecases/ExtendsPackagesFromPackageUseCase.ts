@@ -3,16 +3,22 @@ import { Namespace } from "../../../data/storage/Namespaces";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
 import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ExtendsPackagesFromPackageUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private transformationRepository: TransformationRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(packageSourceId: string, dhisVersions: string[]): Promise<void> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
-        const transformationRepository = this.repositoryFactory.transformationRepository();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const packageData = await storageClient.getObjectInCollection<BasePackage>(Namespace.PACKAGES, packageSourceId);
 
@@ -26,13 +32,13 @@ export class ExtendsPackagesFromPackageUseCase implements UseCase {
 
             const versionedPayload =
                 destinationApiVersion > originApiVersion
-                    ? transformationRepository.mapPackageTo(
+                    ? this.transformationRepository.mapPackageTo(
                           destinationApiVersion,
                           pkg.contents,
                           metadataTransformations,
                           originApiVersion
                       )
-                    : transformationRepository.mapPackageFrom(
+                    : this.transformationRepository.mapPackageFrom(
                           originApiVersion,
                           pkg.contents,
                           metadataTransformations,

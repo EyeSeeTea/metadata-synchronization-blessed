@@ -113,17 +113,10 @@ export class TEID2ApiRepository implements TEIRepository {
 
     async save(data: TEIsPackage, additionalParams: DataImportParams | undefined): Promise<SynchronizationResult> {
         try {
-            const teiPostParams: TrackerPostParams = {
-                idScheme: "UID",
-                dataElementIdScheme: "UID",
-                orgUnitIdScheme: "UID",
-                importMode: "COMMIT",
-                importStrategy: "CREATE_AND_UPDATE",
-                ...additionalParams,
-            };
+            const teiPostParams = this.getTeiPostParams(additionalParams);
 
             const trackerPostRequest: TrackerPostRequest = {
-                trackedEntities: data.trackedEntityInstances.map(tei => this.buildD2TrackerTrackedEntity(tei)),
+                trackedEntities: data.trackedEntities.map(tei => this.buildD2TrackerTrackedEntity(tei)),
             };
 
             const response = await this.api.tracker.post(teiPostParams, trackerPostRequest).getData();
@@ -140,6 +133,45 @@ export class TEID2ApiRepository implements TEIRepository {
                 date: new Date(),
                 type: "events",
             };
+        }
+    }
+
+    private getTeiPostParams(params: DataImportParams | undefined): TrackerPostParams {
+        const defaultTeiPostParams: TrackerPostParams = {
+            idScheme: "UID",
+            dataElementIdScheme: "UID",
+            orgUnitIdScheme: "UID",
+            importMode: "COMMIT",
+            importStrategy: "CREATE_AND_UPDATE",
+        };
+
+        if (!params) return defaultTeiPostParams;
+
+        const teiPostParams: TrackerPostParams = {
+            idScheme: params?.idScheme ?? defaultTeiPostParams.idScheme,
+            dataElementIdScheme: params?.dataElementIdScheme ?? defaultTeiPostParams.dataElementIdScheme,
+            orgUnitIdScheme: params?.orgUnitIdScheme ?? defaultTeiPostParams.orgUnitIdScheme,
+            importMode: params?.importMode ?? defaultTeiPostParams.importMode,
+            importStrategy: this.convertImportStrategy(params?.strategy) ?? defaultTeiPostParams.importStrategy,
+        };
+
+        return params?.async !== undefined ? { ...teiPostParams, async: params.async } : teiPostParams;
+    }
+
+    private convertImportStrategy(
+        strategy: DataImportParams["strategy"]
+    ): TrackerPostParams["importStrategy"] | undefined {
+        switch (strategy) {
+            case "NEW_AND_UPDATES":
+                return "CREATE_AND_UPDATE";
+            case "NEW":
+                return "CREATE";
+            case "UPDATES":
+                return "UPDATE";
+            case "DELETES":
+                return "DELETE";
+            default:
+                return undefined;
         }
     }
 

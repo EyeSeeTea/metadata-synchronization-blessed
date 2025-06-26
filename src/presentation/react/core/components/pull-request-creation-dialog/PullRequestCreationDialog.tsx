@@ -13,7 +13,7 @@ import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 
 export interface PullRequestCreation {
@@ -59,14 +59,12 @@ export const PullRequestCreationDialog: React.FC<PullRequestCreationDialogProps>
 
         try {
             loading.show(true, i18n.t("Creating pull request"));
-            const sync = compositionRoot.sync[type](builder);
-            const payload = await sync.buildPayload();
 
             await compositionRoot.sync.createPullRequest({
                 instance,
                 type,
                 ids: builder.metadataIds,
-                payload,
+                syncBuilder: builder,
                 subject,
                 description,
                 notificationUsers: {

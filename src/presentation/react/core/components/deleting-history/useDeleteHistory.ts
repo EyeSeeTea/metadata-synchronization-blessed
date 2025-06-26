@@ -6,20 +6,26 @@ export function useDeleteHistory(appContext: AppContextState | null) {
 
     useEffect(() => {
         if (!appContext) return;
+        appContext.newCompositionRoot.settings.get.execute().run(
+            settings => {
+                if (settings.historyRetentionDays) {
+                    setDeletingHistory(true);
 
-        appContext.compositionRoot.settings.get().then(settings => {
-            if (settings.historyRetentionDays) {
-                setDeletingHistory(true);
-
-                appContext.compositionRoot.reports
-                    .deleteOld()
-                    .then(() => setDeletingHistory(false))
-                    .catch(error => {
-                        console.debug(error);
-                        setDeletingHistory(false);
-                    });
+                    appContext.compositionRoot.reports
+                        .deleteOld()
+                        .then(() => setDeletingHistory(false))
+                        .catch(error => {
+                            console.debug(`Error deleting old history: ${error}`);
+                            setDeletingHistory(false);
+                        });
+                } else {
+                    console.error(`No history retention days set in settings, cannot delete history.`);
+                }
+            },
+            error => {
+                console.error(`error fetching settings in useDeleteHistory :  ${error}`);
             }
-        });
+        );
     }, [appContext]);
 
     return { deletingHistory };

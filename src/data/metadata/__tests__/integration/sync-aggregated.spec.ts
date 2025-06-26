@@ -1,18 +1,13 @@
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
+import { AggregatedPayloadBuilder } from "../../../../domain/aggregated/builders/AggregatedPayloadBuilder";
 import { AggregatedSyncUseCase } from "../../../../domain/aggregated/usecases/AggregatedSyncUseCase";
-import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../../../domain/common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
+import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
-import { AggregatedD2ApiRepository } from "../../../aggregated/AggregatedD2ApiRepository";
-import { ConfigAppRepository } from "../../../config/ConfigAppRepository";
-import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { InstanceFileD2Repository } from "../../../instance/InstanceFileD2Repository";
-import { MappingD2ApiRepository } from "../../../mapping/MappingD2ApiRepository";
-import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
-import { MetadataD2ApiRepository } from "../../MetadataD2ApiRepository";
 
 const repositoryFactory = buildRepositoryFactory();
 
@@ -289,9 +284,12 @@ describe("Sync aggregated", () => {
             dataParams: { orgUnitPaths: ["/Global"] },
         };
 
-        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance);
+        const aggregatedPayloadBuilder = new AggregatedPayloadBuilder(repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, aggregatedPayloadBuilder);
+
+        const payload = await aggregatedPayloadBuilder.build(builder);
+
         expect(payload.dataValues?.find(({ value }) => value === "test-value-1")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -319,9 +317,12 @@ describe("Sync aggregated", () => {
             dataParams: { orgUnitPaths: ["/Global"] },
         };
 
-        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance);
+        const aggregatedPayloadBuilder = new AggregatedPayloadBuilder(repositoryFactory, localInstance);
 
-        const payload = await sync.buildPayload();
+        const sync = new AggregatedSyncUseCase(builder, repositoryFactory, localInstance, aggregatedPayloadBuilder);
+
+        const payload = await aggregatedPayloadBuilder.build(builder);
+
         expect(payload.dataValues?.find(({ value }) => value === "test-value-2")).toBeDefined();
 
         for await (const _sync of sync.execute()) {
@@ -336,14 +337,10 @@ describe("Sync aggregated", () => {
 });
 
 function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
-    repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
-    repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-    repositoryFactory.bind(Repositories.AggregatedRepository, AggregatedD2ApiRepository);
-    repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
-    repositoryFactory.bind(Repositories.MappingRepository, MappingD2ApiRepository);
-    repositoryFactory.bind(Repositories.InstanceFileRepository, InstanceFileD2Repository);
+    const repositoryFactory: DynamicRepositoryFactory = new DynamicRepositoryFactory();
+
+    registerDynamicRepositoriesInFactory(repositoryFactory);
+
     return repositoryFactory;
 }
 

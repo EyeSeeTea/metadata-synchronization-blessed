@@ -4,7 +4,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { DataSourceMapping } from "../../../../../domain/mapping/entities/DataSourceMapping";
 import { MetadataMapping, MetadataMappingDictionary } from "../../../../../domain/mapping/entities/MetadataMapping";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import {
     AggregatedDataElementModel,
     EventProgramWithDataElementsModel,
@@ -124,7 +124,9 @@ export default function InstanceMappingPage() {
         await onChangeMapping(newMapping);
     };
 
-    const instanceTitle = instance ? i18n.t("Between this instance and {{name}}", instance) : null;
+    const instanceTitle = instance
+        ? i18n.t("Between this instance and {{name}}", { name: instance.name, interpolation: { escapeValue: false } })
+        : null;
     const title = _.compact([sectionTitle, instanceTitle]).join(" - ");
 
     return (

@@ -2,22 +2,19 @@ import _ from "lodash";
 import { Request, Server } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
 import Schema from "miragejs/orm/schema";
-import { Repositories, RepositoryFactory } from "../../../../domain/common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../../../domain/common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../../../domain/instance/entities/Instance";
+import { MetadataPayloadBuilder } from "../../../../domain/metadata/builders/MetadataPayloadBuilder";
 import { MetadataSyncUseCase } from "../../../../domain/metadata/usecases/MetadataSyncUseCase";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
+import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
-import { ConfigAppRepository } from "../../../config/ConfigAppRepository";
-import { InstanceD2ApiRepository } from "../../../instance/InstanceD2ApiRepository";
-import { MetadataD2ApiRepository } from "../../../metadata/MetadataD2ApiRepository";
-import { TransformationD2ApiRepository } from "../../../transformations/TransformationD2ApiRepository";
 
 export function buildRepositoryFactory() {
-    const repositoryFactory: RepositoryFactory = new RepositoryFactory("");
-    repositoryFactory.bind(Repositories.InstanceRepository, InstanceD2ApiRepository);
-    repositoryFactory.bind(Repositories.ConfigRepository, ConfigAppRepository);
-    repositoryFactory.bind(Repositories.MetadataRepository, MetadataD2ApiRepository);
-    repositoryFactory.bind(Repositories.TransformationRepository, TransformationD2ApiRepository);
+    const repositoryFactory: DynamicRepositoryFactory = new DynamicRepositoryFactory();
+
+    registerDynamicRepositoriesInFactory(repositoryFactory);
+
     return repositoryFactory;
 }
 
@@ -176,7 +173,12 @@ export async function executeMetadataSync(
         excludedIds: [],
     };
 
-    const useCase = new MetadataSyncUseCase(builder, repositoryFactory, localInstance);
+    const useCase = new MetadataSyncUseCase(
+        builder,
+        repositoryFactory,
+        localInstance,
+        new MetadataPayloadBuilder(repositoryFactory, localInstance)
+    );
 
     let done = false;
     for await (const sync of useCase.execute()) {

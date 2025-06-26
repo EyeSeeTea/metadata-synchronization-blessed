@@ -4,7 +4,7 @@ import _ from "lodash";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { SynchronizationReport } from "../../../../domain/reports/entities/SynchronizationReport";
-import i18n from "../../../../locales";
+import i18n from "../../../../utils/i18n";
 import { isGlobalAdmin } from "../../../../utils/permissions";
 import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { useAppContext } from "../../../react/core/contexts/AppContext";

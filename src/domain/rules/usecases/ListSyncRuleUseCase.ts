@@ -3,7 +3,7 @@ import moment from "moment";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { getUserInfo, isGlobalAdmin } from "../../../utils/permissions";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
 import { SynchronizationRule } from "../entities/SynchronizationRule";
@@ -15,10 +15,11 @@ export interface ListSyncRuleUseCaseParams {
     sorting?: { field: keyof SynchronizationRule; order: "asc" | "desc" };
     filters?: {
         targetInstanceFilter?: string;
-        enabledFilter?: string;
+        schedulerEnabledFilter?: string;
         lastExecutedFilter?: Date | null;
         types?: SynchronizationType[];
         search?: string;
+        allProperties?: boolean;
     };
 }
 
@@ -28,7 +29,7 @@ export interface ListSyncRuleUseCaseResult {
 }
 
 export class ListSyncRuleUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute({
         paging = true,
@@ -37,9 +38,16 @@ export class ListSyncRuleUseCase implements UseCase {
         sorting = { field: "id", order: "asc" },
         filters = {},
     }: ListSyncRuleUseCaseParams): Promise<ListSyncRuleUseCaseResult> {
-        const rawData = await this.repositoryFactory.rulesRepository(this.localInstance).list();
+        const {
+            targetInstanceFilter = null,
+            schedulerEnabledFilter = null,
+            lastExecutedFilter = null,
+            types,
+            search,
+            allProperties = false,
+        } = filters;
 
-        const { targetInstanceFilter = null, enabledFilter = null, lastExecutedFilter = null, types, search } = filters;
+        const rawData = await this.repositoryFactory.rulesRepository(this.localInstance).list(allProperties);
 
         const filteredData = search
             ? _.filter(rawData, item =>
@@ -67,8 +75,11 @@ export class ListSyncRuleUseCase implements UseCase {
             })
             .filter(rule => (targetInstanceFilter ? rule.targetInstances.includes(targetInstanceFilter) : true))
             .filter(rule => {
-                if (!enabledFilter) return true;
-                return (rule.enabled && enabledFilter === "enabled") || (!rule.enabled && enabledFilter === "disabled");
+                if (!schedulerEnabledFilter) return true;
+                return (
+                    (rule.enabled && schedulerEnabledFilter === "enabled") ||
+                    (!rule.enabled && schedulerEnabledFilter === "disabled")
+                );
             })
             .filter(rule =>
                 lastExecutedFilter && rule.lastExecuted

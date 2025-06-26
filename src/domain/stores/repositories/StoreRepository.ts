@@ -1,9 +1,4 @@
-import { ConfigRepository } from "../../config/repositories/ConfigRepository";
 import { Store } from "../entities/Store";
-
-export interface StoreRepositoryConstructor {
-    new (configRepository: ConfigRepository): StoreRepository;
-}
 
 export interface StoreRepository {
     list(): Promise<Store[]>;

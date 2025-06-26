@@ -22,16 +22,16 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Instance, InstanceData } from "../../../../../domain/instance/entities/Instance";
 import { User } from "../../../../../domain/user/entities/User";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { executeAnalytics } from "../../../../../utils/analytics";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import { SharingDialog } from "../../../../react/core/components/sharing-dialog/SharingDialog";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
-import { StorageType } from "../../../../../domain/config/entities/Config";
+import { AppStorageType } from "../../../../../domain/storage-client-config/entities/StorageConfig";
 
 const InstanceListPage = () => {
-    const { api, compositionRoot } = useAppContext();
+    const { api, compositionRoot, newCompositionRoot } = useAppContext();
     const history = useHistory();
     const snackbar = useSnackbar();
     const loading = useLoading();
@@ -43,7 +43,7 @@ const InstanceListPage = () => {
     const [toDelete, deleteInstances] = useState<string[]>([]);
     const [sharingSettingsObject, setSharingSettingsObject] = useState<MetaObject | null>(null);
     const [user, setUser] = useState<User>();
-    const [appStorage, setAppStorage] = useState<StorageType>();
+    const [appStorage, setAppStorage] = useState<AppStorageType>();
     const [localInstance, setLocalInstance] = useState<Instance>();
 
     useEffect(() => {
@@ -58,8 +58,15 @@ const InstanceListPage = () => {
     }, [compositionRoot, search, toDelete]);
 
     useEffect(() => {
-        compositionRoot.config.getStorage().then(storage => setAppStorage(storage));
-    }, [compositionRoot]);
+        return newCompositionRoot.config.getStorageClient.execute().run(
+            storage => {
+                setAppStorage(storage);
+            },
+            error => {
+                console.error(error);
+            }
+        );
+    }, [newCompositionRoot]);
 
     useEffect(() => {
         compositionRoot.instances.getLocal().then(setLocalInstance);
@@ -368,7 +375,9 @@ const InstanceListPage = () => {
                         title: false,
                         dataSharing: false,
                     }}
-                    title={i18n.t("Sharing settings for {{name}}", sharingSettingsObject.object)}
+                    title={i18n.t("Sharing settings for {{name}}", {
+                        name: sharingSettingsObject.object.name,
+                    })}
                     meta={sharingSettingsObject}
                     onCancel={() => setSharingSettingsObject(null)}
                     onChange={onSharingChanged}

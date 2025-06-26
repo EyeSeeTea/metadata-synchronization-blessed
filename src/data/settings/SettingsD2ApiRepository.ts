@@ -1,31 +1,48 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
-import { Settings, SettingsData } from "../../domain/settings/Settings";
+import { Future, FutureData } from "../../domain/common/entities/Future";
+import { DEFAULT_SETTINGS, Settings, SettingsData } from "../../domain/settings/Settings";
 import { SettingsRepository } from "../../domain/settings/SettingsRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
+import { StorageClientFactory } from "../config/StorageClientFactory";
+
 import { Namespace } from "../storage/Namespaces";
 
 export class SettingsD2ApiRepository implements SettingsRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private storageClientFactory: StorageClientFactory) {}
 
-    async get(): Promise<Settings> {
-        const storageClient = await this.getStorageClient();
-        const settingsData = await storageClient.getObject<SettingsData>(Namespace.SETTINGS);
-
-        return settingsData
-            ? Settings.create({ historyRetentionDays: settingsData.historyRetentionDays?.toString() }).getOrThrow()
-            : Settings.create({ historyRetentionDays: undefined }).getOrThrow();
+    get(): FutureData<Settings> {
+        return this.getStorageClient().flatMap(storageClient => {
+            return storageClient.getObjectFuture<SettingsData>(Namespace.SETTINGS).flatMap(settingsData => {
+                if (!settingsData) {
+                    return storageClient
+                        .saveObjectFuture<SettingsData>(Namespace.SETTINGS, DEFAULT_SETTINGS)
+                        .flatMap(() => {
+                            return Future.success(
+                                Settings.create({
+                                    historyRetentionDays: DEFAULT_SETTINGS.historyRetentionDays?.toString(),
+                                }).getOrThrow()
+                            );
+                        });
+                } else {
+                    return Future.success(
+                        Settings.create({
+                            historyRetentionDays: settingsData.historyRetentionDays?.toString(),
+                        }).getOrThrow()
+                    );
+                }
+            });
+        });
     }
 
-    async save(settings: Settings): Promise<void> {
+    save(settings: Settings): FutureData<void> {
         const data = {
             historyRetentionDays: settings.historyRetentionDays,
         };
-
-        const storageClient = await this.getStorageClient();
-        await storageClient.saveObject<SettingsData>(Namespace.SETTINGS, data);
+        return this.getStorageClient().flatMap(storageClient => {
+            return storageClient.saveObjectFuture<SettingsData>(Namespace.SETTINGS, data);
+        });
     }
 
-    private getStorageClient(): Promise<StorageClient> {
-        return this.configRepository.getStorageClient();
+    private getStorageClient(): FutureData<StorageClient> {
+        return this.storageClientFactory.getStorageClient();
     }
 }

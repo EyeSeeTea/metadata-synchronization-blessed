@@ -1,7 +1,7 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { AppNotification } from "../entities/Notification";
 import { ReceivedPullRequestNotification, SentPullRequestNotification } from "../entities/PullRequestNotification";
@@ -14,10 +14,12 @@ export type CancelPullRequestError =
     | "REMOTE_INVALID";
 
 export class CancelPullRequestUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string): Promise<Either<CancelPullRequestError, void>> {
-        const localStorageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const localStorageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const notification = await this.getNotification(this.localInstance, id);
 
@@ -38,7 +40,9 @@ export class CancelPullRequestUseCase implements UseCase {
         const remoteInstance = await this.getInstanceById(notification.instance.id);
         if (!remoteInstance) return Either.error("INSTANCE_NOT_FOUND");
 
-        const remoteStorageClient = await this.repositoryFactory.configRepository(remoteInstance).getStorageClient();
+        const remoteStorageClient = await this.repositoryFactory
+            .configRepository(remoteInstance)
+            .getStorageClientPromise();
 
         const remoteNotification = await this.getNotification(remoteInstance, notification.remoteNotification);
 
@@ -61,7 +65,7 @@ export class CancelPullRequestUseCase implements UseCase {
     }
 
     private async getNotification(instance: Instance, id: string): Promise<AppNotification | undefined> {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         return await storageClient.getObjectInCollection<AppNotification>(Namespace.NOTIFICATIONS, id);
     }

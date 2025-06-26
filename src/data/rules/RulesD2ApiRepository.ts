@@ -1,12 +1,12 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { SynchronizationRule, SynchronizationRuleData } from "../../domain/rules/entities/SynchronizationRule";
 import { RulesRepository } from "../../domain/rules/repositories/RulesRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { UserRepository } from "../../domain/user/repositories/UserRepository";
 import { Namespace } from "../storage/Namespaces";
+import { StorageClientFactory } from "../config/StorageClientFactory";
 
 export class RulesD2ApiRepository implements RulesRepository {
-    constructor(private configRepository: ConfigRepository, private userRepository: UserRepository) {}
+    constructor(private storageClientFactory: StorageClientFactory, private userRepository: UserRepository) {}
 
     public async getById(id: string): Promise<SynchronizationRule | undefined> {
         const storageClient = await this.getStorageClient();
@@ -22,11 +22,19 @@ export class RulesD2ApiRepository implements RulesRepository {
         return data ?? [];
     }
 
-    public async list(): Promise<SynchronizationRule[]> {
-        const storageClient = await this.getStorageClient();
-        const stores = await storageClient.listObjectsInCollection<SynchronizationRuleData>(Namespace.RULES);
+    public async list(allProperties?: boolean): Promise<SynchronizationRule[]> {
+        const rulesData = await this.getRulesData(allProperties);
+        return rulesData.map(ruleData => SynchronizationRule.build(ruleData));
+    }
 
-        return stores.map(data => SynchronizationRule.build(data));
+    private async getRulesData(allProperties?: boolean): Promise<SynchronizationRuleData[]> {
+        const storageClient = await this.getStorageClient();
+
+        if (allProperties) {
+            return storageClient.getObjectsInCollection<SynchronizationRuleData>(Namespace.RULES);
+        } else {
+            return storageClient.listObjectsInCollection<SynchronizationRuleData>(Namespace.RULES);
+        }
     }
 
     public async save(rules: SynchronizationRule[]): Promise<void> {
@@ -50,6 +58,6 @@ export class RulesD2ApiRepository implements RulesRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.configRepository.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

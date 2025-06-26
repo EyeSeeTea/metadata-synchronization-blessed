@@ -1,12 +1,12 @@
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { getD2APiFromInstance } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { Debug } from "../entities/Debug";
 
 export class RunMigrationsUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(debug: Debug): Promise<void> {
         // TODO: Move to a new permissions repository

@@ -2,7 +2,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import { Card, Landing } from "../../../../react/core/components/landing/Landing";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
@@ -62,7 +62,12 @@ const InstanceMappingLandingPage: React.FC = () => {
     };
 
     const mainTitle = i18n.t("Instance mapping");
-    const instanceTitle = instance ? i18n.t("Between this instance and {{name}}", instance) : null;
+    const instanceTitle = instance
+        ? i18n.t("Between this instance and {{name}}", {
+              name: instance.name,
+              interpolation: { escapeValue: false },
+          })
+        : null;
     const title = _.compact([mainTitle, instanceTitle]).join(" - ");
 
     return (

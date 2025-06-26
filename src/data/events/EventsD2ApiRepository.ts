@@ -223,23 +223,7 @@ export class EventsD2ApiRepository implements EventsRepository {
 
     public async save(data: EventsPackage, params: DataImportParams = {}): Promise<SynchronizationResult> {
         try {
-            if (data.events.length === 0) {
-                return {
-                    status: "SUCCESS",
-                    stats: {
-                        imported: 0,
-                        updated: 0,
-                        deleted: 0,
-                        ignored: 0,
-                        total: 0,
-                    },
-                    instance: this.instance.toPublicObject(),
-                    date: new Date(),
-                    type: "events",
-                };
-            } else {
-                return this.push(params, data.events);
-            }
+            return this.push(params, data.events);
         } catch (error: any) {
             if (error?.response?.data) {
                 return this.cleanEventsImportResponse(error.response.data);

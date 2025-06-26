@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { MigrationParams } from ".";
 import { Debug } from "../../../domain/migrations/entities/Debug";
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { D2Api } from "../../../types/d2-api";
 import { Maybe } from "../../../types/utils";
 import { promiseMap } from "../../../utils/common";

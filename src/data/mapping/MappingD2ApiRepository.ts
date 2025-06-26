@@ -1,13 +1,13 @@
 import { Either } from "../../domain/common/entities/Either";
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { DataSourceMapping } from "../../domain/mapping/entities/DataSourceMapping";
 import { isMappingOwnerStore, MappingOwner } from "../../domain/mapping/entities/MappingOwner";
 import { MappingRepository, SaveMappingError } from "../../domain/mapping/repositories/MappingRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
+import { StorageClientFactory } from "../config/StorageClientFactory";
 import { Namespace } from "../storage/Namespaces";
 
 export class MappingD2ApiRepository implements MappingRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private storageClientFactory: StorageClientFactory) {}
 
     async getByOwner(owner: MappingOwner): Promise<DataSourceMapping | undefined> {
         const storageClient = await this.getStorageClient();
@@ -50,6 +50,6 @@ export class MappingD2ApiRepository implements MappingRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.configRepository.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

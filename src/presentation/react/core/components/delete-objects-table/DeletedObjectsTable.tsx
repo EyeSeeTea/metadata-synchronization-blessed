@@ -10,7 +10,7 @@ import {
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import DeletedObject from "../../../../../models/deletedObjects";
 import { MetadataType } from "../../../../../utils/d2";
 import { useAppContext } from "../../contexts/AppContext";

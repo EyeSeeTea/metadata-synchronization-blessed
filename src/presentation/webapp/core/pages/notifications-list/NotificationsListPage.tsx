@@ -17,7 +17,7 @@ import { ImportPullRequestError } from "../../../../../domain/notifications/usec
 import { UpdatePullRequestStatusError } from "../../../../../domain/notifications/usecases/UpdatePullRequestStatusUseCase";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationResult } from "../../../../../domain/reports/entities/SynchronizationResult";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import Dropdown from "../../../../react/core/components/dropdown/Dropdown";
 import { NotificationViewerDialog } from "../../../../react/core/components/notification-viewer-dialog/NotificationViewerDialog";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";

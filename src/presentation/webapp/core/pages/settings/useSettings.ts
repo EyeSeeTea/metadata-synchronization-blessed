@@ -1,9 +1,10 @@
 import { ConfirmationDialogProps } from "@eyeseetea/d2-ui-components";
 import { useCallback, useEffect, useState } from "react";
-import { StorageType } from "../../../../../domain/config/entities/Config";
+import { AppStorageType } from "../../../../../domain/storage-client-config/entities/StorageConfig";
 import { Settings, SettingsParams } from "../../../../../domain/settings/Settings";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
+import { useHistory } from "react-router-dom";
 
 type ValidationForm<Form> = {
     [Key in keyof Form]: {
@@ -20,48 +21,76 @@ const initialSettingsForm = {
 };
 
 export function useSettings() {
-    const { compositionRoot } = useAppContext();
+    const { newCompositionRoot } = useAppContext();
 
-    const [storageType, setStorageType] = useState<StorageType>("dataStore");
-    const [savedStorageType, setSavedStorageType] = useState<StorageType>("dataStore");
+    const [storageType, setStorageType] = useState<AppStorageType>();
+    const [savedStorageType, setSavedStorageType] = useState<AppStorageType>();
 
     const [settingsForm, setSettingsForm] = useState<SettingsForm>(initialSettingsForm);
 
     const [dialogProps, updateDialog] = useState<ConfirmationDialogProps | null>(null);
     const [loadingMessage, setLoadingMessage] = useState<string | undefined>();
-    const [goHome, setGoHome] = useState<boolean>(false);
     const [error, setError] = useState<string | undefined>(undefined);
+    const [info, setInfo] = useState<string | undefined>(undefined);
+
+    const history = useHistory();
+    const backHome = useCallback(() => history.push("/dashboard"), [history]);
 
     useEffect(() => {
-        compositionRoot.config.getStorage().then(storage => {
-            setStorageType(storage);
-            setSavedStorageType(storage);
-        });
-    }, [compositionRoot]);
-
-    useEffect(() => {
-        compositionRoot.settings.get().then(settings => {
-            setSettingsForm({
-                historyRetentionDays: {
-                    hasError: false,
-                    message: "",
-                    value: settings.historyRetentionDays?.toString() || "",
+        if (!storageType)
+            return newCompositionRoot.config.getStorageClient.execute().run(
+                storage => {
+                    setStorageType(storage);
+                    setSavedStorageType(storage);
                 },
-            });
-        });
-    }, [compositionRoot]);
+                error => {
+                    console.error(`error fetching storage client in useeffect :  ${error}`);
+                }
+            );
+    }, [newCompositionRoot, storageType]);
+
+    useEffect(() => {
+        newCompositionRoot.settings.get.execute().run(
+            settings => {
+                setSettingsForm({
+                    historyRetentionDays: {
+                        hasError: false,
+                        message: "",
+                        value: settings.historyRetentionDays?.toString() || "",
+                    },
+                });
+            },
+            error => {
+                console.error(`error fetching settings in useSettings :  ${error}`);
+            }
+        );
+    }, [newCompositionRoot.settings.get]);
 
     const changeStorage = useCallback(
-        async (storage: StorageType) => {
-            setLoadingMessage(i18n.t("Updating storage location, please wait..."));
-            await compositionRoot.config.setStorage(storage);
+        (storage: AppStorageType) => {
+            setLoadingMessage(i18n.t(`Updating storage location to ${storage} , please wait... `));
 
-            const newStorage = await compositionRoot.config.getStorage();
-            setStorageType(newStorage);
-            setLoadingMessage(undefined);
-            setGoHome(true);
+            return newCompositionRoot.config.setStorageClient.execute(storage).run(
+                () => {
+                    return newCompositionRoot.config.getStorageClient.execute().run(
+                        newStorage => {
+                            setStorageType(newStorage);
+                            setLoadingMessage(undefined);
+                            backHome();
+                        },
+                        error => {
+                            console.error(`error fetching storage client:  ${error}`);
+                            setLoadingMessage(undefined);
+                        }
+                    );
+                },
+                error => {
+                    console.error(`error setting storage client:  ${error}`);
+                    setLoadingMessage(undefined);
+                }
+            );
         },
-        [compositionRoot.config]
+        [newCompositionRoot, backHome]
     );
 
     const saveSettings = useCallback(() => {
@@ -69,13 +98,15 @@ export function useSettings() {
             historyRetentionDays: settingsForm.historyRetentionDays.value,
         }).getOrThrow();
 
-        compositionRoot.settings
-            .save(settings)
-            .then(() => setGoHome(true))
-            .catch(error => {
+        return newCompositionRoot.settings.save.execute(settings).run(
+            () => {
+                setInfo(i18n.t("Settings saved succesfully!"));
+            },
+            error => {
                 setError(`${i18n.t("An error has occurred saving settings")}:${error}`);
-            });
-    }, [compositionRoot.settings, settingsForm.historyRetentionDays.value]);
+            }
+        );
+    }, [newCompositionRoot.settings, settingsForm.historyRetentionDays.value]);
 
     const showConfirmationDialog = useCallback(() => {
         updateDialog({
@@ -86,17 +117,15 @@ export function useSettings() {
             onCancel: () => {
                 updateDialog(null);
             },
-            onSave: async () => {
+            onSave: () => {
                 updateDialog(null);
-                await changeStorage(storageType);
+                storageType && changeStorage(storageType);
                 saveSettings();
             },
             cancelText: i18n.t("Cancel"),
             saveText: i18n.t("Proceed"),
         });
     }, [changeStorage, saveSettings, storageType]);
-
-    const onChangeStorageType = useCallback((storage: StorageType) => setStorageType(storage), []);
 
     const onChangeSettings = useCallback((settings: SettingsParams) => {
         const settingsValidation = Settings.create({ historyRetentionDays: settings.historyRetentionDays });
@@ -128,18 +157,18 @@ export function useSettings() {
         }
     }, [saveSettings, savedStorageType, showConfirmationDialog, storageType]);
 
-    const onCancel = useCallback(() => setGoHome(true), []);
+    const onCancel = useCallback(() => backHome(), [backHome]);
 
     return {
         storageType,
         settingsForm,
-        onChangeStorageType,
         onChangeSettings,
         onCancel,
         onSave,
         dialogProps,
         loadingMessage,
-        goHome,
         error,
+        setStorageType,
+        info,
     };
 }
