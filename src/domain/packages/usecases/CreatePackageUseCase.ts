@@ -1,19 +1,21 @@
 import { Namespace } from "../../../data/storage/Namespaces";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
-import { CompositionRoot } from "../../../presentation/CompositionRoot";
 import { getMajorVersion } from "../../../utils/d2-utils";
 import { UseCase } from "../../common/entities/UseCase";
 import { ValidationError } from "../../common/entities/Validations";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { Module } from "../../modules/entities/Module";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { Package } from "../entities/Package";
 
 export class CreatePackageUseCase implements UseCase {
     constructor(
-        private compositionRoot: CompositionRoot,
-        private repositoryFactory: RepositoryFactory,
+        private metadataPayloadBuilder: MetadataPayloadBuilder,
+        private repositoryFactory: DynamicRepositoryFactory,
+        private transformationRepository: TransformationRepository,
         private localInstance: Instance
     ) {}
 
@@ -24,21 +26,25 @@ export class CreatePackageUseCase implements UseCase {
         dhisVersion: string,
         contents?: MetadataPackage
     ): Promise<ValidationError[]> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const apiVersion = getMajorVersion(dhisVersion);
 
-        const basePayload = contents
-            ? contents
-            : await this.compositionRoot.sync[module.type]({
-                  ...module.toSyncBuilder(),
-                  originInstance,
-                  targetInstances: [],
-              }).buildPayload();
+        const syncBuilder = {
+            ...module.toSyncBuilder(),
+            originInstance,
+            targetInstances: [],
+        };
 
-        const versionedPayload = this.repositoryFactory
-            .transformationRepository()
-            .mapPackageTo(apiVersion, basePayload, metadataTransformations);
+        const basePayload = contents ? contents : this.metadataPayloadBuilder.build(syncBuilder);
+
+        const versionedPayload = this.transformationRepository.mapPackageTo(
+            apiVersion,
+            basePayload,
+            metadataTransformations
+        );
 
         const payload = sourcePackage.update({ contents: versionedPayload, dhisVersion });
 

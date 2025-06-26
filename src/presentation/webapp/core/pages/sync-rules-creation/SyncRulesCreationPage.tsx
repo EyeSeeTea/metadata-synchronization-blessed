@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import SyncWizard from "../../../../react/core/components/sync-wizard/SyncWizard";
 import { TestWrapper } from "../../../../react/core/components/test-wrapper/TestWrapper";
@@ -24,6 +24,8 @@ const SyncRulesCreation: React.FC = () => {
 
     const [dialogOpen, updateDialogOpen] = useState(false);
     const [syncRule, updateSyncRule] = useState(location.state?.syncRule ?? SynchronizationRule.create(type));
+    const [originalSyncRule, setOriginalSyncRule] = useState<SynchronizationRule | undefined>(undefined);
+
     const isEdit = action === "edit" && !!id;
 
     const title = !isEdit
@@ -47,6 +49,7 @@ const SyncRulesCreation: React.FC = () => {
             loading.show(true, "Loading sync rule");
             compositionRoot.rules.get(id).then(syncRule => {
                 updateSyncRule(syncRule ?? SynchronizationRule.create(type));
+                setOriginalSyncRule(syncRule ?? SynchronizationRule.create(type));
                 loading.reset();
             });
         }
@@ -65,7 +68,12 @@ const SyncRulesCreation: React.FC = () => {
 
             <PageHeader title={title} onBackClick={openDialog} />
 
-            <SyncWizard syncRule={syncRule} onChange={updateSyncRule} onCancel={exit} />
+            <SyncWizard
+                syncRule={syncRule}
+                originalSyncRule={originalSyncRule}
+                onChange={updateSyncRule}
+                onCancel={exit}
+            />
         </TestWrapper>
     );
 };

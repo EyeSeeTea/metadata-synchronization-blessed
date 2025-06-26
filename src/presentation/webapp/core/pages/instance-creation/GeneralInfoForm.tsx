@@ -6,7 +6,7 @@ import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { ValidationError } from "../../../../../domain/common/entities/Validations";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import SaveButton from "./SaveButton";
 

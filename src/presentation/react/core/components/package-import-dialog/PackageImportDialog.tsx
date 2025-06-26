@@ -10,7 +10,7 @@ import { PackageSource, isInstance, isStore } from "../../../../../domain/packag
 import { mapToImportedPackage } from "../../../../../domain/package-import/mappers/ImportedPackageMapper";
 import { Package } from "../../../../../domain/packages/entities/Package";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { useAppContext } from "../../contexts/AppContext";
 import { PackageImportWizard } from "../package-import-wizard/PackageImportWizard";
 

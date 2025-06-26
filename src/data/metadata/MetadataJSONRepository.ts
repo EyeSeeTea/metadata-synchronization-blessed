@@ -1,6 +1,5 @@
 import _ from "lodash";
 import { IdentifiableRef } from "../../domain/common/entities/Ref";
-import { DataSource } from "../../domain/instance/entities/DataSource";
 import { JSONDataSource } from "../../domain/instance/entities/JSONDataSource";
 import { FilterRule } from "../../domain/metadata/entities/FilterRule";
 import { CategoryOptionCombo, MetadataEntity, MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
@@ -17,7 +16,7 @@ import { Dictionary } from "../../types/utils";
 export class MetadataJSONRepository implements MetadataRepository {
     private instance: JSONDataSource;
 
-    constructor(instance: DataSource, private transformationRepository: TransformationRepository) {
+    constructor(instance: JSONDataSource, private transformationRepository: TransformationRepository) {
         if (instance.type !== "json") {
             throw new Error("Invalid instance type for MetadataJSONRepository");
         }

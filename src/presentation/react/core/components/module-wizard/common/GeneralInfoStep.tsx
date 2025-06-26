@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { NamedRef } from "../../../../../../domain/common/entities/Ref";
 import { ValidationError } from "../../../../../../domain/common/entities/Validations";
 import { Module } from "../../../../../../domain/modules/entities/Module";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { Dictionary } from "../../../../../../types/utils";
 import { useAppContext } from "../../../contexts/AppContext";
 import Dropdown from "../../dropdown/Dropdown";

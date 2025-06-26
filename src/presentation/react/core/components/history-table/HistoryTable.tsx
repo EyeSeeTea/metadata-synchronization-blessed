@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { SynchronizationRule } from "../../../../../domain/rules/entities/SynchronizationRule";
 import { SynchronizationType } from "../../../../../domain/synchronization/entities/SynchronizationType";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { promiseMap } from "../../../../../utils/common";
 import { getValueForCollection } from "../../../../../utils/d2-ui-components";
 import { isAppConfigurator } from "../../../../../utils/permissions";

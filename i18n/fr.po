@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2024-09-05T09:32:03.371Z\n"
+"POT-Creation-Date: 2025-06-25T11:55:58.705Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1061,21 +1061,6 @@ msgstr ""
 msgid "Create and update"
 msgstr ""
 
-msgid "Include owner and sharing settings"
-msgstr ""
-
-msgid "Remove organisation units and references (UID)"
-msgstr ""
-
-msgid "Remove organisation units and keep organisation units references (UID)"
-msgstr ""
-
-msgid "Remove users and references (UID)"
-msgstr ""
-
-msgid "Remove users and keep user references (UID)"
-msgstr ""
-
 msgid "Disable atomic verification"
 msgstr ""
 
@@ -1375,6 +1360,18 @@ msgstr ""
 msgid "Strategy"
 msgstr ""
 
+msgid "Include objects and references"
+msgstr ""
+
+msgid "Include only references"
+msgstr ""
+
+msgid "Remove objects and references"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
 msgid "No"
 msgstr ""
 
@@ -1472,6 +1469,35 @@ msgid "Sync all TEIs"
 msgstr ""
 
 msgid "Exclude relationships"
+msgstr ""
+
+msgid "Include owner and sharing settings"
+msgstr ""
+
+msgid "Include users"
+msgstr ""
+
+msgid "Include organisation units"
+msgstr ""
+
+msgid ""
+"Remove default categories, categoryOptions, categoryCombos and "
+"categoryOptionCombos"
+msgstr ""
+
+msgid "Remove lastUpdated, lastUpdatedBy, created and createdBys"
+msgstr ""
+
+msgid "Exclude objects and references ->"
+msgstr ""
+
+msgid "Include objects"
+msgstr ""
+
+msgid "Include only references ->"
+msgstr ""
+
+msgid "Include references and objects"
 msgstr ""
 
 msgid "Use sync rules periods"
@@ -1953,7 +1979,7 @@ msgstr ""
 msgid "Metadata constant"
 msgstr ""
 
-msgid "Updating storage location, please wait..."
+msgid "Settings saved succesfully!"
 msgstr ""
 
 msgid "An error has occurred saving settings"
@@ -2149,7 +2175,7 @@ msgstr ""
 msgid "Finished aggregated data synchronization successfully"
 msgstr ""
 
-msgid "An error has ocurred retrieving the instance {{name}}"
+msgid "An error has occurred retrieving the instance {{name}}"
 msgstr ""
 
 msgid "Checking data values in previous periods ...."
@@ -2187,16 +2213,57 @@ msgstr ""
 msgid "Push data to HQ server"
 msgstr ""
 
+msgid "SYNCHRONIZATION SUCCESSFUL"
+msgstr ""
+
+msgid "The synchronization has been completed successfully."
+msgstr ""
+
+msgid "Do not forget to perform the following actions:"
+msgstr ""
+
+msgid "Set up passwords manually for all users intended to use this instance"
+msgstr ""
+
+msgid "Clear the application cache"
+msgstr ""
+
+msgid "SYNCHRONIZATION FAILED"
+msgstr ""
+
+msgid ""
+"The synchronization and metadata import failed. Please, reach out an "
+"administrator and share the JSON Response obtained as an output for the "
+"synchronization rule that failed."
+msgstr ""
+
+msgid "DATA PUSHED SUCCESSFULLY"
+msgstr ""
+
+msgid "The data was pushed successfully to the HQ server."
+msgstr ""
+
+msgid "ERROR PUSHING DATA"
+msgstr ""
+
+msgid ""
+"There was an error pushing the data to the HQ server. Please, reach out an "
+"administrator and share the JSON Response obtained as an output for the "
+"synchronization rule that failed."
+msgstr ""
+
 msgid "Output: "
 msgstr ""
 
 msgid "Sync finished - {{dateEnd}}"
 msgstr ""
 
-msgid "Status: {{status}}"
+msgid "Status: "
 msgstr ""
 
-msgid "Synchronizing rule {{name}} - {{dateStart}}"
+msgid ""
+"Synchronizing rule {{currentRule}} out of {{totalRules}} {{name}} - "
+"{{dateStart}}"
 msgstr ""
 
 msgid "Error: {{code}}"
@@ -2214,7 +2281,7 @@ msgstr ""
 msgid "Running analytics for instance {{name}}"
 msgstr ""
 
-msgid "Updating analytics done`for instance {{name}}"
+msgid "Updating analytics done for instance {{name}}"
 msgstr ""
 
 msgid "Short name"

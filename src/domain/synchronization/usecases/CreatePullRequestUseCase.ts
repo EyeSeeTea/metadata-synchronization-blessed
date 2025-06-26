@@ -2,42 +2,51 @@ import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { NamedRef } from "../../common/entities/Ref";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
-import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
+import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { MessageNotification } from "../../notifications/entities/Notification";
 import {
     ReceivedPullRequestNotification,
     SentPullRequestNotification,
 } from "../../notifications/entities/PullRequestNotification";
+import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 interface CreatePullRequestParams {
     instance: Instance;
     type: SynchronizationType;
     ids: string[];
-    payload: MetadataPackage;
+    syncBuilder: SynchronizationBuilder;
     subject: string;
     description?: string;
     notificationUsers: Pick<MessageNotification, "users" | "userGroups">;
 }
 
 export class CreatePullRequestUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private localInstance: Instance,
+        private metadataPayloadBuilder: MetadataPayloadBuilder
+    ) {}
 
     public async execute({
         instance,
         type,
         ids,
-        payload,
+        syncBuilder,
         subject,
         description = "",
         notificationUsers: { users, userGroups },
     }: CreatePullRequestParams): Promise<void> {
-        const localStorageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const payload = await this.metadataPayloadBuilder.build(syncBuilder);
 
-        const remoteStorageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const localStorageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
+
+        const remoteStorageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const owner = await this.getOwner();
 
@@ -102,7 +111,7 @@ export class CreatePullRequestUseCase implements UseCase {
     }
 
     private async getResponsibleNames(instance: Instance, ids: string[]) {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 

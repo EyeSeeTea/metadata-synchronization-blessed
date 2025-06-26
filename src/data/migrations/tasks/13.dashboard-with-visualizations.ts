@@ -1,5 +1,4 @@
 import { MigrationParams } from ".";
-import { MetadataIncludeExcludeRules } from "../../../domain/metadata/entities/MetadataExcludeIncludeRules";
 import { MetadataImportParams } from "../../../domain/metadata/entities/MetadataSynchronizationParams";
 import { Debug } from "../../../domain/migrations/entities/Debug";
 import { SynchronizationType } from "../../../domain/synchronization/entities/SynchronizationType";
@@ -19,8 +18,17 @@ export interface SynchronizationBuilder {
     syncParams?: OldMetadataSynchronizationParams;
 }
 
+export interface OldExcludeIncludeRules {
+    excludeRules: string[];
+    includeRules: string[];
+}
+
+export interface OldMetadataIncludeExcludeRules {
+    [metadataType: string]: OldExcludeIncludeRules;
+}
+
 export interface OldMetadataSynchronizationParams extends MetadataImportParams {
-    metadataIncludeExcludeRules?: MetadataIncludeExcludeRules;
+    metadataIncludeExcludeRules?: OldMetadataIncludeExcludeRules;
 }
 
 export async function migrate(storage: AppStorage, _debug: Debug, _params: MigrationParams): Promise<void> {

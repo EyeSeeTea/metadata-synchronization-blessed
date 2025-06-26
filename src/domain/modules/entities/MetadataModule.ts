@@ -50,11 +50,15 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             excludedIds: this.excludedIds,
             syncParams: {
                 enableMapping: true,
-                removeOrgUnitReferences: this.removeOrgUnitReferences,
-                includeSharingSettings: this.includeUserInformation,
                 useDefaultIncludeExclude: this.useDefaultIncludeExclude,
                 metadataIncludeExcludeRules: this.metadataIncludeExcludeRules,
                 metadataModelsSyncAll: [],
+                includeSharingSettingsObjectsAndReferences: this.includeUserInformation,
+                includeOnlySharingSettingsReferences: false,
+                includeUsersObjectsAndReferences: this.includeUserInformation,
+                includeOnlyUsersReferences: false,
+                includeOrgUnitsObjectsAndReferences: !this.removeOrgUnitReferences,
+                includeOnlyOrgUnitsReferences: false,
             },
         };
     }
@@ -92,9 +96,13 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             .uniq()
             .value();
 
+        const includeRules = _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]);
+
         const excludeIncludeRules = {
-            includeRules: _.uniq([...oldIncludeRules, ...rulesToIncludeWithParents]),
+            includeRules,
             excludeRules: oldExcludeRules.filter(rule => !rulesToIncludeWithParents.includes(rule)),
+            includeOnlyReferencesRules: [],
+            includeReferencesAndObjectsRules: includeRules,
         };
 
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);
@@ -114,9 +122,13 @@ export class MetadataModule extends GenericModule implements BaseMetadataModule 
             .uniq()
             .value();
 
+        const includeRules = oldIncludeRules.filter(rule => !rulesToExcludeWithChildren.includes(rule));
+
         const excludeIncludeRules = {
-            includeRules: oldIncludeRules.filter(rule => !rulesToExcludeWithChildren.includes(rule)),
+            includeRules,
             excludeRules: [...oldExcludeRules, ...rulesToExcludeWithChildren],
+            includeOnlyReferencesRules: [],
+            includeReferencesAndObjectsRules: includeRules,
         };
 
         return this.updateIncludeExcludeRules(type, excludeIncludeRules);

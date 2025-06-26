@@ -1,11 +1,11 @@
-import { ConfigRepository } from "../../domain/config/repositories/ConfigRepository";
 import { StorageClient } from "../../domain/storage/repositories/StorageClient";
 import { Store } from "../../domain/stores/entities/Store";
 import { StoreRepository } from "../../domain/stores/repositories/StoreRepository";
+import { StorageClientFactory } from "../config/StorageClientFactory";
 import { Namespace } from "../storage/Namespaces";
 
 export class StoreD2ApiRepository implements StoreRepository {
-    constructor(private configRepository: ConfigRepository) {}
+    constructor(private storageClientFactory: StorageClientFactory) {}
 
     public async list(): Promise<Store[]> {
         const storageClient = await this.getStorageClient();
@@ -52,6 +52,6 @@ export class StoreD2ApiRepository implements StoreRepository {
     }
 
     private getStorageClient(): Promise<StorageClient> {
-        return this.configRepository.getStorageClient();
+        return this.storageClientFactory.getStorageClientPromise();
     }
 }

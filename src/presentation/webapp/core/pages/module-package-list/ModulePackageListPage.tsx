@@ -5,7 +5,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { SynchronizationReport } from "../../../../../domain/reports/entities/SynchronizationReport";
 import { Store } from "../../../../../domain/stores/entities/Store";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { CreatePackageFromFileDialog } from "../../../../react/core/components/create-package-from-file-dialog/CreatePackageFromFileDialog";
 import {
     ModulePackageListTable,

@@ -1,32 +1,26 @@
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { SchedulerExecution } from "../../../../../domain/scheduler/entities/SchedulerExecution";
-import i18n from "../../../../../locales";
-import { useAppContext } from "../../contexts/AppContext";
+import i18n from "../../../../../utils/i18n";
+import { useSnackbar } from "@eyeseetea/d2-ui-components";
+import { useSchedulerInfo } from "./useSchedulerInfo";
+
+// NOTICE: This is refactored
 
 export interface SchedulerInfoProps {
     onSchedulerRun?: (timestamp: string) => void;
 }
 
 export const SchedulerInfo: React.FC<SchedulerInfoProps> = React.memo(props => {
+    const snackbar = useSnackbar();
     const { onSchedulerRun } = props;
-    const { compositionRoot } = useAppContext();
-    const [status, setStatus] = useState<boolean>(false);
-
-    const getSchedulerInfo = useCallback(() => {
-        compositionRoot.scheduler.getLastExecution().then(execution => {
-            const timestamp = execution?.lastExecution?.toISOString() ?? "";
-            if (onSchedulerRun) onSchedulerRun(timestamp);
-            return setStatus(isRunning(execution));
-        });
-    }, [compositionRoot, onSchedulerRun]);
+    const { status, errorMessage } = useSchedulerInfo(onSchedulerRun);
 
     useEffect(() => {
-        getSchedulerInfo();
-        const intervalId = setInterval(() => getSchedulerInfo(), 60 * 1000);
-        return () => clearInterval(intervalId);
-    }, [getSchedulerInfo, setStatus]);
+        if (errorMessage) {
+            snackbar.error(errorMessage);
+        }
+    }, [errorMessage, snackbar]);
 
     return (
         <SchedulerContainer>
@@ -48,7 +42,3 @@ const SchedulerContainer = styled.div`
     border: none;
     gap: 10px;
 `;
-
-function isRunning(info?: SchedulerExecution): boolean {
-    return !!info?.nextExecution && info.nextExecution >= new Date();
-}

@@ -3,7 +3,7 @@ import { Namespace } from "../../../data/storage/Namespaces";
 import { promiseMap } from "../../../utils/common";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
@@ -12,7 +12,7 @@ import { SynchronizationType } from "../entities/SynchronizationType";
 export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND" | "NOT_AUTHORIZED";
 
 export class PrepareSyncUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(
         type: SynchronizationType,
@@ -81,7 +81,9 @@ export class PrepareSyncUseCase implements UseCase {
         const instance = await this.getInstanceById(instanceId);
         if (instance.isError() || !instance.value.data) return Either.error("INSTANCE_NOT_FOUND");
 
-        const storageClient = await this.repositoryFactory.configRepository(instance.value.data).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(instance.value.data)
+            .getStorageClientPromise();
 
         const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 

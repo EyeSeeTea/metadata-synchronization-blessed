@@ -10,7 +10,7 @@ import { Store } from "../../../../domain/stores/entities/Store";
 import { SynchronizationBuilder } from "../../../../domain/synchronization/entities/SynchronizationBuilder";
 import { SynchronizationResultType } from "../../../../domain/synchronization/entities/SynchronizationType";
 import { cleanOrgUnitPath } from "../../../../domain/synchronization/utils";
-import i18n from "../../../../locales";
+import i18n from "../../../../utils/i18n";
 import { executeAnalytics } from "../../../../utils/analytics";
 import { promiseMap } from "../../../../utils/common";
 import { formatDateLong } from "../../../../utils/date";
@@ -117,7 +117,9 @@ export async function executeAggregateData(
                 success: async instance => await runAnalytics(instance, addEventToProgress, msfSettings.analyticsYears),
                 error: () => {
                     addEventToProgress(
-                        i18n.t(`An error has ocurred retrieving the instance {{name}}`, instance),
+                        i18n.t(`An error has occurred retrieving the instance {{name}}`, {
+                            name: instance.value.data ? instance.value.data.name : undefined,
+                        }),
                         "admin"
                     );
                 },
@@ -438,7 +440,7 @@ async function deletePreviousDataValues(
 
                 const { startDate, endDate } = buildPeriodFromParams(builder.dataParams ?? { period: "ALL" });
 
-                const sync = compositionRoot.sync.aggregated({
+                const syncBuilder: SynchronizationBuilder = {
                     originInstance: builder.originInstance,
                     targetInstances: builder.targetInstances,
                     metadataIds: dataElements,
@@ -454,9 +456,12 @@ async function deletePreviousDataValues(
                         orgUnitPaths: builder.dataParams?.orgUnitPaths,
                         allAttributeCategoryOptions: true,
                     },
-                });
+                };
 
-                const payload = await sync.buildPayload();
+                const sync = compositionRoot.sync.aggregated(syncBuilder);
+
+                const payload = await compositionRoot.aggregatedPayloadBuilder.build(syncBuilder);
+
                 const mappedPayload = await sync.mapPayload(instance, payload);
 
                 const dataSourceMapping = await compositionRoot.mapping.get({ type: "instance", id: instance.id });

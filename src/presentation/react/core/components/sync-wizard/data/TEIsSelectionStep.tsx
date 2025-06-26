@@ -8,7 +8,7 @@ import {
     useSnackbar,
 } from "@eyeseetea/d2-ui-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import { SyncWizardStepProps } from "../Steps";
 import { TrackedEntityInstance } from "../../../../../../domain/tracked-entity-instances/entities/TrackedEntityInstance";
 import _ from "lodash";

@@ -2,136 +2,37 @@ import _ from "lodash";
 import memoize from "nano-memoize";
 import { debug } from "../../../utils/debug";
 import { Instance } from "../../instance/entities/Instance";
-import {
-    DataElement,
-    DataElementGroup,
-    DataElementGroupSet,
-    DataSet,
-    Indicator,
-    ProgramIndicator,
-} from "../../metadata/entities/MetadataEntities";
+import { DataElement } from "../../metadata/entities/MetadataEntities";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { GenericSyncUseCase } from "../../synchronization/usecases/GenericSyncUseCase";
 import { buildMetadataDictionary } from "../../synchronization/utils";
 import { AggregatedPackage } from "../entities/AggregatedPackage";
 import { DataValue } from "../entities/DataValue";
 import { createAggregatedPayloadMapper } from "../mapper/AggregatedPayloadMapperFactory";
-import { getMinimumParents } from "../utils";
 import { promiseMap } from "../../../utils/common";
+import { SynchronizationBuilder } from "../../synchronization/entities/SynchronizationBuilder";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
+import { AggregatedPayloadBuilder } from "../builders/AggregatedPayloadBuilder";
+
+export const AggregatedMetadatafields =
+    "id,dataElements[id,name,valueType],dataSetElements[:all,dataElement[id,name,valueType]],dataElementGroups[id,dataElements[id,name,valueType]],name";
 
 export class AggregatedSyncUseCase extends GenericSyncUseCase {
     public readonly type = "aggregated";
-    public readonly fields =
-        "id,dataElements[id,name,valueType],dataSetElements[:all,dataElement[id,name,valueType]],dataElementGroups[id,dataElements[id,name,valueType]],name";
+    public readonly fields = AggregatedMetadatafields;
 
-    public buildPayload = memoize(async (remoteInstance?: Instance) => {
-        const { dataParams: { enableAggregation = false } = {} } = this.builder;
+    constructor(
+        readonly builder: SynchronizationBuilder,
+        readonly repositoryFactory: DynamicRepositoryFactory,
+        readonly localInstance: Instance,
+        private aggregatedPayloadBuilder: AggregatedPayloadBuilder
+    ) {
+        super(builder, repositoryFactory, localInstance);
+    }
 
-        if (enableAggregation) {
-            return this.buildAnalyticsPayload(remoteInstance);
-        } else {
-            return this.buildNormalPayload(remoteInstance);
-        }
+    protected buildPayload = memoize(async (remoteInstance?: Instance) => {
+        return this.aggregatedPayloadBuilder.build(this.builder, remoteInstance);
     });
-
-    private buildNormalPayload = async (remoteInstance?: Instance) => {
-        const { dataParams = {}, excludedIds = [] } = this.builder;
-        const aggregatedRepository = await this.getAggregatedRepository(remoteInstance);
-
-        const { dataSets = [] } = await this.extractMetadata<DataSet>(remoteInstance);
-        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(remoteInstance);
-        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>(remoteInstance);
-        const { dataElements = [] } = await this.extractMetadata<DataElement>(remoteInstance);
-
-        const dataSetIds = dataSets.map(({ id }) => id);
-        const dataElementGroupIds = dataElementGroups.map(({ id }) => id);
-        const dataElementGroupSetIds = dataElementGroupSets.map(({ dataElementGroups }) =>
-            dataElementGroups.map(({ id }) => id)
-        );
-
-        // Retrieve direct data values from dataSets and dataElementGroups
-        const { dataValues: directDataValues = [] } = await aggregatedRepository.getAggregated(
-            dataParams,
-            dataSetIds,
-            _([...dataElementGroupIds, ...dataElementGroupSetIds])
-                .flatten()
-                .uniq()
-                .value()
-        );
-
-        // Retrieve candidate data values from dataElements
-        const dataSetIdsFromDataElements = getMinimumParents(
-            new Map(dataElements.map(de => [de.id, de.dataSetElements.map(dse => dse.dataSet.id)]))
-        );
-
-        const dataElementGroupIdsFromDataElements = getMinimumParents(
-            new Map(dataElements.map(de => [de.id, de.dataElementGroups.map(deg => deg.id)]))
-        );
-
-        const { dataValues: candidateDataValues = [] } = await aggregatedRepository.getAggregated(
-            dataParams,
-            dataSetIdsFromDataElements,
-            dataElementGroupIdsFromDataElements
-        );
-
-        // Retrieve indirect data values from dataElements
-        const indirectDataValues = _.filter(
-            candidateDataValues,
-            ({ dataElement }) => !!_.find(dataElements, { id: dataElement })
-        );
-
-        const dataValues = [...directDataValues, ...indirectDataValues].filter(
-            ({ dataElement }) => !excludedIds.includes(dataElement)
-        );
-
-        return { dataValues };
-    };
-
-    private buildAnalyticsPayload = async (remoteInstance?: Instance) => {
-        const { dataParams = {}, excludedIds = [] } = this.builder;
-
-        // TODO: All these extract metadata methods can be combined if properly typed
-        const { dataSets = [] } = await this.extractMetadata<DataSet>(remoteInstance);
-        const { dataElementGroups = [] } = await this.extractMetadata<DataElementGroup>(remoteInstance);
-        const { dataElementGroupSets = [] } = await this.extractMetadata<DataElementGroupSet>(remoteInstance);
-        const { dataElements = [] } = await this.extractMetadata<DataElement>(remoteInstance);
-        const { indicators = [] } = await this.extractMetadata<Indicator>(remoteInstance);
-        const { programIndicators = [] } = await this.extractMetadata<ProgramIndicator>(remoteInstance);
-
-        const dataElementIds = dataElements.map(({ id }) => id);
-        const indicatorIds = [...indicators, ...programIndicators].map(({ id }) => id);
-        const dataSetIds = _.flatten(
-            dataSets.map(({ dataSetElements }) => dataSetElements.map(({ dataElement }) => dataElement.id))
-        );
-        const dataElementGroupIds = _.flatten(
-            dataElementGroups.map(({ dataElements }) => dataElements.map(({ id }) => id))
-        );
-        const dataElementGroupSetIds = _.flatten(
-            dataElementGroupSets.map(({ dataElementGroups }) =>
-                _.flatten(dataElementGroups.map(({ dataElements }) => dataElements.map(({ id }) => id)))
-            )
-        );
-
-        const aggregatedRepository = await this.getAggregatedRepository(remoteInstance);
-
-        const { dataValues: dataElementValues = [] } = await aggregatedRepository.getAnalytics({
-            dataParams,
-            dimensionIds: [...dataElementIds, ...dataSetIds, ...dataElementGroupIds, ...dataElementGroupSetIds],
-            includeCategories: true,
-        });
-
-        const { dataValues: indicatorValues = [] } = await aggregatedRepository.getAnalytics({
-            dataParams,
-            dimensionIds: indicatorIds,
-            includeCategories: false,
-        });
-
-        const dataValues = [...dataElementValues, ...indicatorValues].filter(
-            ({ dataElement }) => !excludedIds.includes(dataElement)
-        );
-
-        return { dataValues };
-    };
 
     public async postPayload(instance: Instance): Promise<SynchronizationResult[]> {
         const { dataParams = {} } = this.builder;

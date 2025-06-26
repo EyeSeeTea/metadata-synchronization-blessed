@@ -4,13 +4,20 @@ import { metadataTransformations } from "../../../data/transformations/PackageTr
 import { cache } from "../../../utils/cache";
 import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
+import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
 import { SynchronizationReport } from "../entities/SynchronizationReport";
 
 export class DownloadPayloadUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private downloadRepository: DownloadRepository,
+        private transformationRepository: TransformationRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(reports: SynchronizationReport[]): Promise<void> {
         const date = moment().format("YYYYMMDDHHmm");
@@ -26,9 +33,7 @@ export class DownloadPayloadUseCase implements UseCase {
                 const apiVersion = instance?.apiVersion;
 
                 const payload = apiVersion
-                    ? this.repositoryFactory
-                          .transformationRepository()
-                          .mapPackageTo(apiVersion, result.payload, metadataTransformations)
+                    ? this.transformationRepository.mapPackageTo(apiVersion, result.payload, metadataTransformations)
                     : result.payload;
 
                 const downloadItem = {
@@ -48,11 +53,12 @@ export class DownloadPayloadUseCase implements UseCase {
             .value();
 
         if (files.length === 1) {
-            this.repositoryFactory.downloadRepository().downloadFile(files[0].name, files[0].content);
+            this.downloadRepository.downloadFile(files[0].name, files[0].content);
         } else {
-            await this.repositoryFactory
-                .downloadRepository()
-                .downloadZippedFiles(`synchronization-${moment().format("YYYYMMDDHHmm")}`, files);
+            await this.downloadRepository.downloadZippedFiles(
+                `synchronization-${moment().format("YYYYMMDDHHmm")}`,
+                files
+            );
         }
     }
 

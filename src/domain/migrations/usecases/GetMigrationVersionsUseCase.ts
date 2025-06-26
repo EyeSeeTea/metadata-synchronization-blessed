@@ -1,10 +1,10 @@
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MigrationVersions } from "../entities/MigrationVersions";
 
 export class GetMigrationVersionsUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(): Promise<MigrationVersions> {
         return this.repositoryFactory.migrationsRepository(this.localInstance).getAppVersion();

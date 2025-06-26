@@ -7,14 +7,14 @@ import {
 } from "../../../presentation/react/core/components/mapping-table/utils";
 import { Dictionary } from "../../../types/utils";
 import { IdentifiableRef, NamedRef } from "../../common/entities/Ref";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { DataSource } from "../../instance/entities/DataSource";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataPackage } from "../../metadata/entities/MetadataEntities";
 import { MetadataMapping, MetadataMappingDictionary } from "../entities/MetadataMapping";
 
 export abstract class GenericMappingUseCase {
-    constructor(private repositoryFactory: RepositoryFactory, protected localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, protected localInstance: Instance) {}
 
     protected async getMetadata(instance: DataSource, ids: string[]) {
         return this.repositoryFactory

@@ -2,7 +2,7 @@ import { makeStyles, Typography } from "@material-ui/core";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { useMemo } from "react";
 import { DataSyncAggregation } from "../../../../../../domain/aggregated/entities/DataSyncAggregation";
-import i18n from "../../../../../../locales";
+import i18n from "../../../../../../utils/i18n";
 import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";

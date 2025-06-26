@@ -1,23 +1,28 @@
 import _ from "lodash";
 import moment from "moment";
 import { metadataTransformations } from "../../../data/transformations/PackageTransformations";
-import i18n from "../../../locales";
+import i18n from "../../../utils/i18n";
 import { CompositionRoot } from "../../../presentation/CompositionRoot";
 import { promiseMap } from "../../../utils/common";
 import { AggregatedPackage } from "../../aggregated/entities/AggregatedPackage";
 import { AggregatedSyncUseCase } from "../../aggregated/usecases/AggregatedSyncUseCase";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { EventsPackage } from "../../events/entities/EventsPackage";
 import { Instance } from "../../instance/entities/Instance";
 import { SynchronizationRule } from "../../rules/entities/SynchronizationRule";
 import { TEIsPackage } from "../../tracked-entity-instances/entities/TEIsPackage";
 import { createTEIsPayloadMapper } from "../../tracked-entity-instances/mapper/TEIsPayloadMapperFactory";
 import { SynchronizationPayload } from "../entities/SynchronizationPayload";
-import { SynchronizationResultType } from "../entities/SynchronizationType";
+import { SynchronizationResultType, SynchronizationType } from "../entities/SynchronizationType";
 import { PayloadMapper } from "../mapper/PayloadMapper";
 import { GenericSyncUseCase } from "./GenericSyncUseCase";
+import { MetadataPayloadBuilder } from "../../metadata/builders/MetadataPayloadBuilder";
+import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
+import { TransformationRepository } from "../../transformations/repositories/TransformationRepository";
+import { EventsPayloadBuilder } from "../../events/builders/EventsPayloadBuilder";
+import { AggregatedPayloadBuilder } from "../../aggregated/builders/AggregatedPayloadBuilder";
 
 type DownloadErrors = string[];
 
@@ -33,10 +38,16 @@ type SynRuleParam = {
 
 type DownloadPayloadParams = SynRuleIdParam | SynRuleParam;
 
+//TODO: Avoid  code smell: Call use case from another use case
 export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
     constructor(
         private compositionRoot: CompositionRoot,
-        private repositoryFactory: RepositoryFactory,
+        private metadataPayloadBuilder: MetadataPayloadBuilder,
+        private eventsPayloadBuilder: EventsPayloadBuilder,
+        private aggregatePayloadBuilder: AggregatedPayloadBuilder,
+        private repositoryFactory: DynamicRepositoryFactory,
+        private downloadRepository: DownloadRepository,
+        private transformationRepository: TransformationRepository,
         private localInstance: Instance
     ) {}
 
@@ -45,7 +56,8 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         if (!rule) return Either.success(true);
 
         const sync: GenericSyncUseCase = this.compositionRoot.sync[rule.type](rule.toBuilder());
-        const payload: SynchronizationPayload = await sync.buildPayload();
+
+        const payload: SynchronizationPayload = await this.buildPayload(rule.type, rule);
 
         const date = moment().format("YYYYMMDDHHmm");
 
@@ -63,24 +75,36 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
         const files = _.compact(
             mappedData.map(item => {
                 if (typeof item === "string") return undefined;
-                const payload = this.repositoryFactory
-                    .transformationRepository()
-                    .mapPackageTo(item.apiVersion, item.content, metadataTransformations);
+                const payload = this.transformationRepository.mapPackageTo(
+                    item.apiVersion,
+                    item.content,
+                    metadataTransformations
+                );
 
                 return { name: item.name, content: payload };
             })
         );
 
         if (files.length === 1) {
-            this.repositoryFactory.downloadRepository().downloadFile(files[0].name, files[0].content);
+            this.downloadRepository.downloadFile(files[0].name, files[0].content);
         } else if (files.length > 1) {
-            await this.repositoryFactory.downloadRepository().downloadZippedFiles(`synchronization-${date}`, files);
+            await this.downloadRepository.downloadZippedFiles(`synchronization-${date}`, files);
         }
 
         if (errors.length === 0) {
             return Either.success(true);
         } else {
             return Either.error(errors);
+        }
+    }
+
+    private async buildPayload(type: SynchronizationType, rule: SynchronizationRule): Promise<SynchronizationPayload> {
+        if (type === "metadata") {
+            return this.metadataPayloadBuilder.build(rule.builder);
+        } else if (type === "events") {
+            return this.eventsPayloadBuilder.build(rule.builder);
+        } else {
+            return this.aggregatePayloadBuilder.build(rule.builder);
         }
     }
 
@@ -133,10 +157,10 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
                   )
                 : [];
 
-        const { trackedEntityInstances } = payload as TEIsPackage;
+        const { trackedEntities } = payload as TEIsPackage;
 
         const downloadItemsByTEIS =
-            trackedEntityInstances.length > 0
+            trackedEntities.length > 0
                 ? await this.mapToDownloadItems(
                       rule,
                       "trackedEntityInstances",
@@ -145,18 +169,23 @@ export class DownloadPayloadFromSyncRuleUseCase implements UseCase {
 
                           return await createTEIsPayloadMapper(
                               await this.getMetadataRepository(instance),
-                              trackedEntityInstances,
+                              trackedEntities,
                               mapping
                           );
                       },
-                      { trackedEntityInstances }
+                      { trackedEntities }
                   )
                 : [];
 
         const { dataValues } = payload as AggregatedPackage;
 
         //TODO: we should create AggregatedMapper to don't use this use case here
-        const aggregatedSync = new AggregatedSyncUseCase(rule.builder, this.repositoryFactory, this.localInstance);
+        const aggregatedSync = new AggregatedSyncUseCase(
+            rule.builder,
+            this.repositoryFactory,
+            this.localInstance,
+            this.aggregatePayloadBuilder
+        );
 
         const downloadItemsByAggregated =
             dataValues && dataValues.length > 0

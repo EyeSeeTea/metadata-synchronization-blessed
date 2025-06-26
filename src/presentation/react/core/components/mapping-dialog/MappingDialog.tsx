@@ -6,7 +6,7 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { DataSource, isDhisInstance } from "../../../../../domain/instance/entities/DataSource";
 import { MetadataMappingDictionary } from "../../../../../domain/mapping/entities/MetadataMapping";
-import i18n from "../../../../../locales";
+import i18n from "../../../../../utils/i18n";
 import { modelFactory } from "../../../../../models/dhis/factory";
 import { MetadataType } from "../../../../../utils/d2";
 import { useAppContext } from "../../contexts/AppContext";

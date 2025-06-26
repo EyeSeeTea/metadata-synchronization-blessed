@@ -7,6 +7,8 @@ import { D2Api, SelectedPick, FieldsOf } from "../../types/d2-api";
 import { Dictionary } from "../../types/utils";
 import { promiseMap } from "../../utils/common";
 import { getD2APiFromInstance } from "../../utils/d2-utils";
+import { Future, FutureData } from "../../domain/common/entities/Future";
+import { apiToFuture } from "../common/utils/api-futures";
 
 const CONSTANT_NAME = "MDSync Storage";
 const CONSTANT_PREFIX = "MDSYNC_";
@@ -21,14 +23,27 @@ export class StorageConstantClient extends StorageClient {
         this.api = getD2APiFromInstance(instance);
     }
 
+    /**
+     * @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getObjectFuture instead
+     */
     public async getObject<T extends object>(key: string): Promise<T | undefined> {
-        const { value } = await this.getConstant<T>(key);
+        const { value } = await this.getConstantPromise<T>(key);
         return value;
     }
 
+    public getObjectFuture<T extends object>(key: string): FutureData<T | undefined> {
+        return Future.fromPromise(this.getConstantPromise<T>(key))
+            .map(({ value }) => value)
+            .mapError(error => {
+                console.error(error);
+                return error;
+            });
+    }
+
     public async getOrCreateObject<T extends object>(key: string, defaultValue: T): Promise<T> {
-        const { id, value } = await this.getConstant<T>(key);
-        if (!value) await this.updateConstant(id, key, defaultValue);
+        const { id, value } = await this.getConstantPromise<T>(key);
+        if (!value) await this.updateConstantPromise(id, key, defaultValue);
         return value ?? defaultValue;
     }
 
@@ -64,12 +79,18 @@ export class StorageConstantClient extends StorageClient {
     }
 
     public async saveObject<T extends object>(key: string, keyValue: T): Promise<void> {
-        const { id } = await this.getConstant<T>(key);
-        await this.updateConstant(id, key, keyValue);
+        const { id } = await this.getConstantPromise<T>(key);
+        await this.updateConstantPromise(id, key, keyValue);
+    }
+
+    public saveObjectFuture<T extends object>(key: string, keyValue: T): FutureData<void> {
+        return this.getConstant<T>(key).flatMap(({ id }) => {
+            return this.updateConstant(id, key, keyValue);
+        });
     }
 
     public async removeObject(key: string): Promise<void> {
-        const { id } = await this.getConstant<unknown>(key);
+        const { id } = await this.getConstantPromise<unknown>(key);
         if (id) await this.api.models.constants.delete({ id }).getData();
     }
 
@@ -111,17 +132,23 @@ export class StorageConstantClient extends StorageClient {
     }
 
     public async getObjectSharing(key: string): Promise<ObjectSharing | undefined> {
-        const { user, userAccesses, userGroupAccesses, publicAccess, externalAccess } = await this.getConstant(key);
+        const { user, userAccesses, userGroupAccesses, publicAccess, externalAccess } = await this.getConstantPromise(
+            key
+        );
 
         return { user, userAccesses, userGroupAccesses, publicAccess, externalAccess };
     }
 
     public async saveObjectSharing(key: string, sharing: ObjectSharing): Promise<void> {
-        const { id, value } = await this.getConstant<object>(key);
-        if (value) await this.updateConstant<object>(id, key, value, sharing);
+        const { id, value } = await this.getConstantPromise<object>(key);
+        if (value) await this.updateConstantPromise<object>(id, key, value, sharing);
     }
 
-    private async updateConstant<T extends object>(
+    /**
+     * @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+     * use updateConstant instead
+     */
+    private async updateConstantPromise<T extends object>(
         id: string,
         key: string,
         value: T,
@@ -144,7 +171,37 @@ export class StorageConstantClient extends StorageClient {
             .getData();
     }
 
-    private async getConstant<T>(key: string): Promise<Constant & { value?: T }> {
+    private updateConstant<T extends object>(
+        id: string,
+        key: string,
+        value: T,
+        sharing: Partial<ObjectSharing> = {}
+    ): FutureData<void> {
+        return apiToFuture(
+            this.api.metadata.post({
+                constants: [
+                    {
+                        id,
+                        code: formatKey(key),
+                        name: formatName(key),
+                        shortName: formatName(key),
+                        description: JSON.stringify(value, null, 2),
+                        value: 1,
+                        ...sharing,
+                    },
+                ],
+            })
+        ).flatMap(res => {
+            if (res.status === "OK") return Future.success(undefined);
+            else return Future.error(new Error("Failed to update constant"));
+        });
+    }
+
+    /**
+     * @deprecated - We are moving from Promises to Futures, this method will be removed in future refactors.
+     * use getConstant instead
+     */
+    private async getConstantPromise<T>(key: string): Promise<Constant & { value?: T }> {
         const { objects: constants } = await this.api.models.constants
             .get({
                 paging: false,
@@ -162,6 +219,26 @@ export class StorageConstantClient extends StorageClient {
             console.error(error);
             return this.formatConstant({ id, description, ...rest });
         }
+    }
+
+    private getConstant<T>(key: string): FutureData<Constant & { value?: T }> {
+        return apiToFuture(
+            this.api.models.constants.get({
+                paging: false,
+                fields: apiFields,
+                filter: { code: { eq: formatKey(key) } },
+            })
+        ).map(({ objects: constants }) => {
+            const { id = generateUid(), description, ...rest } = constants[0] ?? {};
+
+            try {
+                const value = description ? JSON.parse(description) : undefined;
+                return { ...this.formatConstant({ id, description, ...rest }), value };
+            } catch (error: any) {
+                console.error(error);
+                return this.formatConstant({ id, description, ...rest });
+            }
+        });
     }
 
     private formatConstant(item: SelectedPick<D2ConstantSchema, typeof apiFields>): Constant {

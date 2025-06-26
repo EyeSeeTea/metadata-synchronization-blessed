@@ -2,7 +2,7 @@ import _ from "lodash";
 import { Namespace } from "../../../data/storage/Namespaces";
 import { Either } from "../../common/entities/Either";
 import { UseCase } from "../../common/entities/UseCase";
-import { RepositoryFactory } from "../../common/factories/RepositoryFactory";
+import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
 import { PullRequestStatus, ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
@@ -10,10 +10,12 @@ import { PullRequestStatus, ReceivedPullRequestNotification } from "../entities/
 export type UpdatePullRequestStatusError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
 
 export class UpdatePullRequestStatusUseCase implements UseCase {
-    constructor(private repositoryFactory: RepositoryFactory, private localInstance: Instance) {}
+    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(id: string, status: PullRequestStatus): Promise<Either<UpdatePullRequestStatusError, void>> {
-        const storageClient = await this.repositoryFactory.configRepository(this.localInstance).getStorageClient();
+        const storageClient = await this.repositoryFactory
+            .configRepository(this.localInstance)
+            .getStorageClientPromise();
 
         const notification = await storageClient.getObjectInCollection<ReceivedPullRequestNotification>(
             Namespace.NOTIFICATIONS,
@@ -55,7 +57,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
     }
 
     private async getResponsibles(instance: Instance, ids: string[]) {
-        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClient();
+        const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
         const responsibles = await storageClient.listObjectsInCollection<MetadataResponsible>(Namespace.RESPONSIBLES);
 
