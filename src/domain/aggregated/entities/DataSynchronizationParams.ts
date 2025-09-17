@@ -1,6 +1,9 @@
+import moment from "moment";
 import { buildPeriodFromParams } from "../utils";
 import { DataSyncAggregation } from "./DataSyncAggregation";
 import { DataSyncPeriod } from "./DataSyncPeriod";
+import { EventsSyncPeriodField } from "./EventsSyncPeriodField";
+import { TeisSyncPeriodField } from "./TeisSyncPeriodField";
 
 export interface DataImportParams {
     idScheme?: "UID" | "CODE";
@@ -20,6 +23,8 @@ export interface DataSynchronizationParams extends DataImportParams {
     allAttributeCategoryOptions?: boolean;
     orgUnitPaths?: string[];
     period?: DataSyncPeriod;
+    teisSyncPeriodField?: TeisSyncPeriodField;
+    eventsSyncPeriodField?: EventsSyncPeriodField;
     startDate?: Date;
     endDate?: Date;
     lastUpdated?: Date;
@@ -41,10 +46,14 @@ export interface DataSynchronizationParams extends DataImportParams {
 
 export function isDataSynchronizationRequired(params: DataSynchronizationParams, lastUpdated?: string): boolean {
     const { period } = params;
-    const { startDate } = buildPeriodFromParams(params);
+    // Moment object in UTC
+    const { startDate: startDateMoment } = buildPeriodFromParams(params);
 
-    const isUpdatedAfterStartDate = lastUpdated && new Date(lastUpdated).toISOString() >= startDate.toISOString();
+    // lastUpdated is a string in UTC from DHIS2, e.g. "2025-08-19T15:48:46.184". To avoid timezone ambiguity, we parse it with moment.utc()
+    const lastUpdatedMoment = moment.utc(lastUpdated);
+
+    const isUpdatedAfterStartDate = lastUpdated && lastUpdatedMoment.isSameOrAfter(startDateMoment);
     const isLastSuccessfulSync = period === "SINCE_LAST_SUCCESSFUL_SYNC";
 
-    return isUpdatedAfterStartDate || !isLastSuccessfulSync;
+    return !!isUpdatedAfterStartDate || !isLastSuccessfulSync;
 }

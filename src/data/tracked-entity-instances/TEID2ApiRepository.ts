@@ -50,7 +50,7 @@ export class TEID2ApiRepository implements TEIRepository {
         page: number,
         pageSize: number
     ): Promise<TEIsResponse> {
-        const { period, orgUnitPaths = [] } = params;
+        const { period, orgUnitPaths = [], teisSyncPeriodField } = params;
         const { startDate, endDate } = buildPeriodFromParams(params);
 
         const orgUnits = cleanOrgUnitPaths(orgUnitPaths);
@@ -64,19 +64,29 @@ export class TEID2ApiRepository implements TEIRepository {
                 page,
             };
 
+        const periodFilter =
+            teisSyncPeriodField === "LAST_UPDATED"
+                ? {
+                      updatedAfter: startDate.format("YYYY-MM-DD"),
+                      updatedBefore: endDate.format("YYYY-MM-DD"),
+                  }
+                : {
+                      enrollmentEnrolledAfter: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
+                      enrollmentEnrolledBefore:
+                          period !== "ALL" && period !== "SINCE_LAST_SUCCESSFUL_SYNC"
+                              ? endDate.format("YYYY-MM-DD")
+                              : undefined,
+                  };
+
         const result = await this.api.tracker.trackedEntities
             .get({
                 fields: teiFields,
                 program,
                 orgUnit: orgUnits.join(";"),
-                enrollmentEnrolledAfter: period !== "ALL" ? startDate.format("YYYY-MM-DD") : undefined,
-                enrollmentEnrolledBefore:
-                    period !== "ALL" && period !== "SINCE_LAST_SUCCESSFUL_SYNC"
-                        ? endDate.format("YYYY-MM-DD")
-                        : undefined,
                 totalPages: true,
                 page,
                 pageSize,
+                ...periodFilter,
             })
             .getData();
 
@@ -182,11 +192,11 @@ export class TEID2ApiRepository implements TEIRepository {
         return {
             status: importResult.status === "OK" ? "SUCCESS" : importResult.status,
             stats: {
-                imported: stats.created,
-                updated: stats.updated,
-                ignored: stats.ignored,
-                deleted: stats.deleted,
-                total: stats.total,
+                imported: stats?.created ?? 0,
+                updated: stats?.updated ?? 0,
+                ignored: stats?.ignored ?? 0,
+                deleted: stats?.deleted ?? 0,
+                total: stats?.total ?? 0,
             },
             instance: this.instance.toPublicObject(),
             errors: importResult.validationReport.errorReports.map(error => {

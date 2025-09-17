@@ -29,6 +29,7 @@ import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import { modelFactory } from "../../models/dhis/factory";
 import { D2Api, D2Model, Id, MetadataResponse, Model, Stats } from "../../types/d2-api";
+import { D2ApiDefinition, D2CategoryOptionComboSchema, GetOptions } from "../../types/d2-api";
 import { Dictionary, isNotEmpty, Maybe } from "../../types/utils";
 import { cache } from "../../utils/cache";
 import { promiseMap } from "../../utils/common";
@@ -205,6 +206,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                     categoryCombo: true,
                     categoryOptions: true,
                 },
+                ...this.getAdditionalCategoryOptionCombosOptionsByVariant(),
             })
             .getData();
 
@@ -611,7 +613,33 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     private getApiModel(type: keyof MetadataEntities): Model<any, any> {
         return this.api.models[type];
     }
+
+    private getAdditionalCategoryOptionCombosOptionsByVariant(): CategoryOptionCombosAdditionalOptions {
+        const appVariant = process.env.REACT_APP_PRESENTATION_VARIANT;
+
+        switch (appVariant) {
+            case "msf-aggregate-data-app": {
+                // The Vaccination app introduces a huge number of category option combos (~300K),
+                // which cause a "RangeError: Invalid array length" error during d2-api iconv decoding.
+                //
+                // Since these category option combos are not required for the MSF Aggregate Data App,
+                // we filter them out.
+                return {
+                    filter: {
+                        "categoryCombo.code": [{ null: true }, { "!like": "RVC_" }],
+                    },
+                    rootJunction: "OR",
+                };
+            }
+            default:
+                return {};
+        }
+    }
 }
+
+type CategoryOptionCombosAdditionalOptions = Partial<
+    Pick<GetOptions<D2ApiDefinition, D2CategoryOptionComboSchema>, "filter" | "rootJunction">
+>;
 
 const formatStats = (stats: Stats) => ({
     ..._.omit(stats, ["created"]),

@@ -20,6 +20,8 @@ import {
     SynchronizationBuilder,
 } from "../../synchronization/entities/SynchronizationBuilder";
 import { SynchronizationType } from "../../synchronization/entities/SynchronizationType";
+import { TeisSyncPeriodField } from "../../aggregated/entities/TeisSyncPeriodField";
+import { EventsSyncPeriodField } from "../../aggregated/entities/EventsSyncPeriodField";
 
 export class SynchronizationRule {
     private readonly syncRule: SynchronizationRuleData;
@@ -262,6 +264,14 @@ export class SynchronizationRule {
 
     public get ondemand(): boolean {
         return this.syncRule.ondemand ?? false;
+    }
+
+    public get teisSyncPeriodField(): TeisSyncPeriodField {
+        return this.syncRule.builder?.dataParams?.teisSyncPeriodField ?? "ENROLLMENT_DATE";
+    }
+
+    public get eventsSyncPeriodField(): EventsSyncPeriodField {
+        return this.syncRule.builder?.dataParams?.eventsSyncPeriodField ?? "OCCURRED_EVENT_DATE";
     }
 
     public static create(type: SynchronizationType = "metadata"): SynchronizationRule {
@@ -722,6 +732,14 @@ export class SynchronizationRule {
 
     public updateLastSuccessfulSync(lastSuccessfulSync: Date): SynchronizationRule {
         return this.update({ lastSuccessfulSync });
+    }
+
+    public updateTeisSyncPeriodField(teisSyncPeriodField: TeisSyncPeriodField | undefined): SynchronizationRule {
+        return this.updateBuilderDataParams({ teisSyncPeriodField });
+    }
+
+    public updateEventsSyncPeriodField(eventsSyncPeriodField: EventsSyncPeriodField | undefined): SynchronizationRule {
+        return this.updateBuilderDataParams({ eventsSyncPeriodField });
     }
 
     public isOnDemand() {

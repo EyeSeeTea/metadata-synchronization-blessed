@@ -1,8 +1,14 @@
 import React, { useCallback, useMemo, useState } from "react";
+import styled from "styled-components";
+
 import { DataSyncPeriod } from "../../../../../../domain/aggregated/entities/DataSyncPeriod";
 import { PeriodType } from "../../../../../../utils/synchronization";
 import PeriodSelection, { ObjectWithPeriod } from "../../period-selection/PeriodSelection";
 import { SyncWizardStepProps } from "../Steps";
+import Dropdown, { DropdownOption } from "../../dropdown/Dropdown";
+import i18n from "../../../../../../utils/i18n";
+import { TeisSyncPeriodField } from "../../../../../../domain/aggregated/entities/TeisSyncPeriodField";
+import { EventsSyncPeriodField } from "../../../../../../domain/aggregated/entities/EventsSyncPeriodField";
 
 const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) => {
     const [skipPeriods] = useState<Set<PeriodType> | undefined>(
@@ -17,6 +23,8 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
                     .updateDataSyncStartDate(undefined)
                     .updateDataSyncEndDate(undefined)
                     .updateDataSyncEvents([])
+                    .updateTeisSyncPeriodField(undefined)
+                    .updateEventsSyncPeriodField(undefined)
             );
         },
         [onChange, syncRule]
@@ -32,6 +40,20 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
     const updateEndDate = useCallback(
         (date: Date | null) => {
             onChange(syncRule.updateDataSyncEndDate(date ?? undefined).updateDataSyncEvents([]));
+        },
+        [onChange, syncRule]
+    );
+
+    const updateTeisSyncPeriodField = useCallback(
+        (teisSyncPeriodField: TeisSyncPeriodField) => {
+            onChange(syncRule.updateTeisSyncPeriodField(teisSyncPeriodField).updateDataSyncEvents([]));
+        },
+        [onChange, syncRule]
+    );
+
+    const updateEventsSyncPeriodField = useCallback(
+        (eventsSyncPeriodField: EventsSyncPeriodField) => {
+            onChange(syncRule.updateEventsSyncPeriodField(eventsSyncPeriodField).updateDataSyncEvents([]));
         },
         [onChange, syncRule]
     );
@@ -58,9 +80,54 @@ const PeriodSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange
         };
     }, [syncRule]);
 
+    const teisSyncPeriodFieldOptions: DropdownOption<TeisSyncPeriodField>[] = useMemo(() => {
+        return [
+            { name: i18n.t("Enrollment date"), id: "ENROLLMENT_DATE" },
+            { name: i18n.t("Last updated date"), id: "LAST_UPDATED" },
+        ];
+    }, []);
+
+    const eventsSyncPeriodFieldOptions: DropdownOption<EventsSyncPeriodField>[] = useMemo(() => {
+        return [
+            { name: i18n.t("Occurred event date"), id: "OCCURRED_EVENT_DATE" },
+            { name: i18n.t("Last updated date"), id: "LAST_UPDATED" },
+        ];
+    }, []);
+
     return (
-        <PeriodSelection objectWithPeriod={objectWithPeriod} onFieldChange={onFieldChange} skipPeriods={skipPeriods} />
+        <Container>
+            <PeriodSelection
+                objectWithPeriod={objectWithPeriod}
+                onFieldChange={onFieldChange}
+                skipPeriods={skipPeriods}
+            />
+            {objectWithPeriod.period === "SINCE_LAST_SUCCESSFUL_SYNC" && syncRule.metadataTypes.includes("programs") ? (
+                <>
+                    <Dropdown
+                        label={i18n.t("Tracked entities sync period field")}
+                        items={teisSyncPeriodFieldOptions}
+                        value={syncRule.teisSyncPeriodField || null}
+                        onValueChange={updateTeisSyncPeriodField}
+                        hideEmpty={true}
+                    />
+                    <Dropdown
+                        label={i18n.t("Events sync period field")}
+                        items={eventsSyncPeriodFieldOptions}
+                        value={syncRule.eventsSyncPeriodField || null}
+                        onValueChange={updateEventsSyncPeriodField}
+                        hideEmpty={true}
+                    />
+                </>
+            ) : null}
+        </Container>
     );
 };
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    max-width: fit-content;
+`;
 
 export default PeriodSelectionStep;

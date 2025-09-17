@@ -33,6 +33,12 @@ export const DataSynchronizationParamsModel: Codec<DataSynchronizationParams> = 
         orgUnitPaths: Schema.optional(Schema.array(Schema.string)),
         allAttributeCategoryOptions: Schema.optional(Schema.boolean),
         period: Schema.optional(DataSyncPeriodModel),
+        teisSyncPeriodField: Schema.optional(
+            Schema.oneOf([Schema.exact("ENROLLMENT_DATE"), Schema.exact("LAST_UPDATED")])
+        ),
+        eventsSyncPeriodField: Schema.optional(
+            Schema.oneOf([Schema.exact("OCCURRED_EVENT_DATE"), Schema.exact("LAST_UPDATED")])
+        ),
         startDate: Schema.optional(Schema.date),
         endDate: Schema.optional(Schema.date),
         lastUpdated: Schema.optional(Schema.date),

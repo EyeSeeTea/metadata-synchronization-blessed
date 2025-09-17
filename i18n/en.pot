@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-06-25T11:55:58.705Z\n"
-"PO-Revision-Date: 2025-06-25T11:55:58.705Z\n"
+"POT-Creation-Date: 2025-08-20T07:48:28.722Z\n"
+"PO-Revision-Date: 2025-08-20T07:48:28.722Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
@@ -1456,6 +1456,18 @@ msgid "Exclude coordinates"
 msgstr ""
 
 msgid "You do not have assigned any organisation unit"
+msgstr ""
+
+msgid "Enrollment date"
+msgstr ""
+
+msgid "Occurred event date"
+msgstr ""
+
+msgid "Tracked entities sync period field"
+msgstr ""
+
+msgid "Events sync period field"
 msgstr ""
 
 msgid "Enrollment Date"
