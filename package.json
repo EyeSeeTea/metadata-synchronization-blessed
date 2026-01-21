@@ -31,7 +31,7 @@
         "font-awesome": "4.7.0",
         "json-stringify-deterministic": "1.0.1",
         "jszip": "3.8.0",
-        "lodash": "4.17.21",
+        "lodash": "4.17.23",
         "log4js": "^6.9.1",
         "mime-types": "2.1.33",
         "moment": "2.29.4",
