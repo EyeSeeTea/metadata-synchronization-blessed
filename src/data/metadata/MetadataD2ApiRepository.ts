@@ -1,4 +1,4 @@
-import { FilterBase, FilterValue } from "@eyeseetea/d2-api/api/common";
+import { FilterBase, FilterValue } from "../../types/d2-api";
 import _ from "lodash";
 import moment from "moment";
 import { buildPeriodFromParams } from "../../domain/aggregated/utils";
@@ -16,6 +16,7 @@ import {
     MetadataEntities,
     MetadataEntity,
     MetadataPackage,
+    OrganisationUnit,
 } from "../../domain/metadata/entities/MetadataEntities";
 import {
     ListMetadataParams,
@@ -28,7 +29,7 @@ import { SynchronizationResult } from "../../domain/reports/entities/Synchroniza
 import { cleanOrgUnitPaths } from "../../domain/synchronization/utils";
 import { TransformationRepository } from "../../domain/transformations/repositories/TransformationRepository";
 import { modelFactory } from "../../models/dhis/factory";
-import { D2Api, D2Model, Id, MetadataResponse, Model, Stats } from "../../types/d2-api";
+import { D2Api, D2Model, getApiModel, Id, MetadataResponse, Model, Stats } from "../../types/d2-api";
 import { D2ApiDefinition, D2CategoryOptionComboSchema, GetOptions } from "../../types/d2-api";
 import { Dictionary, isNotEmpty, Maybe } from "../../types/utils";
 import { cache } from "../../utils/cache";
@@ -41,18 +42,23 @@ import { D2MetadataUtils } from "./D2MetadataUtils";
 import { D2ApiDataStore } from "../common/D2ApiDataStore";
 import { DataStoreMetadata } from "../../domain/data-store/DataStoreMetadata";
 import { isDhisInstance } from "../../domain/instance/entities/DataSource";
+import { config } from "../../utils/Config";
 
 export class MetadataD2ApiRepository implements MetadataRepository {
     private api: D2Api;
-    private instance: Instance;
+    private targetInstance: Instance;
 
-    constructor(instance: Instance, private transformationRepository: TransformationRepository) {
-        if (!isDhisInstance(instance)) {
+    constructor(
+        localInstance: Instance,
+        targetInstance: Instance,
+        private transformationRepository: TransformationRepository
+    ) {
+        if (!isDhisInstance(targetInstance)) {
             throw new Error("Invalid instance type for MetadataD2ApiRepository");
         }
 
-        this.api = getD2APiFromInstance(instance);
-        this.instance = instance;
+        this.api = getD2APiFromInstance(localInstance, targetInstance);
+        this.targetInstance = targetInstance;
     }
 
     /**
@@ -62,14 +68,20 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     public async getMetadataByIds<T>(
         ids: string[],
         fields?: object | string,
-        includeDefaults = false
+        includeDefaults = false,
+        preserveNestedDefaultRefs = false
     ): Promise<MetadataPackage<T>> {
-        const { apiVersion } = this.instance;
+        const { apiVersion } = this.targetInstance;
 
-        const d2ApiDataStore = new D2ApiDataStore(this.instance);
+        const d2ApiDataStore = new D2ApiDataStore(this.targetInstance);
         const dataStoreIds = DataStoreMetadata.getDataStoreIds(ids);
         const requestFields = typeof fields === "object" ? getFieldsAsString(fields) : fields;
-        const d2Metadata = await this.getMetadata<D2Model>(ids, requestFields, includeDefaults);
+        const d2Metadata = await this.getMetadata<D2Model>(
+            ids,
+            requestFields,
+            includeDefaults,
+            preserveNestedDefaultRefs
+        );
 
         if (apiVersion >= 32 && d2Metadata["dashboards"] && fields === undefined) {
             //Fix dashboard bug from 2.32
@@ -78,7 +90,8 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             const fixedD2Metadata = await this.getMetadata<D2Model>(
                 ids,
                 ":all,dashboardItems[:all,visualization[id,type]]",
-                includeDefaults
+                includeDefaults,
+                preserveNestedDefaultRefs
             );
 
             const metadataPackage = this.transformationRepository.mapPackageFrom(
@@ -88,7 +101,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             );
 
             const dataStoresMetadata = await this.getDataStoresMetadata(ids);
-            const responseWithDataStores = { ...metadataPackage, ...dataStoresMetadata } as T;
+            const responseWithDataStores = { ...metadataPackage, ...dataStoresMetadata } as MetadataPackage<T>;
 
             return responseWithDataStores;
         } else {
@@ -102,14 +115,14 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                 metadataPackage.dataStores = await d2ApiDataStore.getDataStores({ namespaces: ids });
             }
             const dataStoresMetadata = await this.getDataStoresMetadata(ids);
-            const responseWithDataStores = { ...metadataPackage, ...dataStoresMetadata } as T;
+            const responseWithDataStores = { ...metadataPackage, ...dataStoresMetadata } as MetadataPackage<T>;
 
             return responseWithDataStores;
         }
     }
 
     private async getDataStoresMetadata(ids: Id[]) {
-        const d2ApiDataStore = new D2ApiDataStore(this.instance);
+        const d2ApiDataStore = new D2ApiDataStore(this.targetInstance);
         const dataStoreIds = DataStoreMetadata.getDataStoreIds(ids);
         if (dataStoreIds.length === 0) return {};
 
@@ -122,10 +135,10 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         const { type, fields = { $owner: true }, page, pageSize, order, rootJunction, ...params } = listParams;
 
         const filter = this.buildListFilters(params);
-        const { apiVersion } = this.instance;
+        const { apiVersion } = this.targetInstance;
         const options = { type, fields, filter, order, page, pageSize, rootJunction };
         if (type === "dataStores") {
-            const d2ApiDataStore = new D2ApiDataStore(this.instance);
+            const d2ApiDataStore = new D2ApiDataStore(this.targetInstance);
             const response = await d2ApiDataStore.getDataStores({ namespaces: undefined });
             // Hardcoded pagination since DHIS2 does not support pagination for namespaces
             return { objects: response, pager: { page: 1, total: response.length, pageSize: 100 } };
@@ -152,7 +165,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         ...params
     }: ListMetadataParams): Promise<MetadataEntity[]> {
         const filter = this.buildListFilters(params);
-        const { apiVersion } = this.instance;
+        const { apiVersion } = this.targetInstance;
         const objects = await this.getListAll({ type, fields, filter, order });
 
         const metadataPackage = this.transformationRepository.mapPackageFrom(
@@ -165,26 +178,39 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     public async lookupSimilar(query: IdentifiableRef): Promise<MetadataPackage<IdentifiableRef>> {
-        const response = await this.api
-            .get<MetadataPackage<IdentifiableRef>>("/metadata", {
-                fields: getFieldsAsString({
-                    id: true,
-                    code: true,
-                    name: true,
-                    path: true,
-                    level: true,
-                }),
-                filter: getFilterAsString({
-                    name: { token: query.name },
-                    id: { eq: query.id },
-                    code: { eq: query.code },
-                }),
-                rootJunction: "OR",
-                paging: false,
-            })
-            .getData();
+        const fields = getFieldsAsString({
+            id: true,
+            code: true,
+            name: true,
+            path: true,
+            level: true,
+        });
+        // using two separate requests because rootJunction is not working with name:token:str filter (2.41.3)
+        const [responseEqual, responseSimilar] = await Promise.all([
+            this.api
+                .get<MetadataPackage<IdentifiableRef>>("/metadata", {
+                    fields: fields,
+                    filter: getFilterAsString({
+                        id: { eq: query.id },
+                        code: { eq: query.code },
+                        // identifiable: { token: query.name },
+                    }),
+                    rootJunction: "OR",
+                    paging: false,
+                })
+                .getData(),
+            this.api
+                .get<MetadataPackage<IdentifiableRef>>("/metadata", {
+                    fields: fields,
+                    filter: getFilterAsString({
+                        name: { token: query.name },
+                    }),
+                    paging: false,
+                })
+                .getData(),
+        ]);
 
-        return _.omit(response, ["system"]);
+        return _.omit(_.merge(responseEqual, responseSimilar), ["system"]);
     }
 
     @cache()
@@ -207,6 +233,18 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                     categoryOptions: true,
                 },
                 ...this.getAdditionalCategoryOptionCombosOptionsByVariant(),
+            })
+            .getData();
+
+        return objects;
+    }
+
+    public async getOrgUnitRoots(): Promise<Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]> {
+        const { objects } = await this.api.models.organisationUnits
+            .get({
+                paging: false,
+                filter: { level: { eq: "1" } },
+                fields: { id: true, name: true, displayName: true, path: true },
             })
             .getData();
 
@@ -320,6 +358,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         programType,
         domainType,
         childrenPropInList,
+        categoryComboDataDimensionType,
     }: Partial<ListMetadataParams>) {
         const filter: Dictionary<FilterValue> = {};
 
@@ -342,11 +381,16 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         if (includeParents && isNotEmpty(parents)) {
             filter["parent.id"] = { in: cleanOrgUnitPaths(parents) };
         }
-        if (showOnlySelected) filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
-        if (!disableFilterRows && filterRows) {
+        if (showOnlySelected) {
+            filter["id"] = { in: selectedIds.concat(filter["id"]?.in ?? []) };
+        } else if (!disableFilterRows && isNotEmpty(filterRows)) {
             filter["id"] = { in: filterRows.concat(filter["id"]?.in ?? []) };
         }
         if (search) filter[search.field] = { [search.operator]: search.value };
+
+        if (categoryComboDataDimensionType && !filter["id"]) {
+            filter["categoryCombo.dataDimensionType"] = { eq: categoryComboDataDimensionType };
+        }
 
         return filter;
     }
@@ -355,7 +399,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
         metadata: MetadataPackage,
         additionalParams: MetadataImportParams
     ): Promise<SynchronizationResult> {
-        const { apiVersion } = this.instance;
+        const { apiVersion } = this.targetInstance;
         const versionedPayloadPackage = this.transformationRepository.mapPackageTo(
             apiVersion,
             metadata,
@@ -370,7 +414,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             if (!response) {
                 return {
                     status: "ERROR",
-                    instance: this.instance.toPublicObject(),
+                    instance: this.targetInstance.toPublicObject(),
                     date: new Date(),
                     type: "metadata",
                 };
@@ -384,7 +428,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                 } catch (error: any) {
                     return {
                         status: "NETWORK ERROR",
-                        instance: this.instance.toPublicObject(),
+                        instance: this.targetInstance.toPublicObject(),
                         date: new Date(),
                         type: "metadata",
                     };
@@ -393,7 +437,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
             return {
                 status: "NETWORK ERROR",
-                instance: this.instance.toPublicObject(),
+                instance: this.targetInstance.toPublicObject(),
                 date: new Date(),
                 type: "metadata",
             };
@@ -413,7 +457,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             if (!response) {
                 return {
                     status: "ERROR",
-                    instance: this.instance.toPublicObject(),
+                    instance: this.targetInstance.toPublicObject(),
                     date: new Date(),
                     type: "deleted",
                 };
@@ -427,7 +471,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
 
             return {
                 status: "NETWORK ERROR",
-                instance: this.instance.toPublicObject(),
+                instance: this.targetInstance.toPublicObject(),
                 date: new Date(),
                 type: "deleted",
             };
@@ -517,7 +561,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
             status: status === "OK" ? "SUCCESS" : status,
             stats: formatStats(stats),
             typeStats,
-            instance: this.instance.toPublicObject(),
+            instance: this.targetInstance.toPublicObject(),
             errors: messages,
             date: new Date(),
             type,
@@ -552,11 +596,13 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     private async getMetadata<T>(
         elements: string[],
         fields = ":all",
-        includeDefaults: boolean
+        includeDefaults: boolean,
+        preserveNestedDefaultRefs: boolean
     ): Promise<Record<string, T[]>> {
         try {
             const promises = [];
             const chunkSize = 50;
+            const keepDefaults = includeDefaults || preserveNestedDefaultRefs;
 
             for (let i = 0; i < elements.length; i += chunkSize) {
                 const requestElements = elements.slice(i, i + chunkSize).toString();
@@ -565,7 +611,7 @@ export class MetadataD2ApiRepository implements MetadataRepository {
                         .get("/metadata", {
                             fields,
                             filter: "id:in:[" + requestElements + "]",
-                            defaults: includeDefaults ? undefined : "EXCLUDE",
+                            defaults: keepDefaults ? undefined : "EXCLUDE",
                         })
                         .getData()
                 );
@@ -611,11 +657,11 @@ export class MetadataD2ApiRepository implements MetadataRepository {
     }
 
     private getApiModel(type: keyof MetadataEntities): Model<any, any> {
-        return this.api.models[type];
+        return getApiModel(this.api, type);
     }
 
     private getAdditionalCategoryOptionCombosOptionsByVariant(): CategoryOptionCombosAdditionalOptions {
-        const appVariant = process.env.REACT_APP_PRESENTATION_VARIANT;
+        const appVariant = config.appPresentationVariant;
 
         switch (appVariant) {
             case "msf-aggregate-data-app": {

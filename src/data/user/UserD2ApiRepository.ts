@@ -19,11 +19,9 @@ export class UserD2ApiRepository implements UserRepository {
                     id: true,
                     name: true,
                     email: true,
-                    userCredentials: {
-                        username: true,
-                        userRoles: {
-                            $all: true,
-                        },
+                    username: true,
+                    userRoles: {
+                        $all: true,
                     },
                     userGroups: { id: true, name: true },
                     organisationUnits: { id: true, name: true },
@@ -32,7 +30,7 @@ export class UserD2ApiRepository implements UserRepository {
             })
             .getData();
 
-        const isGlobalAdmin = !!currentUser.userCredentials.userRoles.find((role: any) =>
+        const isGlobalAdmin = !!currentUser.userRoles.find((role: { name: string; authorities: string[] }) =>
             role.authorities.find((authority: string) => authority === "ALL")
         );
 
@@ -40,20 +38,21 @@ export class UserD2ApiRepository implements UserRepository {
             id: currentUser.id,
             name: currentUser.name,
             email: currentUser.email,
-            username: currentUser.userCredentials.username,
+            username: currentUser.username,
             userGroups: currentUser.userGroups,
             organisationUnits: currentUser.organisationUnits,
             dataViewOrganisationUnits: currentUser.dataViewOrganisationUnits,
             isGlobalAdmin,
             isAppConfigurator:
                 isGlobalAdmin ||
-                !!currentUser.userCredentials.userRoles.find(
-                    (role: any) => role.name === AppRoles.CONFIGURATION_ACCESS.name
+                !!currentUser.userRoles.find(
+                    (role: { name: string; authorities: string[] }) => role.name === AppRoles.CONFIGURATION_ACCESS.name
                 ),
             isAppExecutor:
                 isGlobalAdmin ||
-                !!currentUser.userCredentials.userRoles.find(
-                    (role: any) => role.name === AppRoles.SYNC_RULE_EXECUTION_ACCESS.name
+                !!currentUser.userRoles.find(
+                    (role: { name: string; authorities: string[] }) =>
+                        role.name === AppRoles.SYNC_RULE_EXECUTION_ACCESS.name
                 ),
         };
     }

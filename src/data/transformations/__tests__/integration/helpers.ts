@@ -10,10 +10,19 @@ import { SynchronizationBuilder } from "../../../../domain/synchronization/entit
 import { registerDynamicRepositoriesInFactory } from "../../../../presentation/CompositionRoot";
 import { startDhis } from "../../../../utils/dhisServer";
 
-export function buildRepositoryFactory() {
+let localInstance: Instance;
+
+export function buildRepositoryFactory(version: string): DynamicRepositoryFactory {
+    localInstance = Instance.build({
+        url: "http://origin.test",
+        name: "Testing",
+        type: "local",
+        version,
+    });
+
     const repositoryFactory: DynamicRepositoryFactory = new DynamicRepositoryFactory();
 
-    registerDynamicRepositoriesInFactory(repositoryFactory);
+    registerDynamicRepositoriesInFactory(localInstance, repositoryFactory);
 
     return repositoryFactory;
 }
@@ -38,65 +47,38 @@ export async function sync({
     models: string[];
 }): Promise<SyncResult> {
     const local = startDhis({ urlPrefix: "http://origin.test" }, { version: from });
-    const remote = startDhis({ urlPrefix: "http://destination.test", pretender: local.pretender }, { version: to });
 
     local.get("/metadata", async () => metadata);
     local.get("/programRules", async () => []);
-    remote.get("/metadata", async () => ({}));
+    local.get("/routes/DESTINATION/run/metadata", async () => ({}));
 
     local.get("/dataStore/metadata-synchronization/instances", async () => [
         {
-            type: "local",
-            id: "LOCAL",
-            name: "This instance",
-            description: "",
-            url: "http://origin.test",
-        },
-        {
-            type: "dhis",
             id: "DESTINATION",
-            name: "Destination test",
-            url: "http://destination.test",
-            username: "test",
-            password: "",
-            description: "",
         },
     ]);
 
-    local.get("/dataStore/metadata-synchronization/instances-LOCAL", async () => ({}));
-    local.get("/dataStore/metadata-synchronization/instances-DESTINATION", async () => ({}));
-
-    local.get("/dataStore/metadata-synchronization/instances-LOCAL/metaData", async () => ({
-        created: "2021-03-30T01:59:59.191",
-        lastUpdated: "2021-04-20T09:34:00.780",
-        externalAccess: false,
-        publicAccess: "rw------",
-        user: { id: "H4atNsEuKxP" },
-        userGroupAccesses: [],
-        userAccesses: [],
-        lastUpdatedBy: { id: "s5EVHUwoFKu" },
-        namespace: "metadata-synchronization",
-        key: "instances-LOCAL",
-        value: "",
-        favorite: false,
-        id: "Db5532sXKXT",
+    local.get("/routes", async () => ({
+        routes: [
+            {
+                id: "DESTINATION",
+                name: "Destination test",
+                url: "http://destination.test",
+                username: "test",
+                auth: { type: "http-basic", username: "test", password: "" },
+                description: "",
+                sharing: {
+                    external: false,
+                    owner: "H4atNsEuKxP",
+                    public: "rw------",
+                    users: {},
+                    userGroups: {},
+                },
+            },
+        ],
     }));
 
-    local.get("/dataStore/metadata-synchronization/instances-DESTINATION/metaData", async () => ({
-        created: "2021-03-30T01:59:59.191",
-        lastUpdated: "2021-04-20T09:34:00.780",
-        externalAccess: false,
-        publicAccess: "rw------",
-        user: { id: "H4atNsEuKxP" },
-        userGroupAccesses: [],
-        userAccesses: [],
-        lastUpdatedBy: { id: "s5EVHUwoFKu" },
-        namespace: "metadata-synchronization",
-        key: "instances-DESTINATION",
-        value: "",
-        favorite: false,
-        id: "Db5532sXKX1",
-    }));
+    local.get("/routes/DESTINATION/run/api/system/info", () => ({ version: to }));
 
     local.get("/sharing", async () => ({
         meta: {
@@ -128,8 +110,8 @@ export async function sync({
         },
     }));
 
-    const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request) => {
-        schema.db.metadata.insert(JSON.parse(request.requestBody));
+    const addMetadataToDb = async (schema: Schema<AnyRegistry>, request: Request, collection: string) => {
+        schema.db[collection].insert(JSON.parse(request.requestBody));
 
         return {
             status: "OK",
@@ -138,16 +120,19 @@ export async function sync({
         };
     };
 
-    local.db.createCollection("metadata", []);
-    local.post("/metadata", addMetadataToDb);
+    local.db.createCollection("metadataLocal", []);
+    local.post("/metadata", (schema: Schema<AnyRegistry>, request: Request) =>
+        addMetadataToDb(schema, request, "metadataLocal")
+    );
 
-    remote.db.createCollection("metadata", []);
-    remote.post("/metadata", addMetadataToDb);
+    local.db.createCollection("metadataDestination", []);
+    local.post("/routes/DESTINATION/run/api/metadata", (schema: Schema<AnyRegistry>, request: Request) =>
+        addMetadataToDb(schema, request, "metadataDestination")
+    );
 
-    const response = await executeMetadataSync(from, local, remote, models);
+    const response = await executeMetadataSync(from, local, models);
 
     local.shutdown();
-    remote.shutdown();
 
     return response;
 }
@@ -155,16 +140,9 @@ export async function sync({
 export async function executeMetadataSync(
     fromVersion: string,
     local: Server,
-    remote: Server,
     expectedModels: string[]
 ): Promise<SyncResult> {
-    const repositoryFactory = buildRepositoryFactory();
-
-    const localInstance = Instance.build({
-        url: "http://origin.test",
-        name: "Testing",
-        version: fromVersion,
-    });
+    const repositoryFactory = buildRepositoryFactory(fromVersion);
 
     const builder: SynchronizationBuilder = {
         originInstance: "LOCAL",
@@ -186,9 +164,9 @@ export async function executeMetadataSync(
     }
     expect(done).toBeTruthy();
 
-    expect(local.db.metadata.where({})).toHaveLength(0);
+    expect(local.db.metadataLocal.where({})).toHaveLength(0);
 
-    const payloads = remote.db.metadata.where({});
+    const payloads = local.db.metadataDestination.where({});
     expect(payloads).toHaveLength(1);
 
     const payload = payloads[0];

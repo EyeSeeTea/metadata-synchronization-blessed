@@ -1,5 +1,6 @@
 import { DataImportParams, DataSynchronizationParams } from "../../aggregated/entities/DataSynchronizationParams";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
+import { EventsPackage } from "../entities/EventsPackage";
 import { ProgramEvent } from "../entities/ProgramEvent";
 
 export interface EventsRepository {
@@ -9,7 +10,7 @@ export interface EventsRepository {
         defaults?: string[]
     ): Promise<ProgramEvent[]>;
 
-    save(data: object, additionalParams: DataImportParams | undefined): Promise<SynchronizationResult>;
+    save(data: EventsPackage, additionalParams: DataImportParams | undefined): Promise<SynchronizationResult>;
 
     getEventFile(eventId: string, dataElement: string, fileResourceId: string): Promise<File>;
 }

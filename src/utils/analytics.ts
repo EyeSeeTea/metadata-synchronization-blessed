@@ -10,7 +10,9 @@ export async function* executeAnalytics(instance: Instance, options?: AnalyticsO
     yield i18n.t("Running analytics for instance {{name}}", instance);
     const api = getD2APiFromInstance(instance);
 
-    const { response } = await api.analytics.run(options).getData();
+    const { response } = await api
+        .post<RunAnalyticsTaskResponse>("/resourceTables/analytics", { ...options })
+        .getData();
     const endpoint = response.relativeNotifierEndpoint.replace("/api", "");
 
     let done = false;
@@ -33,10 +35,15 @@ export async function* executeAnalytics(instance: Instance, options?: AnalyticsO
 type AnalyticsMessage = { message: string; completed: boolean };
 type AnalyticsResponse = AnalyticsMessage[] | null;
 
+type RunAnalyticsTaskResponse = { response: { relativeNotifierEndpoint: string } };
+
 interface AnalyticsOptions {
     skipResourceTables?: boolean;
     skipAggregate?: boolean;
     skipEvents?: boolean;
     skipEnrollment?: boolean;
+    skipOrgUnitOwnership?: boolean;
+    skipTrackedEntities?: boolean;
+    skipOutliers?: boolean;
     lastYears?: number;
 }

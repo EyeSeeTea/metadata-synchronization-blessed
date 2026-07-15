@@ -51,7 +51,7 @@ async function getAllPossibleDestinationPrograms(
         const programs = (
             await metadataRepository.getMetadataByIds<ProgramRef>(
                 allPossibleDestinationProgramIds,
-                "id,programType, programTrackedEntityAttributes[trackedEntityAttribute],programStages[id,programStageDataElements[dataElement]]"
+                "id,programType,programTrackedEntityAttributes[trackedEntityAttribute],programStages[id,programStageDataElements[dataElement]]"
             )
         ).programs;
 

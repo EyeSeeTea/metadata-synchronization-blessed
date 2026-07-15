@@ -1,3 +1,4 @@
+import { Instance } from "../../../domain/instance/entities/Instance";
 import { D2Api } from "../../../types/d2-api";
 import { MigrationTasks } from "../client/types";
 
@@ -18,9 +19,11 @@ export function getMigrationTasks(): MigrationTasks<MigrationParams> {
         [13, import("./13.dashboard-with-visualizations")],
         [14, import("./14.metadata-include-objects-and-references")],
         [15, import("./15.sharing-settings-users-org-units-include-objects-and-references")],
+        [16, import("./16.instances-as-routes")],
     ];
 }
 
 export interface MigrationParams {
     d2Api?: D2Api;
+    localInstance?: Instance;
 }

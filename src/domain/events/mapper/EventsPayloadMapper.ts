@@ -65,7 +65,8 @@ export class EventsPayloadMapper implements PayloadMapper {
             attributeOptionCombo ?? defaultCategoryOptionCombo,
             [innerMapping, globalMapping],
             originCategoryOptionCombos,
-            destinationCategoryOptionCombos
+            destinationCategoryOptionCombos,
+            false
         );
 
         const mappedDataValues = dataValues

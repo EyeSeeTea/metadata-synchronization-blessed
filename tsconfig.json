@@ -1,12 +1,4 @@
 {
-    "ts-node": {
-        // these options are overrides used only by ts-node
-        // same as our --compilerOptions flag and our TS_NODE_COMPILER_OPTIONS environment variable
-        "compilerOptions": {
-            "module": "commonjs",
-            "typeRoots": ["./src/types", "./node_modules/@types"]
-        }
-    },
     "compilerOptions": {
         "target": "es2015",
         "allowJs": true,
@@ -28,7 +20,8 @@
         "noUncheckedIndexedAccess": false,
         "experimentalDecorators": true,
         "noFallthroughCasesInSwitch": true,
+        "types": ["node", "vite/client", "vitest/globals"],
         "lib": ["dom", "dom.iterable", "esnext"]
     },
-    "include": ["src"]
+    "include": ["src", "scripts"]
 }

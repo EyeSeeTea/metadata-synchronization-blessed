@@ -2,9 +2,10 @@ import qs from "qs";
 import { useEffect, useState } from "react";
 import { HashRouter } from "react-router-dom";
 import { Dictionary } from "../../../types/utils";
+import { config } from "../../../utils/Config";
 
 function useWidget(): { dashboardItemId: string; userOrgUnits: string[]; widget: string } {
-    const widget = process.env.REACT_APP_PRESENTATION_VARIANT;
+    const widget = config.presentationVariant;
     if (!widget) {
         throw new Error("Attempting to use useWidget on application");
     }

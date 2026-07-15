@@ -11,6 +11,7 @@ import { SchedulerContract } from "../SchedulerContract";
 import { getSynchronizationRule } from "./data/getSynchronizationRule";
 import { MockLogger } from "./mocks/MockLogger";
 import { MockScheduler } from "./mocks/MockScheduler";
+import { vi } from "vitest";
 
 // TODO: This is the first version of tests, needs a refactor to use ts-mockito instead
 
@@ -23,10 +24,10 @@ describe("SchedulerCLI", () => {
     let mockLogger: Logger;
 
     beforeEach(() => {
-        jest.useFakeTimers();
-        jest.setSystemTime(new Date("2025-06-12T08:12:50.777Z"));
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date("2025-06-12T08:12:50.777Z"));
 
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockScheduler = new MockScheduler();
         mockCompositionRoot = new MockCompositionRoot() as unknown as CompositionRoot;
         mockLogger = new MockLogger();
@@ -39,14 +40,14 @@ describe("SchedulerCLI", () => {
     });
 
     afterEach(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
     });
 
     describe("initialize", () => {
         it("should fetch tasks, schedule a job and log a message", async () => {
-            const spyGetSyncRuleJobConfigs = jest.spyOn(mockCompositionRoot.rules, "list");
-            const spyScheduleJob = jest.spyOn(mockScheduler, "scheduleJob");
-            const spyLoggerInfo = jest.spyOn(mockLogger, "info");
+            const spyGetSyncRuleJobConfigs = vi.spyOn(mockCompositionRoot.rules, "list");
+            const spyScheduleJob = vi.spyOn(mockScheduler, "scheduleJob");
+            const spyLoggerInfo = vi.spyOn(mockLogger, "info");
 
             schedulerCLI.initialize(API_PATH);
 
@@ -56,7 +57,7 @@ describe("SchedulerCLI", () => {
         });
 
         it("should call compositionRoot.rules.list with correct params and return correct SyncRuleJobConfig[]", async () => {
-            const spyListRules = jest.spyOn(mockCompositionRoot.rules, "list");
+            const spyListRules = vi.spyOn(mockCompositionRoot.rules, "list");
 
             const expectedSyncRules: SynchronizationRule[] = [getSynchronizationRule(true)];
 
@@ -64,7 +65,11 @@ describe("SchedulerCLI", () => {
 
             expect(spyListRules).toHaveBeenCalledWith({
                 paging: false,
-                filters: { schedulerEnabledFilter: "enabled", allProperties: true },
+                filters: {
+                    schedulerEnabledFilter: "enabled",
+                    schedulerTypeFilter: "metadataSync",
+                    allProperties: true,
+                },
             });
             expect(result).toEqual(expectedSyncRules);
         });

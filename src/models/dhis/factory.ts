@@ -1,7 +1,6 @@
 import _ from "lodash";
 import { debug } from "../../utils/debug";
-import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
-import { D2Api } from "../../types/d2-api";
+import { D2Api, getApiModel } from "../../types/d2-api";
 import { D2Model, defaultModel } from "./default";
 import * as mappingClasses from "./mapping";
 import * as metadataClasses from "./metadata";
@@ -76,12 +75,13 @@ export function modelFactory(d2ModelName?: string): typeof D2Model {
 
     // TODO: Improvement, use schemas to find properties
     const api = new D2Api();
-    const { modelName = defaultName } = api.models[d2ModelName as keyof MetadataEntities] ?? {};
+    const { modelName = defaultName } = getApiModel(api, d2ModelName) ?? {};
 
+    const mappedModel = findClasses("mappingType", d2ModelName);
     const directClass = findClasses("metadataType", d2ModelName);
     const modelClass = findClasses("collectionName", modelName);
 
-    const result = directClass ?? modelClass;
+    const result = mappedModel ?? directClass ?? modelClass;
     if (!result) {
         debug(`Could not find a model for ${d2ModelName}... This is probably a mistake in your app.`);
     }

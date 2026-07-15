@@ -39,7 +39,7 @@ const AggregationStep: React.FC<SyncWizardStepProps> = ({ syncRule, onChange }) 
     const snackbar = useSnackbar();
 
     const updateEnableAggregation = (value: boolean) => {
-        if (syncRule.metadataTypes.includes("indicators") && !value) {
+        if ((syncRule.metadataTypes.includes("indicators") || syncRule.useAggregatedDataExchange) && !value) {
             snackbar.warning(i18n.t("Without aggregation, any data value related to an indicator will be ignored"));
         } else if (syncRule.metadataTypes.includes("programIndicators") && !value) {
             snackbar.warning(i18n.t("Without aggregation, program indicators will not be aggregated and synchronized"));

@@ -1,0 +1,1850 @@
+{
+    "categoryCombinations": {
+        "MAL_OWNERSHIP": {
+            "viewType": "formName"
+        }
+    },
+    "dataElements": {
+        "GEN_ALL_CAUSE_DTH_CASES_5ABOVE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "GEN_ALL_CAUSE_IPD_CASES_ABOVE5": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "GEN_ALL_CAUSE_IPD_CASES_F": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_FEMALE_LONG"
+                }
+            }
+        },
+        "GEN_ALL_CAUSE_OPD_CASES_5ABOVE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "MAL_CASES_CLASS_AS_INDUC": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_CASES_CLASS_AS_INDUC_DESCRIPTION"
+                }
+            }
+        },
+        "MAL_CASES_CLASS_AS_INTRO_MIXED": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_MIXTE_LONG"
+                }
+            }
+        },
+        "MAL_CASES_CLASS_AS_INTRO_PF": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PFALCIPARUM"
+                }
+            }
+        },
+        "MAL_CASES_CLASS_AS_INTRO_PK": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PKNOWLESI"
+                }
+            }
+        },
+        "MAL_CASES_CLASS_AS_INTRO_PM": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PMALARIAE"
+                }
+            }
+        },
+        "MAL_CASES_CLASS_AS_INTRO_PO": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_POVALE"
+                }
+            }
+        },
+        "MAL_CASES_CLASS_AS_INTRO_PV": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PVIVAX"
+                }
+            }
+        },
+        "MAL_CASES_CLASS_AS_INTRO_UNKNOWN": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_SPECIES_UNKNOWN_LONG"
+                }
+            }
+        },
+        "MAL_CASES_CONF_5ABOVE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "MAL_CASES_CONF_TOTAL": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_ALL_AGES"
+                }
+            }
+        },
+        "MAL_CASES_CONF_TOTAL_F": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_FEMALE_LONG"
+                }
+            }
+        },
+        "MAL_CASES_PRES_5ABOVE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "MAL_CASES_PRES_CONF": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_ALL_AGES"
+                }
+            }
+        },
+        "MAL_CASES_PRES_CONF_5ABOVE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "MAL_CASES_PRES_CONF_TOTAL_F": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_FEMALE_LONG"
+                }
+            }
+        },
+        "MAL_CASES_PRES_TOTAL": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_ALL_AGES"
+                }
+            }
+        },
+        "MAL_CASES_PRES_TOTAL_F": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_FEMALE_LONG"
+                }
+            }
+        },
+        "MAL_DEATH_5ABOVE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "MAL_DEATH_FEMALE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_FEMALE_LONG"
+                }
+            }
+        },
+        "MAL_DEATH_PV_5ABOVE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "MAL_FIN_PEOPLE_COVERED_BY_INTERVENTIONS": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PEOPLE_COVERED_BY_INTERVENTIONS_LONG"
+                }
+            }
+        },
+        "MAL_IMPORTD_MIXD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_MIXTE_LONG"
+                }
+            }
+        },
+        "MAL_IMPORTD_PF": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PFALCIPARUM"
+                }
+            }
+        },
+        "MAL_IMPORTD_PK": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PKNOWLESI"
+                }
+            }
+        },
+        "MAL_IMPORTD_PM": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PMALARIAE"
+                }
+            }
+        },
+        "MAL_IMPORTD_PO": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_POVALE"
+                }
+            }
+        },
+        "MAL_IMPORTD_PV": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PVIVAX"
+                }
+            }
+        },
+        "MAL_IMPORTD_UNKNOWN": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_IMPORTD_UNKNOWN"
+                }
+            }
+        },
+        "MAL_INDIG_MIXD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_MIXTE_LONG"
+                }
+            }
+        },
+        "MAL_INDIG_PF": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PFALCIPARUM"
+                }
+            }
+        },
+        "MAL_INDIG_PK": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PKNOWLESI"
+                }
+            }
+        },
+        "MAL_INDIG_PM": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PMALARIAE"
+                }
+            }
+        },
+        "MAL_INDIG_PO": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_POVALE"
+                }
+            }
+        },
+        "MAL_INDIG_PV": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PVIVAX"
+                }
+            }
+        },
+        "MAL_INDIG_UKNOWN": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_SPECIES_UNKNOWN_LONG"
+                }
+            }
+        },
+        "MAL_INPAT_MAL_CASES_FEMALE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_FEMALE_LONG"
+                }
+            }
+        },
+        "MAL_IPD_CASES_VIVAX_ABOVE5": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "MAL_IPD_MAL_5ABOVE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_5ABOVE_LONG"
+                }
+            }
+        },
+        "MAL_MICRO_PF_ACD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PFALCIPARUM"
+                }
+            }
+        },
+        "MAL_MICRO_PV_ACD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PVIVAX"
+                }
+            }
+        },
+        "MAL_MICR_PK_ACD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PKNOWLESI"
+                }
+            }
+        },
+        "MAL_MICR_PM_ACD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PMALARIAE"
+                }
+            }
+        },
+        "MAL_MICR_PO_ACD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_POVALE"
+                }
+            }
+        },
+        "MAL_MIX_MAL_SPECIES_MICR": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_MAL_MIX_MAL_SPECIES_MICR_NOTE"
+                }
+            }
+        },
+        "MAL_MIX_MAL_SPECIES_RDT": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_MAL_MIX_MAL_SPECIES_MICR_NOTE"
+                }
+            }
+        },
+        "MAL_NSP_END_DATE": {
+            "texts": {
+                "name": {
+                    "code": "MAL-NSP-END-DATE-NAME"
+                }
+            }
+        },
+        "MAL_NSP_START_DATE": {
+            "texts": {
+                "name": {
+                    "code": "MAL-NSP-START-DATE-NAME"
+                }
+            }
+        },
+        "MAL_NUM_HF_KNOWN": {
+            "rules": {
+                "disabled": {
+                    "condition": "false",
+                    "dataElements": ["MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_PUB", "MAL_TOTAL_RPT_RECEVD"]
+                },
+                "visible": {
+                    "condition": "false",
+                    "dataElements": ["MAL_EST_REPORTING_COMPLETENESS_PUB"]
+                }
+            }
+        },
+        "MAL_NUM_HF_KNOWN_COMM": {
+            "rules": {
+                "disabled": {
+                    "condition": "false",
+                    "dataElements": ["MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_COMM", "MAL_TOTAL_RPT_RECEVD_COMM"]
+                },
+                "visible": {
+                    "condition": "false",
+                    "dataElements": ["MAL_EST_REPORTING_COMPLETENESS_COMM"]
+                }
+            }
+        },
+        "MAL_NUM_HF_KNOWN_PRIV": {
+            "rules": {
+                "disabled": {
+                    "condition": "false",
+                    "dataElements": ["MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_PRIV", "MAL_TOTAL_RPT_RECEVD_PRIV"]
+                },
+                "visible": {
+                    "condition": "false",
+                    "dataElements": ["MAL_EST_REPORTING_COMPLETENESS_PRIV"]
+                }
+            }
+        },
+        "MAL_OTHER_LARVAL_SOURCE_MGMT": {
+            "selection": {
+                "isMultiple": true,
+                "optionSet": {
+                    "code": "MAL_CF_LARVAL_CONTROL"
+                }
+            },
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_OTHER_LARVAL_SOURCE_MGMT"
+                }
+            }
+        },
+        "MAL_PF_MICR": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PFALCIPARUM"
+                }
+            }
+        },
+        "MAL_PF_RDT": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PFALCIPARUM"
+                }
+            }
+        },
+        "MAL_PK_MICR": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PKNOWLESI"
+                }
+            }
+        },
+        "MAL_PM_MICR": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PMALARIAE"
+                }
+            }
+        },
+        "MAL_PO_MICR": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_POVALE"
+                }
+            }
+        },
+        "MAL_PV_MICR": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PVIVAX"
+                }
+            }
+        },
+        "MAL_PV_RDT": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PVIVAX"
+                }
+            }
+        },
+        "MAL_RDT_POS_PF_ACD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PFALCIPARUM"
+                }
+            }
+        },
+        "MAL_RDT_POS_PV_ACD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_PVIVAX"
+                }
+            }
+        },
+        "MAL_SUB-NATIONAL_DATA_FILE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_EXCEL_UPLOAD"
+                }
+            }
+        },
+        "MAL_SUBSET_OPD": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_SUBSET_OPD"
+                }
+            }
+        },
+        "MAL_SUSP_MAL_CASES": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_SUSP_MAL_CASES"
+                }
+            }
+        },
+        "MAL_THEME_DATA_FILE": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_GER_EXCEL_UPLOAD"
+                }
+            }
+        },
+        "MAL_TOTAL_CASES_PER_YEAR": {
+            "texts": {
+                "name": {
+                    "code": "MAL_LBL_TOTAL_CASES_PER_YEAR"
+                }
+            }
+        },
+        "MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_PUB": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_PUB"
+                }
+            }
+        },
+        "MAL_TOTAL_RPT_RECEVD_COMM": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_MAL_TOTAL_RPT_RECEVD_COMM"
+                }
+            }
+        },
+        "MAL_UNKNOWN_MAL_SPECIES_MICR": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_MAL_UNKNOWN_MAL_SPECIES_MICR_NOTE"
+                }
+            }
+        },
+        "MAL_UNKNOWN_MAL_SPECIES_RDT": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_UNKNOWN_MAL_WMR_SPECIES_RDT_NOTE"
+                }
+            }
+        },
+        "MAL_WHICH_CONFIRMED_FIGURE_TO_USE_AS_FINAL": {
+            "texts": {
+                "name": {
+                    "code": "MAL_WMR_LBL_WHICH_CONFIRMED_FIGURE_TO_USE_AS_FINAL"
+                }
+            }
+        }
+    },
+    "dataSets": {
+        "MAL_WMR_COUNTRY_SYNC": {
+            "sections": {
+                "MAL_WMR_BREAKDOWN": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -1,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 10.1
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_BREAKDOWN_NOTE"
+                        }
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_CIC": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00FF9F1A"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00FF9F1A"
+                        },
+                        "title": {
+                            "backgroundColor": "#00FF9F1A"
+                        },
+                        "totals": {
+                            "backgroundColor": "#01bff080"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.28
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_CIC_REPORT": {
+                    "groupDescriptions": {
+                        "MAL_CASES_CLASS_AS_INDIG": {
+                            "code": "MAL_WMR_INDIGENOUS_CASES_DESCRIPTION"
+                        },
+                        "MAL_CASES_CLASS_AS_INTRO": {
+                            "code": "MAL_WMR_INTRODUCED_CASES_DESCRIPTION"
+                        },
+                        "MAL_CASES_CLASS_IMPORT": {
+                            "code": "MAL_WMR_IMPORTED_CASES_DESCRIPTION"
+                        }
+                    },
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -1,
+                        "type": "relative-interval"
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00FF9F1A"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00FF9F1A"
+                        },
+                        "title": {
+                            "backgroundColor": "#00FF9F1A"
+                        },
+                        "totals": {
+                            "backgroundColor": "#01bff080"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.291
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-CASE-INVESTIGATION-HEADER"
+                        },
+                        "totals": {
+                            "code": "MAL-WMR-CASE-INVESTIGATION-TOTAL-COLUMN"
+                        }
+                    },
+                    "toggle": {
+                        "code": "MAL_IS_CASE_INV_UNDRTKN",
+                        "condition": "true",
+                        "type": "dataElementExternal"
+                    },
+                    "totals": {
+                        "dataElementsCodes": [
+                            "MAL_CASES_CLASS_AS_INDIG",
+                            "MAL_CASES_CLASS_AS_INDUC",
+                            "MAL_CASES_CLASS_AS_INTRO",
+                            "MAL_CASES_CLASS_AS_RECRU",
+                            "MAL_CASES_CLASS_AS_RELAP",
+                            "MAL_CASES_CLASS_IMPORT",
+                            "MAL_NOT_CLASSIFIED_OTHER_CASES"
+                        ],
+                        "formula": "<%= MAL_CASES_CLASS_AS_INDIG+MAL_CASES_CLASS_IMPORT+MAL_CASES_CLASS_AS_INTRO+MAL_CASES_CLASS_AS_INDUC+MAL_CASES_CLASS_AS_RELAP+MAL_CASES_CLASS_AS_RECRU+MAL_NOT_CLASSIFIED_OTHER_CASES %>"
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_COMMENTS": {
+                    "tabs": {
+                        "active": true,
+                        "order": 11.1
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_REMARKS_WMR_FORM_NOTE"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_CONF_AGE_SEX": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "title": {
+                            "backgroundColor": "#00ff9f1a"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.15
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_CONF_HS": {
+                    "columnsDescriptions": {
+                        "MAL_CO_COMB": {
+                            "code": "MAL_WMR_LBL_COMBINED_NOTE"
+                        },
+                        "MAL_CO_COMM": {
+                            "code": "MAL_WMR_LBL_COMMUNITY_NOTE"
+                        },
+                        "MAL_CO_PRIV": {
+                            "code": "MAL_WMR_LBL_PRIVATE_NOTE"
+                        },
+                        "MAL_CO_PUB": {
+                            "code": "MAL_WMR_LBL_PUBLIC_NOTE"
+                        }
+                    },
+                    "groupDescriptions": {
+                        "MAL_CASES_CONF_TOTAL": {
+                            "code": "MAL_CASES_CONF_TOTAL_NOTE"
+                        }
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "title": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "totals": {
+                            "backgroundColor": "#00bff080"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.14
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-OUTPATIENT-NOTE"
+                        },
+                        "rowTotals": {
+                            "code": "MAL_WMR_LABORATORY_TOTAL_COLUMN"
+                        }
+                    },
+                    "viewType": "grid-with-cat-option-combos"
+                },
+                "MAL_WMR_CONTACT_INFORMATION": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#ffffff"
+                        },
+                        "rows": {
+                            "backgroundColor": "#F7F7F7"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 0.1
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_CONTACT_INFORMATION_NOTE"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_DEATHS_AGE_SEX": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": 0,
+                        "type": "relative-interval"
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#f3e6ff"
+                        },
+                        "rows": {
+                            "backgroundColor": "#f3e6ff"
+                        },
+                        "title": {
+                            "backgroundColor": "#f3e6ff"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 3.1
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-DEATHS-SEX-NOTE"
+                        }
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_DEATHS_CLASS": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": 0,
+                        "type": "relative-interval"
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#f3e6ff"
+                        },
+                        "rows": {
+                            "backgroundColor": "#f3e6ff"
+                        },
+                        "title": {
+                            "backgroundColor": "#f3e6ff"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 3.2
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_DEATHS_REMARKS": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#f3e6ff"
+                        },
+                        "rows": {
+                            "backgroundColor": "#f3e6ff"
+                        },
+                        "title": {
+                            "backgroundColor": "#f3e6ff"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 3.3
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_DISTRIBUTION_AND_TREATMENT": {
+                    "tabs": {
+                        "active": true,
+                        "order": 5.2
+                    },
+                    "viewType": "matrix-grid"
+                },
+                "MAL_WMR_DISTRIBUTION_AND_TREATMENTS": {
+                    "tabs": {
+                        "active": true,
+                        "order": 5.1
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-DISTRIBUTION-AND-TREATMENTS-SUBTITLE"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_DISTRIBUTION_REMARKS": {
+                    "tabs": {
+                        "active": true,
+                        "order": 5.5
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_FINANCING_BY_YEAR": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -1,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 9.1
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_FIN_REMARKS": {
+                    "tabs": {
+                        "active": true,
+                        "order": 9.2
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_HEALTH_SECTOR_DATA": {
+                    "tabs": {
+                        "active": true,
+                        "order": 2.1
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-HEALTH-SECTOR-NOTE"
+                        }
+                    }
+                },
+                "MAL_WMR_INPATIENT_AGE_SEX": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "title": {
+                            "backgroundColor": "#00ff9f1a"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.21
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_INPATIENT_HS": {
+                    "columnsDescriptions": {
+                        "MAL_CO_COMB": {
+                            "code": "MAL_WMR_LBL_COMBINED_NOTE"
+                        },
+                        "MAL_CO_COMM": {
+                            "code": "MAL_WMR_LBL_COMMUNITY_NOTE"
+                        },
+                        "MAL_CO_PRIV": {
+                            "code": "MAL_WMR_LBL_PRIVATE_NOTE"
+                        },
+                        "MAL_CO_PUB": {
+                            "code": "MAL_WMR_LBL_PUBLIC_NOTE"
+                        }
+                    },
+                    "groupDescriptions": {
+                        "MAL_CASES_CONF_TOTAL": {
+                            "code": "MAL_WMR_CONFIRMED_NOTE"
+                        }
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "title": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "totals": {
+                            "backgroundColor": "#00bff080"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.18
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-INPATIENT-NOTE"
+                        },
+                        "rowTotals": {
+                            "code": "MAL_WMR_LABORATORY_TOTAL_COLUMN"
+                        }
+                    },
+                    "viewType": "grid-with-cat-option-combos"
+                },
+                "MAL_WMR_INTERVENTIONS_IPT_MDA": {
+                    "tabs": {
+                        "active": true,
+                        "order": 7.1
+                    },
+                    "viewType": "grid"
+                },
+                "MAL_WMR_INTERVENTIONS_IRS": {
+                    "indicators": {
+                        "MAL_WMR_PEOPLE_PROT_BY_IRS_INDICATOR": {
+                            "position": {
+                                "dataElement": "MAL_PEOPLE_PROT_BY_IRS",
+                                "direction": "after"
+                            }
+                        }
+                    },
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -1,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 6.6
+                    },
+                    "toggle": {
+                        "code": "MAL_IS_IRS_UNDRTKN",
+                        "type": "dataElement"
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_INTERVENTIONS_IRS_PRODUCTS": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -1,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 6.7
+                    },
+                    "toggle": {
+                        "code": "MAL_IS_IRS_UNDRTKN",
+                        "condition": "true",
+                        "type": "dataElementExternal"
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_INTERVENTIONS_ITN_DISTR_SUMMARY": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -2,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 6.5
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_INTERVENTIONS_ITN_MASS_CAMPAIGN": {
+                    "groupDescriptions": {
+                        "MAL_G2_DISTR_MASS_CAMP": {
+                            "code": "MAL_WMR_MASS_CAMPAIGN_NOTE"
+                        },
+                        "MAL_NUM_G2_PLANNED_DISTR": {
+                            "code": "MAL_WMR_MASS_CAMPAIGN_NOTE"
+                        },
+                        "MAL_NUM_ITNS_DIST_MASS_CAMP": {
+                            "code": "MAL_WMR_MASS_CAMPAIGN_NOTE"
+                        },
+                        "MAL_NUM_ITNS_PLANNED_DISTR": {
+                            "code": "MAL_WMR_MASS_CAMPAIGN_NOTE"
+                        },
+                        "MAL_NUM_PBO_PLANNED_DISTR": {
+                            "code": "MAL_WMR_MASS_CAMPAIGN_NOTE"
+                        },
+                        "MAL_NUM_ROYALGUARD_PLANNED_DISTR": {
+                            "code": "MAL_WMR_MASS_CAMPAIGN_NOTE"
+                        },
+                        "MAL_ROYALGUARD_DISTR_MASS_CAMP": {
+                            "code": "MAL_WMR_MASS_CAMPAIGN_NOTE"
+                        }
+                    },
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -2,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 6.3
+                    },
+                    "toggle": {
+                        "code": "MAL_IS_MASS_NET_DIST_CARRYD_OUT",
+                        "condition": "true",
+                        "type": "dataElementExternal"
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_INTERVENTIONS_ITN_ROUTINE_DISTR": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -2,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 6.4
+                    },
+                    "texts": {
+                        "footer": {
+                            "code": "MAL_WMR_INTERVENTIONS_SEC_FOOTNOTE"
+                        }
+                    },
+                    "toggle": {
+                        "code": "MAL_IS_ROUTINE_NET_DIST_CARRYD_OUT",
+                        "condition": "true",
+                        "type": "dataElementExternal"
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_INTERVENTIONS_SEC": {
+                    "tabs": {
+                        "active": true,
+                        "order": 6.1
+                    },
+                    "viewType": "grid"
+                },
+                "MAL_WMR_ITN_SEC": {
+                    "tabs": {
+                        "active": true,
+                        "order": 6.2
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-ITN-SEC-SUBTITLE"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_LAB": {
+                    "columnsDescriptions": {
+                        "MAL_CO_COMB": {
+                            "code": "MAL_WMR_LBL_COMBINED_NOTE"
+                        },
+                        "MAL_CO_COMM": {
+                            "code": "MAL_WMR_LBL_COMMUNITY_NOTE"
+                        },
+                        "MAL_CO_PRIV": {
+                            "code": "MAL_WMR_LBL_PRIVATE_NOTE"
+                        },
+                        "MAL_CO_PUB": {
+                            "code": "MAL_WMR_LBL_PUBLIC_NOTE"
+                        }
+                    },
+                    "groupDescriptions": {
+                        "MAL_CASES_TEST_MICR": {
+                            "code": "MAL_WMR_CASES_TEST_MICR_NOTE"
+                        },
+                        "MAL_CASES_TEST_RDT": {
+                            "code": "MAL_WMR_CASES_TEST_RDT_NOTE"
+                        },
+                        "MAL_SUSP_MAL_CASES": {
+                            "code": "MAL_WMR_SUSPECTED_MAL_CASES_NOTE"
+                        }
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "title": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "totals": {
+                            "backgroundColor": "#01bff080"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.27
+                    },
+                    "texts": {
+                        "rowTotals": {
+                            "code": "MAL_WMR_LABORATORY_TOTAL_COLUMN"
+                        }
+                    },
+                    "totals": {
+                        "MAL_WMR_TOTAL_LABORATORY_POSITIVES": {
+                            "dataElementsCodes": ["MAL_CASES_POS_MICR", "MAL_CASES_POS_RDT"],
+                            "formula": "<%= MAL_CASES_POS_RDT+MAL_CASES_POS_MICR %>",
+                            "texts": {
+                                "code": "MAL_WMR_TOTAL_LABORATORY_POSITIVES"
+                            }
+                        },
+                        "MAL_WMR_TOTAL_LABORATORY_POSITIVE_CORRECTED": {
+                            "dataElementsCodes": [
+                                "MAL_CASES_POS_MICR",
+                                "MAL_CASES_POS_RDT",
+                                "MAL_MICR_RDT_DOUBLE_COUNT_POS"
+                            ],
+                            "formula": "<%= MAL_CASES_POS_RDT+MAL_CASES_POS_MICR-MAL_MICR_RDT_DOUBLE_COUNT_POS%>",
+                            "texts": {
+                                "code": "MAL_WMR_TOTAL_LABORATORY_POSITIVE_CORRECTED"
+                            }
+                        }
+                    },
+                    "viewType": "grid-with-cat-option-combos"
+                },
+                "MAL_WMR_LAB_DBL_COUNT_GRID": {
+                    "columnsDescriptions": {
+                        "MAL_CO_COMB": {
+                            "code": "MAL_WMR_LBL_COMBINED_NOTE"
+                        },
+                        "MAL_CO_COMM": {
+                            "code": "MAL_WMR_LBL_COMMUNITY_NOTE"
+                        },
+                        "MAL_CO_PRIV": {
+                            "code": "MAL_WMR_LBL_PRIVATE_NOTE"
+                        },
+                        "MAL_CO_PUB": {
+                            "code": "MAL_WMR_LBL_PUBLIC_NOTE"
+                        }
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "title": {
+                            "backgroundColor": "#4caf501a"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.25
+                    },
+                    "texts": {
+                        "rowTotals": {
+                            "code": "MAL_WMR_LABORATORY_TOTAL_COLUMN"
+                        }
+                    },
+                    "toggleMultiple": {
+                        "conditions": [
+                            {
+                                "condition": "true",
+                                "dataElement": "MAL_MICRDTDOUBLECOUNTFIGURESKNOWNCOMB"
+                            },
+                            {
+                                "condition": "true",
+                                "dataElement": "MAL_MICR_RDT_DOUBLE_COMB"
+                            }
+                        ],
+                        "logicalOperator": "AND"
+                    },
+                    "viewType": "grid-with-cat-option-combos"
+                },
+                "MAL_WMR_LAB_DBL_COUNT_QUEST": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "title": {
+                            "backgroundColor": "#4caf501a"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.24
+                    },
+                    "toggle": {
+                        "code": "MAL_MICR_RDT_DOUBLE_COMB",
+                        "condition": "true",
+                        "type": "dataElementExternal"
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_LAB_INIT": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "title": {
+                            "backgroundColor": "#4caf501a"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.23
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_LAB_SEC": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#4caf501a"
+                        },
+                        "title": {
+                            "backgroundColor": "#4caf501a"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.22
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_OPD_PRES_AGE_SEX": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "title": {
+                            "backgroundColor": "#00ff9f1a"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.17
+                    },
+                    "toggle": {
+                        "code": "MAL_DO_YOU_HAVE_PRES_CASES",
+                        "condition": "true",
+                        "type": "dataElementExternal"
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_OPD_PRES_HS": {
+                    "columnsDescriptions": {
+                        "MAL_CO_COMB": {
+                            "code": "MAL_WMR_LBL_COMBINED_NOTE"
+                        },
+                        "MAL_CO_COMM": {
+                            "code": "MAL_WMR_LBL_COMMUNITY_NOTE"
+                        },
+                        "MAL_CO_PRIV": {
+                            "code": "MAL_WMR_LBL_PRIVATE_NOTE"
+                        },
+                        "MAL_CO_PUB": {
+                            "code": "MAL_WMR_LBL_PUBLIC_NOTE"
+                        }
+                    },
+                    "groupDescriptions": {
+                        "MAL_CASES_PRES_TOTAL": {
+                            "code": "MAL_WMR_PRESUMED_NOTE"
+                        }
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "title": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "totals": {
+                            "backgroundColor": "#00bff080"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.16
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-PRESUMED-SEC-SUBTITLE"
+                        },
+                        "rowTotals": {
+                            "code": "MAL_WMR_LABORATORY_TOTAL_COLUMN"
+                        }
+                    },
+                    "toggle": {
+                        "code": "MAL_DO_YOU_HAVE_PRES_CASES",
+                        "condition": "true",
+                        "type": "dataElement"
+                    },
+                    "viewType": "grid-with-cat-option-combos"
+                },
+                "MAL_WMR_OPD_REMARKS": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#ffffff"
+                        },
+                        "rows": {
+                            "backgroundColor": "#ffffff"
+                        },
+                        "title": {
+                            "backgroundColor": "#ffffff"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.292
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_OTHER_QUESTIONS_IPT": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -1,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 7.2
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_OTHER_QUESTIONS_MDA": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": -1,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 7.3
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_MDA_NOTE"
+                        }
+                    },
+                    "toggle": {
+                        "code": "MAL_MDA_CARRIED_OUT",
+                        "type": "dataElement"
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_PAR_REMARKS": {
+                    "tabs": {
+                        "active": true,
+                        "order": 8.3
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_POPULATION_RISK": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#ffffff"
+                        },
+                        "rows": {
+                            "backgroundColor": "#EBEFFF"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 8.1
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_POP_COVERED_FUNDING_MAL_CONTROL": {
+                    "tabs": {
+                        "active": true,
+                        "order": 8.2
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT1": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 0.15
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_1"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT10": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 9.3
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_10"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT11": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 10.3
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_11"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT12": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 11.2
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_12"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT2": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 1.5
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_2"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT3": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.293
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_3"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT4": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 3.5
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_4"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT5": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 4.5
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_5"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT6": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 5.6
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_6"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT7": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 6.8
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_7"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT8": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 7.3
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_8"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_PROGRESS_FT9": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#8bf7f4"
+                        },
+                        "rows": {
+                            "backgroundColor": "#8bf7f4"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 8.4
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL_WMR_LBL_PROGRESS_NOTE_9"
+                        }
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_RDT_DIAG_TEST": {
+                    "tabs": {
+                        "active": true,
+                        "order": 5.3
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_RDT_PRODUCT_TYPE": {
+                    "periods": {
+                        "endOffset": 0,
+                        "startOffset": 0,
+                        "type": "relative-interval"
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 5.4
+                    },
+                    "viewType": "grid-with-periods"
+                },
+                "MAL_WMR_REPORTING_HS": {
+                    "tabs": {
+                        "active": true,
+                        "order": 2.11
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_REP_COMP_EST": {
+                    "tabs": {
+                        "active": true,
+                        "order": 4.2
+                    },
+                    "viewType": "grid"
+                },
+                "MAL_WMR_REP_COMP_MISSING_RPTS": {
+                    "tabs": {
+                        "active": true,
+                        "order": 4.3
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_REP_COMP_PVT": {
+                    "tabs": {
+                        "active": true,
+                        "order": 4.4
+                    },
+                    "toggle": {
+                        "code": "MAL_IS_PRO_PVT_HF_DIAG_OR_TRT_RPT_TO_NAT_KNOWN",
+                        "condition": "true",
+                        "type": "dataElement"
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_REP_COMP_REPORT": {
+                    "tabs": {
+                        "active": true,
+                        "order": 4.1
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-COMP-OUTPATIENT-REPORT-IMAGE"
+                        },
+                        "totals": {
+                            "code": "MAL_WMR_LBL_REPORTING_COMPLETENESS_AND_CALC"
+                        }
+                    },
+                    "totals": {
+                        "dataElementsCodes": [
+                            "MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_COMM",
+                            "MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_PRIV",
+                            "MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_PUB",
+                            "MAL_TOTAL_RPT_RECEVD",
+                            "MAL_TOTAL_RPT_RECEVD_COMM",
+                            "MAL_TOTAL_RPT_RECEVD_PRIV"
+                        ],
+                        "formulas": {
+                            "Community based": {
+                                "formula": "<%= Math.round((MAL_TOTAL_RPT_RECEVD_COMM/MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_COMM)*100) %>",
+                                "rules": {
+                                    "condition": "< 80",
+                                    "sectionCodes": ["MAL_WMR_REP_COMP_MISSING_RPTS"]
+                                },
+                                "type": "sections"
+                            },
+                            "Private Sector": {
+                                "formula": "<%= Math.round((MAL_TOTAL_RPT_RECEVD_PRIV/MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_PRIV)*100) %>",
+                                "rules": {
+                                    "condition": "< 80",
+                                    "sectionCodes": ["MAL_WMR_REP_COMP_MISSING_RPTS"]
+                                },
+                                "type": "sections"
+                            },
+                            "Public Sector": {
+                                "formula": "<%= Math.round((MAL_TOTAL_RPT_RECEVD/MAL_TOTAL_HF_EXPCTD_RPT_EACH_YEAR_PUB)*100) %>",
+                                "rules": {
+                                    "condition": "< 80",
+                                    "sectionCodes": ["MAL_WMR_REP_COMP_MISSING_RPTS"]
+                                },
+                                "type": "sections"
+                            }
+                        }
+                    },
+                    "viewType": "grid"
+                },
+                "MAL_WMR_REP_COMP_RMRK": {
+                    "tabs": {
+                        "active": true,
+                        "order": 4.5
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_SN_DF": {
+                    "tabs": {
+                        "active": true,
+                        "order": 1.1
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_SPENDING_REMARKS": {
+                    "tabs": {
+                        "active": true,
+                        "order": 10.2
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_TOTAL_CASES_AGE_SEX": {
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "title": {
+                            "backgroundColor": "#00ff9f1a"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.13
+                    },
+                    "viewType": "table"
+                },
+                "MAL_WMR_TOTAL_CASES_HS": {
+                    "columnsDescriptions": {
+                        "MAL_CO_COMB": {
+                            "code": "MAL_WMR_LBL_COMBINED_NOTE"
+                        },
+                        "MAL_CO_COMM": {
+                            "code": "MAL_WMR_LBL_COMMUNITY_NOTE"
+                        },
+                        "MAL_CO_PRIV": {
+                            "code": "MAL_WMR_LBL_PRIVATE_NOTE"
+                        },
+                        "MAL_CO_PUB": {
+                            "code": "MAL_WMR_LBL_PUBLIC_NOTE"
+                        }
+                    },
+                    "groupDescriptions": {
+                        "MAL_CASES_PRES_CONF": {
+                            "code": "MAL_CASES_PRES_CONF_NOTE"
+                        }
+                    },
+                    "styles": {
+                        "columns": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "rows": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "title": {
+                            "backgroundColor": "#00ff9f1a"
+                        },
+                        "totals": {
+                            "backgroundColor": "#00bff080"
+                        }
+                    },
+                    "tabs": {
+                        "active": true,
+                        "order": 2.12
+                    },
+                    "texts": {
+                        "header": {
+                            "code": "MAL-WMR-OUTPATIENT-NOTE"
+                        },
+                        "rowTotals": {
+                            "code": "MAL_WMR_LABORATORY_TOTAL_COLUMN"
+                        }
+                    },
+                    "viewType": "grid-with-cat-option-combos"
+                }
+            }
+        }
+    }
+}

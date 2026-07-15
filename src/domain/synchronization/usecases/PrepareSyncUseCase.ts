@@ -6,13 +6,18 @@ import { UseCase } from "../../common/entities/UseCase";
 import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
+import { UserRepository } from "../../user/repositories/UserRepository";
 import { SynchronizationBuilder } from "../entities/SynchronizationBuilder";
 import { SynchronizationType } from "../entities/SynchronizationType";
 
 export type PrepareSyncError = "PULL_REQUEST" | "PULL_REQUEST_RESPONSIBLE" | "INSTANCE_NOT_FOUND" | "NOT_AUTHORIZED";
 
 export class PrepareSyncUseCase implements UseCase {
-    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private userRepository: UserRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(
         type: SynchronizationType,
@@ -64,13 +69,13 @@ export class PrepareSyncUseCase implements UseCase {
     }
 
     private async getCurrentUser() {
-        return this.repositoryFactory.userRepository(this.localInstance).getCurrent();
+        return this.userRepository.getCurrent();
     }
 
     private async userHasPermissionsToExecute(targetInstances: string[]): Promise<boolean> {
         const result = await promiseMap(targetInstances, id => this.getInstanceById(id));
         const instances = _.compact(result.map(either => either.value.data));
-        const currentUser = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
+        const currentUser = await this.getCurrentUser();
 
         return _.every(instances, instance => instance.hasPermissions("read", currentUser));
     }

@@ -2,6 +2,7 @@ import moment, { Moment } from "moment";
 import _ from "lodash";
 import { availablePeriods } from "../../utils/synchronization";
 import { DataSynchronizationParams } from "./entities/DataSynchronizationParams";
+import { DataSyncAggregation } from "./entities/DataSyncAggregation";
 
 /* For a map of relationships (child -> parent[]), return the minimum array of parents
    that include all of the children.
@@ -75,4 +76,31 @@ export function buildPeriodFromParams(params: Pick<DataSynchronizationParams, "p
         startDate: moment().subtract(startAmount, startType).startOf(startType),
         endDate: moment().subtract(endAmount, endType).endOf(endType),
     };
+}
+
+export const aggregations = {
+    DAILY: { format: "YYYYMMDD", unit: "days" as const, amount: 1 },
+    WEEKLY: { format: "GGGG[W]W", unit: "weeks" as const, amount: 1 },
+    MONTHLY: { format: "YYYYMM", unit: "months" as const, amount: 1 },
+    QUARTERLY: { format: "YYYY[Q]Q", unit: "quarters" as const, amount: 1 },
+    YEARLY: { format: "YYYY", unit: "years" as const, amount: 1 },
+};
+
+export function buildPeriodsForAggregation(
+    aggregationType: DataSyncAggregation | undefined,
+    startDate: Moment,
+    endDate: Moment
+): string[] {
+    if (!aggregationType) return [];
+    const { format, unit, amount } = aggregations[aggregationType];
+
+    const current = startDate.clone();
+    const periods = [];
+
+    while (current.isSameOrBefore(endDate)) {
+        periods.push(current.format(format));
+        current.add(amount, unit);
+    }
+
+    return periods;
 }

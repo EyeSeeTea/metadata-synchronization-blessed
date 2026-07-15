@@ -1,7 +1,8 @@
 import React, { Suspense } from "react";
+import { config } from "../utils/Config";
 
 const App = React.lazy(() => {
-    switch (process.env.REACT_APP_PRESENTATION_TYPE) {
+    switch (config.presentationType) {
         case "widget": {
             return import("./widget/WidgetApp");
         }

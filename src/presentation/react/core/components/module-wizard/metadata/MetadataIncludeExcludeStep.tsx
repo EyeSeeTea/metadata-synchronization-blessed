@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { D2SchemaProperties } from "@eyeseetea/d2-api/schemas";
+import { D2SchemaProperties, getApiModel } from "../../../../../../types/d2-api";
 import { MultiSelector } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -30,7 +30,7 @@ export const MetadataIncludeExcludeStep: React.FC<ModuleWizardStepProps<Metadata
             });
 
             const options = models
-                .map((model: typeof D2Model) => api.models[model.getCollectionName()].schema)
+                .map((model: typeof D2Model) => getApiModel(api, model.getCollectionName()).schema)
                 .map((schema: D2SchemaProperties) => ({
                     name: schema.displayName,
                     id: schema.name,

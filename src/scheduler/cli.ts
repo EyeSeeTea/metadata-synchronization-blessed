@@ -80,8 +80,7 @@ const start = async (config: SchedulerConfig, logger: LoggerLog4js): Promise<voi
             username,
             password,
             version,
-        }),
-        encryptionKey
+        })
     );
 
     await checkMigrations(compositionRoot).toPromise();

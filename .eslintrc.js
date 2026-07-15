@@ -1,20 +1,25 @@
-/** @format */
+const reactAppConfig = require("eslint-config-react-app");
+
+const reactAppRestrictedGlobals = reactAppConfig.rules["no-restricted-globals"] || [];
+// Override no-restricted-globals to exclude 'name'. Review this rule if causes new issues
+const restrictedGlobals = reactAppRestrictedGlobals.filter(global => global !== "name");
 
 module.exports = {
-    extends: [
-        "react-app",
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:cypress/recommended",
-        "plugin:@typescript-eslint/recommended",
-    ],
+    extends: ["react-app"],
     parser: "@typescript-eslint/parser",
+    ignorePatterns: ["src/**/snapshots/*.ts", ".eslintrc.js"],
     rules: {
         "no-console": ["warn", { allow: ["debug", "warn", "error"] }],
         "@typescript-eslint/camelcase": "off",
-        "@typescript-eslint/explicit-function-return-type": ["off"],
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+                argsIgnorePattern: "^_",
+                varsIgnorePattern: "^_",
+            },
+        ],
         "unused-imports/no-unused-imports": "warn",
-        "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
         "react/prop-types": "off",
         "react/display-name": "off",
         "react/react-in-jsx-scope": "off",
@@ -35,20 +40,28 @@ module.exports = {
         "@typescript-eslint/indent": "off",
         "@typescript-eslint/member-delimiter-style": "off",
         "@typescript-eslint/type-annotation-spacing": "off",
-        "@typescript-eslint/explicit-function-return-type": "off",
         "no-use-before-define": "off",
         "no-debugger": "warn",
         "no-extra-semi": "off",
         "no-mixed-spaces-and-tabs": "off",
+        "no-useless-rename": "off",
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
+        "testing-library/await-async-query": "off",
+        "testing-library/no-await-sync-query": "off",
+        "testing-library/prefer-screen-queries": "off",
+        "testing-library/no-debugging-utils": "off",
+        "testing-library/no-dom-import": "off",
+        "no-restricted-globals": restrictedGlobals,
     },
-    plugins: ["cypress", "@typescript-eslint", "react-hooks", "unused-imports"],
-    env: { "cypress/globals": true },
+    plugins: ["unused-imports"],
+    parserOptions: {
+        project: "./tsconfig.json",
+    },
     settings: {
         react: {
             pragma: "React",
-            version: "16.6.0",
+            version: "17.0.2",
         },
     },
 };

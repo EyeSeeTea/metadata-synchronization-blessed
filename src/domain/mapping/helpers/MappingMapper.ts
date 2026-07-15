@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { modelFactory } from "../../../models/dhis/factory";
-import { D2Api } from "../../../types/d2-api";
+import { D2Api, getApiModel } from "../../../types/d2-api";
 import { Expression, ExpressionParser, ExpressionType } from "../../../utils/expressionParser";
 import { mapCategoryOptionCombo } from "../../../utils/synchronization";
 import { Ref } from "../../common/entities/Ref";
@@ -27,7 +27,7 @@ export class MappingMapper {
     public applyMapping(payload: MetadataPackage) {
         return _.mapValues(payload, (items, model) => {
             const collectionName = modelFactory(model).getCollectionName();
-            const properties = _.keyBy(this.api.models[collectionName]?.schema.properties, "fieldName");
+            const properties = _.keyBy(getApiModel(this.api, collectionName)?.schema.properties, "fieldName");
 
             return items?.map((object: any) => {
                 if (typeof object !== "object") return object;
@@ -126,7 +126,8 @@ export class MappingMapper {
                         expression.categoryOptionCombo,
                         [innerMapping, this.mapping],
                         this.originCategoryOptionCombos,
-                        this.destinationCategoryOptionCombos
+                        this.destinationCategoryOptionCombos,
+                        false
                     ) ?? expression.categoryOptionCombo;
 
                 const attributeOptionCombo =
@@ -134,7 +135,8 @@ export class MappingMapper {
                         expression.attributeOptionCombo,
                         [innerMapping, this.mapping],
                         this.originCategoryOptionCombos,
-                        this.destinationCategoryOptionCombos
+                        this.destinationCategoryOptionCombos,
+                        true
                     ) ?? expression.attributeOptionCombo;
 
                 return {

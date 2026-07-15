@@ -108,10 +108,20 @@ export abstract class GenericMappingUseCase {
             this.getCategoryOptions(destinationItem)
         );
 
+        // The "default" combo has a different UID per instance, so it never matches by UID/code/name.
+        // Fall back to the destination default (not EXCLUDED_KEY) to avoid a false mapping conflict.
         const categoryOptionCombos = await this.autoMapCollection(
             destinationInstance,
             this.getCategoryOptionCombos(originMetadata, defaultOriginCategoryOptionCombo[0]),
-            this.getCategoryOptionCombos(destinationItem, defaultDestinationCategoryOptionCombo[0])
+            this.getCategoryOptionCombos(destinationItem, defaultDestinationCategoryOptionCombo[0]),
+            defaultDestinationCategoryOptionCombo[0]
+        );
+
+        const attributeOptionCombos = await this.autoMapCollection(
+            destinationInstance,
+            this.getAttributeOptionCombos(originMetadata, defaultOriginCategoryOptionCombo[0]),
+            this.getAttributeOptionCombos(destinationItem, defaultDestinationCategoryOptionCombo[0]),
+            defaultDestinationCategoryOptionCombo[0]
         );
 
         const options =
@@ -131,6 +141,7 @@ export abstract class GenericMappingUseCase {
         const mapping = _.omitBy(
             {
                 categoryOptionCombos,
+                attributeOptionCombos,
                 categoryCombos,
                 categoryOptions,
                 options,
@@ -154,13 +165,21 @@ export abstract class GenericMappingUseCase {
 
         const categoryOptions = this.getCategoryOptions(metadata[0]);
         const categoryOptionCombos = this.getCategoryOptionCombos(metadata[0]);
+        const attributeOptionCombos = this.getAttributeOptionCombos(metadata[0]);
         const options = this.getOptions(metadata[0]);
         const programStages = this.getProgramStages(metadata[0]);
         const programStageDataElements = this.getProgramStageDataElements(metadata[0]);
 
         const defaultValues = await this.repositoryFactory.metadataRepository(instance).getDefaultIds();
 
-        return _.union(categoryOptions, categoryOptionCombos, options, programStages, programStageDataElements)
+        return _.union(
+            categoryOptions,
+            categoryOptionCombos,
+            attributeOptionCombos,
+            options,
+            programStages,
+            programStageDataElements
+        )
             .map(({ id }) => id)
             .concat(...defaultValues)
             .map(cleanNestedMappedId);
@@ -238,7 +257,8 @@ export abstract class GenericMappingUseCase {
     protected async autoMapCollection(
         destinationInstance: DataSource,
         originMetadata: CombinedMetadata[],
-        destinationMetadata: CombinedMetadata[]
+        destinationMetadata: CombinedMetadata[],
+        defaultValue: string = EXCLUDED_KEY
     ) {
         if (originMetadata.length === 0) return {};
         const filter = _.compact(destinationMetadata.map(({ id }) => cleanNestedMappedId(id)));
@@ -251,7 +271,7 @@ export abstract class GenericMappingUseCase {
             const [candidate] = await this.autoMap({
                 destinationInstance,
                 selectedItem: { ...item, id: cleanNestedMappedId(item.id) },
-                defaultValue: EXCLUDED_KEY,
+                defaultValue,
                 filter,
             });
             if (item.id && candidate) {
@@ -355,6 +375,26 @@ export abstract class GenericMappingUseCase {
         }
     }
 
+    protected getAttributeOptionCombos(object: CombinedMetadata, defaultAoc = "default"): CombinedMetadata[] {
+        switch (object.model) {
+            case "indicators":
+            case "programIndicators": {
+                const { aggregateExportAttributeOptionCombo = defaultAoc } = object;
+                return [
+                    {
+                        id: defaultAoc,
+                        model: "categoryOptionCombos",
+                        name: "",
+                        aggregateExportAttributeOptionCombo: _.last(aggregateExportAttributeOptionCombo.split(".")),
+                    },
+                ];
+            }
+            default: {
+                return [];
+            }
+        }
+    }
+
     protected getProgramStageDataElements(object: CombinedMetadata) {
         const dataElementsOption1 = _.compact(
             _.flatten(
@@ -421,6 +461,7 @@ interface CombinedMetadata {
         }[];
     }[];
     aggregateExportCategoryOptionCombo?: string;
+    aggregateExportAttributeOptionCombo?: string;
     programStageDataElements?: {
         dataElement: {
             id: string;
@@ -446,6 +487,7 @@ const fields = {
         categoryOptionCombos: { id: true, name: true },
     },
     aggregateExportCategoryOptionCombo: true,
+    aggregateExportAttributeOptionCombo: true,
     optionSet: { options: { id: true, name: true, shortName: true, code: true } },
     commentOptionSet: {
         options: { id: true, name: true, shortName: true, code: true },

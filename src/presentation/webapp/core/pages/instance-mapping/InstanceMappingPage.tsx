@@ -1,6 +1,7 @@
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { Id } from "../../../../../domain/common/entities/Schemas";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import { DataSourceMapping } from "../../../../../domain/mapping/entities/DataSourceMapping";
 import { MetadataMapping, MetadataMappingDictionary } from "../../../../../domain/mapping/entities/MetadataMapping";
@@ -72,11 +73,32 @@ interface InstanceMappingParams {
     section: MappingType;
 }
 
-export default function InstanceMappingPage() {
+export type InstanceMappingProps = {
+    instanceId?: string;
+    section?: MappingType;
+    showHeader?: boolean;
+    filterRows?: Id[];
+    filterMappingIds?: Id[];
+    /**
+     * If true, only Ids from filterMappingIds will be allowed to be auto-mapped.
+     */
+    applyFilterMappingIdsToAutoMap?: boolean;
+};
+
+export function useDefaultParams(props: InstanceMappingProps): InstanceMappingParams {
+    const { id, section } = useParams() as InstanceMappingParams;
+    return {
+        id: id ?? props.instanceId ?? "LOCAL",
+        section: section ?? props.section ?? "aggregated",
+    };
+}
+
+export default function InstanceMappingPage(props: InstanceMappingProps) {
+    const { showHeader = true } = props;
     const { compositionRoot } = useAppContext();
     const history = useHistory();
 
-    const { id, section } = useParams() as InstanceMappingParams;
+    const { id, section } = useDefaultParams(props);
     const { models, title: sectionTitle } = config[section];
 
     const [dataSourceMapping, setDataSourceMapping] = useState<DataSourceMapping>();
@@ -131,7 +153,7 @@ export default function InstanceMappingPage() {
 
     return (
         <React.Fragment>
-            <PageHeader title={title} onBackClick={backHome} />
+            {showHeader && <PageHeader title={title} onBackClick={backHome} />}
 
             {instance && dataSourceMapping && (
                 <MappingTable
@@ -141,6 +163,9 @@ export default function InstanceMappingPage() {
                     globalMapping={dataSourceMapping.mappingDictionary}
                     onChangeMapping={onChangeMapping}
                     onApplyGlobalMapping={onApplyGlobalMapping}
+                    filterRows={props.filterRows}
+                    filterMappingIds={props.filterMappingIds}
+                    applyFilterMappingIdsToAutoMap={props.applyFilterMappingIdsToAutoMap}
                 />
             )}
         </React.Fragment>

@@ -16,6 +16,7 @@ export interface ProgramEvent {
     attributeOptionCombo?: string;
     dataValues: ProgramEventDataValue[];
     event?: string;
+    trackedEntity?: string;
 }
 
 export type EventStatus = "ACTIVE" | "COMPLETED" | "VISITED" | "SCHEDULE" | "OVERDUE" | "SKIPPED";

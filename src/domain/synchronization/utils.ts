@@ -46,3 +46,15 @@ export function cleanOrgUnitPath(orgUnitPath?: string): string {
 export function cleanOrgUnitPaths(orgUnitPaths: string[]): string[] {
     return orgUnitPaths.map(cleanOrgUnitPath);
 }
+
+export function isEmptyContent(content: unknown): boolean {
+    if (!content || typeof content !== "object") return true;
+
+    return Object.values(content).every(
+        value =>
+            value === undefined ||
+            value === null ||
+            (Array.isArray(value) && value.length === 0) ||
+            (typeof value === "object" && Object.keys(value).length === 0)
+    );
+}

@@ -1,4 +1,4 @@
-import { Ref } from "@eyeseetea/d2-api";
+import { Ref } from "../../../types/d2-api";
 
 /**
  * Models to use by EventsPayloadMapper

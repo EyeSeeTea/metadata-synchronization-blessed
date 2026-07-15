@@ -86,9 +86,8 @@ export const executeRule = async (props: ExecuteRuleProps) => {
 
 function getSynchronizationResultStats(result: SynchronizationResult): SynchronizationStats[] {
     const typeStats = result.typeStats || [];
-    const { payload } = result;
-    const isEvents = payload && "events" in payload;
-    const isTeis = payload && "trackedEntityInstances" in payload;
+    const isEvents = result.type === "events";
+    const isTeis = result.type === "trackedEntityInstances";
 
     const type = isEvents
         ? i18n.t("Consultations and Surgery (Events)")

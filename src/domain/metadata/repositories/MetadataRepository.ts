@@ -1,18 +1,30 @@
-import { FilterValueOperator } from "@eyeseetea/d2-api/api/common";
+import { FilterValueOperator } from "../../../types/d2-api";
 import { IdentifiableRef, Ref } from "../../common/entities/Ref";
 import { Id } from "../../common/entities/Schemas";
 import { SynchronizationResult } from "../../reports/entities/SynchronizationResult";
 import { FilterRule } from "../entities/FilterRule";
-import { CategoryOptionCombo, MetadataEntities, MetadataEntity, MetadataPackage } from "../entities/MetadataEntities";
+import {
+    CategoryOptionCombo,
+    MetadataEntities,
+    MetadataEntity,
+    MetadataPackage,
+    OrganisationUnit,
+} from "../entities/MetadataEntities";
 import { MetadataImportParams } from "../entities/MetadataSynchronizationParams";
 
 export interface MetadataRepository {
-    getMetadataByIds<T>(ids: Id[], fields?: object | string, includeDefaults?: boolean): Promise<MetadataPackage<T>>;
+    getMetadataByIds<T>(
+        ids: Id[],
+        fields?: object | string,
+        includeDefaults?: boolean,
+        preserveNestedDefaultRefs?: boolean
+    ): Promise<MetadataPackage<T>>;
     getByFilterRules(filterRules: FilterRule[]): Promise<Id[]>;
     getDefaultIds(filter?: string): Promise<string[]>;
     getCategoryOptionCombos(): Promise<
         Pick<CategoryOptionCombo, "id" | "name" | "categoryCombo" | "categoryOptions">[]
     >;
+    getOrgUnitRoots(): Promise<Pick<OrganisationUnit, "id" | "name" | "displayName" | "path">[]>;
 
     listMetadata(params: ListMetadataParams): Promise<ListMetadataResponse>;
     listAllMetadata(params: ListMetadataParams): Promise<MetadataEntity[]>;
@@ -47,6 +59,7 @@ export interface ListMetadataParams {
     rootJunction?: "AND" | "OR";
     programType?: "WITHOUT_REGISTRATION" | "WITH_REGISTRATION";
     childrenPropInList?: { prop: string; values: string[] };
+    categoryComboDataDimensionType?: string;
 }
 
 export interface ListMetadataResponse {

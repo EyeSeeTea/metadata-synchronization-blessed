@@ -55,6 +55,12 @@ export class CategoryOptionComboMappedModel extends CategoryOptionComboModel {
     protected static mappingType = "categoryOptionCombos";
 }
 
+export class AttributeOptionComboMappedModel extends CategoryOptionComboModel {
+    protected static mappingType = "attributeOptionCombos";
+
+    protected static modelFilters = { categoryComboDataDimensionType: "ATTRIBUTE" };
+}
+
 export class IndicatorMappedModel extends IndicatorModel {
     protected static fields = indicatorFields;
     protected static mappingType = "aggregatedDataElements";
@@ -83,9 +89,20 @@ export class ProgramIndicatorMappedModel extends ProgramIndicatorModel {
     protected static modelFilters: any = { programType: undefined };
 
     protected static modelTransform = (objects: SelectedPick<D2ProgramIndicatorSchema, typeof indicatorFields>[]) => {
-        return _.map(objects, ({ aggregateExportCategoryOptionCombo = "default", ...rest }) => {
-            return { ...rest, aggregateExportCategoryOptionCombo };
-        });
+        return _.map(
+            objects,
+            ({
+                aggregateExportCategoryOptionCombo = "default",
+                aggregateExportAttributeOptionCombo = "default",
+                ...rest
+            }) => {
+                return {
+                    ...rest,
+                    aggregateExportCategoryOptionCombo,
+                    aggregateExportAttributeOptionCombo,
+                };
+            }
+        );
     };
 }
 
@@ -300,6 +317,7 @@ export class EventProgramWithIndicatorsModel extends EventProgramModel {
 
 export class DataElementFromTEIMappedModel extends DataElementModel {
     protected static metadataType = "trackedEntityAttributesToDE";
+    protected static mappingType = "trackedEntityAttributesToDE";
 }
 
 export class TrackedEntityAttributeToTEIMappedModel extends TrackedEntityAttributeModel {

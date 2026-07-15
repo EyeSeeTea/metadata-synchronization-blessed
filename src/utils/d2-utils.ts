@@ -8,7 +8,19 @@ export function getMajorVersion(version: string): number {
     return Number(apiVersion);
 }
 
-export function getD2APiFromInstance(instance: Instance) {
+export function removeTrailingSlash(url: string): string {
+    return url.replace(/\/+$/, "");
+}
+
+export function getD2ApiBaseUrl(localInstance: Instance, targetInstance?: Instance): string {
+    const localUrl = removeTrailingSlash(localInstance.url);
+
+    return targetInstance === undefined || localInstance.id === targetInstance.id
+        ? localUrl
+        : `${localUrl}/api/routes/${targetInstance.id}/run/`;
+}
+
+export function getD2APiFromInstance(localInstance: Instance, targetInstance?: Instance): D2Api {
     /*
     Problem: If we use Axios (XMLHttpRequest.withCredentials option), the session is lost when
     connecting to an instance in the same domain (even with a different path prefix or port).
@@ -20,5 +32,8 @@ export function getD2APiFromInstance(instance: Instance) {
     https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
     https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials
     */
-    return new D2Api({ baseUrl: instance.url, auth: instance.auth, backend: "fetch" });
+
+    const url = getD2ApiBaseUrl(localInstance, targetInstance);
+
+    return new D2Api({ baseUrl: url, auth: localInstance.auth, backend: "fetch" });
 }

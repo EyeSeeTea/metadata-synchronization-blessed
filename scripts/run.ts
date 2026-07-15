@@ -1,53 +1,18 @@
-import { execSync } from "child_process";
+import { execSync, spawn } from "child_process";
 import yargs, { Argv } from "yargs";
-import { ArrayElementType } from "../src/types/utils";
-import fs from "fs";
+import * as fs from "node:fs";
+import { setupVariantAssets, cleanupVariantAssets } from "./helpers/variant-assets";
+import { VariantKeys, variants } from "./variants";
 
 const defaultVariant = "core-app";
-const variants = [
-    {
-        type: "app",
-        name: "core-app",
-        title: "MetaData Synchronization",
-        file: "metadata-synchronization",
-    },
-    {
-        type: "app",
-        name: "data-metadata-app",
-        title: "Data/Metadata Exchange",
-        file: "metadata-synchronization-data-metadata-exchange",
-    },
-    {
-        type: "app",
-        name: "module-package-app",
-        title: "Module/Package Generation",
-        file: "metadata-synchronization-module-package-generation",
-    },
-    {
-        type: "app",
-        name: "msf-aggregate-data-app",
-        title: "MSF Aggregate Data",
-        file: "metadata-synchronization-msf-aggregate-data",
-    },
-    {
-        type: "widget",
-        name: "modules-list",
-        title: "MetaData Synchronization Modules List Widget",
-        file: "metadata-synchronization-widget-modules-list",
-    },
-    {
-        type: "widget",
-        name: "package-exporter",
-        title: "MetaData Synchronization Package Exporter Widget",
-        file: "metadata-synchronization-widget-package-exporter",
-    },
-    {
-        type: "app",
-        name: "sp-emergency-responses",
-        title: "Emergency Responses Sync",
-        file: "emergency-responses-sync",
-    },
-] as const;
+
+function setVariantToEnv(variant: typeof variants[number]) {
+    Object.assign(process.env, {
+        VITE_PRESENTATION_TYPE: variant.type,
+        VITE_PRESENTATION_VARIANT: variant.name,
+        VITE_PRESENTATION_TITLE: variant.title,
+    });
+}
 
 function getYargs(): Argv {
     yargs
@@ -102,6 +67,7 @@ function getYargs(): Argv {
 }
 
 function main() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     getYargs().argv;
 }
 
@@ -112,7 +78,6 @@ function run(cmd: string): void {
 
 /* Build */
 
-type VariantKeys = ArrayElementType<typeof variants>["name"];
 type BuildArgs = { variant: "all" | VariantKeys; verbose: boolean };
 
 function build(args: BuildArgs): void {
@@ -123,29 +88,33 @@ function build(args: BuildArgs): void {
     }
 
     for (const variant of buildVariants) {
-        Object.assign(process.env, {
-            REACT_APP_PRESENTATION_TYPE: variant.type,
-            REACT_APP_PRESENTATION_VARIANT: variant.name,
-            REACT_APP_PRESENTATION_TITLE: variant.title,
-        });
+        setVariantToEnv(variant);
 
         if (args.verbose) {
-            console.info(`Package name: ${variant.name}`);
+            console.debug(`Package name: ${variant.name}`);
         }
 
         const fileName = `${variant.file}.zip`;
         const manifestType = variant.type === "widget" ? "DASHBOARD_WIDGET" : "APP";
 
-        run(`react-scripts build && cp -r i18n icon.png build`);
-        run(`d2-manifest package.json build/manifest.webapp -t ${manifestType} -n '${variant.title}'`);
-        if (variant.file === "metadata-synchronization") {
-            updateManifestJsonFile(`build/manifest.json`, variant.title);
+        setupVariantAssets(variant.name);
+
+        try {
+            run(`yarn build:variant`);
+            run(`d2-manifest package.json build/manifest.webapp -t ${manifestType} -n '${variant.title}'`);
+            if (variant.file === "metadata-synchronization") {
+                updateManifestJsonFile(`build/manifest.json`, variant.title);
+            }
+            updateManifestNamespace(`build/manifest.webapp`, variant.file);
+            run(`rm -f ${fileName}`);
+            run(`cd build && zip -r ../${fileName} *`);
+            console.debug(`Written: ${fileName}`);
+        } finally {
+            cleanupVariantAssets(variant.name);
         }
-        updateManifestNamespace(`build/manifest.webapp`, variant.file);
-        run(`rm -f ${fileName}`);
-        run(`cd build && zip -r ../${fileName} *`);
-        console.info(`Written: ${fileName}`);
     }
+
+    run(`yarn build-scheduler`);
 }
 
 function updateManifestNamespace(manifestPath: string, variantFile: string) {
@@ -166,6 +135,42 @@ function updateManifestJsonFile(manifestJsonPath: string, variantTitle: string) 
 
 /* Start server */
 
+function runDevServer(onExit: () => void) {
+    let serverProcess: ReturnType<typeof spawn> | null = null;
+    let isShuttingDown = false;
+
+    const cleanup = () => {
+        if (isShuttingDown) return;
+        isShuttingDown = true;
+
+        if (serverProcess) {
+            serverProcess.kill("SIGTERM");
+        }
+
+        onExit();
+
+        process.exit(0);
+    };
+
+    process.on("SIGINT", () => cleanup());
+    process.on("SIGTERM", () => cleanup());
+
+    serverProcess = spawn("yarn", ["start:variant"], {
+        stdio: "inherit",
+        env: process.env,
+        shell: true,
+    });
+
+    serverProcess.on("error", error => {
+        console.error("Failed to start server:", error);
+        cleanup();
+    });
+
+    serverProcess.on("exit", () => {
+        cleanup();
+    });
+}
+
 type StartServerArgs = { variant: string; port: number; verbose: boolean };
 
 function startServer(args: StartServerArgs): void {
@@ -176,19 +181,18 @@ function startServer(args: StartServerArgs): void {
     }
 
     if (args.verbose) {
-        console.info(`Variant: ${args.variant}`);
-        console.info(`Start server on: ${args.port}`);
+        console.debug(`Variant: ${args.variant}`);
+        console.debug(`Start server on: ${args.port}`);
     }
 
-    Object.assign(process.env, {
-        REACT_APP_PRESENTATION_TYPE: variant.type,
-        REACT_APP_PRESENTATION_VARIANT: variant.name,
-        REACT_APP_PRESENTATION_TITLE: variant.title,
-        PORT: args.port,
-    });
+    setVariantToEnv(variant);
+    Object.assign(process.env, { PORT: args.port });
 
-    run("yarn localize && d2-manifest package.json manifest.webapp");
-    run("react-scripts start");
+    setupVariantAssets(variant.name);
+
+    runDevServer(() => {
+        cleanupVariantAssets(variant.name);
+    });
 }
 
 main();

@@ -7,7 +7,7 @@ export interface DhisOptions {
 }
 
 export function startDhis(mirageOptions: ServerConfig<AnyModels, AnyFactories> = {}, options: DhisOptions = {}) {
-    const { version = "2.36" } = options;
+    const { version = "2.40" } = options;
 
     const server = new Server({
         namespace: "/api",
@@ -48,7 +48,7 @@ export function startDhis(mirageOptions: ServerConfig<AnyModels, AnyFactories> =
             }));
             this.get("/attributes", async () => ({ attributes: [] }));
             this.get("/constants", async () => ({ constants: [] }));
-            this.get("/me", async () => ({ userCredentials: { username: "test-user" } }));
+            this.get("/me", async () => ({ username: "test-user" }));
             this.get("/me/authorization", async () => []);
             this.get("/userSettings", async () => ({
                 keyDbLocale: "en",

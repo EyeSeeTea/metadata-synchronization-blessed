@@ -1,18 +1,12 @@
-import { Namespace } from "../../../data/storage/Namespaces";
 import { UseCase } from "../../common/entities/UseCase";
-import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
-import { Instance } from "../entities/Instance";
+import { InstanceRepository } from "../repositories/InstanceRepository";
 
 export class DeleteInstanceUseCase implements UseCase {
-    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
+    constructor(private instanceRepository: InstanceRepository) {}
 
-    public async execute(id: string): Promise<boolean> {
-        const storageClient = await this.repositoryFactory
-            .configRepository(this.localInstance)
-            .getStorageClientPromise();
-
+    public async execute(id: string): Promise<Boolean> {
         try {
-            await storageClient.removeObjectInCollection(Namespace.INSTANCES, id);
+            await this.instanceRepository.delete(id);
         } catch (error: any) {
             console.error(error);
             return false;

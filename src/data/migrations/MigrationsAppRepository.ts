@@ -14,8 +14,8 @@ import { StorageClientFactory } from "../config/StorageClientFactory";
 export class MigrationsAppRepository implements MigrationsRepository {
     private d2Api: D2Api;
 
-    constructor(private storageClientFactory: StorageClientFactory, localInstance: Instance) {
-        this.d2Api = getD2APiFromInstance(localInstance);
+    constructor(private storageClientFactory: StorageClientFactory, private localInstance: Instance) {
+        this.d2Api = getD2APiFromInstance(this.localInstance);
     }
 
     public async runMigrations(debug: Debug): Promise<void> {
@@ -44,7 +44,7 @@ export class MigrationsAppRepository implements MigrationsRepository {
             storage,
             debug: console.debug,
             migrations,
-            migrationParams: { d2Api: this.d2Api },
+            migrationParams: { d2Api: this.d2Api, localInstance: this.localInstance },
         });
     }
 
@@ -58,6 +58,7 @@ export class MigrationsAppRepository implements MigrationsRepository {
             save: <T extends object>(key: string, value: T) => storageClient.saveObject<T>(key, value),
             remove: (key: string) => storageClient.removeObject(key),
             listKeys: () => storageClient.listKeys(),
+            getObjectSharing: (key: string) => storageClient.getObjectSharing(key),
         };
     }
 }

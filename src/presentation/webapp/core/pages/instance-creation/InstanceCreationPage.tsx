@@ -1,5 +1,5 @@
 import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Instance } from "../../../../../domain/instance/entities/Instance";
 import i18n from "../../../../../utils/i18n";
@@ -13,7 +13,7 @@ const InstanceCreationPage = () => {
     const history = useHistory();
     const { id, action } = useParams<{ id: string; action: "new" | "edit" }>();
     const location = useLocation<{ instance?: Instance }>();
-    const isEdit = action === "edit" && id;
+    const isEdit = useMemo(() => action === "edit" && id !== undefined, [action, id]);
 
     const [error, setError] = useState<boolean>(false);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -51,6 +51,10 @@ const InstanceCreationPage = () => {
         setInstance(instance);
     }, []);
 
+    const onSaved = useCallback(() => {
+        history.push("/instances");
+    }, [history]);
+
     const title = !isEdit ? i18n.t("New Instance") : i18n.t("Edit Instance");
 
     const cancel = !isEdit ? i18n.t("Cancel Instance Creation") : i18n.t("Cancel Instance Editing");
@@ -67,12 +71,17 @@ const InstanceCreationPage = () => {
                 description={i18n.t("All your changes will be lost. Are you sure?")}
                 saveText={i18n.t("Ok")}
             />
-
             <PageHeader title={title} onBackClick={cancelSave} />
 
-            {instance.type === "dhis" && (
-                <GeneralInfoForm instance={instance} onChange={onChange} cancelAction={cancelSave} />
-            )}
+            <GeneralInfoForm
+                instance={instance}
+                onChange={onChange}
+                cancelAction={cancelSave}
+                testConnectionVisible={isEdit}
+                onSaved={onSaved}
+                showMetadataMapping
+                isEdit={isEdit}
+            />
         </TestWrapper>
     );
 };

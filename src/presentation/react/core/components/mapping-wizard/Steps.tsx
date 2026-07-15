@@ -1,6 +1,7 @@
 import i18n from "../../../../../utils/i18n";
 import { D2Model } from "../../../../../models/dhis/default";
 import {
+    AttributeOptionComboMappedModel,
     CategoryOptionComboMappedModel,
     CategoryOptionMappedModel,
     OptionMappedModel,
@@ -36,6 +37,15 @@ export const buildModelSteps = (type: string): MappingWizardStepBuilder[] => {
                 return !!element.aggregateExportCategoryOptionCombo;
             },
         },
+        attributeOptionCombos: {
+            key: "attribute-option-combos",
+            label: i18n.t("Attribute Option Combos"),
+            component: (props: MappingTableProps) => <MappingTable {...props} />,
+            models: [AttributeOptionComboMappedModel],
+            isVisible: (_type: string, element: MetadataType) => {
+                return !!element.aggregateExportAttributeOptionCombo;
+            },
+        },
         options: {
             key: "options",
             label: i18n.t("Options"),
@@ -60,6 +70,7 @@ export const buildModelSteps = (type: string): MappingWizardStepBuilder[] => {
         aggregatedDataElements: [
             availableSteps.categoryOptions,
             availableSteps.categoryOptionCombos,
+            availableSteps.attributeOptionCombos,
             availableSteps.options,
         ],
         programDataElements: [availableSteps.options],

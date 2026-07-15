@@ -53,22 +53,30 @@ export class AggregatedPayloadMapper implements PayloadMapper {
 
         const dataElementId = dataElement.replace(".", "-");
 
+        // Special scenario: program indicators can return categoryOptionCombo/attributeOptionCombo
+        // in the compound format {dataElement}.{categoryOptionCombo} (from aggregateExportCategoryOptionCombo
+        // / aggregateExportAttributeOptionCombo). The mapping dictionary is keyed by the unpacked id.
+        const realCategoryOptionCombo = _.last(categoryOptionCombo?.split(".")) ?? categoryOptionCombo;
+        const realAttributeOptionCombo = _.last(attributeOptionCombo?.split(".")) ?? attributeOptionCombo;
+
         const mappedOrgUnit = organisationUnits[orgUnit]?.mappedId ?? orgUnit;
         const mappedDataElement = aggregatedDataElements[dataElementId]?.mappedId ?? dataElement;
         const mappedValue = mapOptionValue(value, [innerMapping, globalMapping]);
         const mappedComment = mapOptionValue(comment, [innerMapping, globalMapping]);
         const mappedCategory =
             mapCategoryOptionCombo(
-                categoryOptionCombo,
+                realCategoryOptionCombo,
                 [innerMapping, globalMapping],
                 originCategoryOptionCombos,
-                destinationCategoryOptionCombos
-            ) ?? categoryOptionCombo;
+                destinationCategoryOptionCombos,
+                false
+            ) ?? realCategoryOptionCombo;
         const mappedAttribute = mapCategoryOptionCombo(
-            attributeOptionCombo,
+            realAttributeOptionCombo,
             [innerMapping, globalMapping],
             originCategoryOptionCombos,
-            destinationCategoryOptionCombos
+            destinationCategoryOptionCombos,
+            true
         );
 
         return {

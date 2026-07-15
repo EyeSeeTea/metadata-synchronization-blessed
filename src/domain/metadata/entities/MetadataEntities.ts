@@ -792,6 +792,7 @@ export type DashboardItem = {
     displayName: string;
     eventChart: EventChart;
     eventReport: EventReport;
+    eventVisualization?: EventVisualization;
     externalAccess: boolean;
     favorite: boolean;
     favorites: string[];
@@ -1654,6 +1655,85 @@ export type EventReport = {
     userOrganisationUnitChildren: boolean;
     userOrganisationUnitGrandChildren: boolean;
     value: unknown;
+};
+
+export type EventVisualization = {
+    access: Access;
+    attributeDimensions: unknown[];
+    attributeValues: AttributeValue[];
+    categoryDimensions: CategoryDimension[];
+    categoryOptionGroupSetDimensions: CategoryOptionGroupSetDimension[];
+    code: Id;
+    colSubTotals: boolean;
+    colTotals: boolean;
+    dataElementDimensions: TrackedEntityDataElementDimension[];
+    dataElementGroupSetDimensions: DataElementGroupSetDimension[];
+    dataElementValueDimension: DataElement;
+    fontSize: "LARGE" | "NORMAL" | "SMALL";
+    hideEmptyRows: boolean;
+    hideNaData: boolean;
+    hideSubtitle: boolean;
+    hideTitle: boolean;
+    href: string;
+    id: Id;
+    interpretations: Interpretation[];
+    itemOrganisationUnitGroups: OrganisationUnitGroup[];
+    lastUpdated: string;
+    lastUpdatedBy: User;
+    name: string;
+    orgUnitField: string;
+    organisationUnitGroupSetDimensions: OrganisationUnitGroupSetDimension[];
+    organisationUnitLevels: number[];
+    organisationUnits: OrganisationUnit[];
+    outputType: "EVENT" | "ENROLLMENT" | "TRACKED_ENTITY_INSTANCE";
+    percentStackedValues: boolean;
+    periods: Ref[];
+    program: Program;
+    programIndicatorDimensions: TrackedEntityProgramIndicatorDimension[];
+    programStage: ProgramStage;
+    publicAccess: string;
+    relativePeriods: unknown;
+    rowDimensions: string[];
+    rowSubTotals: boolean;
+    rowTotals: boolean;
+    rows: unknown[];
+    sharing: Sharing;
+    shortName: string;
+    showData: boolean;
+    showDimensionLabels: boolean;
+    showHierarchy: boolean;
+    sortOrder: number;
+    subscribed: boolean;
+    subscribers: string[];
+    subtitle: string;
+    topLimit: number;
+    translations: Translation[];
+    type:
+        | "LINE_LISTING"
+        | "COLUMN"
+        | "STACKED_COLUMN"
+        | "BAR"
+        | "STACKED_BAR"
+        | "LINE"
+        | "LINE_LIST"
+        | "AREA"
+        | "STACKED_AREA"
+        | "PIE"
+        | "RADAR"
+        | "GAUGE"
+        | "YEAR_OVER_YEAR_LINE"
+        | "YEAR_OVER_YEAR_COLUMN"
+        | "SINGLE_VALUE"
+        | "PIVOT_TABLE"
+        | "SCATTER"
+        | "BUBBLE";
+    user: User;
+    userAccesses: UserAccess[];
+    userGroupAccesses: UserGroupAccess[];
+    userOrgUnitType: "DATA_CAPTURE" | "DATA_OUTPUT" | "TEI_SEARCH";
+    userOrganisationUnit: boolean;
+    userOrganisationUnitChildren: boolean;
+    userOrganisationUnitGrandChildren: boolean;
 };
 
 export type Expression = {
@@ -5092,7 +5172,3 @@ export type MetadataEntities = {
 };
 
 export type MetadataPackage<T = MetadataEntity> = Partial<Record<keyof MetadataEntities, T[]>>;
-
-// function getApiModel(api: D2Api, type: keyof MetadataEntities): InstanceType<typeof Model> {
-//     return api.models[type];
-// }

@@ -1,4 +1,4 @@
-import { D2ConstantSchema } from "@eyeseetea/d2-api/2.33";
+import { D2ConstantSchema } from "../../types/d2-api";
 import { generateUid } from "d2/uid";
 import _ from "lodash";
 import { Instance } from "../../domain/instance/entities/Instance";
@@ -18,9 +18,9 @@ export class StorageConstantClient extends StorageClient {
 
     private api: D2Api;
 
-    constructor(instance: Instance) {
+    constructor(localInstance: Instance, targetInstance?: Instance) {
         super();
-        this.api = getD2APiFromInstance(instance);
+        this.api = getD2APiFromInstance(localInstance, targetInstance);
     }
 
     /**

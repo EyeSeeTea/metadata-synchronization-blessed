@@ -25,6 +25,19 @@ const SchedulerStep = ({ syncRule, onChange, originalSyncRule }: SyncWizardStepP
         <>
             <Toggle value={form.syncRuleForm.enabled} label={i18n.t("Enabled")} onChange={form.setEnabled} />
 
+            {syncRule.useAggregatedDataExchange && (
+                <Dropdown
+                    items={[
+                        { id: "metadataSync", name: i18n.t("Metadata Sync Scheduler") },
+                        { id: "dhis2", name: i18n.t("DHIS2 Scheduler") },
+                    ]}
+                    value={form.useAggregatedDataExchangeDhis2Job}
+                    label={i18n.t("Scheduler type")}
+                    style={{ width: "100%", marginTop: 20, marginBottom: 10, marginLeft: -10 }}
+                    onValueChange={form.setUseAggregatedDataExchangeDhis2Job}
+                />
+            )}
+
             <Dropdown
                 value={selectedCron?.id ?? ""}
                 items={cronExpressions}
@@ -103,7 +116,30 @@ function useSchedulerForm(options: {
         [originalSyncRule?.frequency, syncRule, onChange]
     );
 
-    return { errors, setErrors, syncRuleForm, setEnabled, setUpdateFrequency, setCronExpression };
+    const setUseAggregatedDataExchangeDhis2Job = React.useCallback(
+        (value: string) => {
+            const useAggregatedDataExchangeDhis2Job = value === "dhis2";
+            const syncRuleUpdated = syncRule.updateUseAggregatedDataExchangeDhis2Job(useAggregatedDataExchangeDhis2Job);
+            setSyncRuleForm(syncRuleUpdated);
+            onChange(syncRuleUpdated);
+        },
+        [syncRule, onChange]
+    );
+
+    const useAggregatedDataExchangeDhis2Job = React.useMemo(() => {
+        return syncRule.useAggregatedDataExchangeDhis2Job ? "dhis2" : "metadataSync";
+    }, [syncRule.useAggregatedDataExchangeDhis2Job]);
+
+    return {
+        errors,
+        setErrors,
+        syncRuleForm,
+        setEnabled,
+        setUpdateFrequency,
+        setCronExpression,
+        setUseAggregatedDataExchangeDhis2Job,
+        useAggregatedDataExchangeDhis2Job,
+    };
 }
 
 SchedulerStep.propTypes = {

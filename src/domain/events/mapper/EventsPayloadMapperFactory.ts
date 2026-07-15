@@ -42,7 +42,7 @@ async function getMappedTrackedProgramStages(
     if (destinationProgramStages && destinationProgramStages?.length > 0) {
         const result = await remoteMetadataRepository.getMetadataByIds<ProgramStageRef>(
             destinationProgramStages,
-            "id, program"
+            "id,program"
         );
 
         return result.programStages ?? [];

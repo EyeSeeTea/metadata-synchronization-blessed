@@ -16,7 +16,13 @@ import { promiseMap } from "../../../../utils/common";
 import { formatDateLong } from "../../../../utils/date";
 import { availablePeriods } from "../../../../utils/synchronization";
 import { CompositionRoot } from "../../../CompositionRoot";
-import { AdvancedSettings, MSFSettings } from "./MSFEntities";
+import {
+    AdvancedSettings,
+    AnalyticsOptions,
+    defaultAnalyticsOptions,
+    MSFSettings,
+    toAnalyticsRequest,
+} from "./MSFEntities";
 import { NamedRef, Ref } from "../../../../domain/common/entities/Ref";
 
 type LoggerFunction = (event: string, userType?: "user" | "admin") => void;
@@ -92,7 +98,11 @@ export async function executeAggregateData(
 
     if (runAnalyticsBeforeIsRequired) {
         const localInstance = await compositionRoot.instances.getLocal();
-        await runAnalytics(localInstance, addEventToProgress, msfSettings.analyticsYears);
+        const analyticsOptions = toAnalyticsRequest(
+            msfSettings.analyticsBefore ?? defaultAnalyticsOptions,
+            "individual"
+        );
+        await runAnalytics(localInstance, addEventToProgress, analyticsOptions);
     }
 
     const reports = await promiseMap(rulesWithoutRunAnalylics, syncRule =>
@@ -113,8 +123,12 @@ export async function executeAggregateData(
         await promiseMap(targetInstances, async instanceId => {
             const instance = await compositionRoot.instances.getById(instanceId);
 
+            const analyticsOptions = toAnalyticsRequest(
+                msfSettings.analyticsAfter ?? defaultAnalyticsOptions,
+                "aggregate"
+            );
             instance.match({
-                success: async instance => await runAnalytics(instance, addEventToProgress, msfSettings.analyticsYears),
+                success: async instance => await runAnalytics(instance, addEventToProgress, analyticsOptions),
                 error: () => {
                     addEventToProgress(
                         i18n.t(`An error has occurred retrieving the instance {{name}}`, {
@@ -369,8 +383,8 @@ async function getSyncRules(
         .value();
 }
 
-async function runAnalytics(instance: Instance, addEventToProgress: LoggerFunction, lastYears: number) {
-    for await (const message of executeAnalytics(instance, { lastYears })) {
+async function runAnalytics(instance: Instance, addEventToProgress: LoggerFunction, options: AnalyticsOptions) {
+    for await (const message of executeAnalytics(instance, options)) {
         addEventToProgress(message, "admin");
     }
 

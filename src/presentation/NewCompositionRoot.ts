@@ -7,6 +7,10 @@ import { SettingsRepository } from "../domain/settings/SettingsRepository";
 import { GetSettingsUseCase } from "../domain/settings/GetSettingsUseCase";
 import { SaveSettingsUseCase } from "../domain/settings/SaveSettingsUseCase";
 import { SettingsD2ApiRepository } from "../data/settings/SettingsD2ApiRepository";
+import { UserSettingsRepository } from "../domain/user-settings/UserSettingsRepository";
+import { UserSettingsD2ApiRepository } from "../data/user-settings/UserSettingsD2ApiRepository";
+import { GetUserSettingsUseCase } from "../domain/user-settings/GetUserSettingsUseCase";
+import { SaveUserSettingsUseCase } from "../domain/user-settings/SaveUserSettingsUseCase";
 
 /**
  * @description This file is refactored
@@ -17,6 +21,7 @@ export type NewCompositionRoot = ReturnType<typeof getCompositionRoot>;
 type Repositories = {
     storageClientRepository: StorageClientRepository;
     settingsRepository: SettingsRepository;
+    userSettingsRepository: UserSettingsRepository;
 };
 
 function getCompositionRoot(repositories: Repositories) {
@@ -30,14 +35,20 @@ function getCompositionRoot(repositories: Repositories) {
             get: new GetSettingsUseCase(repositories.settingsRepository),
             save: new SaveSettingsUseCase(repositories.settingsRepository),
         },
+
+        userSettings: {
+            get: new GetUserSettingsUseCase(repositories.userSettingsRepository),
+            save: new SaveUserSettingsUseCase(repositories.userSettingsRepository),
+        },
     };
 }
 
 export function getWebappCompositionRoot(instance: Instance) {
     const storageClientRepository = new StorageClientD2Repository(instance);
     const repositories: Repositories = {
-        storageClientRepository: new StorageClientD2Repository(instance),
+        storageClientRepository: storageClientRepository,
         settingsRepository: new SettingsD2ApiRepository(storageClientRepository),
+        userSettingsRepository: new UserSettingsD2ApiRepository(instance),
     };
 
     return getCompositionRoot(repositories);

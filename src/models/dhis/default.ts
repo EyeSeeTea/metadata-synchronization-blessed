@@ -1,8 +1,7 @@
-import { FilterValueOperator } from "@eyeseetea/d2-api/api/common";
 import { ObjectsTableDetailField, TableColumn } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import { MetadataEntities } from "../../domain/metadata/entities/MetadataEntities";
-import { D2Api, Model } from "../../types/d2-api";
+import { D2Api, FilterValueOperator, getApiModel, Model } from "../../types/d2-api";
 import { d2BaseModelColumns, d2BaseModelDetails, d2BaseModelFields, MetadataType } from "../../utils/d2";
 
 export interface SearchFilter {
@@ -38,12 +37,12 @@ export abstract class D2Model {
     protected static isSelectable = true;
 
     public static getApiModel(api: D2Api): Model<any, any> {
-        return api.models[this.collectionName];
+        return getApiModel(api, this.collectionName);
     }
 
     public static getModelName(): string {
         const api = new D2Api();
-        const apiName = api.models[this.collectionName].schema.displayName;
+        const apiName = getApiModel(api, this.collectionName).schema.displayName;
         return this.modelName ?? apiName ?? "Unknown model";
     }
 

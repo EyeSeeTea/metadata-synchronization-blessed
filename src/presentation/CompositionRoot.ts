@@ -21,14 +21,19 @@ import { SystemInfoD2ApiRepository } from "../data/system-info/SystemInfoD2ApiRe
 import { TEID2ApiRepository } from "../data/tracked-entity-instances/TEID2ApiRepository";
 import { TransformationD2ApiRepository } from "../data/transformations/TransformationD2ApiRepository";
 import { UserD2ApiRepository } from "../data/user/UserD2ApiRepository";
+import { WmrDataSetD2Repository } from "../data/wmr/WmrDataSetD2Repository";
+import { WmrRequisitesD2Repository } from "../data/wmr/WmrRequisitesD2Repository";
+import { WmrSettingsD2Repository } from "../data/wmr/WmrSettingsD2Repository";
 import { AggregatedSyncUseCase } from "../domain/aggregated/usecases/AggregatedSyncUseCase";
 import { DeleteAggregatedUseCase } from "../domain/aggregated/usecases/DeleteAggregatedUseCase";
 import { ListAggregatedUseCase } from "../domain/aggregated/usecases/ListAggregatedUseCase";
 import { UseCase } from "../domain/common/entities/UseCase";
 import { Repositories, DynamicRepositoryFactory } from "../domain/common/factories/DynamicRepositoryFactory";
-import { StartApplicationUseCase } from "../domain/common/usecases/StartApplicationUseCase";
 import { GetCustomDataUseCase } from "../domain/custom-data/usecases/GetCustomDataUseCase";
 import { SaveCustomDataUseCase } from "../domain/custom-data/usecases/SaveCustomDataUseCase";
+import { GetDataSetByIdUseCase } from "../domain/entities/wmr/usecases/GetDataSetByIdUseCase";
+import { GetWmrSettingsUseCase } from "../domain/entities/wmr/usecases/GetWmrSettingsUseCase";
+import { CheckWmrRequisitesByTypeUseCase } from "../domain/entities/wmr/usecases/CheckWmrRequisitesByTypeUseCase";
 import { EventsSyncUseCase } from "../domain/events/usecases/EventsSyncUseCase";
 import { ListEventsUseCase } from "../domain/events/usecases/ListEventsUseCase";
 import { UpdateEmergencyResponseSyncRuleUseCase } from "../domain/events/usecases/UpdateEmergencyResponseSyncRuleUseCase";
@@ -36,7 +41,6 @@ import { Instance } from "../domain/instance/entities/Instance";
 import { DeleteInstanceUseCase } from "../domain/instance/usecases/DeleteInstanceUseCase";
 import { GetInstanceApiUseCase } from "../domain/instance/usecases/GetInstanceApiUseCase";
 import { GetInstanceByIdUseCase } from "../domain/instance/usecases/GetInstanceByIdUseCase";
-import { GetInstanceVersionUseCase } from "../domain/instance/usecases/GetInstanceVersionUseCase";
 import { GetLocalInstanceUseCase } from "../domain/instance/usecases/GetLocalInstanceUseCase";
 import { GetRootOrgUnitUseCase } from "../domain/instance/usecases/GetRootOrgUnitUseCase";
 import { ListInstancesUseCase } from "../domain/instance/usecases/ListInstancesUseCase";
@@ -125,6 +129,9 @@ import { getD2APiFromInstance } from "../utils/d2-utils";
 import { RoleD2ApiRepository } from "../data/role/RoleD2ApiRepository";
 import { ValidateRolesUseCase } from "../domain/role/ValidateRolesUseCase";
 import { StorageDataStoreClient } from "../data/storage/StorageDataStoreClient";
+import { SetupWmrRequisitesByTypeUseCase } from "../domain/entities/wmr/usecases/SetupWmrRequisitesByTypeUseCase";
+import { ValidateOrgUnitUseCase } from "../domain/entities/wmr/usecases/ValidateOrgUnitUseCase";
+import { WmrAggregatedSyncUseCase } from "../domain/entities/wmr/usecases/WmrAggregatedSyncUseCase";
 import { MetadataPayloadBuilder } from "../domain/metadata/builders/MetadataPayloadBuilder";
 import { GitHubRepository } from "../domain/packages/repositories/GitHubRepository";
 import { DownloadRepository } from "../domain/storage/repositories/DownloadRepository";
@@ -132,6 +139,12 @@ import { TransformationRepository } from "../domain/transformations/repositories
 import { EventsPayloadBuilder } from "../domain/events/builders/EventsPayloadBuilder";
 import { AggregatedPayloadBuilder } from "../domain/aggregated/builders/AggregatedPayloadBuilder";
 import { JSONDataSource } from "../domain/instance/entities/JSONDataSource";
+import { InstanceRepository } from "../domain/instance/repositories/InstanceRepository";
+import { InstanceD2Validator } from "../data/instance/InstanceD2Validator";
+import { UserRepository } from "../domain/user/repositories/UserRepository";
+import { VisualizationD2Repository } from "../data/visualization/VisualizationD2Repository";
+import { AggregatedDataExchangeExecutor } from "../domain/aggregated/repositories/AggregatedDataExchangeExecutor";
+import { AggregatedDataExchangeApiExecutor } from "../data/aggregated/AggregatedDataExchangeApiExecutor";
 
 /**
  * @deprecated CompositionRoot has been deprecated and will be removed in the future.
@@ -146,25 +159,27 @@ export class CompositionRoot {
     private gitHubRepository: GitHubRepository;
     private downloadRepository: DownloadRepository;
     private transformationRepository: TransformationRepository;
+    private instanceRepository: InstanceRepository;
+    private userRepository: UserRepository;
+    private aggregatedDataExchangeExecutor: AggregatedDataExchangeExecutor;
 
-    constructor(public readonly localInstance: Instance, encryptionKey: string) {
+    constructor(public readonly localInstance: Instance) {
         this.repositoryFactory = new DynamicRepositoryFactory();
         this.gitHubRepository = new GitHubOctokitRepository();
         this.downloadRepository = new DownloadWebRepository();
         this.transformationRepository = new TransformationD2ApiRepository();
+        this.instanceRepository = new InstanceD2ApiRepository(
+            this.localInstance,
+            new StorageClientD2Repository(this.localInstance)
+        );
+        this.userRepository = new UserD2ApiRepository(this.localInstance);
+        this.aggregatedDataExchangeExecutor = new AggregatedDataExchangeApiExecutor(this.localInstance);
 
-        registerDynamicRepositoriesInFactory(this.repositoryFactory, encryptionKey);
+        registerDynamicRepositoriesInFactory(this.localInstance, this.repositoryFactory);
 
         this.metadataPayloadBuilder = new MetadataPayloadBuilder(this.repositoryFactory, this.localInstance);
         this.eventsPayloadBuilder = new EventsPayloadBuilder(this.repositoryFactory, this.localInstance);
         this.aggregatedPayloadBuilder = new AggregatedPayloadBuilder(this.repositoryFactory, this.localInstance);
-    }
-
-    @cache()
-    public get app() {
-        return getExecute({
-            initialize: new StartApplicationUseCase(this.repositoryFactory, this.localInstance),
-        });
     }
 
     @cache()
@@ -180,9 +195,10 @@ export class CompositionRoot {
         // TODO: Sync builder should be part of an execute method
         return {
             ...getExecute({
-                prepare: new PrepareSyncUseCase(this.repositoryFactory, this.localInstance),
+                prepare: new PrepareSyncUseCase(this.repositoryFactory, this.userRepository, this.localInstance),
                 createPullRequest: new CreatePullRequestUseCase(
                     this.repositoryFactory,
+                    this.userRepository,
                     this.localInstance,
                     this.metadataPayloadBuilder
                 ),
@@ -192,7 +208,8 @@ export class CompositionRoot {
                     builder,
                     this.repositoryFactory,
                     this.localInstance,
-                    this.aggregatedPayloadBuilder
+                    this.aggregatedPayloadBuilder,
+                    this.aggregatedDataExchangeExecutor
                 ),
             events: (builder: SynchronizationBuilder) =>
                 new EventsSyncUseCase(
@@ -200,7 +217,8 @@ export class CompositionRoot {
                     this.repositoryFactory,
                     this.localInstance,
                     this.eventsPayloadBuilder,
-                    this.aggregatedPayloadBuilder
+                    this.aggregatedPayloadBuilder,
+                    this.aggregatedDataExchangeExecutor
                 ),
             metadata: (builder: SynchronizationBuilder) =>
                 new MetadataSyncUseCase(
@@ -221,6 +239,7 @@ export class CompositionRoot {
             listAll: new ListAllMetadataUseCase(this.repositoryFactory, this.localInstance),
             getByIds: new GetMetadataByIdsUseCase(this.repositoryFactory, this.localInstance),
             import: new ImportMetadataUseCase(this.repositoryFactory, this.localInstance),
+            getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -256,13 +275,12 @@ export class CompositionRoot {
     @cache()
     public get modules() {
         return getExecute({
-            list: new ListModulesUseCase(this.repositoryFactory, this.localInstance),
-            save: new SaveModuleUseCase(this.repositoryFactory, this.localInstance),
+            list: new ListModulesUseCase(this.repositoryFactory, this.userRepository, this.localInstance),
+            save: new SaveModuleUseCase(this.repositoryFactory, this.userRepository, this.localInstance),
             get: new GetModuleUseCase(this.repositoryFactory, this.localInstance),
             delete: new DeleteModuleUseCase(this.repositoryFactory, this.localInstance),
             download: new DownloadModuleSnapshotUseCase(
-                this.repositoryFactory,
-                this.localInstance,
+                this.userRepository,
                 this.downloadRepository,
                 this.metadataPayloadBuilder
             ),
@@ -272,7 +290,7 @@ export class CompositionRoot {
     @cache()
     public get packages() {
         return getExecute({
-            list: new ListPackagesUseCase(this.repositoryFactory, this.localInstance),
+            list: new ListPackagesUseCase(this.repositoryFactory, this.userRepository, this.localInstance),
             listStore: new ListStorePackagesUseCase(
                 this.repositoryFactory,
                 new GitHubOctokitRepository(),
@@ -282,6 +300,7 @@ export class CompositionRoot {
                 this.metadataPayloadBuilder,
                 this.repositoryFactory,
                 this.transformationRepository,
+                this.userRepository,
                 this.localInstance
             ),
             get: new GetPackageUseCase(this.repositoryFactory, this.localInstance),
@@ -300,10 +319,11 @@ export class CompositionRoot {
                 this.gitHubRepository,
                 this.localInstance
             ),
-            import: new ImportPackageUseCase(this.repositoryFactory, this.localInstance),
+            import: new ImportPackageUseCase(this.repositoryFactory, this.userRepository, this.localInstance),
             extend: new ExtendsPackagesFromPackageUseCase(
                 this.repositoryFactory,
                 this.transformationRepository,
+                this.userRepository,
                 this.localInstance
             ),
             validate: new ValidatePackageContentsUseCase(this.repositoryFactory, this.localInstance),
@@ -328,9 +348,17 @@ export class CompositionRoot {
     @cache()
     public get notifications() {
         return getExecute({
-            list: new ListNotificationsUseCase(this.repositoryFactory, this.localInstance),
-            updatePullRequestStatus: new UpdatePullRequestStatusUseCase(this.repositoryFactory, this.localInstance),
-            markReadNotifications: new MarkReadNotificationsUseCase(this.repositoryFactory, this.localInstance),
+            list: new ListNotificationsUseCase(this.repositoryFactory, this.userRepository, this.localInstance),
+            updatePullRequestStatus: new UpdatePullRequestStatusUseCase(
+                this.repositoryFactory,
+                this.userRepository,
+                this.localInstance
+            ),
+            markReadNotifications: new MarkReadNotificationsUseCase(
+                this.repositoryFactory,
+                this.userRepository,
+                this.localInstance
+            ),
             importPullRequest: new ImportPullRequestUseCase(this.repositoryFactory, this.localInstance),
             cancelPullRequest: new CancelPullRequestUseCase(this.repositoryFactory, this.localInstance),
         });
@@ -339,15 +367,16 @@ export class CompositionRoot {
     @cache()
     public get instances() {
         return getExecute({
-            getApi: new GetInstanceApiUseCase(this.repositoryFactory, this.localInstance),
+            list: new ListInstancesUseCase(this.userRepository, this.instanceRepository),
+            getById: new GetInstanceByIdUseCase(this.instanceRepository),
+            save: new SaveInstanceUseCase(this.instanceRepository),
+            delete: new DeleteInstanceUseCase(this.instanceRepository),
+            validate: new ValidateInstanceUseCase(new InstanceD2Validator(this.localInstance)),
+
+            // TODO: remove this. Api now uses routes but never should be invoked directly
+            getApi: new GetInstanceApiUseCase(this.localInstance),
+            //TODO: Use getById("LOCAL"), instead of use getLocal
             getLocal: new GetLocalInstanceUseCase(this.localInstance),
-            list: new ListInstancesUseCase(this.repositoryFactory, this.localInstance),
-            getById: new GetInstanceByIdUseCase(this.repositoryFactory, this.localInstance),
-            save: new SaveInstanceUseCase(this.repositoryFactory, this.localInstance),
-            delete: new DeleteInstanceUseCase(this.repositoryFactory, this.localInstance),
-            validate: new ValidateInstanceUseCase(this.repositoryFactory),
-            getVersion: new GetInstanceVersionUseCase(this.repositoryFactory, this.localInstance),
-            getOrgUnitRoots: new GetRootOrgUnitUseCase(this.repositoryFactory, this.localInstance),
         });
     }
 
@@ -426,7 +455,8 @@ export class CompositionRoot {
                 this.repositoryFactory,
                 this.downloadRepository,
                 this.transformationRepository,
-                this.localInstance
+                this.localInstance,
+                this.aggregatedDataExchangeExecutor
             ),
         });
     }
@@ -450,7 +480,7 @@ export class CompositionRoot {
     @cache()
     public get user() {
         return getExecute({
-            current: new GetCurrentUserUseCase(this.repositoryFactory, this.localInstance),
+            current: new GetCurrentUserUseCase(this.userRepository),
         });
     }
 
@@ -490,6 +520,21 @@ export class CompositionRoot {
             getSupportedDhisVersions: new GetSupportedDhisVersionsUseCase(new DhisReleasesLocalRepository()),
         });
     }
+
+    @cache()
+    public get wmr() {
+        return {
+            ...getExecute({
+                settings: new GetWmrSettingsUseCase(this.repositoryFactory, this.localInstance),
+                getDataSetById: new GetDataSetByIdUseCase(this.repositoryFactory, this.localInstance),
+                checkRequisites: new CheckWmrRequisitesByTypeUseCase(this.repositoryFactory, this.localInstance),
+                setupRequisites: new SetupWmrRequisitesByTypeUseCase(this.repositoryFactory, this.localInstance),
+                validateOrgUnit: new ValidateOrgUnitUseCase(this.repositoryFactory),
+            }),
+            syncDataset: (builder: SynchronizationBuilder) =>
+                new WmrAggregatedSyncUseCase(builder, this.repositoryFactory, this.localInstance),
+        };
+    }
 }
 
 function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof UseCases>(
@@ -506,10 +551,15 @@ function getExecute<UseCases extends Record<Key, UseCase>, Key extends keyof Use
     }, initialOutput);
 }
 
-export function registerDynamicRepositoriesInFactory(repositoryFactory: DynamicRepositoryFactory, encryptionKey = "") {
+export function registerDynamicRepositoriesInFactory(
+    localInstance: Instance,
+    repositoryFactory: DynamicRepositoryFactory
+) {
+    const userRepository = new UserD2ApiRepository(localInstance);
+
     repositoryFactory.bindByInstance(
         Repositories.ConfigRepository,
-        (instance: Instance) => new StorageClientD2Repository(instance)
+        (instance: Instance) => new StorageClientD2Repository(localInstance, instance)
     );
 
     repositoryFactory.bindByInstance(Repositories.StoreRepository, (instance: Instance) => {
@@ -521,22 +571,18 @@ export function registerDynamicRepositoriesInFactory(repositoryFactory: DynamicR
     repositoryFactory.bindByInstance(Repositories.InstanceRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
 
-        return new InstanceD2ApiRepository(storageClient, instance, encryptionKey);
+        return new InstanceD2ApiRepository(instance, storageClient);
     });
 
     repositoryFactory.bindByInstance(
         Repositories.InstanceFileRepository,
-        (instance: Instance) => new InstanceFileD2Repository(instance)
-    );
-
-    repositoryFactory.bindByInstance(
-        Repositories.UserRepository,
-        (instance: Instance) => new UserD2ApiRepository(instance)
+        (instance: Instance) => new InstanceFileD2Repository(localInstance, instance)
     );
 
     repositoryFactory.bindByInstance(
         Repositories.MetadataRepository,
-        (instance: Instance) => new MetadataD2ApiRepository(instance, new TransformationD2ApiRepository())
+        (instance: Instance) =>
+            new MetadataD2ApiRepository(localInstance, instance, new TransformationD2ApiRepository())
     );
 
     repositoryFactory.bindByJsonDataSource(
@@ -546,12 +592,12 @@ export function registerDynamicRepositoriesInFactory(repositoryFactory: DynamicR
 
     repositoryFactory.bindByInstance(
         Repositories.AggregatedRepository,
-        (instance: Instance) => new AggregatedD2ApiRepository(instance)
+        (instance: Instance) => new AggregatedD2ApiRepository(localInstance, instance)
     );
 
     repositoryFactory.bindByInstance(
         Repositories.EventsRepository,
-        (instance: Instance) => new EventsD2ApiRepository(instance)
+        (instance: Instance) => new EventsD2ApiRepository(localInstance, instance)
     );
 
     repositoryFactory.bindByInstance(Repositories.TableColumnsRepository, (instance: Instance) => {
@@ -562,7 +608,7 @@ export function registerDynamicRepositoriesInFactory(repositoryFactory: DynamicR
 
     repositoryFactory.bindByInstance(
         Repositories.TEIsRepository,
-        (instance: Instance) => new TEID2ApiRepository(instance)
+        (instance: Instance) => new TEID2ApiRepository(localInstance, instance, new TransformationD2ApiRepository())
     );
 
     repositoryFactory.bindByInstance(Repositories.ReportsRepository, (instance: Instance) => {
@@ -573,16 +619,19 @@ export function registerDynamicRepositoriesInFactory(repositoryFactory: DynamicR
 
     repositoryFactory.bindByInstance(Repositories.RulesRepository, (instance: Instance) => {
         const storageClient = repositoryFactory.configRepository(instance);
-        const user = repositoryFactory.userRepository(instance);
 
-        return new RulesD2ApiRepository(storageClient, user);
+        return new RulesD2ApiRepository(localInstance, storageClient, userRepository);
     });
 
-    repositoryFactory.bindByInstance(Repositories.FileRulesRepository, (instance: Instance) => {
+    repositoryFactory.bindByInstance(Repositories.FileRulesRepository, (_instance: Instance) => {
         const file = new FileDataRepository();
-        const user = repositoryFactory.userRepository(instance);
 
-        return new FileRulesDefaultRepository(user, file);
+        return new FileRulesDefaultRepository(
+            localInstance,
+            repositoryFactory.configRepository(localInstance),
+            userRepository,
+            file
+        );
     });
 
     repositoryFactory.bindByInstance(Repositories.CustomDataRepository, (instance: Instance) => {
@@ -611,6 +660,26 @@ export function registerDynamicRepositoriesInFactory(repositoryFactory: DynamicR
 
     repositoryFactory.bindByInstance(
         Repositories.DataStoreMetadataRepository,
-        (instance: Instance) => new DataStoreMetadataD2Repository(instance)
+        (instance: Instance) => new DataStoreMetadataD2Repository(localInstance, instance)
+    );
+
+    repositoryFactory.bindByInstance(
+        Repositories.VisualizationRepository,
+        (instance: Instance) => new VisualizationD2Repository(localInstance, instance)
+    );
+
+    repositoryFactory.bindByInstance(
+        Repositories.WmrSettingsRepository,
+        (instance: Instance) => new WmrSettingsD2Repository(instance)
+    );
+
+    repositoryFactory.bindByInstance(
+        Repositories.WmrDataSetRepository,
+        (instance: Instance) => new WmrDataSetD2Repository(instance)
+    );
+
+    repositoryFactory.bindByInstance(
+        Repositories.WmrRequisitesRepository,
+        (instance: Instance) => new WmrRequisitesD2Repository(localInstance, instance)
     );
 }

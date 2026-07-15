@@ -1,0 +1,52 @@
+{
+    "aggregatedDataElements": {
+        "xQWBiTAywVq": {
+            "global": false,
+            "mapping": {
+                "categoryOptionCombos": {
+                    "HllvX50cXC0": {
+                        "code": "default",
+                        "global": false,
+                        "mapping": {
+                            "categoryCombos": {
+                                "bjDvmb4bfuf": {
+                                    "mapping": {},
+                                    "mappedId": "JzvGfLYkX17",
+                                    "conflicts": false,
+                                    "mappedName": "default"
+                                }
+                            }
+                        },
+                        "mappedId": "Xr12mI7VPn3",
+                        "conflicts": false,
+                        "mappedCode": "default",
+                        "mappedName": "default"
+                    }
+                },
+                "attributeOptionCombos": {
+                    "xYerKDKCefk": {
+                        "code": "default",
+                        "global": false,
+                        "mapping": {
+                            "categoryCombos": {
+                                "GLevLNI9wkl": {
+                                    "mapping": {},
+                                    "mappedId": "KzvGfLYkX18",
+                                    "conflicts": false,
+                                    "mappedName": "default"
+                                }
+                            }
+                        },
+                        "mappedId": "Yr13mI7VPn4",
+                        "conflicts": false,
+                        "mappedCode": "default",
+                        "mappedName": "default"
+                    }
+                }
+            },
+            "mappedId": "F6yeCU8jIbq",
+            "conflicts": false,
+            "mappedName": "TT from program indicator 1"
+        }
+    }
+}

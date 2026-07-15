@@ -1,6 +1,6 @@
-import { Box, Checkbox, FormControlLabel, Icon, Paper, Tooltip, makeStyles } from "@material-ui/core";
+import { Box, Button, Checkbox, FormControlLabel, Icon, Paper, Tooltip, makeStyles } from "@material-ui/core";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
-import { isCancel } from "@eyeseetea/d2-api";
+import { isCancel } from "../../../../../types/d2-api";
 import {
     DatePicker,
     ObjectsTable,
@@ -28,8 +28,10 @@ import { MetadataType } from "../../../../../utils/d2";
 import { useAppContext } from "../../contexts/AppContext";
 import Dropdown from "../dropdown/Dropdown";
 import { ResponsibleDialog } from "../responsible-dialog/ResponsibleDialog";
-import { getFilterData, getOrgUnitSubtree } from "./utils";
+import { getFilterData, getMergedSelection, getOrgUnitSubtree } from "./utils";
 import { Toggle } from "../toggle/Toggle";
+import { computeDataStoreSelection } from "../../../../../domain/data-store/DataStoreSelectionUtils";
+import { useSelection } from "./useSelection";
 
 export type MetadataTableFilters =
     | "group"
@@ -311,13 +313,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         changeParentOrgUnitFilter(orgUnitPaths);
     };
 
-    const addToSelection = (ids: string[]) => {
-        const oldSelection = _.difference(selectedIds, ids);
-        const newSelection = _.difference(ids, selectedIds);
-
-        notifyNewSelection([...oldSelection, ...newSelection], excludedIds);
-    };
-
     const openResponsibleDialog = (ids: string[]) => {
         const { id, name } = rows.find(({ id }) => ids[0] === id) ?? {};
         if (!id || !name) return;
@@ -329,20 +324,18 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         <React.Fragment key={"metadata-table-filters"}>
             {externalFilterComponents}
 
-            {models.length > 1 && (
-                <div className={classes.metadataFilter}>
-                    <Dropdown
-                        items={models.map(model => ({
-                            id: model.getMetadataType(),
-                            name: model.getModelName(),
-                        }))}
-                        onValueChange={changeModelFilter}
-                        value={model.getMetadataType()}
-                        label={i18n.t("Metadata type")}
-                        hideEmpty={true}
-                    />
-                </div>
-            )}
+            <div className={classes.metadataFilter}>
+                <Dropdown
+                    items={models.map(model => ({
+                        id: model.getMetadataType(),
+                        name: model.getModelName(),
+                    }))}
+                    onValueChange={changeModelFilter}
+                    value={model.getMetadataType()}
+                    label={i18n.t("Metadata type")}
+                    hideEmpty={true}
+                />
+            </div>
 
             {viewFilters.includes("lastUpdated") && (
                 <div className={classes.dateFilter}>
@@ -504,14 +497,6 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             },
         },
         {
-            name: "select",
-            text: i18n.t("Select"),
-            primary: true,
-            multiple: true,
-            onClick: addToSelection,
-            isActive: () => false,
-        },
-        {
             name: "set-responsible",
             text: i18n.t("Set metadata custodian"),
             multiple: false,
@@ -534,11 +519,11 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
         if (remoteInstance && isJSONDataSource(remoteInstance)) return;
 
         compositionRoot.metadata
-            .listAll({ ...filters, filterRows, fields: { id: true } }, remoteInstance)
+            .listAll({ ...filters, filterRows, fields: { id: true }, selectedIds }, remoteInstance)
             .then(objects => {
                 updateIds(objects.map(({ id }) => id));
             });
-    }, [filters, filterRows, model, compositionRoot, remoteInstance]);
+    }, [filters, filterRows, model, compositionRoot, remoteInstance, selectedIds]);
 
     useEffect(() => {
         if (model.getCollectionName() !== "organisationUnits") return;
@@ -547,7 +532,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
             return;
         }
 
-        compositionRoot.instances
+        compositionRoot.metadata
             .getOrgUnitRoots(remoteInstance)
             .then(roots => changeParentOrgUnitFilter(roots.map(({ path }) => path)))
             .catch(handleError);
@@ -611,15 +596,19 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     useEffect(() => {
         if (remoteInstance && isJSONDataSource(remoteInstance)) return;
 
-        compositionRoot.responsibles.list(remoteInstance).then(updateResponsibles);
+        if (!remoteInstance) {
+            compositionRoot.responsibles.list().then(updateResponsibles);
+        }
     }, [compositionRoot, remoteInstance]);
 
     const handleTableChange = (tableState: TableState<ReferenceObject>) => {
         const { sorting, pagination, selection } = tableState;
 
         const included = _.reject(selection, { indeterminate: true }).map(({ id }) => id);
-        const newlySelectedIds = _.difference(included, selectedIds);
-        const newlyUnselectedIds = _.difference(selectedIds, included);
+        const [prevMetadataTypeIds, otherMetadataTypeIds] = _.partition(selectedIds, id => ids.includes(id));
+
+        const newlySelectedIds = _.difference(included, prevMetadataTypeIds);
+        const newlyUnselectedIds = _.difference(prevMetadataTypeIds, included);
 
         const parseChildren = (ids: string[]) =>
             _(rows)
@@ -629,19 +618,47 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 .map(({ id }) => id)
                 .value();
 
-        const excluded = _(excludedIds)
-            .union(newlyUnselectedIds)
-            .difference(parseChildren(newlyUnselectedIds))
-            .difference(newlySelectedIds)
-            .difference(parseChildren(newlySelectedIds))
-            .filter(id => !_.find(rows, { id }))
-            .value();
+        if (model.getMetadataType() === "dataStore") {
+            const result = computeDataStoreSelection({
+                included,
+                newlySelectedIds,
+                newlyUnselectedIds,
+                excludedIds,
+                rows,
+                parseChildren,
+            });
 
-        if (!_.isEqual(stateSelection, included)) {
-            notifyNewSelection(included, excluded);
+            const mergedSelection = getMergedSelection({
+                included: result.included,
+                otherTypeIds: otherMetadataTypeIds,
+            });
+
+            if (!_.isEqual(selectedIds, mergedSelection)) {
+                notifyNewSelection(mergedSelection, result.excluded);
+            }
+
+            setStateSelection(mergedSelection);
+        } else {
+            const excluded = _(excludedIds)
+                .union(newlyUnselectedIds)
+                .difference(parseChildren(newlyUnselectedIds))
+                .difference(newlySelectedIds)
+                .difference(parseChildren(newlySelectedIds))
+                .filter(id => !_.find(rows, { id }))
+                .value();
+
+            const mergedSelection = getMergedSelection({
+                included,
+                otherTypeIds: otherMetadataTypeIds,
+            });
+
+            if (!_.isEqual(selectedIds, mergedSelection)) {
+                notifyNewSelection(mergedSelection, excluded);
+            }
+
+            setStateSelection(mergedSelection);
         }
 
-        setStateSelection(included);
         updateFilters({
             order: sorting,
             page: pagination.page,
@@ -650,11 +667,38 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
     };
 
     const exclusion = excludedIds.map(id => ({ id }));
-    const selection = selectedIds.map(id => ({
-        id,
-        checked: true,
-        indeterminate: false,
-    }));
+    const { selection, crossTypeCount } = useSelection(model.getCollectionName(), ids, selectedIds, remoteInstance);
+
+    const crossTypeNotifications =
+        crossTypeCount > 0
+            ? [
+                  {
+                      message: (
+                          <>
+                              {i18n.t("{{count}} items are selected in other metadata types.", {
+                                  count: crossTypeCount,
+                              })}{" "}
+                              <Button
+                                  size="small"
+                                  color="primary"
+                                  onClick={() => {
+                                      setStateSelection([]);
+                                      notifyNewSelection([], []);
+                                  }}
+                                  style={{
+                                      textTransform: "none",
+                                      padding: 0,
+                                      minWidth: "auto",
+                                      verticalAlign: "baseline",
+                                  }}
+                              >
+                                  {i18n.t("Clear all")}
+                              </Button>
+                          </>
+                      ),
+                  },
+              ]
+            : [];
 
     const childrenSelection: TableSelection[] = useMemo(
         () =>
@@ -736,6 +780,7 @@ const MetadataTable: React.FC<MetadataTableProps> = ({
                 actions={actions}
                 sideComponents={orgUnitTreeFilter}
                 {...rest}
+                tableNotifications={[...(rest.tableNotifications ?? []), ...crossTypeNotifications]}
             />
         </React.Fragment>
     );

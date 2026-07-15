@@ -3,10 +3,15 @@ import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
 import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { UserRepository } from "../../user/repositories/UserRepository";
 import { AppNotification } from "../entities/Notification";
 
 export class MarkReadNotificationsUseCase implements UseCase {
-    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private userRepository: UserRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(ids: string[], read: boolean): Promise<void> {
         const storageClient = await this.repositoryFactory
@@ -30,7 +35,7 @@ export class MarkReadNotificationsUseCase implements UseCase {
     }
 
     private async hasPermissions(notification: AppNotification) {
-        const { id, userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
+        const { id, userGroups } = await this.userRepository.getCurrent();
 
         if (
             notification.owner.id !== id &&

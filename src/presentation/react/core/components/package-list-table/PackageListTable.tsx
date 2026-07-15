@@ -386,7 +386,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                 success: async originPackage => {
                     try {
                         const currentUser = await api.currentUser
-                            .get({ fields: { id: true, userCredentials: { username: true } } })
+                            .get({ fields: { id: true, username: true } })
                             .getData();
 
                         loading.show(true, i18n.t("Importing package {{name}}", { name: originPackage.name }));
@@ -410,7 +410,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
 
                         const report = SynchronizationReport.create(
                             "metadata",
-                            currentUser.userCredentials.username ?? "Unknown",
+                            currentUser.username ?? "Unknown",
                             true
                         );
 
@@ -431,7 +431,7 @@ export const PackagesListTable: React.FC<PackagesListTableProps> = ({
                         if (result.status === "SUCCESS") {
                             const author = {
                                 id: currentUser.id,
-                                name: currentUser.userCredentials.username,
+                                name: currentUser.username,
                             };
 
                             await saveImportedPackage(

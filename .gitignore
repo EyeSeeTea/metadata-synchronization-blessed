@@ -36,14 +36,26 @@ bak
 .eslintcache
 config.json
 
-# cypress
-cypress/screenshots/
-cypress/videos/
-cypress/fixtures/
-
 # IntelliJ
 .idea/*
 .vscode/*
 
 # Configuration
 /**/app-config.json
+
+# Variant-specific assets (copied to public/ during build/dev)
+/public/wmr
+
+
+# Claude Code (skill + local settings distributed externally)
+.claude/
+
+# sca-triage generated report (regenerable; durable knowledge lives in RESOLUTIONS.md)
+sca-triage-report.md
+
+# Yarn 4
+.yarn/cache
+.yarn/install-state.gz
+.yarn/unplugged
+.yarn/build-state.yml
+.pnp.*

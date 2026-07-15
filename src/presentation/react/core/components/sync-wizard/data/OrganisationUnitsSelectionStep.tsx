@@ -30,7 +30,7 @@ const OrganisationUnitsSelectionStep: React.FC<SyncWizardStepProps> = ({ syncRul
                 success: instance => {
                     setApi(compositionRoot.instances.getApi(instance));
 
-                    compositionRoot.instances
+                    compositionRoot.metadata
                         .getOrgUnitRoots(instance)
                         .then(roots => setOrgUnitRootIds(roots.map(({ id }) => id)));
                 },

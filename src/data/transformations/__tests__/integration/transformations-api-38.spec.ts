@@ -1,10 +1,6 @@
 import { sync } from "./helpers";
 
 describe("API 38", () => {
-    beforeAll(() => {
-        jest.setTimeout(30000);
-    });
-
     describe("Transformation 2.36 -> 2.38", () => {
         it("Add userRole under ", async () => {
             const metadata = {

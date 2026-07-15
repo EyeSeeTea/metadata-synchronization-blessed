@@ -7,6 +7,8 @@ import i18n from "../../../../../utils/i18n";
 import PageHeader from "../../../../react/core/components/page-header/PageHeader";
 import { StorageSettingDropdown } from "./storage/StorageSettingDropdown";
 import { useSettings } from "./useSettings";
+import { useUserSettings } from "./useUserSettings";
+import { InclusionFields } from "../../../../react/core/components/sync-wizard/metadata/InclusionFields";
 
 export const SettingsPage: React.FC = () => {
     const history = useHistory();
@@ -27,6 +29,13 @@ export const SettingsPage: React.FC = () => {
         setStorageType,
         info,
     } = useSettings();
+
+    const { userSettings, updateUserSettingsInclusionConfig, saveUserSettings, inclusionOptions } = useUserSettings();
+
+    const handleSave = useCallback(async () => {
+        await saveUserSettings();
+        onSave();
+    }, [onSave, saveUserSettings]);
 
     const backHome = useCallback(() => history.push("/dashboard"), [history]);
 
@@ -80,12 +89,37 @@ export const SettingsPage: React.FC = () => {
                     onChange={onChangeRetentionDays}
                 />
 
+                <FormGroup className={classes.content}>
+                    <h4 className={classes.subsection}>{i18n.t("Metadata Sync User Settings")}</h4>
+
+                    <InclusionFields
+                        sharingSettings={{
+                            value: userSettings.inclusionConfig.sharing,
+                            options: inclusionOptions,
+                            onValueChange: value => updateUserSettingsInclusionConfig("sharing", value),
+                            label: i18n.t("Default owner and sharing settings inclusion method"),
+                        }}
+                        users={{
+                            value: userSettings.inclusionConfig.users,
+                            options: inclusionOptions,
+                            onValueChange: value => updateUserSettingsInclusionConfig("users", value),
+                            label: i18n.t("Default users inclusion method"),
+                        }}
+                        orgUnits={{
+                            value: userSettings.inclusionConfig.organisationUnits,
+                            options: inclusionOptions,
+                            onValueChange: value => updateUserSettingsInclusionConfig("organisationUnits", value),
+                            label: i18n.t("Default organisation units inclusion method"),
+                        }}
+                    />
+                </FormGroup>
+
                 <ButtonsContainer>
                     <Button key={"cancel"} autoFocus onClick={onCancel}>
                         {i18n.t("Cancel")}
                     </Button>
 
-                    <Button key={"save"} color="primary" onClick={onSave}>
+                    <Button key={"save"} color="primary" onClick={handleSave}>
                         {i18n.t("Save")}
                     </Button>
                 </ButtonsContainer>
@@ -98,6 +132,7 @@ export const SettingsPage: React.FC = () => {
 const useStyles = makeStyles({
     content: { margin: "1rem", marginBottom: 35, marginLeft: 0 },
     title: { marginTop: 0 },
+    subsection: { marginTop: "1rem" },
     container: { margin: "1rem", padding: "1rem" },
 });
 

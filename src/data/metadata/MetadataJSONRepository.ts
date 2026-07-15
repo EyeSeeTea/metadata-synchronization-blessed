@@ -2,7 +2,12 @@ import _ from "lodash";
 import { IdentifiableRef } from "../../domain/common/entities/Ref";
 import { JSONDataSource } from "../../domain/instance/entities/JSONDataSource";
 import { FilterRule } from "../../domain/metadata/entities/FilterRule";
-import { CategoryOptionCombo, MetadataEntity, MetadataPackage } from "../../domain/metadata/entities/MetadataEntities";
+import {
+    CategoryOptionCombo,
+    MetadataEntity,
+    MetadataPackage,
+    OrganisationUnit,
+} from "../../domain/metadata/entities/MetadataEntities";
 import {
     ListMetadataParams,
     ListMetadataResponse,
@@ -22,6 +27,17 @@ export class MetadataJSONRepository implements MetadataRepository {
         }
 
         this.instance = instance;
+    }
+
+    async getOrgUnitRoots(): Promise<Pick<OrganisationUnit, "id" | "name" | "path" | "displayName">[]> {
+        const orgUnitRoots = this.instance.metadata.organisationUnits?.filter(unit => unit.level === 1) || [];
+
+        return orgUnitRoots.map(unit => ({
+            id: unit.id,
+            name: unit.name,
+            path: unit.path,
+            displayName: unit.displayName,
+        }));
     }
 
     public async listMetadata({

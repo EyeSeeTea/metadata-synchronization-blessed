@@ -18,6 +18,7 @@ import { NamedRef } from "../../../../../domain/common/entities/Ref";
 import Dropdown from "../dropdown/Dropdown";
 import { Module } from "../../../../../domain/modules/entities/Module";
 import { useGetSupportedVersions } from "../../hooks/useGetSupportedVersions";
+import { useLocalInstance } from "../../hooks/useLocalInstance";
 
 interface CreatePackageFromFileDialogProps {
     onClose: () => void;
@@ -50,11 +51,15 @@ export const CreatePackageFromFileDialog: React.FC<CreatePackageFromFileDialogPr
     const { supportedVersions } = useGetSupportedVersions();
     const [errors, setErrors] = useState<Dictionary<ValidationError>>({});
 
+    const { localInstance, error } = useLocalInstance();
+
     useEffect(() => {
-        compositionRoot.instances.getVersion().then(version => {
-            if (versions.length === 0) updateVersions([version]);
-        });
-    }, [compositionRoot, versions, updateVersions]);
+        if (versions.length === 0 && localInstance?.version) updateVersions([localInstance.versionSmall]);
+    }, [localInstance, versions, updateVersions]);
+
+    useEffect(() => {
+        if (error) snackbar.error(i18n.t("Error fetching instance version"));
+    }, [error, snackbar]);
 
     useEffect(() => {
         compositionRoot.user.current().then(({ userGroups }) => setUserGroups(userGroups));

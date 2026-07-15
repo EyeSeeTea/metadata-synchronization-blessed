@@ -11,8 +11,8 @@ import { getD2APiFromInstance } from "../../utils/d2-utils";
 export class InstanceFileD2Repository implements InstanceFileRepository {
     private api: D2Api;
 
-    constructor(private instance: Instance) {
-        this.api = getD2APiFromInstance(this.instance);
+    constructor(private localInstance: Instance, private targetInstance: Instance) {
+        this.api = getD2APiFromInstance(this.localInstance, this.targetInstance);
     }
 
     public async getById(fileId: FileId): Promise<File> {
@@ -50,7 +50,7 @@ export class InstanceFileD2Repository implements InstanceFileRepository {
         }
     }
 
-    saveFileResource(params: { name: string; data: Blob }, domain: FileResourceDomain): D2ApiResponse<string> {
+    private saveFileResource(params: { name: string; data: Blob }, domain: FileResourceDomain): D2ApiResponse<string> {
         const { name, data } = params;
 
         const formData = new FormData();

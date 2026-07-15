@@ -9,6 +9,7 @@ import { PresentationLoader } from "./presentation/PresentationLoader";
 import "./presentation/utils/wdyr";
 import { getD2APiFromInstance } from "./utils/d2-utils";
 import { Instance } from "./domain/instance/entities/Instance";
+import { config } from "./utils/Config";
 
 declare global {
     interface Window {
@@ -17,10 +18,8 @@ declare global {
     }
 }
 
-const isDev = process.env.NODE_ENV === "development";
-
 async function getBaseUrl() {
-    if (isDev) {
+    if (config.isDevelopment) {
         return "/dhis2"; // See src/setupProxy.js
     } else {
         const { data: manifest } = await axios.get<AppManifest>("manifest.webapp");
@@ -57,7 +56,7 @@ async function main() {
     try {
         const instance = Instance.build({ name: "Default", url: baseUrl });
         const api = getD2APiFromInstance(instance);
-        if (isDev) {
+        if (config.isDevelopment) {
             window.api = api;
         }
 

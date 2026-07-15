@@ -112,6 +112,15 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
         );
     };
 
+    const changeSkipRuleEngine = (skipRuleEngine: boolean) => {
+        onChange(
+            syncRule.updateDataParams({
+                ...dataParams,
+                skipRuleEngine,
+            })
+        );
+    };
+
     return (
         <React.Fragment>
             <Typography className={classes.advancedOptionsTitle} variant={"subtitle1"} gutterBottom>
@@ -201,6 +210,16 @@ const SyncParamsSelector: React.FC<SyncParamsSelectorProps> = ({ syncRule, onCha
                         label={i18n.t("Async mode")}
                         onValueChange={changeAsyncMode}
                         value={dataParams.async ?? true}
+                    />
+                </div>
+            )}
+
+            {syncRule.type === "events" && (
+                <div>
+                    <Toggle
+                        label={i18n.t("Skip Rule Engine on destination")}
+                        onValueChange={changeSkipRuleEngine}
+                        value={dataParams.skipRuleEngine ?? false}
                     />
                 </div>
             )}

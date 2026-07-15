@@ -1,6 +1,6 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
+import { ConfirmationDialog, useSnackbar } from "@eyeseetea/d2-ui-components";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import semver from "semver";
@@ -9,11 +9,11 @@ import { Module } from "../../../../../domain/modules/entities/Module";
 import { Package } from "../../../../../domain/packages/entities/Package";
 import i18n from "../../../../../utils/i18n";
 import { Dictionary } from "../../../../../types/utils";
-import { useAppContext } from "../../contexts/AppContext";
+import { useLocalInstance } from "../../hooks/useLocalInstance";
 
 export const NewPackageDialog: React.FC<NewPackageDialogProps> = ({ module, save, close }) => {
-    const { compositionRoot } = useAppContext();
     const classes = useStyles();
+    const snackbar = useSnackbar();
 
     const [versions, updateVersions] = useState<string[]>([]);
     const [item, updateItem] = useState<Package>(
@@ -74,11 +74,15 @@ export const NewPackageDialog: React.FC<NewPackageDialogProps> = ({ module, save
         else setErrors(messages);
     }, [item, save, module, versions]);
 
+    const { localInstance, error } = useLocalInstance();
+
     useEffect(() => {
-        compositionRoot.instances.getVersion().then(version => {
-            if (versions.length === 0) updateVersions([version]);
-        });
-    }, [compositionRoot, versions, updateVersions]);
+        if (versions.length === 0 && localInstance?.version) updateVersions([localInstance.versionSmall]);
+    }, [localInstance, versions, updateVersions]);
+
+    useEffect(() => {
+        if (error) snackbar.error(i18n.t("Error fetching instance version"));
+    }, [error, snackbar]);
 
     return (
         <ConfirmationDialog

@@ -31,24 +31,32 @@ const config = {
         models: metadataModels,
         childrenKeys: ["keys"],
     },
-    aggregated: {
-        models: [
-            DataSetModel,
-            AggregatedDataElementModel,
-            DataElementGroupModel,
-            DataElementGroupSetModel,
-            IndicatorModel,
-        ],
-        childrenKeys: ["dataElements", "dataElementGroups"],
+    aggregated: (useAggregatedDataExchange: boolean) => {
+        return {
+            models: !useAggregatedDataExchange
+                ? [
+                      DataSetModel,
+                      AggregatedDataElementModel,
+                      DataElementGroupModel,
+                      DataElementGroupSetModel,
+                      IndicatorModel,
+                  ]
+                : [AggregatedDataElementModel, IndicatorModel],
+            childrenKeys: !useAggregatedDataExchange ? ["dataElements", "dataElementGroups"] : [],
+        };
     },
-    events: {
-        models: [
-            EventProgramWithDataElementsModel,
-            EventProgramWithProgramStagesModel,
-            EventProgramWithIndicatorsModel,
-            ProgramIndicatorMappedModel,
-        ],
-        childrenKeys: ["dataElements", "programIndicators", "stages"],
+    events: (useAggregatedDataExchange: boolean) => {
+        return {
+            models: !useAggregatedDataExchange
+                ? [
+                      EventProgramWithDataElementsModel,
+                      EventProgramWithProgramStagesModel,
+                      EventProgramWithIndicatorsModel,
+                      ProgramIndicatorMappedModel,
+                  ]
+                : [ProgramIndicatorMappedModel],
+            childrenKeys: !useAggregatedDataExchange ? ["dataElements", "programIndicators", "stages"] : [],
+        };
     },
     deleted: {
         models: [],
@@ -64,7 +72,15 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
     const [remoteInstance, setRemoteInstance] = useState<Instance>();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
-    const { models, childrenKeys } = config[syncRule.type];
+    const { models, childrenKeys } = useMemo(() => {
+        if (syncRule.type === "events") {
+            return config["events"](syncRule.useAggregatedDataExchange);
+        } else if (syncRule.type === "aggregated") {
+            return config["aggregated"](syncRule.useAggregatedDataExchange);
+        } else {
+            return config[syncRule.type];
+        }
+    }, [syncRule.type, syncRule.useAggregatedDataExchange]);
 
     const [model, setModel] = useState<typeof D2Model>(() => models[0] ?? {});
     const [rows, setRows] = useState<MetadataType[]>([]);
@@ -101,7 +117,9 @@ export default function MetadataSelectionStep({ syncRule, onChange }: SyncWizard
                         .updateExcludedIds(newExclusionIds)
                         .updateMetadataTypes(types)
                         .updateDataSyncEnableAggregation(
-                            types.includes("indicators") || types.includes("programIndicators")
+                            types.includes("indicators") ||
+                                types.includes("programIndicators") ||
+                                syncRule.useAggregatedDataExchange
                         )
                 );
             });

@@ -5,12 +5,17 @@ import { UseCase } from "../../common/entities/UseCase";
 import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataResponsible } from "../../metadata/entities/MetadataResponsible";
+import { UserRepository } from "../../user/repositories/UserRepository";
 import { PullRequestStatus, ReceivedPullRequestNotification } from "../entities/PullRequestNotification";
 
 export type UpdatePullRequestStatusError = "NOT_FOUND" | "PERMISSIONS" | "INVALID";
 
 export class UpdatePullRequestStatusUseCase implements UseCase {
-    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private userRepository: UserRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(id: string, status: PullRequestStatus): Promise<Either<UpdatePullRequestStatusError, void>> {
         const storageClient = await this.repositoryFactory
@@ -44,7 +49,7 @@ export class UpdatePullRequestStatusUseCase implements UseCase {
 
     private async hasPermissions(ids: string[]) {
         const responsibles = await this.getResponsibles(this.localInstance, ids);
-        const { id, userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
+        const { id, userGroups } = await this.userRepository.getCurrent();
 
         if (
             !responsibles.users?.find(user => user.id === id) &&

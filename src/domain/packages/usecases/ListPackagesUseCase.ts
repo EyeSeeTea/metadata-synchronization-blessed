@@ -4,16 +4,21 @@ import { DynamicRepositoryFactory } from "../../common/factories/DynamicReposito
 import { Instance } from "../../instance/entities/Instance";
 import { MetadataModule } from "../../modules/entities/MetadataModule";
 import { BaseModule } from "../../modules/entities/Module";
+import { UserRepository } from "../../user/repositories/UserRepository";
 import { BasePackage, Package } from "../entities/Package";
 
 export class ListPackagesUseCase implements UseCase {
-    constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
+    constructor(
+        private repositoryFactory: DynamicRepositoryFactory,
+        private userRepository: UserRepository,
+        private localInstance: Instance
+    ) {}
 
     public async execute(bypassSharingSettings = false, instance = this.localInstance): Promise<Package[]> {
         const storageClient = await this.repositoryFactory.configRepository(instance).getStorageClientPromise();
 
-        const { userGroups } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
-        const { id: userId } = await this.repositoryFactory.userRepository(this.localInstance).getCurrent();
+        const { userGroups } = await this.userRepository.getCurrent();
+        const { id: userId } = await this.userRepository.getCurrent();
 
         const items = await storageClient.listObjectsInCollection<BasePackage>(Namespace.PACKAGES);
         const modulesSource = (await storageClient.listObjectsInCollection<BaseModule>(Namespace.MODULES)).map(module =>

@@ -13,7 +13,7 @@ export function recursiveMap(children: React.ReactNode, fn: Function, parentId?:
         }
 
         const clone = child.props.children
-            ? React.cloneElement(child, {
+            ? React.cloneElement(child as React.ReactElement<any>, {
                   children: recursiveMap(child.props.children, fn, id),
               })
             : child;
@@ -47,7 +47,7 @@ export function removeParentheses(string: string) {
 }
 
 export function isClassComponent(component: any) {
-    return typeof component === "function" && !!component.prototype.isReactComponent ? true : false;
+    return typeof component === "function" && !!component.prototype && !!component.prototype.isReactComponent;
 }
 
 export const wrapType = memoize((type: any, parentId?: string) => {

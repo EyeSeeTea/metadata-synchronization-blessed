@@ -6,7 +6,8 @@ import Dropdown from "../../dropdown/Dropdown";
 import { Toggle } from "../../toggle/Toggle";
 import { SyncWizardStepProps } from "../Steps";
 import { styled } from "styled-components";
-import { IncludeObjectsAndReferences, useMetadataIncludeExcludeStep } from "./useMetadataIncludeExcludeStep";
+import { useMetadataIncludeExcludeStep } from "./useMetadataIncludeExcludeStep";
+import { InclusionFields } from "./InclusionFields";
 
 const useStyles = makeStyles({
     includeExcludeContainer: {
@@ -63,38 +64,23 @@ const MetadataIncludeExcludeStep: React.FC<SyncWizardStepProps> = ({ syncRule, o
     return modelSelectItems.length > 0 ? (
         <React.Fragment>
             <div>
-                <DropdownContainer>
-                    <Dropdown<IncludeObjectsAndReferences>
-                        value={sharingSettingsObjectsAndReferencesValue}
-                        items={includeObjectsAndReferencesOptions}
-                        label={i18n.t("Include owner and sharing settings")}
-                        style={{ width: "100%", marginTop: 20, marginBottom: 20, marginLeft: -10 }}
-                        onValueChange={changeSharingSettingsObjectsAndReferences}
-                        hideEmpty
-                    />
-                </DropdownContainer>
-
-                <DropdownContainer>
-                    <Dropdown<IncludeObjectsAndReferences>
-                        value={usersObjectsAndReferencesValue}
-                        items={includeObjectsAndReferencesOptions}
-                        label={i18n.t("Include users")}
-                        style={{ width: "100%", marginTop: 20, marginBottom: 20, marginLeft: -10 }}
-                        onValueChange={changeUsersObjectsAndReferences}
-                        hideEmpty
-                    />
-                </DropdownContainer>
-
-                <DropdownContainer>
-                    <Dropdown<IncludeObjectsAndReferences>
-                        value={orgUnitsObjectsAndReferencesValue}
-                        items={includeObjectsAndReferencesOptions}
-                        label={i18n.t("Include organisation units")}
-                        style={{ width: "100%", marginTop: 20, marginBottom: 20, marginLeft: -10 }}
-                        onValueChange={changeOrgUnitsObjectsAndReferences}
-                        hideEmpty
-                    />
-                </DropdownContainer>
+                <InclusionFields
+                    sharingSettings={{
+                        value: sharingSettingsObjectsAndReferencesValue,
+                        options: includeObjectsAndReferencesOptions,
+                        onValueChange: changeSharingSettingsObjectsAndReferences,
+                    }}
+                    users={{
+                        value: usersObjectsAndReferencesValue,
+                        options: includeObjectsAndReferencesOptions,
+                        onValueChange: changeUsersObjectsAndReferences,
+                    }}
+                    orgUnits={{
+                        value: orgUnitsObjectsAndReferencesValue,
+                        options: includeObjectsAndReferencesOptions,
+                        onValueChange: changeOrgUnitsObjectsAndReferences,
+                    }}
+                />
 
                 {syncRule.type === "metadata" && (
                     <div>
@@ -187,9 +173,4 @@ const LoadingContainer = styled.div`
     align-items: center;
     height: 100%;
     width: 100%;
-`;
-
-const DropdownContainer = styled.div`
-    width: fit-content;
-    min-width: 350px;
 `;

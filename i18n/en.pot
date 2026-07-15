@@ -5,101 +5,124 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-20T07:48:28.722Z\n"
-"PO-Revision-Date: 2025-08-20T07:48:28.722Z\n"
+"POT-Creation-Date: 2026-07-07T09:14:53.473Z\n"
+"PO-Revision-Date: 2026-07-07T09:14:53.473Z\n"
 
 msgid ""
 "THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
 "TO WORK PROPERLY, YOU WILL HAVE TO SET THE SHARING SETTINGS FOR EACH "
 "INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
 msgstr ""
+"THIS NEW RELEASE INCLUDES SHARING SETTINGS PER INSTANCES. FOR THIS VERSION "
+"TO WORK PROPERLY, YOU WILL HAVE TO SET THE SHARING SETTINGS FOR EACH "
+"INSTANCE (Menu 'Instance Settings' > Contextual action 'Sharing settings')"
 
 msgid "Field {{field}} cannot be blank"
-msgstr ""
+msgstr "Field {{field}} cannot be blank"
 
 msgid "You need to select at least one {{field}}"
-msgstr ""
+msgstr "You need to select at least one {{field}}"
 
 msgid "Field {{field}} needs to be a valid url"
-msgstr ""
+msgstr "Field {{field}} needs to be a valid url"
 
 msgid "Field {{field}} is not valid"
-msgstr ""
+msgstr "Field {{field}} is not valid"
 
 msgid "Field {{field}} is not a number"
-msgstr ""
+msgstr "Field {{field}} is not a number"
 
 msgid "Program not found"
-msgstr ""
+msgstr "Program not found"
 
 msgid "An instance with this name already exists"
+msgstr "An instance with this name already exists"
+
+msgid "The instance type cannot be changed after the instance is created"
+msgstr "The instance type cannot be changed after the instance is created"
+
+msgid "The exchange target type cannot be changed after the instance is created"
+msgstr "The exchange target type cannot be changed after the instance is created"
+
+msgid ""
+"An internal Aggregated Data Exchange instance already exists: "
+"{{instanceName}}"
 msgstr ""
+"An internal Aggregated Data Exchange instance already exists: "
+"{{instanceName}}"
+
+msgid ""
+"An Aggregated Data Exchange instance with this URL already exists: "
+"{{instanceName}}"
+msgstr ""
+"An Aggregated Data Exchange instance with this URL already exists: "
+"{{instanceName}}"
 
 msgid "You need to provide a username and password combination"
-msgstr ""
+msgstr "You need to provide a username and password combination"
 
 msgid "Not a valid DHIS2 instance"
-msgstr ""
+msgstr "Not a valid DHIS2 instance"
 
 msgid "Wrong username/password"
-msgstr ""
+msgstr "Wrong username/password"
 
 msgid "Wrong URL endpoint"
-msgstr ""
+msgstr "Wrong URL endpoint"
 
 msgid "Error {{status}}"
-msgstr ""
+msgstr "Error {{status}}"
 
 msgid "Network error, check if server is up and CORS is enabled"
-msgstr ""
+msgstr "Network error, check if server is up and CORS is enabled"
 
 msgid "Unknown error"
-msgstr ""
+msgstr "Unknown error"
 
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 msgid "Created"
-msgstr ""
+msgstr "Created"
 
 msgid "Last updated"
-msgstr ""
+msgstr "Last updated"
 
 msgid "String matches"
-msgstr ""
+msgstr "String matches"
 
 msgid "Metadata type"
-msgstr ""
+msgstr "Metadata type"
 
 msgid "Starts with"
-msgstr ""
+msgstr "Starts with"
 
 msgid "Contains"
-msgstr ""
+msgstr "Contains"
 
 msgid "Ends with"
-msgstr ""
+msgstr "Ends with"
 
 msgid "Metadata type: {{model}}"
-msgstr ""
+msgstr "Metadata type: {{model}}"
 
 msgid "Name/code/description"
-msgstr ""
+msgstr "Name/code/description"
 
 msgid "From {{- startDate}} to {{- endDate}}"
-msgstr ""
+msgstr "From {{- startDate}} to {{- endDate}}"
 
 msgid "From {{- startDate}}"
-msgstr ""
+msgstr "From {{- startDate}}"
 
 msgid "To {{- endDate}}"
-msgstr ""
+msgstr "To {{- endDate}}"
 
 msgid "You must select a metadata type"
-msgstr ""
+msgstr "You must select a metadata type"
 
 msgid "Select at least one date for fixed period on create"
-msgstr ""
+msgstr "Select at least one date for fixed period on create"
 
 msgid ""
 "Your current DHIS2 version is {{version}}. This version does not come with "
@@ -107,1101 +130,1183 @@ msgid ""
 "settings for each instance. This is a potential risk and we highly "
 "recommend you to update your DHIS2 version."
 msgstr ""
+"Your current DHIS2 version is {{version}}. This version does not come with "
+"share settings in the data store and, in consequence, there are not sharing "
+"settings for each instance. This is a potential risk and we highly "
+"recommend you to update your DHIS2 version."
 
 msgid "Version is not valid (ie. {{validExample}})"
-msgstr ""
+msgstr "Version is not valid (ie. {{validExample}})"
 
 msgid "Version is too small (next version is {{validExample}})"
-msgstr ""
+msgstr "Version is too small (next version is {{validExample}})"
 
 msgid "deleted"
-msgstr ""
+msgstr "deleted"
 
 msgid "An error has ocurred mapping payload for instance {{name}}"
-msgstr ""
+msgstr "An error has ocurred mapping payload for instance {{name}}"
 
 msgid "Instance {{id}} not found"
+msgstr "Instance {{id}} not found"
+
+msgid ""
+"An error has occurred while downloading datastore payload for instance "
+"{{name}}: {{message}}"
 msgstr ""
+"An error has occurred while downloading datastore payload for instance "
+"{{name}}: {{message}}"
 
 msgid "Analytics execution finished on {{name}}"
-msgstr ""
+msgstr "Analytics execution finished on {{name}}"
 
 msgid "Preparing synchronization"
-msgstr ""
+msgstr "Preparing synchronization"
 
 msgid "Importing in instance {{instance}}"
-msgstr ""
+msgstr "Importing in instance {{instance}}"
 
 msgid "Event Program with Data Elements"
-msgstr ""
+msgstr "Event Program with Data Elements"
 
 msgid "Program with Data Elements to Aggregated"
-msgstr ""
+msgstr "Program with Data Elements to Aggregated"
 
 msgid "Tracker Program with Program Stages"
-msgstr ""
+msgstr "Tracker Program with Program Stages"
 
 msgid "Program with Indicators"
-msgstr ""
+msgstr "Program with Indicators"
 
 msgid "Tracked Entity Attribute (to TEI)"
-msgstr ""
+msgstr "Tracked Entity Attribute (to TEI)"
 
 msgid "Tracked Entity Attribute (to DE)"
-msgstr ""
+msgstr "Tracked Entity Attribute (to DE)"
 
 msgid "Tracker Data Elements"
-msgstr ""
+msgstr "Tracker Data Elements"
 
-msgid "Unauthorized - You do not have permission to view this page."
-msgstr ""
-
-msgid "Login"
-msgstr ""
-
-msgid "An exported dhis2 file is necessary"
-msgstr ""
-
-msgid "An error has ocurred to find the autogenerated module"
-msgstr ""
-
-msgid "Creating {{dhisVersion}} package for module {{name}}"
-msgstr ""
-
-msgid "Creating autogenerated module"
-msgstr ""
-
-msgid "Generate package from File"
-msgstr ""
-
-msgid "Package/Module Name (*)"
-msgstr ""
-
-msgid "Department (*)"
-msgstr ""
-
-msgid "Version number (*)"
-msgstr ""
-
-msgid "Version tag"
-msgstr ""
-
-msgid "DHIS2 Version (*)"
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Save & import"
-msgstr ""
-
-msgid "Identifier"
-msgstr ""
-
-msgid "Code"
-msgstr ""
-
-msgid "Deleted date"
-msgstr ""
-
-msgid "Deleted by"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Search deleted objects"
-msgstr ""
-
-msgid "Deleting history"
-msgstr ""
-
-msgid "<No value>"
-msgstr ""
-
-msgid "Create new filter"
-msgstr ""
-
-msgid "Edit filter"
-msgstr ""
-
-msgid "Create"
-msgstr ""
-
-msgid "Update"
-msgstr ""
-
-msgid "Match string (name, code, description)"
-msgstr ""
-
-msgid "Condition"
-msgstr ""
-
-msgid "String to match"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Ready"
-msgstr ""
-
-msgid "Running"
-msgstr ""
-
-msgid "Failure"
-msgstr ""
-
-msgid "Done"
-msgstr ""
-
-msgid "Sync Rule"
-msgstr ""
-
-msgid "(package import)"
-msgstr ""
-
-msgid "(manual synchronization)"
-msgstr ""
-
-msgid "Type"
-msgstr ""
-
-msgid "Timestamp"
-msgstr ""
-
-msgid "Status"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Metadata Types"
-msgstr ""
-
-msgid "Edit {{name}}"
-msgstr ""
-
-msgid "View summary"
-msgstr ""
-
-msgid "Deleting History Notifications"
-msgstr ""
-
-msgid "Successfully deleted {{total}} history notifications"
-msgstr ""
-
-msgid "Synchronization status"
-msgstr ""
-
-msgid "Delete History Notifications?"
-msgstr ""
-
-msgid "Are you sure you want to delete {{total}} history notifications?"
-msgstr ""
+msgid "Aggregated Data Exchange instances credentials"
+msgstr "Aggregated Data Exchange instances credentials"
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Instance: {{name}}"
+msgstr "Instance: {{name}}"
+
+msgid "Internal exchange — no credentials required."
+msgstr "Internal exchange — no credentials required."
+
+msgid "Authentication Scheme (*)"
+msgstr "Authentication Scheme (*)"
+
+msgid "Token (*)"
+msgstr "Token (*)"
+
+msgid "Username (*)"
+msgstr "Username (*)"
+
+msgid "Password (*)"
+msgstr "Password (*)"
+
+msgid "Unauthorized - You do not have permission to view this page."
+msgstr "Unauthorized - You do not have permission to view this page."
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Error fetching instance version"
+msgstr "Error fetching instance version"
+
+msgid "An exported dhis2 file is necessary"
+msgstr "An exported dhis2 file is necessary"
+
+msgid "An error has ocurred to find the autogenerated module"
+msgstr "An error has ocurred to find the autogenerated module"
+
+msgid "Creating {{dhisVersion}} package for module {{name}}"
+msgstr "Creating {{dhisVersion}} package for module {{name}}"
+
+msgid "Creating autogenerated module"
+msgstr "Creating autogenerated module"
+
+msgid "Generate package from File"
+msgstr "Generate package from File"
+
+msgid "Package/Module Name (*)"
+msgstr "Package/Module Name (*)"
+
+msgid "Department (*)"
+msgstr "Department (*)"
+
+msgid "Version number (*)"
+msgstr "Version number (*)"
+
+msgid "Version tag"
+msgstr "Version tag"
+
+msgid "DHIS2 Version (*)"
+msgstr "DHIS2 Version (*)"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Save & import"
+msgstr "Save & import"
+
+msgid "Identifier"
+msgstr "Identifier"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Deleted date"
+msgstr "Deleted date"
+
+msgid "Deleted by"
+msgstr "Deleted by"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Search deleted objects"
+msgstr "Search deleted objects"
+
+msgid "Deleting history"
+msgstr "Deleting history"
+
+msgid "<No value>"
+msgstr "<No value>"
+
+msgid "Create new filter"
+msgstr "Create new filter"
+
+msgid "Edit filter"
+msgstr "Edit filter"
+
+msgid "Create"
+msgstr "Create"
+
+msgid "Update"
+msgstr "Update"
+
+msgid "Match string (name, code, description)"
+msgstr "Match string (name, code, description)"
+
+msgid "Condition"
+msgstr "Condition"
+
+msgid "String to match"
+msgstr "String to match"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Ready"
+msgstr "Ready"
+
+msgid "Running"
+msgstr "Running"
+
+msgid "Failure"
+msgstr "Failure"
+
+msgid "Done"
+msgstr "Done"
+
+msgid "Sync Rule"
+msgstr "Sync Rule"
+
+msgid "(package import)"
+msgstr "(package import)"
+
+msgid "(manual synchronization)"
+msgstr "(manual synchronization)"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Timestamp"
+msgstr "Timestamp"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "User"
+msgstr "User"
+
+msgid "Metadata Types"
+msgstr "Metadata Types"
+
+msgid "Edit {{name}}"
+msgstr "Edit {{name}}"
+
+msgid "View summary"
+msgstr "View summary"
+
+msgid "Deleting History Notifications"
+msgstr "Deleting History Notifications"
+
+msgid "Successfully deleted {{total}} history notifications"
+msgstr "Successfully deleted {{total}} history notifications"
+
+msgid "Synchronization status"
+msgstr "Synchronization status"
+
+msgid "Delete History Notifications?"
+msgstr "Delete History Notifications?"
+
+msgid "Are you sure you want to delete {{total}} history notifications?"
+msgstr "Are you sure you want to delete {{total}} history notifications?"
 
 msgid "Instances"
-msgstr ""
+msgstr "Instances"
 
 msgid "This instance"
-msgstr ""
+msgstr "This instance"
 
 msgid "Store"
-msgstr ""
+msgstr "Store"
 
 msgid "Add"
-msgstr ""
+msgstr "Add"
 
 msgid "List"
-msgstr ""
+msgstr "List"
 
 msgid ""
 "Select {{type}} from destination instance {{instance}} to map {{total}} "
 "elements"
 msgstr ""
+"Select {{type}} from destination instance {{instance}} to map {{total}} "
+"elements"
 
 msgid ""
 "Select {{type}} from destination instance {{instance}} to map {{name}} "
 "({{id}})"
 msgstr ""
+"Select {{type}} from destination instance {{instance}} to map {{name}} "
+"({{id}})"
 
 msgid "Close"
-msgstr ""
+msgstr "Close"
 
 msgid "Could not connect with remote instance"
-msgstr ""
+msgstr "Could not connect with remote instance"
 
 msgid "Applying mapping..."
-msgstr ""
+msgstr "Applying mapping..."
 
 msgid "Could not apply mapping, please try again."
-msgstr ""
+msgstr "Could not apply mapping, please try again."
 
 msgid "You need to map the item before applying a global mapping"
-msgstr ""
+msgstr "You need to map the item before applying a global mapping"
 
 msgid "Successfully applied global mapping"
-msgstr ""
+msgstr "Successfully applied global mapping"
 
 msgid "Unable to update mapping"
-msgstr ""
+msgstr "Unable to update mapping"
 
 msgid "Exclude mapping"
-msgstr ""
+msgstr "Exclude mapping"
 
 msgid "Are you sure you want to exclude mapping for {{total}} elements?"
-msgstr ""
+msgstr "Are you sure you want to exclude mapping for {{total}} elements?"
 
 msgid "Please select at least one item to exclude mapping"
-msgstr ""
+msgstr "Please select at least one item to exclude mapping"
 
 msgid "Reset mapping"
-msgstr ""
+msgstr "Reset mapping"
 
 msgid "Are you sure you want to reset mapping for {{total}} elements?"
-msgstr ""
+msgstr "Are you sure you want to reset mapping for {{total}} elements?"
 
 msgid "Please select at least one item to reset mapping"
-msgstr ""
+msgstr "Please select at least one item to reset mapping"
 
 msgid "You need to select at least one valid item"
-msgstr ""
+msgstr "You need to select at least one valid item"
 
 msgid "You need to select all items from the same type"
-msgstr ""
+msgstr "You need to select all items from the same type"
 
 msgid "Preparing auto-mapping for {{total}} elements"
-msgstr ""
+msgstr "Preparing auto-mapping for {{total}} elements"
 
 msgid "Unable to apply auto-mapping"
-msgstr ""
+msgstr "Unable to apply auto-mapping"
 
 msgid "Could not find a suitable candidate to apply auto-mapping for {{id}}"
-msgstr ""
+msgstr "Could not find a suitable candidate to apply auto-mapping for {{id}}"
 
 msgid "Map by value"
-msgstr ""
+msgstr "Map by value"
 
 msgid "Value"
-msgstr ""
+msgstr "Value"
 
 msgid "Validating mapping for {{total}} elements"
-msgstr ""
+msgstr "Validating mapping for {{total}} elements"
 
 msgid "Validate mapping"
-msgstr ""
+msgstr "Validate mapping"
 
 msgid "Are you sure you want to validate mapping for {{total}} elements?"
-msgstr ""
+msgstr "Are you sure you want to validate mapping for {{total}} elements?"
 
 msgid "Please select at least one item to validate mapping"
-msgstr ""
+msgstr "Please select at least one item to validate mapping"
 
 msgid "You need to map this element before accessing its related metadata mapping"
-msgstr ""
+msgstr "You need to map this element before accessing its related metadata mapping"
 
 msgid "Please map the item before adding data element aggregations"
-msgstr ""
+msgstr "Please map the item before adding data element aggregations"
 
 msgid "Data element aggregation"
-msgstr ""
+msgstr "Data element aggregation"
 
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 msgid "Mapped ID"
-msgstr ""
+msgstr "Mapped ID"
 
 msgid "Set mapping"
-msgstr ""
+msgstr "Set mapping"
 
 msgid "Mapped Name"
-msgstr ""
+msgstr "Mapped Name"
 
 msgid "Mapping has errors"
-msgstr ""
+msgstr "Mapping has errors"
 
 msgid "Mapped Level"
-msgstr ""
+msgstr "Mapped Level"
 
 msgid "Mapping Status"
-msgstr ""
+msgstr "Mapping Status"
 
 msgid "Mapped by value"
-msgstr ""
+msgstr "Mapped by value"
 
 msgid "Not mapped"
-msgstr ""
+msgstr "Not mapped"
 
 msgid "Excluded"
-msgstr ""
+msgstr "Excluded"
 
 msgid "Mapped (Global)"
-msgstr ""
+msgstr "Mapped (Global)"
 
 msgid "Mapped"
-msgstr ""
+msgstr "Mapped"
 
 msgid "Set mapping by value"
-msgstr ""
+msgstr "Set mapping by value"
 
 msgid "Select children"
-msgstr ""
+msgstr "Select children"
 
 msgid "Make this mapping global"
-msgstr ""
+msgstr "Make this mapping global"
 
 msgid "Auto-map element"
-msgstr ""
+msgstr "Auto-map element"
 
 msgid "Reset mapping to default values"
-msgstr ""
+msgstr "Reset mapping to default values"
 
 msgid "Related metadata mapping"
-msgstr ""
+msgstr "Related metadata mapping"
 
 msgid "Related metadata mapping for {{name}} ({{id}})"
-msgstr ""
+msgstr "Related metadata mapping for {{name}} ({{id}})"
 
 msgid "Category Options"
-msgstr ""
+msgstr "Category Options"
 
 msgid "Category Option Combos"
-msgstr ""
+msgstr "Category Option Combos"
+
+msgid "Attribute Option Combos"
+msgstr "Attribute Option Combos"
 
 msgid "Options"
-msgstr ""
+msgstr "Options"
 
 msgid "Program Stages"
-msgstr ""
+msgstr "Program Stages"
 
 msgid "Cannot read file"
-msgstr ""
+msgstr "Cannot read file"
 
 msgid "Drag and drop file to import"
-msgstr ""
+msgstr "Drag and drop file to import"
 
 msgid "Last updated date"
-msgstr ""
+msgstr "Last updated date"
 
 msgid "{{displayName}} Group"
-msgstr ""
+msgstr "{{displayName}} Group"
 
 msgid "{{displayName}} Level"
-msgstr ""
+msgstr "{{displayName}} Level"
 
 msgid "Program"
-msgstr ""
+msgstr "Program"
 
 msgid "Option set"
-msgstr ""
+msgstr "Option set"
 
 msgid "Category"
-msgstr ""
+msgstr "Category"
 
 msgid "Only selected items"
-msgstr ""
+msgstr "Only selected items"
 
 msgid "Show all entries"
-msgstr ""
+msgstr "Show all entries"
 
 msgid "Dynamic auto update"
-msgstr ""
+msgstr "Dynamic auto update"
 
 msgid "Sync all Organisation Units"
-msgstr ""
+msgstr "Sync all Organisation Units"
 
 msgid "Select with children subtree"
-msgstr ""
-
-msgid "Select"
-msgstr ""
+msgstr "Select with children subtree"
 
 msgid "Set metadata custodian"
-msgstr ""
+msgstr "Set metadata custodian"
+
+msgid "{{count}} items are selected in other metadata types."
+msgid_plural "{{count}} items are selected in other metadata types."
+msgstr[0] "{{count}} items are selected in other metadata types."
+msgstr[1] "{{count}} items are selected in other metadata types."
+
+msgid "Clear all"
+msgstr "Clear all"
 
 msgid "Custodian"
-msgstr ""
+msgstr "Custodian"
 
 msgid "Search by name, code or id"
-msgstr ""
+msgstr "Search by name, code or id"
 
 msgid ""
 "There has been an error. You can either retry or contact your administrator "
 "if you think there has been an un recoverable error"
 msgstr ""
+"There has been an error. You can either retry or contact your administrator "
+"if you think there has been an un recoverable error"
 
 msgid "There are pending migrations"
-msgstr ""
+msgstr "There are pending migrations"
 
 msgid "Ignore"
-msgstr ""
+msgstr "Ignore"
 
 msgid "Migrations finished successfully, you may now continue to the app"
-msgstr ""
+msgstr "Migrations finished successfully, you may now continue to the app"
 
 msgid "Checking migrations"
-msgstr ""
+msgstr "Checking migrations"
 
 msgid "Migrate instance"
-msgstr ""
+msgstr "Migrate instance"
 
 msgid "Migrating..."
-msgstr ""
+msgstr "Migrating..."
 
 msgid "Continue to the App"
-msgstr ""
+msgstr "Continue to the App"
 
 msgid ""
 "The app needs to run pending migrations (from version {{instanceVersion}} "
 "to version {{appVersion}}) in order to continue. This may take a long time, "
 "make sure the process is not interrupted."
 msgstr ""
+"The app needs to run pending migrations (from version {{instanceVersion}} "
+"to version {{appVersion}}) in order to continue. This may take a long time, "
+"make sure the process is not interrupted."
 
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 msgid "Continue to the app anyway"
-msgstr ""
+msgstr "Continue to the app anyway"
 
 msgid ""
 "The database version ({{instanceVersion}}) is greater than the app version "
 "({{appVersion}}), cannot continue. Please contact the administrator to "
 "update the app."
 msgstr ""
+"The database version ({{instanceVersion}}) is greater than the app version "
+"({{appVersion}}), cannot continue. Please contact the administrator to "
+"update the app."
 
 msgid "Invalid module"
-msgstr ""
+msgstr "Invalid module"
 
 msgid "Downloading snapshot for module {{name}}"
-msgstr ""
+msgstr "Downloading snapshot for module {{name}}"
 
 msgid "Pulling metadata from module {{name}}"
-msgstr ""
+msgstr "Pulling metadata from module {{name}}"
 
 msgid "Unable to create pull request"
-msgstr ""
+msgstr "Unable to create pull request"
 
 msgid "Pull metadata"
-msgstr ""
+msgstr "Pull metadata"
 
 msgid ""
 "You are one of the reponsibles for the selected items.\n"
 "Do you want to directly pull the metadata?"
 msgstr ""
+"You are one of the reponsibles for the selected items.\n"
+"Do you want to directly pull the metadata?"
 
 msgid "Proceed"
-msgstr ""
+msgstr "Proceed"
 
 msgid "Create pull request"
-msgstr ""
+msgstr "Create pull request"
 
 msgid "Couldn't connect with instance"
-msgstr ""
+msgstr "Couldn't connect with instance"
 
 msgid ""
 "You do not have the authority to one or multiple target instances of the "
 "sync rule"
 msgstr ""
+"You do not have the authority to one or multiple target instances of the "
+"sync rule"
 
 msgid "Unknown synchronization error"
-msgstr ""
+msgstr "Unknown synchronization error"
 
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgid "Department"
-msgstr ""
+msgstr "Department"
 
 msgid "Last updated by"
-msgstr ""
+msgstr "Last updated by"
 
 msgid "Created by"
-msgstr ""
+msgstr "Created by"
 
 msgid "Selected metadata"
-msgstr ""
+msgstr "Selected metadata"
 
 msgid "Replicate"
-msgstr ""
+msgstr "Replicate"
 
 msgid "Download metadata package"
-msgstr ""
+msgstr "Download metadata package"
 
 msgid "Generate package from module"
-msgstr ""
+msgstr "Generate package from module"
 
 msgid "Sharing settings"
-msgstr ""
+msgstr "Sharing settings"
 
 msgid "Sharing settings for {{name}}"
-msgstr ""
+msgstr "Sharing settings for {{name}}"
 
 msgid "Package of {{name}}"
-msgstr ""
+msgstr "Package of {{name}}"
 
 msgid "Generate package from {{name}}"
-msgstr ""
+msgstr "Generate package from {{name}}"
 
 msgid "Name (*)"
-msgstr ""
+msgstr "Name (*)"
 
 msgid "Module: {{module}}"
-msgstr ""
+msgstr "Module: {{module}}"
 
 msgid "{{n}} package(s) created successfully: {{list}}"
-msgstr ""
+msgstr "{{n}} package(s) created successfully: {{list}}"
 
 msgid "{{n}} package(s) could not be created: {{list}}"
-msgstr ""
+msgstr "{{n}} package(s) could not be created: {{list}}"
 
 msgid "Instance not found"
-msgstr ""
+msgstr "Instance not found"
 
 msgid "Instances & Play Stores"
-msgstr ""
+msgstr "Instances & Play Stores"
 
 msgid "View"
-msgstr ""
+msgstr "View"
 
 msgid "Modules"
-msgstr ""
+msgstr "Modules"
 
 msgid "Packages"
-msgstr ""
+msgstr "Packages"
 
 msgid "General info"
-msgstr ""
+msgstr "General info"
 
 msgid "Summary"
-msgstr ""
+msgstr "Summary"
 
 msgid "Metadata"
-msgstr ""
+msgstr "Metadata"
 
 msgid "Select dependencies"
-msgstr ""
+msgstr "Select dependencies"
 
 msgid "Advanced options"
-msgstr ""
+msgstr "Advanced options"
 
 msgid "Selected {{difference}} elements"
-msgstr ""
+msgstr "Selected {{difference}} elements"
 
 msgid "Removed {{difference}} elements"
-msgstr ""
+msgstr "Removed {{difference}} elements"
 
 msgid "Metadata exclusions"
-msgstr ""
+msgstr "Metadata exclusions"
 
 msgid "Include user information and sharing settings"
-msgstr ""
+msgstr "Include user information and sharing settings"
 
 msgid "Remove organisation unit references"
-msgstr ""
+msgstr "Remove organisation unit references"
 
 msgid "Use default dependencies"
-msgstr ""
+msgstr "Use default dependencies"
 
 msgid "[Pull Request by {{name}}] {{subject}}"
-msgstr ""
+msgstr "[Pull Request by {{name}}] {{subject}}"
 
 msgid "Importing package {{name}}"
-msgstr ""
+msgstr "Importing package {{name}}"
 
 msgid "Couldn't load package"
-msgstr ""
+msgstr "Couldn't load package"
 
 msgid "Saving imported packages"
-msgstr ""
+msgstr "Saving imported packages"
 
 msgid "An error has ocurred importing packages"
-msgstr ""
+msgstr "An error has ocurred importing packages"
 
 msgid "Packages Import"
-msgstr ""
+msgstr "Packages Import"
 
 msgid "Import"
-msgstr ""
+msgstr "Import"
 
 msgid "Packages mapping"
-msgstr ""
+msgstr "Packages mapping"
 
 msgid "Attempting to update mapping without a valid data source"
-msgstr ""
+msgstr "Attempting to update mapping without a valid data source"
 
 msgid "Could not save mapping"
-msgstr ""
+msgstr "Could not save mapping"
 
 msgid "Package"
-msgstr ""
+msgstr "Package"
 
 msgid "Unknown error happened loading package"
-msgstr ""
+msgstr "Unknown error happened loading package"
 
 msgid "Unknown error happened loading module"
-msgstr ""
+msgstr "Unknown error happened loading module"
 
 msgid "Unknown error happened loading store"
-msgstr ""
+msgstr "Unknown error happened loading store"
 
 msgid "There are not elements to map in the package"
-msgstr ""
+msgstr "There are not elements to map in the package"
 
 msgid "Existing mapping will be used"
-msgstr ""
+msgstr "Existing mapping will be used"
 
 msgid ""
 "Some elements have been already mapped previously, please continue mapping "
 "remaining one or changed previous mapping"
 msgstr ""
+"Some elements have been already mapped previously, please continue mapping "
+"remaining one or changed previous mapping"
 
 msgid "No mapping found"
-msgstr ""
+msgstr "No mapping found"
 
 msgid "Can't connect to store"
-msgstr ""
+msgstr "Can't connect to store"
 
 msgid "Instance"
-msgstr ""
+msgstr "Instance"
 
 msgid "Play Store"
-msgstr ""
+msgstr "Play Store"
 
 msgid "Loading ..."
-msgstr ""
+msgstr "Loading ..."
 
 msgid "Invalid package"
-msgstr ""
+msgstr "Invalid package"
 
 msgid "Extending Dhis2 compatibility"
-msgstr ""
+msgstr "Extending Dhis2 compatibility"
 
 msgid "Dhis2 Compatibility extended successfully"
-msgstr ""
+msgstr "Dhis2 Compatibility extended successfully"
 
 msgid "An error has ocurred extending Dhis2 compatibility"
-msgstr ""
+msgstr "An error has ocurred extending Dhis2 compatibility"
 
 msgid "Publishing package to Store"
-msgstr ""
+msgstr "Publishing package to Store"
 
 msgid "Package published to default store"
-msgstr ""
+msgstr "Package published to default store"
 
 msgid "Default store is not properly configured"
-msgstr ""
+msgstr "Default store is not properly configured"
 
 msgid "Could not read package"
-msgstr ""
+msgstr "Could not read package"
 
 msgid "You don't have permissions to create file on GitHub"
-msgstr ""
+msgstr "You don't have permissions to create file on GitHub"
 
 msgid "Unknown error while creating file on GitHub"
-msgstr ""
+msgstr "Unknown error while creating file on GitHub"
 
 msgid "Package already published"
-msgstr ""
+msgstr "Package already published"
 
 msgid "Branch not found"
-msgstr ""
+msgstr "Branch not found"
 
 msgid ""
 "There are no branches for the department of this module. Do you want to "
 "create a new branch for this department?"
 msgstr ""
+"There are no branches for the department of this module. Do you want to "
+"create a new branch for this department?"
 
 msgid "Package published to store in a new branch"
-msgstr ""
+msgstr "Package published to store in a new branch"
 
 msgid "Couldn't create new branch on store"
-msgstr ""
+msgstr "Couldn't create new branch on store"
 
 msgid "Validating package"
-msgstr ""
+msgstr "Validating package"
 
 msgid "Package is valid"
-msgstr ""
+msgstr "Package is valid"
 
 msgid "Generating module"
-msgstr ""
+msgstr "Generating module"
 
 msgid "Module generated successfully"
-msgstr ""
+msgstr "Module generated successfully"
 
 msgid "An error has ocurred generating the module"
-msgstr ""
+msgstr "An error has ocurred generating the module"
 
 msgid "Installed"
-msgstr ""
+msgstr "Installed"
 
 msgid "Not Installed"
-msgstr ""
+msgstr "Not Installed"
 
 msgid "Upgrade Available"
-msgstr ""
+msgstr "Upgrade Available"
 
 msgid "Local Package (Installed)"
-msgstr ""
+msgstr "Local Package (Installed)"
 
 msgid "Local Package (Not Installed)"
-msgstr ""
+msgstr "Local Package (Not Installed)"
 
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 msgid "DHIS2 Version"
-msgstr ""
+msgstr "DHIS2 Version"
 
 msgid "Module"
-msgstr ""
+msgstr "Module"
 
 msgid "Download as JSON"
-msgstr ""
+msgstr "Download as JSON"
 
 msgid "Extend DHIS2 version compatibility"
-msgstr ""
+msgstr "Extend DHIS2 version compatibility"
 
 msgid "Publish to Store"
-msgstr ""
+msgstr "Publish to Store"
 
 msgid "Compare with local instance"
-msgstr ""
+msgstr "Compare with local instance"
 
 msgid "Compare selected packages"
-msgstr ""
+msgstr "Compare selected packages"
 
 msgid "Import package"
-msgstr ""
+msgstr "Import package"
 
 msgid "Import package (wizard)"
-msgstr ""
+msgstr "Import package (wizard)"
 
 msgid "Generate Module"
-msgstr ""
+msgstr "Generate Module"
 
 msgid "Validate package"
-msgstr ""
+msgstr "Validate package"
 
 msgid "Not recommended"
-msgstr ""
+msgstr "Not recommended"
 
 msgid "Dhis2 version"
-msgstr ""
+msgstr "Dhis2 version"
 
 msgid "An error has ocurred retrieving imported packages"
-msgstr ""
+msgstr "An error has ocurred retrieving imported packages"
 
 msgid "Validation Summary"
-msgstr ""
+msgstr "Validation Summary"
 
 msgid "Cannot get data from remote instance"
-msgstr ""
+msgstr "Cannot get data from remote instance"
 
 msgid "objects"
-msgstr ""
+msgstr "objects"
 
 msgid "Unmodified"
-msgstr ""
+msgstr "Unmodified"
 
 msgid "New"
-msgstr ""
+msgstr "New"
 
 msgid "Updated"
-msgstr ""
+msgstr "Updated"
 
 msgid "Comparing package contents"
-msgstr ""
+msgstr "Comparing package contents"
 
 msgid "Changes found"
-msgstr ""
+msgstr "Changes found"
 
 msgid "No changes found"
-msgstr ""
+msgstr "No changes found"
 
 msgid "Local"
-msgstr ""
+msgstr "Local"
 
 msgid ""
 "Extend DHIS2 version compatibility for module {{module}} and version "
 "{{version}}"
 msgstr ""
+"Extend DHIS2 version compatibility for module {{module}} and version "
+"{{version}}"
 
 msgid "Create package(s)"
-msgstr ""
+msgstr "Create package(s)"
 
 msgid "Copy From (*)"
-msgstr ""
+msgstr "Copy From (*)"
 
 msgid "New DHIS2 version compatibility (*)"
-msgstr ""
+msgstr "New DHIS2 version compatibility (*)"
 
 msgid "Back"
-msgstr ""
+msgstr "Back"
 
 msgid "Help"
-msgstr ""
+msgstr "Help"
 
 msgid "Period"
-msgstr ""
+msgstr "Period"
 
 msgid "Start date"
-msgstr ""
+msgstr "Start date"
 
 msgid "End date"
-msgstr ""
+msgstr "End date"
 
 msgid "You need to provide a subject"
-msgstr ""
+msgstr "You need to provide a subject"
 
 msgid "Creating pull request"
-msgstr ""
+msgstr "Creating pull request"
 
 msgid "Pull request created"
-msgstr ""
+msgstr "Pull request created"
 
 msgid "Create pull request on {{name}}"
-msgstr ""
+msgstr "Create pull request on {{name}}"
 
 msgid ""
 "There are custodians for the selected metadata. You can still create a pull "
 "request and, once approved by a custodian, you will be able to finish the "
 "synchronization."
 msgstr ""
+"There are custodians for the selected metadata. You can still create a pull "
+"request and, once approved by a custodian, you will be able to finish the "
+"synchronization."
 
 msgid "Open pull request"
-msgstr ""
+msgstr "Open pull request"
 
 msgid "Subject"
-msgstr ""
+msgstr "Subject"
 
 msgid "Field cannot be blank"
-msgstr ""
+msgstr "Field cannot be blank"
 
 msgid "Custodians"
-msgstr ""
+msgstr "Custodians"
 
 msgid "Custodians for {{name}}"
-msgstr ""
+msgstr "Custodians for {{name}}"
 
 msgid "Scheduler"
-msgstr ""
+msgstr "Scheduler"
 
 msgid "The token is empty"
-msgstr ""
+msgstr "The token is empty"
 
 msgid "The account is empty"
-msgstr ""
+msgstr "The account is empty"
 
 msgid "The repository is empty"
-msgstr ""
+msgstr "The repository is empty"
 
 msgid "The token is invalid"
-msgstr ""
+msgstr "The token is invalid"
 
 msgid "Repository not found"
-msgstr ""
+msgstr "Repository not found"
 
 msgid "Testing GitHub connection"
-msgstr ""
+msgstr "Testing GitHub connection"
 
 msgid "Connected successfully"
-msgstr ""
+msgstr "Connected successfully"
 
 msgid "Saving store connection"
-msgstr ""
+msgstr "Saving store connection"
 
 msgid ""
 "There are issues with the connection details you provided.\n"
 "Do you want to proceed?"
 msgstr ""
+"There are issues with the connection details you provided.\n"
+"Do you want to proceed?"
 
 msgid "GitHub account or organisation (*)"
-msgstr ""
+msgstr "GitHub account or organisation (*)"
 
 msgid "GitHub repository (*)"
-msgstr ""
+msgstr "GitHub repository (*)"
 
 msgid "GitHub personal access token (*)"
-msgstr ""
+msgstr "GitHub personal access token (*)"
 
 msgid "Test Connection"
-msgstr ""
+msgstr "Test Connection"
 
 msgid "- Create a repository at https://github.com/new"
-msgstr ""
+msgstr "- Create a repository at https://github.com/new"
 
 msgid "- Create a personal access token at https://github.com/settings/tokens/new"
-msgstr ""
+msgstr "- Create a personal access token at https://github.com/settings/tokens/new"
 
 msgid "Create a personal access token on GitHub"
-msgstr ""
+msgstr "Create a personal access token on GitHub"
 
 msgid "New store"
-msgstr ""
+msgstr "New store"
 
 msgid "Synchronize"
-msgstr ""
+msgstr "Synchronize"
 
 msgid "Create and update"
-msgstr ""
+msgstr "Create and update"
 
 msgid "Disable atomic verification"
-msgstr ""
+msgstr "Disable atomic verification"
 
 msgid "Replace objects in destination instance"
-msgstr ""
+msgstr "Replace objects in destination instance"
 
 msgid "Generate new UID"
-msgstr ""
+msgstr "Generate new UID"
 
 msgid "Dry Run"
-msgstr ""
+msgstr "Dry Run"
 
 msgid "Ignore data with same value on destination (only for program indicators)"
-msgstr ""
+msgstr "Ignore data with same value on destination (only for program indicators)"
 
 msgid "Ignore data with same value on destination"
-msgstr ""
+msgstr "Ignore data with same value on destination"
 
 msgid "Async mode"
-msgstr ""
+msgstr "Async mode"
+
+msgid "Skip Rule Engine on destination"
+msgstr "Skip Rule Engine on destination"
 
 msgid "Sync rule {{idx}}: {{name}} ({{id}})"
-msgstr ""
+msgstr "Sync rule {{idx}}: {{name}} ({{id}})"
 
 msgid "Errors"
-msgstr ""
+msgstr "Errors"
 
 msgid "Imported"
-msgstr ""
+msgstr "Imported"
 
 msgid "Deleted"
-msgstr ""
+msgstr "Deleted"
 
 msgid "Ignored"
-msgstr ""
+msgstr "Ignored"
 
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 msgid "Data element"
-msgstr ""
+msgstr "Data element"
 
 msgid "Number of entries"
-msgstr ""
+msgstr "Number of entries"
 
 msgid "Org units"
-msgstr ""
+msgstr "Org units"
 
 msgid "Property"
-msgstr ""
+msgstr "Property"
 
 msgid "Message"
-msgstr ""
+msgstr "Message"
 
 msgid "Program Indicators / Program Data Elements"
-msgstr ""
+msgstr "Program Indicators / Program Data Elements"
 
 msgid "Aggregated"
-msgstr ""
+msgstr "Aggregated"
 
 msgid "Events"
-msgstr ""
+msgstr "Events"
 
 msgid "Tracked Entity Instances"
-msgstr ""
+msgstr "Tracked Entity Instances"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Unknown"
 
 msgid "Generating JSON"
-msgstr ""
+msgstr "Generating JSON"
 
 msgid "Synchronization Results"
-msgstr ""
+msgstr "Synchronization Results"
 
 msgid "Download JSON Payload"
-msgstr ""
+msgstr "Download JSON Payload"
 
 msgid "Origin"
-msgstr ""
+msgstr "Origin"
 
 msgid "Origin package"
-msgstr ""
+msgstr "Origin package"
 
 msgid "Destination instance"
-msgstr ""
+msgstr "Destination instance"
 
 msgid "Messages"
-msgstr ""
+msgstr "Messages"
 
 msgid "Data Statistics"
-msgstr ""
+msgstr "Data Statistics"
 
 msgid "JSON Response"
-msgstr ""
+msgstr "JSON Response"
 
 msgid "Instance Selection"
-msgstr ""
+msgstr "Instance Selection"
 
 msgid "Scheduling"
-msgstr ""
+msgstr "Scheduling"
 
 msgid "Configure the scheduling frequency for the synchronization rule"
-msgstr ""
+msgstr "Configure the scheduling frequency for the synchronization rule"
 
 msgid ""
 "This step is optional and requires an external server with the metadata "
 "synchronization script properly configured"
 msgstr ""
+"This step is optional and requires an external server with the metadata "
+"synchronization script properly configured"
 
 msgid ""
 "This step allows to schedule background metadata synchronization jobs in a "
 "remote server."
 msgstr ""
+"This step allows to schedule background metadata synchronization jobs in a "
+"remote server."
 
 msgid ""
 "You can either select a pre-defined frequency from the drop-down menu or "
 "you enter a custom cron expression."
 msgstr ""
+"You can either select a pre-defined frequency from the drop-down menu or "
+"you enter a custom cron expression."
 
 msgid "Second (0 - 59)"
-msgstr ""
+msgstr "Second (0 - 59)"
 
 msgid "Minute (0 - 59)"
-msgstr ""
+msgstr "Minute (0 - 59)"
 
 msgid "Hour (0 - 23)"
-msgstr ""
+msgstr "Hour (0 - 23)"
 
 msgid "Day of the month (1 - 31)"
-msgstr ""
+msgstr "Day of the month (1 - 31)"
 
 msgid "Month (1 - 12)"
-msgstr ""
+msgstr "Month (1 - 12)"
 
 msgid "Day of the week (1 - 7) (Monday to Sunday)"
-msgstr ""
+msgstr "Day of the week (1 - 7) (Monday to Sunday)"
 
 msgid ""
 "An asterisk (*) matches all possibilities. For instance, if we want to run "
 "a rule every day we would use asterisks for day of the month, day of the "
 "week, and month of the year to match all values."
 msgstr ""
+"An asterisk (*) matches all possibilities. For instance, if we want to run "
+"a rule every day we would use asterisks for day of the month, day of the "
+"week, and month of the year to match all values."
 
 msgid ""
 "A wildcard (?) means no specific value and only works for day of the month "
@@ -1209,33 +1314,40 @@ msgid ""
 "particular day (10th) but you don't care about what day of the week that "
 "is, you would use ? in the day of the week field."
 msgstr ""
+"A wildcard (?) means no specific value and only works for day of the month "
+"or day of the week. For example, if you want to execute a rule on a "
+"particular day (10th) but you don't care about what day of the week that "
+"is, you would use ? in the day of the week field."
 
 msgid "Aggregation"
-msgstr ""
+msgstr "Aggregation"
 
 msgid "Filter rules"
-msgstr ""
+msgstr "Filter rules"
 
 msgid "Data elements"
-msgstr ""
+msgstr "Data elements"
 
 msgid "Organisation units"
-msgstr ""
+msgstr "Organisation units"
 
 msgid "Category options"
-msgstr ""
+msgstr "Category options"
 
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
 "endpoint and group data by organisation units children and the chosen time "
 "periods."
 msgstr ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods."
 
 msgid "Programs"
-msgstr ""
+msgstr "Programs"
 
 msgid "TEIs"
-msgstr ""
+msgstr "TEIs"
 
 msgid ""
 "If aggregation is enabled, the synchronization will use the Analytics "
@@ -1243,315 +1355,394 @@ msgid ""
 "periods. Program indicators are only included during a synchronization if "
 "aggregation is enabled."
 msgstr ""
+"If aggregation is enabled, the synchronization will use the Analytics "
+"endpoint and group data by organisation units children and the chosen time "
+"periods. Program indicators are only included during a synchronization if "
+"aggregation is enabled."
+
+msgid "You need to select credentials for the selected instances."
+msgstr "You need to select credentials for the selected instances."
+
+msgid "Default"
+msgstr "Default"
+
+msgid "Aggregated data exchange "
+msgstr "Aggregated data exchange "
+
+msgid "Type of synchronization"
+msgstr "Type of synchronization"
 
 msgid "Source instance"
-msgstr ""
+msgstr "Source instance"
 
 msgid "with user {{username}}"
-msgstr ""
+msgstr "with user {{username}}"
 
 msgid "with logged user"
-msgstr ""
+msgstr "with logged user"
 
 msgid "with stored user"
-msgstr ""
+msgstr "with stored user"
+
+msgid "Error fetching local instance"
+msgstr "Error fetching local instance"
 
 msgid "Destination"
-msgstr ""
+msgstr "Destination"
+
+msgid "Set Credentials"
+msgstr "Set Credentials"
 
 msgid "Every day"
-msgstr ""
+msgstr "Every day"
 
 msgid "Every month"
-msgstr ""
+msgstr "Every month"
 
 msgid "Every three months"
-msgstr ""
+msgstr "Every three months"
 
 msgid "Every six months"
-msgstr ""
+msgstr "Every six months"
 
 msgid "Every year"
-msgstr ""
+msgstr "Every year"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Enabled"
+
+msgid "Metadata Sync Scheduler"
+msgstr "Metadata Sync Scheduler"
+
+msgid "DHIS2 Scheduler"
+msgstr "DHIS2 Scheduler"
+
+msgid "Scheduler type"
+msgstr "Scheduler type"
 
 msgid "Select frequency template"
-msgstr ""
+msgstr "Select frequency template"
 
 msgid "Cron expression"
-msgstr ""
+msgstr "Cron expression"
 
 msgid "Cron expression must be valid"
-msgstr ""
+msgstr "Cron expression must be valid"
+
+msgid "An error has ocurred during the save"
+msgstr "An error has ocurred during the save"
 
 msgid "Json files downloaded successfull"
-msgstr ""
+msgstr "Json files downloaded successfull"
 
 msgid "An error has ocurred during the download"
-msgstr ""
+msgstr "An error has ocurred during the download"
 
 msgid "Cancel synchronization rule wizard"
-msgstr ""
+msgstr "Cancel synchronization rule wizard"
 
 msgid ""
 "You are about to exit the Sync Rule Creation Wizard. All your changes will "
 "be lost. Are you sure you want to proceed?"
 msgstr ""
+"You are about to exit the Sync Rule Creation Wizard. All your changes will "
+"be lost. Are you sure you want to proceed?"
 
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 msgid "Save as sync Rule"
-msgstr ""
+msgstr "Save as sync Rule"
 
 msgid "Download JSON"
-msgstr ""
+msgstr "Download JSON"
 
 msgid "Invalid origin instance"
-msgstr ""
+msgstr "Invalid origin instance"
+
+msgid "Aggregated data exchange"
+msgstr "Aggregated data exchange"
 
 msgid "Target instances [{{total}}]"
-msgstr ""
+msgstr "Target instances [{{total}}]"
 
 msgid "Filter rules [{{total}}]"
-msgstr ""
+msgstr "Filter rules [{{total}}]"
 
 msgid "Excluded elements"
-msgstr ""
+msgstr "Excluded elements"
 
 msgid "Use default include exclude configuration"
-msgstr ""
+msgstr "Use default include exclude configuration"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Disabled"
 
 msgid "Include exclude configuration"
-msgstr ""
+msgstr "Include exclude configuration"
 
 msgid "Include rules"
-msgstr ""
+msgstr "Include rules"
 
 msgid "Exclude rules"
-msgstr ""
+msgstr "Exclude rules"
 
 msgid "All TEIs"
-msgstr ""
+msgstr "All TEIs"
 
 msgid "{{total}} selected TEIs"
-msgstr ""
+msgstr "{{total}} selected TEIs"
 
 msgid "All events"
-msgstr ""
+msgstr "All events"
 
 msgid "{{total}} selected events"
-msgstr ""
+msgstr "{{total}} selected events"
 
 msgid "Category Option Combo"
-msgstr ""
+msgstr "Category Option Combo"
 
 msgid "All attribute category options"
-msgstr ""
+msgstr "All attribute category options"
 
 msgid "Strategy"
-msgstr ""
+msgstr "Strategy"
 
 msgid "Include objects and references"
-msgstr ""
+msgstr "Include objects and references"
 
 msgid "Include only references"
-msgstr ""
+msgstr "Include only references"
 
 msgid "Remove objects and references"
-msgstr ""
+msgstr "Remove objects and references"
 
 msgid "Users"
-msgstr ""
+msgstr "Users"
 
 msgid "No"
-msgstr ""
+msgstr "No"
 
 msgid "Dry run"
-msgstr ""
+msgstr "Dry run"
 
 msgid "New and updates"
-msgstr ""
+msgstr "New and updates"
 
 msgid "Updates"
-msgstr ""
+msgstr "Updates"
 
 msgid "Run Analytics before sync"
-msgstr ""
+msgstr "Run Analytics before sync"
 
 msgid "Run Analytics after sync"
-msgstr ""
+msgstr "Run Analytics after sync"
 
 msgid "{{async}}"
-msgstr ""
+msgstr "{{async}}"
 
 msgid "Frequency"
-msgstr ""
+msgstr "Frequency"
+
+msgid "Key: {{key}}"
+msgstr "Key: {{key}}"
+
+msgid "All Keys"
+msgstr "All Keys"
+
+msgid "Namespace: {{namespace}} - {{keyName}}"
+msgstr "Namespace: {{namespace}} - {{keyName}}"
 
 msgid "Daily"
-msgstr ""
+msgstr "Daily"
 
 msgid "Weekly"
-msgstr ""
+msgstr "Weekly"
 
 msgid "Monthly"
-msgstr ""
+msgstr "Monthly"
 
 msgid "Quarterly"
-msgstr ""
+msgstr "Quarterly"
 
 msgid "Yearly"
-msgstr ""
+msgstr "Yearly"
 
 msgid "Without aggregation, any data value related to an indicator will be ignored"
-msgstr ""
+msgstr "Without aggregation, any data value related to an indicator will be ignored"
 
 msgid ""
 "Without aggregation, program indicators will not be aggregated and "
 "synchronized"
 msgstr ""
+"Without aggregation, program indicators will not be aggregated and "
+"synchronized"
 
 msgid "Enable data aggregation"
-msgstr ""
+msgstr "Enable data aggregation"
 
 msgid "Aggregation type"
-msgstr ""
+msgstr "Aggregation type"
 
 msgid "Save empty values as zero (only for program indicators)"
-msgstr ""
+msgstr "Save empty values as zero (only for program indicators)"
 
 msgid "Save empty values as zero (only for indicators)"
-msgstr ""
+msgstr "Save empty values as zero (only for indicators)"
 
 msgid "Sync all attribute category options"
-msgstr ""
+msgstr "Sync all attribute category options"
 
 msgid "UID"
-msgstr ""
+msgstr "UID"
 
 msgid "Organisation unit"
-msgstr ""
+msgstr "Organisation unit"
 
 msgid "Event date"
-msgstr ""
+msgstr "Event date"
 
 msgid "Stored by"
-msgstr ""
+msgstr "Stored by"
 
 msgid "Due date"
-msgstr ""
+msgstr "Due date"
+
+msgid "Select"
+msgstr "Select"
 
 msgid "An error ocurred while trying to access the required events"
-msgstr ""
+msgstr "An error ocurred while trying to access the required events"
 
 msgid "Sync all events"
-msgstr ""
+msgstr "Sync all events"
 
 msgid "Exclude coordinates"
-msgstr ""
+msgstr "Exclude coordinates"
 
 msgid "You do not have assigned any organisation unit"
-msgstr ""
+msgstr "You do not have assigned any organisation unit"
 
 msgid "Enrollment date"
-msgstr ""
+msgstr "Enrollment date"
 
 msgid "Occurred event date"
-msgstr ""
+msgstr "Occurred event date"
 
 msgid "Tracked entities sync period field"
-msgstr ""
+msgstr "Tracked entities sync period field"
 
 msgid "Events sync period field"
-msgstr ""
+msgstr "Events sync period field"
 
 msgid "Enrollment Date"
-msgstr ""
+msgstr "Enrollment Date"
 
 msgid "Sync all TEIs"
-msgstr ""
+msgstr "Sync all TEIs"
 
 msgid "Exclude relationships"
-msgstr ""
+msgstr "Exclude relationships"
 
 msgid "Include owner and sharing settings"
-msgstr ""
+msgstr "Include owner and sharing settings"
 
 msgid "Include users"
-msgstr ""
+msgstr "Include users"
 
 msgid "Include organisation units"
-msgstr ""
+msgstr "Include organisation units"
 
 msgid ""
 "Remove default categories, categoryOptions, categoryCombos and "
 "categoryOptionCombos"
 msgstr ""
+"Remove default categories, categoryOptions, categoryCombos and "
+"categoryOptionCombos"
 
 msgid "Remove lastUpdated, lastUpdatedBy, created and createdBys"
-msgstr ""
+msgstr "Remove lastUpdated, lastUpdatedBy, created and createdBys"
 
 msgid "Exclude objects and references ->"
-msgstr ""
+msgstr "Exclude objects and references ->"
 
 msgid "Include objects"
-msgstr ""
+msgstr "Include objects"
 
 msgid "Include only references ->"
-msgstr ""
+msgstr "Include only references ->"
 
 msgid "Include references and objects"
-msgstr ""
+msgstr "Include references and objects"
 
 msgid "Use sync rules periods"
-msgstr ""
+msgstr "Use sync rules periods"
+
+msgid "Skip generation of resource tables"
+msgstr "Skip generation of resource tables"
+
+msgid "Skip generation of event data"
+msgstr "Skip generation of event data"
+
+msgid "Skip generation of enrollment data"
+msgstr "Skip generation of enrollment data"
+
+msgid "Skip generation of organisation unit ownership data"
+msgstr "Skip generation of organisation unit ownership data"
+
+msgid "Skip generation of tracked entity data"
+msgstr "Skip generation of tracked entity data"
+
+msgid "Skip generation of aggregate data and completeness data"
+msgstr "Skip generation of aggregate data and completeness data"
+
+msgid "Skip generation of outlier data"
+msgstr "Skip generation of outlier data"
 
 msgid "True"
-msgstr ""
+msgstr "True"
 
 msgid "False"
-msgstr ""
+msgstr "False"
 
 msgid "Use sync rule settings"
-msgstr ""
+msgstr "Use sync rule settings"
+
+msgid "Run Analytics"
+msgstr "Run Analytics"
+
+msgid "Number of last years of data to include"
+msgstr "Number of last years of data to include"
 
 msgid "MSF Settings"
-msgstr ""
+msgstr "MSF Settings"
 
 msgid "Analytics"
-msgstr ""
+msgstr "Analytics"
 
-msgid "Run Analytics Before"
-msgstr ""
+msgid "Before sync · Individual data"
+msgstr "Before sync · Individual data"
 
-msgid "Run Analytics After"
-msgstr ""
-
-msgid "Number of years to include"
-msgstr ""
+msgid "After sync · Aggregate data"
+msgstr "After sync · Aggregate data"
 
 msgid "Data values settings"
-msgstr ""
+msgstr "Data values settings"
 
 msgid "Delete data values before sync"
-msgstr ""
+msgstr "Delete data values before sync"
 
 msgid "Check existing data values in previous periods"
-msgstr ""
+msgstr "Check existing data values in previous periods"
 
 msgid "Project minimum dates"
-msgstr ""
+msgstr "Project minimum dates"
 
 msgid "Minimum date"
-msgstr ""
+msgstr "Minimum date"
 
 msgid "Distributed under GNU GLPv3"
-msgstr ""
+msgstr "Distributed under GNU GLPv3"
 
 msgid ""
 "MetadataSync (MDSync) is the metadata & data synchronization solution for "
@@ -1561,6 +1752,12 @@ msgid ""
 "distribution, providing graphical interfaces for such time-consuming "
 "operations."
 msgstr ""
+"MetadataSync (MDSync) is the metadata & data synchronization solution for "
+"DHIS2. It allows easy metadata mapping, distribution and the automatization "
+"of synchronization of data and metadata. MDSync is also a versatile "
+"solution for DHIS2 metadata packages generation, validation and "
+"distribution, providing graphical interfaces for such time-consuming "
+"operations."
 
 msgid ""
 "This application has been funded by the WHO Global Malaria Programme, "
@@ -1573,819 +1770,1034 @@ msgid ""
 "Page](https://eyeseetea.github.io/metadata-synchronization-blessed/"
 "metadatasync/)"
 msgstr ""
+"This application has been funded by the WHO Global Malaria Programme, "
+"Medecins Sans Frontières (MSF), Samaritan’s Purse, Health Information "
+"Systems Program South Africa and the U.S. President’s Malaria Initiative "
+"(PMI)  to support countries in strengthening the collection and use of "
+"health data by using DHIS2. The application has been developed by "
+"[EyeSeeTea SL](http://eyeseetea.com). Source code, documentation and "
+"release notes can be found at the [EyeSeetea GitHub Project "
+"Page](https://eyeseetea.github.io/metadata-synchronization-blessed/"
+"metadatasync/)"
 
 msgid ""
 "If you wish to contribute to the development of MetadataSync with new "
 "features, please contact [EyeSeeTea](mailto:hello@eyeseetea.com)."
 msgstr ""
+"If you wish to contribute to the development of MetadataSync with new "
+"features, please contact [EyeSeeTea](mailto:hello@eyeseetea.com)."
 
 msgid "About MetaData Synchronization App"
-msgstr ""
+msgstr "About MetaData Synchronization App"
 
 msgid "World Health Organization"
-msgstr ""
+msgstr "World Health Organization"
 
 msgid "EyeSeeTea"
-msgstr ""
+msgstr "EyeSeeTea"
 
 msgid "Samaritan's Purse"
-msgstr ""
+msgstr "Samaritan's Purse"
 
 msgid "Médicos Sin Fronteras"
-msgstr ""
+msgstr "Médicos Sin Fronteras"
 
 msgid "Health Information Systems Program - South Africa"
-msgstr ""
+msgstr "Health Information Systems Program - South Africa"
 
 msgid "U.S. President's Malaria Initiative"
-msgstr ""
+msgstr "U.S. President's Malaria Initiative"
 
 msgid "Metadata Synchronization History"
-msgstr ""
+msgstr "Metadata Synchronization History"
 
 msgid "Aggregated Data Synchronization History"
-msgstr ""
+msgstr "Aggregated Data Synchronization History"
 
 msgid "Events Synchronization History"
-msgstr ""
+msgstr "Events Synchronization History"
 
 msgid "Deleted Synchronization History"
-msgstr ""
+msgstr "Deleted Synchronization History"
 
 msgid "Aggregated Data Sync"
-msgstr ""
+msgstr "Aggregated Data Sync"
 
 msgid "Manual sync"
-msgstr ""
+msgstr "Manual sync"
 
 msgid ""
 "Manually synchronise aggregated data by selecting the data sets, data "
 "elements or their groups and group sets together with the organisation "
 "unit, period and category options."
 msgstr ""
+"Manually synchronise aggregated data by selecting the data sets, data "
+"elements or their groups and group sets together with the organisation "
+"unit, period and category options."
 
 msgid "Sync rules"
-msgstr ""
+msgstr "Sync rules"
 
 msgid ""
 "Create, modify, delete, execute and schedule rules to synchronize "
 "aggregated data periodically."
 msgstr ""
+"Create, modify, delete, execute and schedule rules to synchronize "
+"aggregated data periodically."
 
 msgid "History"
-msgstr ""
+msgstr "History"
 
 msgid ""
 "View and analyse the outcome of aggregated data manual syncs and executions "
 "of sync rules."
 msgstr ""
+"View and analyse the outcome of aggregated data manual syncs and executions "
+"of sync rules."
 
 msgid "Events Sync"
-msgstr ""
+msgstr "Events Sync"
 
 msgid ""
 "Manually synchronise event data by selecting the programs or events "
 "together with the organisation unit, period and category options."
 msgstr ""
+"Manually synchronise event data by selecting the programs or events "
+"together with the organisation unit, period and category options."
 
 msgid ""
 "Create, modify, delete, execute and schedule rules to synchronize event "
 "data periodically."
 msgstr ""
+"Create, modify, delete, execute and schedule rules to synchronize event "
+"data periodically."
 
 msgid ""
 "View and analyse the outcome of events manual syncs and executions of sync "
 "rules."
 msgstr ""
+"View and analyse the outcome of events manual syncs and executions of sync "
+"rules."
 
 msgid "Metadata Sync"
-msgstr ""
+msgstr "Metadata Sync"
 
 msgid ""
 "Manually synchronise metadata such as data elements, organisation units, "
 "options, indicators, program indicator, categories and their groups and "
 "group sets."
 msgstr ""
+"Manually synchronise metadata such as data elements, organisation units, "
+"options, indicators, program indicator, categories and their groups and "
+"group sets."
 
 msgid ""
 "Create, modify, delete, execute and schedule rules to synchronize metadata "
 "periodically."
 msgstr ""
+"Create, modify, delete, execute and schedule rules to synchronize metadata "
+"periodically."
 
 msgid ""
 "View and analyse the outcome of metadata manual syncs and executions of "
 "sync rules."
 msgstr ""
+"View and analyse the outcome of metadata manual syncs and executions of "
+"sync rules."
 
 msgid "Notifications"
-msgstr ""
+msgstr "Notifications"
 
 msgid "Read notifications regarding new versions of DHIS2 metadata packages."
-msgstr ""
+msgstr "Read notifications regarding new versions of DHIS2 metadata packages."
 
 msgid "Other"
-msgstr ""
+msgstr "Other"
 
 msgid "Deleted objects"
-msgstr ""
+msgstr "Deleted objects"
 
 msgid "Manually synchronise deleted objects."
-msgstr ""
+msgstr "Manually synchronise deleted objects."
 
 msgid "Metadata distribution"
-msgstr ""
+msgstr "Metadata distribution"
 
 msgid "Create, edit and delete modules from this instance metadata."
-msgstr ""
+msgstr "Create, edit and delete modules from this instance metadata."
 
 msgid ""
 "View, publish, download and delete metadata packages from this instance "
 "metadata modules."
 msgstr ""
+"View, publish, download and delete metadata packages from this instance "
+"metadata modules."
 
 msgid "Package store connection"
-msgstr ""
+msgstr "Package store connection"
 
 msgid "Configure connections to metadata package stores."
-msgstr ""
+msgstr "Configure connections to metadata package stores."
 
 msgid "Configuration"
-msgstr ""
+msgstr "Configuration"
 
 msgid "Instance settings"
-msgstr ""
+msgstr "Instance settings"
 
 msgid ""
 "Configure, test and edit connections to other DHIS2 and map metadata "
 "objects between instances."
 msgstr ""
+"Configure, test and edit connections to other DHIS2 and map metadata "
+"objects between instances."
 
 msgid "Metadata custodians"
-msgstr ""
+msgstr "Metadata custodians"
 
 msgid ""
 "Define who are the custodians of this instance metadata. Custodians approve "
 "metadata requests coming from other DHIS instances."
 msgstr ""
+"Define who are the custodians of this instance metadata. Custodians approve "
+"metadata requests coming from other DHIS instances."
 
 msgid "Settings"
-msgstr ""
+msgstr "Settings"
 
 msgid "Admin Dashboard"
-msgstr ""
+msgstr "Admin Dashboard"
+
+msgid "Basic"
+msgstr "Basic"
+
+msgid "API Token"
+msgstr "API Token"
+
+msgid "Aggregated Data Exchange"
+msgstr "Aggregated Data Exchange"
+
+msgid "External"
+msgstr "External"
+
+msgid "Internal"
+msgstr "Internal"
 
 msgid "Please fix the issues before testing the connection"
-msgstr ""
+msgstr "Please fix the issues before testing the connection"
 
 msgid "Connected successfully to instance"
-msgstr ""
+msgstr "Connected successfully to instance"
 
 msgid "Server name (*)"
-msgstr ""
+msgstr "Server name (*)"
+
+msgid "Exchange target type (*)"
+msgstr "Exchange target type (*)"
 
 msgid "URL endpoint (*)"
-msgstr ""
-
-msgid "Username (*)"
-msgstr ""
-
-msgid "Password (*)"
-msgstr ""
+msgstr "URL endpoint (*)"
 
 msgid "Metadata mapping"
-msgstr ""
+msgstr "Metadata mapping"
 
 msgid "New Instance"
-msgstr ""
+msgstr "New Instance"
 
 msgid "Edit Instance"
-msgstr ""
+msgstr "Edit Instance"
 
 msgid "Cancel Instance Creation"
-msgstr ""
+msgstr "Cancel Instance Creation"
 
 msgid "Cancel Instance Editing"
-msgstr ""
+msgstr "Cancel Instance Editing"
 
 msgid "All your changes will be lost. Are you sure?"
-msgstr ""
+msgstr "All your changes will be lost. Are you sure?"
 
 msgid "Saving..."
-msgstr ""
+msgstr "Saving..."
 
 msgid "Deleting Instances"
-msgstr ""
+msgstr "Deleting Instances"
 
 msgid "Failed to delete some instances"
-msgstr ""
+msgstr "Failed to delete some instances"
 
 msgid "Successfully deleted {{total}} instances"
-msgstr ""
+msgstr "Successfully deleted {{total}} instances"
 
 msgid "Server name"
-msgstr ""
+msgstr "Server name"
 
 msgid "URL endpoint"
-msgstr ""
+msgstr "URL endpoint"
+
+msgid "Authentication Scheme"
+msgstr "Authentication Scheme"
 
 msgid "Username"
-msgstr ""
+msgstr "Username"
 
 msgid "Run analytics"
-msgstr ""
+msgstr "Run analytics"
 
 msgid "An error has ocurred editing share settings"
-msgstr ""
+msgstr "An error has ocurred editing share settings"
 
 msgid "Delete Instances?"
-msgstr ""
+msgstr "Delete Instances?"
 
 msgid "Are you sure you want to delete {{total}} instances?"
-msgstr ""
+msgstr "Are you sure you want to delete {{total}} instances?"
 
 msgid "Instance Settings"
-msgstr ""
+msgstr "Instance Settings"
 
 msgid ""
 "Map data elements, category options and option sets for aggregated data "
 "between instances"
 msgstr ""
+"Map data elements, category options and option sets for aggregated data "
+"between instances"
 
 msgid "Programs (events)"
-msgstr ""
+msgstr "Programs (events)"
 
 msgid ""
 "Map data elements, category options and option sets for tracker data "
 "between instances"
 msgstr ""
+"Map data elements, category options and option sets for tracker data "
+"between instances"
 
 msgid "Map organisation units between instances"
-msgstr ""
+msgstr "Map organisation units between instances"
 
 msgid "Global"
-msgstr ""
+msgstr "Global"
 
 msgid ""
 "Map global category options, category combos, options and tracker data "
 "elements between instances"
 msgstr ""
+"Map global category options, category combos, options and tracker data "
+"elements between instances"
 
 msgid "Instance mapping"
-msgstr ""
+msgstr "Instance mapping"
 
 msgid "Between this instance and {{name}}"
-msgstr ""
+msgstr "Between this instance and {{name}}"
 
 msgid "Aggregated mapping"
-msgstr ""
+msgstr "Aggregated mapping"
 
 msgid "Program (events) mapping"
-msgstr ""
+msgstr "Program (events) mapping"
 
 msgid "Organisation unit mapping"
-msgstr ""
+msgstr "Organisation unit mapping"
 
 msgid "Global mapping"
-msgstr ""
+msgstr "Global mapping"
 
 msgid "Metadata Synchronization"
-msgstr ""
+msgstr "Metadata Synchronization"
 
 msgid "Aggregated Data Synchronization"
-msgstr ""
+msgstr "Aggregated Data Synchronization"
 
 msgid "Events Synchronization"
-msgstr ""
+msgstr "Events Synchronization"
 
 msgid "Deleted Objects Synchronization"
-msgstr ""
+msgstr "Deleted Objects Synchronization"
 
 msgid "Please select at least one element from the table to synchronize"
-msgstr ""
+msgstr "Please select at least one element from the table to synchronize"
 
 msgid "Unknown error with the request"
-msgstr ""
+msgstr "Unknown error with the request"
 
 msgid "An error has ocurred during the synchronization"
-msgstr ""
+msgstr "An error has ocurred during the synchronization"
 
 msgid "New module"
-msgstr ""
+msgstr "New module"
 
 msgid "Edit module"
-msgstr ""
+msgstr "Edit module"
 
 msgid "Cancel module creation"
-msgstr ""
+msgstr "Cancel module creation"
 
 msgid "Cancel module editing"
-msgstr ""
+msgstr "Cancel module editing"
 
 msgid "Origin Instance"
-msgstr ""
+msgstr "Origin Instance"
 
 msgid "Requestor"
-msgstr ""
+msgstr "Requestor"
 
 msgid "Pull request (Sent)"
-msgstr ""
+msgstr "Pull request (Sent)"
 
 msgid "Pull request (Received)"
-msgstr ""
+msgstr "Pull request (Received)"
 
 msgid "Pull request approved but not imported"
-msgstr ""
+msgstr "Pull request approved but not imported"
 
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 msgid "Package has been already imported"
-msgstr ""
+msgstr "Package has been already imported"
 
 msgid "Notification is invalid"
-msgstr ""
+msgstr "Notification is invalid"
 
 msgid "Notification not found"
-msgstr ""
+msgstr "Notification not found"
 
 msgid "Remote pull request has not been approved yet"
-msgstr ""
+msgstr "Remote pull request has not been approved yet"
 
 msgid "Remote pull request is not valid"
-msgstr ""
+msgstr "Remote pull request is not valid"
 
 msgid "Remote pull request has been deleted"
-msgstr ""
+msgstr "Remote pull request has been deleted"
 
 msgid "Updated notification"
-msgstr ""
+msgstr "Updated notification"
 
 msgid "Could not apply action, notification not found"
-msgstr ""
+msgstr "Could not apply action, notification not found"
 
 msgid "You don't have permissions to edit this notification"
-msgstr ""
+msgstr "You don't have permissions to edit this notification"
 
 msgid "Could not apply action, notification is not valid"
-msgstr ""
+msgstr "Could not apply action, notification is not valid"
 
 msgid "Could not update remote instance, notification not found"
-msgstr ""
+msgstr "Could not update remote instance, notification not found"
 
 msgid "Open"
-msgstr ""
+msgstr "Open"
 
 msgid "Mark as read"
-msgstr ""
+msgstr "Mark as read"
 
 msgid "Mark as unread"
-msgstr ""
+msgstr "Mark as unread"
 
 msgid "Approve"
-msgstr ""
+msgstr "Approve"
 
 msgid "Reject"
-msgstr ""
+msgstr "Reject"
 
 msgid "Importing approved pull request"
-msgstr ""
+msgstr "Importing approved pull request"
 
 msgid "Cancelling pull request"
-msgstr ""
+msgstr "Cancelling pull request"
 
 msgid "Pending"
-msgstr ""
+msgstr "Pending"
 
 msgid "Approved"
-msgstr ""
+msgstr "Approved"
 
 msgid "Rejected"
-msgstr ""
+msgstr "Rejected"
 
 msgid "Imported with errors"
-msgstr ""
+msgstr "Imported with errors"
 
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelled"
 
 msgid "Unread messages"
-msgstr ""
+msgstr "Unread messages"
 
 msgid "Refresh"
-msgstr ""
+msgstr "Refresh"
 
 msgid "Application storage"
-msgstr ""
+msgstr "Application storage"
 
 msgid "Retention days"
-msgstr ""
+msgstr "Retention days"
 
 msgid "Leave empty to keep all history"
-msgstr ""
+msgstr "Leave empty to keep all history"
+
+msgid "Metadata Sync User Settings"
+msgstr "Metadata Sync User Settings"
+
+msgid "Default owner and sharing settings inclusion method"
+msgstr "Default owner and sharing settings inclusion method"
+
+msgid "Default users inclusion method"
+msgstr "Default users inclusion method"
+
+msgid "Default organisation units inclusion method"
+msgstr "Default organisation units inclusion method"
 
 msgid "Data Store"
-msgstr ""
+msgstr "Data Store"
 
 msgid "Metadata constant"
-msgstr ""
+msgstr "Metadata constant"
 
 msgid "Settings saved succesfully!"
-msgstr ""
+msgstr "Settings saved succesfully!"
 
 msgid "An error has occurred saving settings"
-msgstr ""
+msgstr "An error has occurred saving settings"
 
 msgid "Change storage"
-msgstr ""
+msgstr "Change storage"
 
 msgid ""
 "When changing the storage of the application, all stored information will "
 "be moved to the new storage. This might take a while, please wait. Do you "
 "want to proceed?"
 msgstr ""
+"When changing the storage of the application, all stored information will "
+"be moved to the new storage. This might take a while, please wait. Do you "
+"want to proceed?"
 
 msgid "Edit store"
-msgstr ""
+msgstr "Edit store"
 
 msgid "An error has occurred setting store as default"
-msgstr ""
+msgstr "An error has occurred setting store as default"
 
 msgid "Account"
-msgstr ""
+msgstr "Account"
 
 msgid "Repository"
-msgstr ""
+msgstr "Repository"
 
 msgid "Token"
-msgstr ""
-
-msgid "Default"
-msgstr ""
+msgstr "Token"
 
 msgid "Set as default"
-msgstr ""
+msgstr "Set as default"
 
 msgid "Test conection"
-msgstr ""
+msgstr "Test conection"
 
 msgid "Stores"
-msgstr ""
+msgstr "Stores"
 
 msgid "Delete Stores?"
-msgstr ""
+msgstr "Delete Stores?"
 
 msgid "Are you sure you want to delete {{total}} stores?"
-msgstr ""
+msgstr "Are you sure you want to delete {{total}} stores?"
 
 msgid "New {{type}} synchronization rule"
-msgstr ""
+msgstr "New {{type}} synchronization rule"
 
 msgid "Edit {{type}} synchronization rule"
-msgstr ""
+msgstr "Edit {{type}} synchronization rule"
 
 msgid "Cancel {{type}} synchronization rule creation"
-msgstr ""
+msgstr "Cancel {{type}} synchronization rule creation"
 
 msgid "Cancel {{type}} synchronization rule editing"
-msgstr ""
+msgstr "Cancel {{type}} synchronization rule editing"
 
 msgid "Metadata Synchronization Rules"
-msgstr ""
+msgstr "Metadata Synchronization Rules"
 
 msgid "Aggregated Data Synchronization Rules"
-msgstr ""
+msgstr "Aggregated Data Synchronization Rules"
 
 msgid "Events Synchronization Rules"
-msgstr ""
+msgstr "Events Synchronization Rules"
 
 msgid "Destination instances"
-msgstr ""
+msgstr "Destination instances"
 
 msgid "Last executed"
-msgstr ""
+msgstr "Last executed"
 
 msgid "Last executed by"
-msgstr ""
+msgstr "Last executed by"
 
 msgid "Last Updated"
-msgstr ""
+msgstr "Last Updated"
 
 msgid "Last Updated By"
-msgstr ""
+msgstr "Last Updated By"
 
 msgid "Generating JSON file"
-msgstr ""
+msgstr "Generating JSON file"
 
 msgid "Exporting synchronization rules"
-msgstr ""
+msgstr "Exporting synchronization rules"
 
 msgid "Deleting Sync Rules"
-msgstr ""
+msgstr "Deleting Sync Rules"
 
 msgid "Successfully deleted {{total}} rules"
-msgstr ""
+msgstr "Successfully deleted {{total}} rules"
 
 msgid "Synchronizing {{name}}"
-msgstr ""
+msgstr "Synchronizing {{name}}"
 
 msgid "Successfully updated sync rule"
-msgstr ""
+msgstr "Successfully updated sync rule"
 
 msgid "Couldn't read the file because it's not valid"
-msgstr ""
+msgstr "Couldn't read the file because it's not valid"
 
 msgid "Importing rule(s)"
-msgstr ""
+msgstr "Importing rule(s)"
 
 msgid "{{name}} ({{id}}): Invalid type found: {{type}}"
-msgstr ""
+msgstr "{{name}} ({{id}}): Invalid type found: {{type}}"
 
 msgid "Importing {{n}} rules"
-msgstr ""
+msgstr "Importing {{n}} rules"
 
 msgid "Imported {{n}} rules"
-msgstr ""
+msgstr "Imported {{n}} rules"
 
 msgid "Execute"
-msgstr ""
+msgstr "Execute"
 
 msgid "Export rule"
-msgstr ""
+msgstr "Export rule"
 
 msgid "Toggle scheduling"
-msgstr ""
+msgstr "Toggle scheduling"
 
 msgid "Import sync rules"
-msgstr ""
+msgstr "Import sync rules"
 
 msgid "Last executed date"
-msgstr ""
+msgstr "Last executed date"
 
 msgid "Destination Instance"
-msgstr ""
+msgstr "Destination Instance"
 
 msgid "Search by name"
-msgstr ""
+msgstr "Search by name"
 
 msgid "Delete Rules?"
-msgstr ""
+msgstr "Delete Rules?"
 
 msgid "Are you sure you want to delete {{total}} rules?"
-msgstr ""
+msgstr "Are you sure you want to delete {{total}} rules?"
 
 msgid "Synchronization History"
-msgstr ""
+msgstr "Synchronization History"
 
 msgid "Server error on aggregation"
-msgstr ""
+msgstr "Server error on aggregation"
 
 msgid "Aggregate Data For HMIS"
-msgstr ""
+msgstr "Aggregate Data For HMIS"
 
 msgid "Aggregate Data"
-msgstr ""
+msgstr "Aggregate Data"
 
 msgid "Synchronization Progress"
-msgstr ""
+msgstr "Synchronization Progress"
 
 msgid "Download payload"
-msgstr ""
+msgstr "Download payload"
 
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Advanced Settings"
 
 msgid "Go To Admin Dashboard"
-msgstr ""
+msgstr "Go To Admin Dashboard"
 
 msgid "Go to History"
-msgstr ""
+msgstr "Go to History"
 
 msgid "MSF Validation"
-msgstr ""
+msgstr "MSF Validation"
 
 msgid "Do you want to proceed?"
-msgstr ""
+msgstr "Do you want to proceed?"
 
 msgid "Syncing process will stop if you leave the current page"
-msgstr ""
+msgstr "Syncing process will stop if you leave the current page"
 
 msgid "Retrieving information from the system..."
-msgstr ""
+msgstr "Retrieving information from the system..."
 
 msgid "Synchronizing aggregated data..."
-msgstr ""
+msgstr "Synchronizing aggregated data..."
 
 msgid "Run analytics after is disabled, last analytics execution: {{lastExecution}}"
-msgstr ""
+msgstr "Run analytics after is disabled, last analytics execution: {{lastExecution}}"
 
 msgid "Finished aggregated data synchronization with errors"
-msgstr ""
+msgstr "Finished aggregated data synchronization with errors"
 
 msgid "Finished aggregated data synchronization successfully"
-msgstr ""
+msgstr "Finished aggregated data synchronization successfully"
 
 msgid "An error has occurred retrieving the instance {{name}}"
-msgstr ""
+msgstr "An error has occurred retrieving the instance {{name}}"
 
 msgid "Checking data values in previous periods ...."
-msgstr ""
+msgstr "Checking data values in previous periods ...."
 
 msgid "Starting Sync Rule {{name}} ..."
-msgstr ""
+msgstr "Starting Sync Rule {{name}} ..."
 
 msgid "Summary of Sync Rule"
-msgstr ""
+msgstr "Summary of Sync Rule"
 
 msgid "Error found: {{message}}"
-msgstr ""
+msgstr "Error found: {{message}}"
 
 msgid "Finished Sync Rule {{name}}"
-msgstr ""
+msgstr "Finished Sync Rule {{name}}"
 
 msgid "Program Indicators"
-msgstr ""
+msgstr "Program Indicators"
 
 msgid "never"
-msgstr ""
+msgstr "never"
 
 msgid "Error retrieving instance {{name}} to delete previous data values"
-msgstr ""
+msgstr "Error retrieving instance {{name}} to delete previous data values"
 
 msgid ""
 "Deleting previous data values in target instance {{name}} for period "
 "{{period}}..."
 msgstr ""
+"Deleting previous data values in target instance {{name}} for period "
+"{{period}}..."
 
 msgid "Get configuration from HQ server"
-msgstr ""
+msgstr "Get configuration from HQ server"
 
 msgid "Push data to HQ server"
-msgstr ""
+msgstr "Push data to HQ server"
 
 msgid "SYNCHRONIZATION SUCCESSFUL"
-msgstr ""
+msgstr "SYNCHRONIZATION SUCCESSFUL"
 
 msgid "The synchronization has been completed successfully."
-msgstr ""
+msgstr "The synchronization has been completed successfully."
 
 msgid "Do not forget to perform the following actions:"
-msgstr ""
+msgstr "Do not forget to perform the following actions:"
 
 msgid "Set up passwords manually for all users intended to use this instance"
-msgstr ""
+msgstr "Set up passwords manually for all users intended to use this instance"
 
 msgid "Clear the application cache"
-msgstr ""
+msgstr "Clear the application cache"
 
 msgid "SYNCHRONIZATION FAILED"
-msgstr ""
+msgstr "SYNCHRONIZATION FAILED"
 
 msgid ""
 "The synchronization and metadata import failed. Please, reach out an "
 "administrator and share the JSON Response obtained as an output for the "
 "synchronization rule that failed."
 msgstr ""
+"The synchronization and metadata import failed. Please, reach out an "
+"administrator and share the JSON Response obtained as an output for the "
+"synchronization rule that failed."
 
 msgid "DATA PUSHED SUCCESSFULLY"
-msgstr ""
+msgstr "DATA PUSHED SUCCESSFULLY"
 
 msgid "The data was pushed successfully to the HQ server."
-msgstr ""
+msgstr "The data was pushed successfully to the HQ server."
 
 msgid "ERROR PUSHING DATA"
-msgstr ""
+msgstr "ERROR PUSHING DATA"
 
 msgid ""
 "There was an error pushing the data to the HQ server. Please, reach out an "
 "administrator and share the JSON Response obtained as an output for the "
 "synchronization rule that failed."
 msgstr ""
+"There was an error pushing the data to the HQ server. Please, reach out an "
+"administrator and share the JSON Response obtained as an output for the "
+"synchronization rule that failed."
 
 msgid "Output: "
-msgstr ""
+msgstr "Output: "
 
 msgid "Sync finished - {{dateEnd}}"
-msgstr ""
+msgstr "Sync finished - {{dateEnd}}"
 
 msgid "Status: "
-msgstr ""
+msgstr "Status: "
 
 msgid ""
 "Synchronizing rule {{currentRule}} out of {{totalRules}} {{name}} - "
 "{{dateStart}}"
 msgstr ""
+"Synchronizing rule {{currentRule}} out of {{totalRules}} {{name}} - "
+"{{dateStart}}"
 
 msgid "Error: {{code}}"
-msgstr ""
+msgstr "Error: {{code}}"
 
 msgid "Consultations and Surgery (Events)"
-msgstr ""
+msgstr "Consultations and Surgery (Events)"
 
 msgid "Patients (Tracked Entity Instances)"
+msgstr "Patients (Tracked Entity Instances)"
+
+msgid "Checking {{itemName}}..."
+msgstr "Checking {{itemName}}..."
+
+msgid "Uploading {{itemName}}..."
+msgstr "Uploading {{itemName}}..."
+
+msgid "The {{itemName}} is already installed."
+msgstr "The {{itemName}} is already installed."
+
+msgid ""
+"An error occurred while installing the {{itemName}}. Alternatively, you can "
+"download the configuration and import it manually"
 msgstr ""
+"An error occurred while installing the {{itemName}}. Alternatively, you can "
+"download the configuration and import it manually"
+
+msgid "The {{itemName}} is not installed yet. Use the button below to install it."
+msgstr "The {{itemName}} is not installed yet. Use the button below to install it."
+
+msgid "Setup WMR prerequisites"
+msgstr "Setup WMR prerequisites"
+
+msgid "Metadata package"
+msgstr "Metadata package"
+
+msgid "This package contains the WMR dataset and its dependencies"
+msgstr "This package contains the WMR dataset and its dependencies"
+
+msgid "Autogenform configuration"
+msgstr "Autogenform configuration"
+
+msgid "Contains the dataStore configurations required by the autogenforms tool"
+msgstr "Contains the dataStore configurations required by the autogenforms tool"
+
+msgid "Loading settings..."
+msgstr "Loading settings..."
+
+msgid ""
+"Select a DataSet. Then map your server data to the newly created test WMR "
+"form"
+msgstr ""
+"Select a DataSet. Then map your server data to the newly created test WMR "
+"form"
+
+msgid "Select a DataSet"
+msgstr "Select a DataSet"
+
+msgid "Submit WMR Data"
+msgstr "Submit WMR Data"
+
+msgid "Data successfully submitted to the target instance."
+msgstr "Data successfully submitted to the target instance."
+
+msgid "Data submitted with warnings."
+msgstr "Data submitted with warnings."
+
+msgid "Data submission failed."
+msgstr "Data submission failed."
+
+msgid "Target Instance "
+msgstr "Target Instance "
+
+msgid "Please select a target instance to submit the data"
+msgstr "Please select a target instance to submit the data"
+
+msgid "Target Organisation Unit Id"
+msgstr "Target Organisation Unit Id"
+
+msgid "Please provide a target organisation unit ID and Validate it"
+msgstr "Please provide a target organisation unit ID and Validate it"
+
+msgid "Send DataValues to target instance"
+msgstr "Send DataValues to target instance"
+
+msgid "Sync WMR Country Dataset"
+msgstr "Sync WMR Country Dataset"
+
+msgid "Download DataValues"
+msgstr "Download DataValues"
+
+msgid "Failed to synchronize WMR data"
+msgstr "Failed to synchronize WMR data"
+
+msgid "WMR data synchronized successfully."
+msgstr "WMR data synchronized successfully."
+
+msgid "Please complete the prerequisites before proceeding."
+msgstr "Please complete the prerequisites before proceeding."
+
+msgid "Please select a source data set before proceeding."
+msgstr "Please select a source data set before proceeding."
+
+msgid "Please Sync your server data to the WMR Country Sync form before proceeding."
+msgstr "Please Sync your server data to the WMR Country Sync form before proceeding."
+
+msgid "Map Server data"
+msgstr "Map Server data"
+
+msgid "Sync & Check Data"
+msgstr "Sync & Check Data"
+
+msgid "Submit Data"
+msgstr "Submit Data"
+
+msgid ""
+"The Organisation Unit ID is not valid or does not exist in the target "
+"instance."
+msgstr ""
+"The Organisation Unit ID is not valid or does not exist in the target "
+"instance."
+
+msgid ""
+"There was a problem communicating with the instance. Please review the "
+"Instance settings."
+msgstr ""
+"There was a problem communicating with the instance. Please review the "
+"Instance settings."
+
+msgid "Target Organisation Unit ID (*)"
+msgstr "Target Organisation Unit ID (*)"
+
+msgid "The ID of the Organisation Unit where the data will be submitted"
+msgstr "The ID of the Organisation Unit where the data will be submitted"
+
+msgid "Validate Organisation Unit"
+msgstr "Validate Organisation Unit"
+
+msgid "Create New Target Instance"
+msgstr "Create New Target Instance"
+
+msgid "Instance or target organisation unit ID is not provided."
+msgstr "Instance or target organisation unit ID is not provided."
 
 msgid "Widget cannot be used until an administrator opens the application"
-msgstr ""
+msgstr "Widget cannot be used until an administrator opens the application"
 
 msgid "Running analytics for instance {{name}}"
-msgstr ""
+msgstr "Running analytics for instance {{name}}"
 
 msgid "Updating analytics done for instance {{name}}"
-msgstr ""
+msgstr "Updating analytics done for instance {{name}}"
 
 msgid "Short name"
-msgstr ""
+msgstr "Short name"
 
 msgid "API link"
-msgstr ""
+msgstr "API link"
 
 msgid "Level"
-msgstr ""
+msgstr "Level"
 
 msgid "Action"
-msgstr ""
+msgstr "Action"
 
 msgid "Program Rule"
-msgstr ""
+msgstr "Program Rule"
 
 msgid "Categories"
-msgstr ""
+msgstr "Categories"
 
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
 msgid "This URL and username combination already exists"
-msgstr ""
+msgstr "This URL and username combination already exists"
 
 msgid "You need to select at least one {{element}}"
-msgstr ""
+msgstr "You need to select at least one {{element}}"
 
 msgid "Cron expression {{expression}} must be valid"
-msgstr ""
+msgstr "Cron expression {{expression}} must be valid"
 
 msgid "To enable a rule you need to enter a valid {{expression}}"
-msgstr ""
+msgstr "To enable a rule you need to enter a valid {{expression}}"
 
 msgid "Start and end dates are not a valid period"
-msgstr ""
+msgstr "Start and end dates are not a valid period"
 
 msgid "All time"
-msgstr ""
+msgstr "All time"
 
 msgid "Fixed period"
-msgstr ""
+msgstr "Fixed period"
 
 msgid "Since last execution"
-msgstr ""
+msgstr "Since last execution"
 
 msgid "Since last successful execution"
-msgstr ""
+msgstr "Since last successful execution"
 
 msgid "Today"
-msgstr ""
+msgstr "Today"
 
 msgid "Yesterday"
-msgstr ""
+msgstr "Yesterday"
 
 msgid "Last 7 days"
-msgstr ""
+msgstr "Last 7 days"
 
 msgid "Last 14 days"
-msgstr ""
+msgstr "Last 14 days"
 
 msgid "Last 30 days"
-msgstr ""
+msgstr "Last 30 days"
 
 msgid "Last 90 days"
-msgstr ""
+msgstr "Last 90 days"
 
 msgid "This week"
-msgstr ""
+msgstr "This week"
 
 msgid "Last week"
-msgstr ""
+msgstr "Last week"
 
 msgid "This month"
-msgstr ""
+msgstr "This month"
 
 msgid "Last month"
-msgstr ""
+msgstr "Last month"
 
 msgid "This quarter"
-msgstr ""
+msgstr "This quarter"
 
 msgid "Last quarter"
-msgstr ""
+msgstr "Last quarter"
 
 msgid "This year"
-msgstr ""
+msgstr "This year"
 
 msgid "Last year"
-msgstr ""
+msgstr "Last year"
 
 msgid "Last 5 years"
-msgstr ""
+msgstr "Last 5 years"
 
 msgctxt "repo' or 'repo' scopes depending if the repository is public or private"
 msgid "The personal access token requires either 'public"
 msgstr ""
+"The personal access token requires either 'public_repo' or 'repo' scopes "
+"depending if the repository is public or private"

@@ -1,4 +1,4 @@
-import { D2Api } from "@eyeseetea/d2-api/2.36";
+import { D2Api, getApiModel } from "../../../../../../types/d2-api";
 import _ from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
@@ -10,19 +10,18 @@ import { D2Model } from "../../../../../../models/dhis/default";
 import { defaultName, modelFactory } from "../../../../../../models/dhis/factory";
 import { useAppContext } from "../../../contexts/AppContext";
 import { DropdownOption } from "../../dropdown/Dropdown";
+import { InclusionMode } from "../../../../../../domain/user-settings/UserSettings";
 
-export const includeObjectsAndReferencesMap = {
+export const includeObjectsAndReferencesMap: Record<InclusionMode, string> = {
     includeObjectsAndReferences: i18n.t("Include objects and references"),
     includeOnlyReferences: i18n.t("Include only references"),
     removeObjectsAndReferences: i18n.t("Remove objects and references"),
 } as const;
 
-export type IncludeObjectsAndReferences = keyof typeof includeObjectsAndReferencesMap;
-
-export const includeObjectsAndReferencesOptions: { id: IncludeObjectsAndReferences; name: string }[] = Object.entries(
+export const includeObjectsAndReferencesOptions: { id: InclusionMode; name: string }[] = Object.entries(
     includeObjectsAndReferencesMap
 ).map(([id, name]) => ({
-    id: id as IncludeObjectsAndReferences,
+    id: id as InclusionMode,
     name,
 }));
 
@@ -184,21 +183,21 @@ export function useMetadataIncludeExcludeStep(
         [includeReferencesAndObjectsRules, onChange, selectedType, syncRule]
     );
 
-    const sharingSettingsObjectsAndReferencesValue: IncludeObjectsAndReferences = useMemo(() => {
+    const sharingSettingsObjectsAndReferencesValue: InclusionMode = useMemo(() => {
         return getObjectsAndReferencesValue(
             syncParams.includeSharingSettingsObjectsAndReferences,
             syncParams.includeOnlySharingSettingsReferences
         );
     }, [syncParams.includeSharingSettingsObjectsAndReferences, syncParams.includeOnlySharingSettingsReferences]);
 
-    const usersObjectsAndReferencesValue: IncludeObjectsAndReferences = useMemo(() => {
+    const usersObjectsAndReferencesValue: InclusionMode = useMemo(() => {
         return getObjectsAndReferencesValue(
             syncParams.includeUsersObjectsAndReferences,
             syncParams.includeOnlyUsersReferences
         );
     }, [syncParams.includeUsersObjectsAndReferences, syncParams.includeOnlyUsersReferences]);
 
-    const orgUnitsObjectsAndReferencesValue: IncludeObjectsAndReferences = useMemo(() => {
+    const orgUnitsObjectsAndReferencesValue: InclusionMode = useMemo(() => {
         return getObjectsAndReferencesValue(
             syncParams.includeOrgUnitsObjectsAndReferences,
             syncParams.includeOnlyOrgUnitsReferences
@@ -206,7 +205,7 @@ export function useMetadataIncludeExcludeStep(
     }, [syncParams.includeOrgUnitsObjectsAndReferences, syncParams.includeOnlyOrgUnitsReferences]);
 
     const changeSharingSettingsObjectsAndReferences = useCallback(
-        (value: IncludeObjectsAndReferences) => {
+        (value: InclusionMode) => {
             onChange(
                 syncRule.updateSyncParams({
                     ...syncRule.syncParams,
@@ -219,7 +218,7 @@ export function useMetadataIncludeExcludeStep(
     );
 
     const changeUsersObjectsAndReferences = useCallback(
-        (value: IncludeObjectsAndReferences) => {
+        (value: InclusionMode) => {
             onChange(
                 syncRule.updateSyncParams({
                     ...syncRule.syncParams,
@@ -232,7 +231,7 @@ export function useMetadataIncludeExcludeStep(
     );
 
     const changeOrgUnitsObjectsAndReferences = useCallback(
-        (value: IncludeObjectsAndReferences) => {
+        (value: InclusionMode) => {
             onChange(
                 syncRule.updateSyncParams({
                     ...syncRule.syncParams,
@@ -308,7 +307,7 @@ function getModelSelectItems(models: typeof D2Model[], api: D2Api) {
     return models
         .filter(model => model.getMetadataType() !== defaultName)
         .map(model => {
-            const apiModel = api.models[model.getCollectionName()];
+            const apiModel = getApiModel(api, model.getCollectionName());
             return apiModel.schema;
         })
         .map(schema => ({
@@ -330,7 +329,7 @@ function getModels(metadata: MetadataPackage<MetadataEntity>, metadataModelsSync
 function getObjectsAndReferencesValue(
     includeObjectsAndReferences: boolean,
     includeOnlyReferences: boolean
-): IncludeObjectsAndReferences {
+): InclusionMode {
     if (includeObjectsAndReferences) {
         return "includeObjectsAndReferences";
     }

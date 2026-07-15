@@ -14,18 +14,14 @@ import {
 } from "../../metadata/entities/MetadataEntities";
 import { DataStoreMetadata } from "../../data-store/DataStoreMetadata";
 import _ from "lodash";
-import { DataValue } from "../entities/DataValue";
 import { AggregatedMetadatafields } from "../usecases/AggregatedSyncUseCase";
 import { getMinimumParents } from "../utils";
-
-type AggregatedPayload = {
-    dataValues: DataValue[];
-};
+import { AggregatedPackage } from "../entities/AggregatedPackage";
 
 export class AggregatedPayloadBuilder {
     constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
-    public async build(syncBuilder: SynchronizationBuilder, remoteInstance?: Instance): Promise<AggregatedPayload> {
+    public async build(syncBuilder: SynchronizationBuilder, remoteInstance?: Instance): Promise<AggregatedPackage> {
         const { dataParams: { enableAggregation = false } = {} } = syncBuilder;
 
         if (enableAggregation) {
@@ -150,22 +146,11 @@ export class AggregatedPayloadBuilder {
 
     @cache()
     public async getOriginInstance(originInstanceId: string): Promise<Instance> {
-        const instance = await this.getInstanceById(originInstanceId);
+        const instance = await this.repositoryFactory.instanceRepository(this.localInstance).getById(originInstanceId);
 
         if (!instance) throw new Error("Unable to read origin instance");
+
         return instance;
-    }
-
-    private async getInstanceById(id: string): Promise<Instance | undefined> {
-        const instance = await this.repositoryFactory.instanceRepository(this.localInstance).getById(id);
-        if (!instance) return undefined;
-
-        try {
-            const version = await this.repositoryFactory.instanceRepository(instance).getVersion();
-            return instance.update({ version });
-        } catch (error: any) {
-            return instance;
-        }
     }
 
     @cache()

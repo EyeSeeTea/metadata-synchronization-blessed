@@ -7,10 +7,10 @@ import { MetadataModule } from "../../../../../../domain/modules/entities/Metada
 import { Module } from "../../../../../../domain/modules/entities/Module";
 import i18n from "../../../../../../utils/i18n";
 import { Dictionary } from "../../../../../../types/utils";
+import { getApiModel } from "../../../../../../types/d2-api";
 import { getMetadata } from "../../../../../../utils/synchronization";
 import { useAppContext } from "../../../contexts/AppContext";
 import { ModuleWizardStepProps } from "../Steps";
-import { MetadataEntities } from "../../../../../../domain/metadata/entities/MetadataEntities";
 
 export const SummaryStep = ({ module, onCancel, onClose }: ModuleWizardStepProps) => {
     const classes = useStyles();
@@ -51,9 +51,7 @@ export const SummaryStep = ({ module, onCancel, onClose }: ModuleWizardStepProps
                             items.length > 0 && (
                                 <LiEntry
                                     key={metadataType}
-                                    label={`${api.models[metadataType as keyof MetadataEntities].schema.displayName} [${
-                                        items.length
-                                    }]`}
+                                    label={`${getApiModel(api, metadataType).schema.displayName} [${items.length}]`}
                                 >
                                     <ul>
                                         {items.map(({ id, name }) => (

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-08-19T15:09:40.837Z\n"
+"POT-Creation-Date: 2026-07-06T15:09:17.686Z\n"
 "PO-Revision-Date: 2020-07-10T06:53:30.625Z\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,6 +34,29 @@ msgstr ""
 
 msgid "An instance with this name already exists"
 msgstr ""
+
+msgid "The instance type cannot be changed after the instance is created"
+msgstr "The instance type cannot be changed after the instance is created"
+
+msgid ""
+"The exchange target type cannot be changed after the instance is created"
+msgstr ""
+"The exchange target type cannot be changed after the instance is created"
+
+#, fuzzy
+msgid ""
+"An internal Aggregated Data Exchange instance already exists: "
+"{{instanceName}}"
+msgstr ""
+"An Aggregated Data Exchange instance with this URL already exists: "
+"{{instanceName}}"
+
+msgid ""
+"An Aggregated Data Exchange instance with this URL already exists: "
+"{{instanceName}}"
+msgstr ""
+"An Aggregated Data Exchange instance with this URL already exists: "
+"{{instanceName}}"
 
 msgid "You need to provide a username and password combination"
 msgstr ""
@@ -123,6 +146,13 @@ msgstr ""
 msgid "Instance {{id}} not found"
 msgstr ""
 
+msgid ""
+"An error has occurred while downloading datastore payload for instance "
+"{{name}}: {{message}}"
+msgstr ""
+"An error has occurred while downloading datastore payload for instance "
+"{{name}}: {{message}}"
+
 msgid "Analytics execution finished on {{name}}"
 msgstr ""
 
@@ -153,10 +183,40 @@ msgstr ""
 msgid "Tracker Data Elements"
 msgstr ""
 
+msgid "Aggregated Data Exchange instances credentials"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Instance: {{name}}"
+msgstr "Instance: {{name}}"
+
+msgid "Internal exchange — no credentials required."
+msgstr "Internal exchange — no credentials required."
+
+msgid "Authentication Scheme (*)"
+msgstr ""
+
+msgid "Token (*)"
+msgstr ""
+
+msgid "Username (*)"
+msgstr ""
+
+msgid "Password (*)"
+msgstr ""
+
 msgid "Unauthorized - You do not have permission to view this page."
 msgstr ""
 
 msgid "Login"
+msgstr ""
+
+msgid "Error fetching instance version"
 msgstr ""
 
 msgid "An exported dhis2 file is necessary"
@@ -190,9 +250,6 @@ msgid "DHIS2 Version (*)"
 msgstr ""
 
 msgid "Description"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Save"
@@ -307,9 +364,6 @@ msgid "Delete History Notifications?"
 msgstr ""
 
 msgid "Are you sure you want to delete {{total}} history notifications?"
-msgstr ""
-
-msgid "Ok"
 msgstr ""
 
 msgid "Instances"
@@ -482,6 +536,9 @@ msgstr ""
 msgid "Category Option Combos"
 msgstr ""
 
+msgid "Attribute Option Combos"
+msgstr ""
+
 msgid "Options"
 msgstr ""
 
@@ -527,11 +584,17 @@ msgstr ""
 msgid "Select with children subtree"
 msgstr ""
 
-msgid "Select"
-msgstr ""
-
 msgid "Set metadata custodian"
 msgstr ""
+
+msgid "{{count}} items are selected in other metadata types."
+msgid_plural "{{count}} items are selected in other metadata types."
+msgstr[0] ""
+msgstr[1] ""
+
+#, fuzzy
+msgid "Clear all"
+msgstr "Clear"
 
 msgid "Custodian"
 msgstr ""
@@ -1083,6 +1146,9 @@ msgstr ""
 msgid "Async mode"
 msgstr ""
 
+msgid "Skip Rule Engine on destination"
+msgstr ""
+
 msgid "Sync rule {{idx}}: {{name}} ({{id}})"
 msgstr ""
 
@@ -1247,6 +1313,18 @@ msgid ""
 "aggregation is enabled."
 msgstr ""
 
+msgid "You need to select credentials for the selected instances."
+msgstr ""
+
+msgid "Default"
+msgstr ""
+
+msgid "Aggregated data exchange "
+msgstr ""
+
+msgid "Type of synchronization"
+msgstr ""
+
 msgid "Source instance"
 msgstr ""
 
@@ -1259,7 +1337,13 @@ msgstr ""
 msgid "with stored user"
 msgstr ""
 
+msgid "Error fetching local instance"
+msgstr ""
+
 msgid "Destination"
+msgstr ""
+
+msgid "Set Credentials"
 msgstr ""
 
 msgid "Every day"
@@ -1280,6 +1364,15 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
+msgid "Metadata Sync Scheduler"
+msgstr ""
+
+msgid "DHIS2 Scheduler"
+msgstr ""
+
+msgid "Scheduler type"
+msgstr ""
+
 msgid "Select frequency template"
 msgstr ""
 
@@ -1287,6 +1380,9 @@ msgid "Cron expression"
 msgstr ""
 
 msgid "Cron expression must be valid"
+msgstr ""
+
+msgid "An error has ocurred during the save"
 msgstr ""
 
 msgid "Json files downloaded successfull"
@@ -1313,6 +1409,9 @@ msgid "Download JSON"
 msgstr ""
 
 msgid "Invalid origin instance"
+msgstr ""
+
+msgid "Aggregated data exchange"
 msgstr ""
 
 msgid "Target instances [{{total}}]"
@@ -1396,6 +1495,15 @@ msgstr ""
 msgid "Frequency"
 msgstr ""
 
+msgid "Key: {{key}}"
+msgstr "Key: {{key}}"
+
+msgid "All Keys"
+msgstr ""
+
+msgid "Namespace: {{namespace}} - {{keyName}}"
+msgstr "Namespace: {{namespace}} - {{keyName}}"
+
 msgid "Daily"
 msgstr ""
 
@@ -1448,6 +1556,9 @@ msgid "Stored by"
 msgstr ""
 
 msgid "Due date"
+msgstr ""
+
+msgid "Select"
 msgstr ""
 
 msgid "An error ocurred while trying to access the required events"
@@ -1515,6 +1626,27 @@ msgstr ""
 msgid "Use sync rules periods"
 msgstr ""
 
+msgid "Skip generation of resource tables"
+msgstr ""
+
+msgid "Skip generation of event data"
+msgstr ""
+
+msgid "Skip generation of enrollment data"
+msgstr ""
+
+msgid "Skip generation of organisation unit ownership data"
+msgstr ""
+
+msgid "Skip generation of tracked entity data"
+msgstr ""
+
+msgid "Skip generation of aggregate data and completeness data"
+msgstr ""
+
+msgid "Skip generation of outlier data"
+msgstr ""
+
 msgid "True"
 msgstr ""
 
@@ -1524,19 +1656,22 @@ msgstr ""
 msgid "Use sync rule settings"
 msgstr ""
 
+msgid "Run Analytics"
+msgstr ""
+
+msgid "Number of last years of data to include"
+msgstr ""
+
 msgid "MSF Settings"
 msgstr ""
 
 msgid "Analytics"
 msgstr ""
 
-msgid "Run Analytics Before"
+msgid "Before sync · Individual data"
 msgstr ""
 
-msgid "Run Analytics After"
-msgstr ""
-
-msgid "Number of years to include"
+msgid "After sync · Aggregate data"
 msgstr ""
 
 msgid "Data values settings"
@@ -1736,6 +1871,21 @@ msgstr ""
 msgid "Admin Dashboard"
 msgstr ""
 
+msgid "Basic"
+msgstr ""
+
+msgid "API Token"
+msgstr ""
+
+msgid "Aggregated Data Exchange"
+msgstr ""
+
+msgid "External"
+msgstr "External"
+
+msgid "Internal"
+msgstr "Internal"
+
 msgid "Please fix the issues before testing the connection"
 msgstr ""
 
@@ -1745,13 +1895,10 @@ msgstr ""
 msgid "Server name (*)"
 msgstr ""
 
+msgid "Exchange target type (*)"
+msgstr "Exchange target type (*)"
+
 msgid "URL endpoint (*)"
-msgstr ""
-
-msgid "Username (*)"
-msgstr ""
-
-msgid "Password (*)"
 msgstr ""
 
 msgid "Metadata mapping"
@@ -1788,6 +1935,9 @@ msgid "Server name"
 msgstr ""
 
 msgid "URL endpoint"
+msgstr ""
+
+msgid "Authentication Scheme"
 msgstr ""
 
 msgid "Username"
@@ -1985,6 +2135,18 @@ msgstr ""
 msgid "Leave empty to keep all history"
 msgstr ""
 
+msgid "Metadata Sync User Settings"
+msgstr ""
+
+msgid "Default owner and sharing settings inclusion method"
+msgstr ""
+
+msgid "Default users inclusion method"
+msgstr ""
+
+msgid "Default organisation units inclusion method"
+msgstr ""
+
 msgid "Data Store"
 msgstr ""
 
@@ -2019,9 +2181,6 @@ msgid "Repository"
 msgstr ""
 
 msgid "Token"
-msgstr ""
-
-msgid "Default"
 msgstr ""
 
 msgid "Set as default"
@@ -2285,6 +2444,133 @@ msgid "Consultations and Surgery (Events)"
 msgstr ""
 
 msgid "Patients (Tracked Entity Instances)"
+msgstr ""
+
+msgid "Checking {{itemName}}..."
+msgstr ""
+
+msgid "Uploading {{itemName}}..."
+msgstr ""
+
+msgid "The {{itemName}} is already installed."
+msgstr ""
+
+msgid ""
+"An error occurred while installing the {{itemName}}. Alternatively, you can "
+"download the configuration and import it manually"
+msgstr ""
+
+msgid ""
+"The {{itemName}} is not installed yet. Use the button below to install it."
+msgstr ""
+
+msgid "Setup WMR prerequisites"
+msgstr ""
+
+msgid "Metadata package"
+msgstr ""
+
+msgid "This package contains the WMR dataset and its dependencies"
+msgstr ""
+
+msgid "Autogenform configuration"
+msgstr ""
+
+msgid "Contains the dataStore configurations required by the autogenforms tool"
+msgstr ""
+
+msgid "Loading settings..."
+msgstr ""
+
+msgid ""
+"Select a DataSet. Then map your server data to the newly created test WMR "
+"form"
+msgstr ""
+
+msgid "Select a DataSet"
+msgstr ""
+
+msgid "Submit WMR Data"
+msgstr ""
+
+msgid "Data successfully submitted to the target instance."
+msgstr ""
+
+msgid "Data submitted with warnings."
+msgstr ""
+
+msgid "Data submission failed."
+msgstr ""
+
+msgid "Target Instance "
+msgstr ""
+
+msgid "Please select a target instance to submit the data"
+msgstr ""
+
+msgid "Target Organisation Unit Id"
+msgstr ""
+
+msgid "Please provide a target organisation unit ID and Validate it"
+msgstr ""
+
+msgid "Send DataValues to target instance"
+msgstr ""
+
+msgid "Sync WMR Country Dataset"
+msgstr ""
+
+msgid "Download DataValues"
+msgstr ""
+
+msgid "Failed to synchronize WMR data"
+msgstr ""
+
+msgid "WMR data synchronized successfully."
+msgstr ""
+
+msgid "Please complete the prerequisites before proceeding."
+msgstr ""
+
+msgid "Please select a source data set before proceeding."
+msgstr ""
+
+msgid ""
+"Please Sync your server data to the WMR Country Sync form before proceeding."
+msgstr ""
+
+msgid "Map Server data"
+msgstr ""
+
+msgid "Sync & Check Data"
+msgstr ""
+
+msgid "Submit Data"
+msgstr ""
+
+msgid ""
+"The Organisation Unit ID is not valid or does not exist in the target "
+"instance."
+msgstr ""
+
+msgid ""
+"There was a problem communicating with the instance. Please review the "
+"Instance settings."
+msgstr ""
+
+msgid "Target Organisation Unit ID (*)"
+msgstr ""
+
+msgid "The ID of the Organisation Unit where the data will be submitted"
+msgstr ""
+
+msgid "Validate Organisation Unit"
+msgstr ""
+
+msgid "Create New Target Instance"
+msgstr ""
+
+msgid "Instance or target organisation unit ID is not provided."
 msgstr ""
 
 msgid "Widget cannot be used until an administrator opens the application"

@@ -4,6 +4,7 @@ import { promiseMap } from "../../../utils/common";
 import { UseCase } from "../../common/entities/UseCase";
 import { DynamicRepositoryFactory } from "../../common/factories/DynamicRepositoryFactory";
 import { Instance } from "../../instance/entities/Instance";
+import { toSynchronizationRulePersistedSnapshot } from "../PersistedSnapshot";
 import { DownloadRepository } from "../../storage/repositories/DownloadRepository";
 
 export class ExportSyncRuleUseCase implements UseCase {
@@ -22,7 +23,10 @@ export class ExportSyncRuleUseCase implements UseCase {
 
         const exportRules = _.compact(rules).map(rule => {
             const ruleName = _.kebabCase(rule.name);
-            return { name: `sync-rule-${ruleName}-${date}`, content: rule.toObject() };
+            return {
+                name: `sync-rule-${ruleName}-${date}`,
+                content: toSynchronizationRulePersistedSnapshot(rule.toObject()),
+            };
         });
 
         if (exportRules.length === 1) {

@@ -1,5 +1,6 @@
 import _ from "lodash";
 import React from "react";
+import { config } from "../../../../../utils/Config";
 import { concatStrings, generateTestId, isClassComponent, recursiveMap, removeParentheses, wrapType } from "./utils";
 
 interface TestWrapperProps {
@@ -52,7 +53,7 @@ export const TestWrapper: React.FC<TestWrapperProps> = ({ children, namespace, a
 
     return (
         <React.Fragment>
-            {process.env.REACT_APP_CYPRESS ? recursiveMap(children, withTestAttribute) : children}
+            {config.isCypressEnabled ? recursiveMap(children, withTestAttribute) : children}
         </React.Fragment>
     );
 };

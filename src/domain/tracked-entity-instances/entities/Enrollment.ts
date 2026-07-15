@@ -16,4 +16,10 @@ export interface Enrollment {
     deleted: boolean;
     storedBy: string;
     notes: string[];
+    attributes: EnrollmentAttribute[];
+}
+
+export interface EnrollmentAttribute {
+    attribute: string;
+    value: string;
 }

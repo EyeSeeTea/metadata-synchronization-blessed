@@ -10,8 +10,15 @@ import PageHeader from "../../../react/core/components/page-header/PageHeader";
 import { useAppContext } from "../../../react/core/contexts/AppContext";
 import { AdvancedSettingsDialog } from "../../../react/msf-aggregate-data/components/advanced-settings-dialog/AdvancedSettingsDialog";
 import { MSFSettingsDialog } from "../../../react/msf-aggregate-data/components/msf-settings-dialog/MSFSettingsDialog";
-import { AdvancedSettings, defaultMSFSettings, MSFSettings, MSFStorageKey, PersistedMSFSettings } from "./MSFEntities";
-import { executeAggregateData, isGlobalInstance } from "./MSFHomePagePresenter";
+import {
+    AdvancedSettings,
+    buildMSFSettings,
+    defaultMSFSettings,
+    MSFSettings,
+    MSFStorageKey,
+    StoredMSFSettings,
+} from "./MSFEntities";
+import { executeAggregateData } from "./MSFHomePagePresenter";
 
 export const MSFHomePage: React.FC = () => {
     const { api, compositionRoot } = useAppContext();
@@ -42,13 +49,8 @@ export const MSFHomePage: React.FC = () => {
     }, [api]);
 
     useEffect(() => {
-        compositionRoot.customData.get<PersistedMSFSettings>(MSFStorageKey).then(settings => {
-            setMsfSettings(oldSettings => ({
-                ...oldSettings,
-                ...settings,
-                runAnalyticsBefore: isGlobalInstance() ? "false" : "by-sync-rule-settings",
-                runAnalyticsAfter: isGlobalInstance() ? "false" : "by-sync-rule-settings",
-            }));
+        compositionRoot.customData.get<StoredMSFSettings>(MSFStorageKey).then(settings => {
+            setMsfSettings(buildMSFSettings(settings));
         });
     }, [compositionRoot]);
 
@@ -83,11 +85,7 @@ export const MSFHomePage: React.FC = () => {
     const handleSaveMSFSettings = async (msfSettings: MSFSettings) => {
         setShowMSFSettingsDialog(false);
         setMsfSettings(msfSettings);
-        await compositionRoot.customData.save(MSFStorageKey, {
-            ...msfSettings,
-            runAnalyticsBefore: undefined,
-            runAnalyticsAfter: undefined,
-        });
+        await compositionRoot.customData.save(MSFStorageKey, msfSettings);
     };
 
     const snackbar = useSnackbar();

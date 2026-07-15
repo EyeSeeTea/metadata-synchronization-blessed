@@ -29,7 +29,7 @@ export const getUserInfo = memoize(
                 fields: {
                     id: true,
                     name: true,
-                    userCredentials: { username: true },
+                    username: true,
                     userGroups: true,
                 },
             })
@@ -39,7 +39,7 @@ export const getUserInfo = memoize(
             userGroups: currentUser.userGroups,
             id: currentUser.id,
             name: currentUser.name,
-            username: currentUser.userCredentials.username,
+            username: currentUser.username,
         };
     },
     { serializer: (api: D2Api) => api.baseUrl }
@@ -53,16 +53,14 @@ const getUserRoles = memoize(
         const currentUser = await api.currentUser
             .get({
                 fields: {
-                    userCredentials: {
-                        userRoles: {
-                            $all: true,
-                        },
+                    userRoles: {
+                        $all: true,
                     },
                 },
             })
             .getData();
 
-        return currentUser.userCredentials.userRoles;
+        return currentUser.userRoles;
     },
     { serializer: (api: D2Api) => api.baseUrl }
 );

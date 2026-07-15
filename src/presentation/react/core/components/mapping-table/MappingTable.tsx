@@ -10,6 +10,7 @@ import {
 import { Icon, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import _ from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
+import { Id } from "../../../../../domain/common/entities/Schemas";
 import { DataSource } from "../../../../../domain/instance/entities/DataSource";
 import { MappingConfig } from "../../../../../domain/mapping/entities/MappingConfig";
 import {
@@ -66,6 +67,11 @@ export interface MappingTableProps extends MetadataTableProps {
     onApplyGlobalMapping(type: string, id: string, mapping: MetadataMapping): Promise<void>;
     isChildrenMapping?: boolean;
     mappingPath?: string[];
+    filterMappingIds?: Id[];
+    /**
+     * If true, only Ids from filterMappingIds will be allowed to be auto-mapped.
+     */
+    applyFilterMappingIdsToAutoMap?: boolean;
 }
 
 export default function MappingTable({
@@ -80,6 +86,8 @@ export default function MappingTable({
     onApplyGlobalMapping,
     isChildrenMapping = false,
     mappingPath,
+    filterMappingIds = [],
+    applyFilterMappingIdsToAutoMap = false,
     ...rest
 }: MappingTableProps) {
     const { compositionRoot } = useAppContext();
@@ -259,7 +267,8 @@ export default function MappingTable({
                     mapping,
                     types[0],
                     elements,
-                    global
+                    global,
+                    applyFilterMappingIdsToAutoMap ? filterMappingIds : undefined
                 );
 
                 await applyMapping(tasks);
@@ -302,6 +311,8 @@ export default function MappingTable({
             snackbar,
             mappingPath,
             mapping,
+            applyFilterMappingIdsToAutoMap,
+            filterMappingIds,
         ]
     );
 
@@ -927,6 +938,7 @@ export default function MappingTable({
                     mapping={mapping}
                     onUpdateMapping={updateMapping}
                     onClose={closeMappingDialog}
+                    filterIds={filterMappingIds}
                 />
             )}
 

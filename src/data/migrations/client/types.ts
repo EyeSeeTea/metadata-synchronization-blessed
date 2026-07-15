@@ -1,4 +1,5 @@
 import { Debug } from "../../../domain/migrations/entities/Debug";
+import { ObjectSharing } from "../../../domain/storage/repositories/StorageClient";
 
 export interface MigrationWithVersion<T> {
     version: number;
@@ -21,6 +22,7 @@ export interface AppStorage {
     save<T extends object>(key: string, value: T): Promise<void>;
     remove(key: string): Promise<void>;
     listKeys(): Promise<string[]>;
+    getObjectSharing(key: string): Promise<ObjectSharing | undefined>;
 }
 
 export interface RunnerOptions<T> {

@@ -1,12 +1,17 @@
-import { Divider, makeStyles, TextField, Theme } from "@material-ui/core";
+import { Divider } from "@material-ui/core";
 import { ConfirmationDialog } from "@eyeseetea/d2-ui-components";
 import { Dictionary } from "lodash";
-import React, { ChangeEvent, useMemo, useState } from "react";
+import React, { useState } from "react";
+import styled from "styled-components";
 import i18n from "../../../../../utils/i18n";
-import { MSFSettings, RunAnalyticsSettings } from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
-import Dropdown from "../../../core/components/dropdown/Dropdown";
+import {
+    AnalyticsOptions,
+    MSFSettings,
+    RunAnalyticsSettings,
+} from "../../../../webapp/msf-aggregate-data/pages/MSFEntities";
 import { Toggle } from "../../../core/components/toggle/Toggle";
 import { NamedDate, OrgUnitDateSelector } from "../org-unit-date-selector/OrgUnitDateSelector";
+import { AnalyticsPanel } from "./AnalyticsPanel";
 
 export interface MSFSettingsDialogProps {
     settings: MSFSettings;
@@ -15,26 +20,7 @@ export interface MSFSettingsDialogProps {
 }
 
 export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, onSave, settings: defaultSettings }) => {
-    const classes = useStyles();
-
     const [settings, updateSettings] = useState<MSFSettings>(defaultSettings);
-
-    const analyticsSettingItems = useMemo(() => {
-        return [
-            {
-                id: "true" as const,
-                name: i18n.t("True"),
-            },
-            {
-                id: "false" as const,
-                name: i18n.t("False"),
-            },
-            {
-                id: "by-sync-rule-settings" as const,
-                name: i18n.t("Use sync rule settings"),
-            },
-        ];
-    }, []);
 
     const setRunAnalyticsBefore = (runAnalyticsBefore: RunAnalyticsSettings) => {
         updateSettings(settings => ({ ...settings, runAnalyticsBefore }));
@@ -44,9 +30,12 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
         updateSettings(settings => ({ ...settings, runAnalyticsAfter }));
     };
 
-    const setAnalyticsYears = (event: ChangeEvent<HTMLInputElement>) => {
-        const analyticsYears = parseInt(event.target.value);
-        updateSettings(settings => ({ ...settings, analyticsYears }));
+    const setAnalyticsBefore = (analyticsBefore: AnalyticsOptions) => {
+        updateSettings(settings => ({ ...settings, analyticsBefore }));
+    };
+
+    const setAnalyticsAfter = (analyticsAfter: AnalyticsOptions) => {
+        updateSettings(settings => ({ ...settings, analyticsAfter }));
     };
 
     const updateProjectMinimumDates = (projectStartDates: Dictionary<NamedDate>) => {
@@ -76,36 +65,31 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
             cancelText={i18n.t("Cancel")}
             saveText={i18n.t("Save")}
         >
-            <div className={classes.section}>
-                <h3 className={classes.title}>{i18n.t("Analytics")}</h3>
+            <Section>
+                <SectionTitle>{i18n.t("Analytics")}</SectionTitle>
 
-                <div className={classes.selector}>
-                    <Dropdown<RunAnalyticsSettings>
-                        label={i18n.t("Run Analytics Before")}
-                        items={analyticsSettingItems}
-                        onValueChange={setRunAnalyticsBefore}
-                        value={settings.runAnalyticsBefore}
-                        hideEmpty
+                <Panels>
+                    <AnalyticsPanel
+                        title={i18n.t("Before sync · Individual data")}
+                        kind="individual"
+                        runSetting={settings.runAnalyticsBefore}
+                        onRunSettingChange={setRunAnalyticsBefore}
+                        options={settings.analyticsBefore}
+                        onOptionsChange={setAnalyticsBefore}
                     />
-                    <Dropdown<RunAnalyticsSettings>
-                        label={i18n.t("Run Analytics After")}
-                        items={analyticsSettingItems}
-                        onValueChange={setRunAnalyticsAfter}
-                        value={settings.runAnalyticsAfter}
-                        hideEmpty
+                    <AnalyticsPanel
+                        title={i18n.t("After sync · Aggregate data")}
+                        kind="aggregate"
+                        runSetting={settings.runAnalyticsAfter}
+                        onRunSettingChange={setRunAnalyticsAfter}
+                        options={settings.analyticsAfter}
+                        onOptionsChange={setAnalyticsAfter}
                     />
-                    <TextField
-                        className={classes.yearsSelector}
-                        label={i18n.t("Number of years to include")}
-                        value={settings.analyticsYears}
-                        onChange={setAnalyticsYears}
-                        type="number"
-                    />
-                </div>
-            </div>
+                </Panels>
+            </Section>
 
-            <div className={classes.section}>
-                <h3 className={classes.title}>{i18n.t("Data values settings")}</h3>
+            <Section>
+                <SectionTitle>{i18n.t("Data values settings")}</SectionTitle>
 
                 <div>
                     <Toggle
@@ -122,12 +106,12 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
                         value={settings.checkInPreviousPeriods ?? false}
                     />
                 </div>
-            </div>
+            </Section>
 
-            <Divider className={classes.divider} />
+            <SpacedDivider />
 
-            <div className={classes.section}>
-                <h3 className={classes.title}>{i18n.t("Project minimum dates")}</h3>
+            <Section>
+                <SectionTitle>{i18n.t("Project minimum dates")}</SectionTitle>
 
                 <div>
                     <OrgUnitDateSelector
@@ -135,31 +119,25 @@ export const MSFSettingsDialog: React.FC<MSFSettingsDialogProps> = ({ onClose, o
                         onChange={updateProjectMinimumDates}
                     />
                 </div>
-            </div>
+            </Section>
         </ConfirmationDialog>
     );
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
-    selector: {
-        margin: theme.spacing(0, 0, 3, 0),
-    },
-    yearsSelector: {
-        minWidth: 250,
-        marginTop: -8,
-        marginLeft: 15,
-    },
-    info: {
-        margin: theme.spacing(0, 0, 2, 1),
-        fontSize: "0.8em",
-    },
-    title: {
-        marginTop: 0,
-    },
-    section: {
-        marginBottom: 20,
-    },
-    divider: {
-        marginBottom: 20,
-    },
-}));
+const Section = styled.div`
+    margin-bottom: 20px;
+`;
+
+const SectionTitle = styled.h3`
+    margin-top: 0;
+`;
+
+const Panels = styled.div`
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+`;
+
+const SpacedDivider = styled(Divider)`
+    margin-bottom: 20px;
+`;

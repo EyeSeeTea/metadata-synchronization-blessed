@@ -1,5 +1,5 @@
 import { makeStyles, TextField } from "@material-ui/core";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Instance } from "../../../../../../domain/instance/entities/Instance";
 import { SynchronizationRule } from "../../../../../../domain/rules/entities/SynchronizationRule";
 import { Store } from "../../../../../../domain/stores/entities/Store";
@@ -11,6 +11,7 @@ import {
     InstanceSelectionOption,
 } from "../../instance-selection-dropdown/InstanceSelectionDropdown";
 import { SyncWizardStepProps } from "../Steps";
+import Dropdown from "../../dropdown/Dropdown";
 
 export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => {
     const classes = useStyles();
@@ -46,6 +47,21 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
         [syncRule, onChange]
     );
 
+    const onChangeUseAggregatedDataExchange = useCallback(
+        (event: React.ChangeEvent<{ value: unknown }>) => {
+            const useAggregatedDataExchange = event.target.value === "dataExchange";
+
+            const newRule = syncRule.updateUseAggregatedDataExchange(useAggregatedDataExchange);
+
+            onChange(newRule);
+        },
+        [syncRule, onChange]
+    );
+
+    const useAggregatedDataExchange = useMemo(() => {
+        return syncRule.useAggregatedDataExchange ? "dataExchange" : "default";
+    }, [syncRule.useAggregatedDataExchange]);
+
     return (
         <React.Fragment>
             <TextField
@@ -68,9 +84,25 @@ export const GeneralInfoStep = ({ syncRule, onChange }: SyncWizardStepProps) => 
                 helperText={errors["code"]}
             />
 
+            {(syncRule.type === "aggregated" || syncRule.type === "events") && (
+                <div className={classes.row}>
+                    <Dropdown
+                        items={[
+                            { id: "default", name: i18n.t("Default") },
+                            { id: "dataExchange", name: i18n.t("Aggregated data exchange ") },
+                        ]}
+                        value={useAggregatedDataExchange}
+                        onChange={onChangeUseAggregatedDataExchange}
+                        label={i18n.t("Type of synchronization")}
+                        hideEmpty={true}
+                        view="full-width"
+                    />
+                </div>
+            )}
+
             <div className={classes.row}>
                 <InstanceSelectionDropdown
-                    showInstances={{ local: true, remote: true }}
+                    showInstances={{ local: true, remote: !syncRule.useAggregatedDataExchange }}
                     selectedInstance={syncRule.originInstance}
                     onChangeSelected={onChangeInstance}
                     view="full-width"

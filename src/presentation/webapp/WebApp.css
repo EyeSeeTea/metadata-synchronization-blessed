@@ -14,3 +14,7 @@ li {
 .content {
     margin: 1rem;
 }
+
+.mds-data-entry {
+    border: none;
+}

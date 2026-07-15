@@ -178,6 +178,7 @@ export const programFieldsWithDataElements = {
 export const indicatorFields = {
     ...d2BaseModelFields,
     aggregateExportCategoryOptionCombo: include,
+    aggregateExportAttributeOptionCombo: include,
 };
 
 export const programIndicatorFields = {

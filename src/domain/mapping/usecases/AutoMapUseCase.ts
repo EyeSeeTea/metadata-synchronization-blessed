@@ -14,7 +14,8 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
         mapping: MetadataMappingDictionary,
         mappingType: string,
         ids: string[],
-        isGlobalMapping = false
+        isGlobalMapping = false,
+        filterIds: string[] | undefined = undefined
     ): Promise<AutoMapUseCaseResult> {
         const cleanIds = ids.map(id => cleanNestedMappedId(cleanOrgUnitPath(id)));
         const metadataResponse = await this.getMetadata(originInstance, cleanIds);
@@ -31,11 +32,12 @@ export class AutoMapUseCase extends GenericMappingUseCase implements UseCase {
                 ? _.first(item?.aggregateExportCategoryOptionCombo?.split("."))
                 : item?.id;
 
-            const filter = await this.buildDataElementFilterForProgram(destinationInstance, id, mapping);
+            const baseFilter = await this.buildDataElementFilterForProgram(destinationInstance, id, mapping);
+            const filter = baseFilter ? (filterIds ? _.intersection(baseFilter, filterIds) : baseFilter) : filterIds;
 
             const candidates = await this.autoMap({
                 destinationInstance,
-                filter,
+                filter: filter,
                 selectedItem: {
                     id: itemId ?? id,
                     name: item?.name ?? "",

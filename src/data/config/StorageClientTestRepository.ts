@@ -14,7 +14,14 @@ export class StorageClientTestRepository implements StorageClientRepository {
             name: "Testing",
             version: "2.36",
         });
-        return Future.success(new StorageDataStoreClient(localInstance, undefined, { storageType: "user" }));
+        const destinationInstance = Instance.build({
+            url: "http://destination.test",
+            name: "Testing",
+            version: "2.36",
+        });
+        return Future.success(
+            new StorageDataStoreClient(localInstance, destinationInstance, undefined, { storageType: "user" })
+        );
     }
     getStorageClientPromise(): Promise<StorageClient> {
         const localInstance = Instance.build({
@@ -22,7 +29,12 @@ export class StorageClientTestRepository implements StorageClientRepository {
             name: "Testing",
             version: "2.36",
         });
-        return Promise.resolve(new StorageDataStoreClient(localInstance));
+        const destinationInstance = Instance.build({
+            url: "http://destination.test",
+            name: "Testing",
+            version: "2.36",
+        });
+        return Promise.resolve(new StorageDataStoreClient(localInstance, destinationInstance));
     }
     getStorageClient(): FutureData<StorageClient> {
         const localInstance = Instance.build({
@@ -30,7 +42,14 @@ export class StorageClientTestRepository implements StorageClientRepository {
             name: "Testing",
             version: "2.36",
         });
-        return Future.success(new StorageDataStoreClient(localInstance, undefined, { storageType: "user" }));
+        const destinationInstance = Instance.build({
+            url: "http://origin.test",
+            name: "Testing",
+            version: "2.36",
+        });
+        return Future.success(
+            new StorageDataStoreClient(localInstance, destinationInstance, undefined, { storageType: "user" })
+        );
     }
     changeStorageClient(_client: AppStorageType): FutureData<void> {
         return Future.success(undefined);

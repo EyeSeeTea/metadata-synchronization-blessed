@@ -38,6 +38,7 @@ import { TestWrapper } from "../../../../react/core/components/test-wrapper/Test
 import { useAppContext } from "../../../../react/core/contexts/AppContext";
 import InstancesSelectors from "./InstancesSelectors";
 import { DataStoreMetadata } from "../../../../../domain/data-store/DataStoreMetadata";
+import { useUserSettings } from "../settings/useUserSettings";
 
 const config: Record<
     SynchronizationType,
@@ -87,8 +88,11 @@ const ManualSyncPage: React.FC = () => {
     const history = useHistory();
     const { type } = useParams() as { type: SynchronizationType };
     const { title, models } = config[type];
+    const { userSettings } = useUserSettings();
 
-    const [syncRule, updateSyncRule] = useState<SynchronizationRule>(SynchronizationRule.createOnDemand(type));
+    const [syncRule, updateSyncRule] = useState<SynchronizationRule>(
+        SynchronizationRule.createOnDemand(type, userSettings.inclusionConfig)
+    );
     const [appConfigurator, updateAppConfigurator] = useState(false);
     const [syncReport, setSyncReport] = useState<SynchronizationReport | null>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
@@ -122,14 +126,14 @@ const ManualSyncPage: React.FC = () => {
     const updateSelection = useCallback(
         (selection: string[], exclusion: string[]) => {
             updateSyncRule(({ originInstance, targetInstances }) =>
-                SynchronizationRule.createOnDemand(type)
+                SynchronizationRule.createOnDemand(type, userSettings.inclusionConfig)
                     .updateBuilder({ originInstance })
                     .updateTargetInstances(targetInstances)
                     .updateMetadataIds(selection)
                     .updateExcludedIds(exclusion)
             );
         },
-        [type]
+        [type, userSettings]
     );
 
     const openSynchronizationDialog = () => {

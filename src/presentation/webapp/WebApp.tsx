@@ -1,6 +1,4 @@
 import { useConfig } from "@dhis2/app-runtime";
-//@ts-ignore
-import { HeaderBar } from "@dhis2/ui";
 import { LoadingProvider, SnackbarProvider } from "@eyeseetea/d2-ui-components";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
@@ -8,6 +6,7 @@ import { createGenerateClassName, StylesProvider } from "@material-ui/styles";
 import { useEffect, useState } from "react";
 import { Instance } from "../../domain/instance/entities/Instance";
 import { D2Api } from "../../types/d2-api";
+import { config } from "../../utils/Config";
 import { CompositionRoot } from "../CompositionRoot";
 import { useMigrations } from "../react/core/components/migrations/hooks";
 import Migrations from "../react/core/components/migrations/Migrations";
@@ -22,6 +21,7 @@ import { Feedback } from "@eyeseetea/feedback-component";
 import { AppConfig } from "../../app-config.template";
 import { Maybe } from "../../types/utils";
 import { getWebappCompositionRoot } from "../NewCompositionRoot";
+import { HeaderBar } from "../react/core/components/header-bar/HeaderBar";
 
 const generateClassName = createGenerateClassName({
     productionPrefix: "c",
@@ -35,15 +35,14 @@ const App = () => {
     const migrations = useMigrations(appContext);
     const { deletingHistory } = useDeleteHistory(appContext);
 
-    const appTitle = process.env.REACT_APP_PRESENTATION_TITLE;
+    const appTitle = config.presentationTitle;
 
     useEffect(() => {
         const run = async () => {
             const configFromJson = (await fetch("app-config.json", {
                 credentials: "same-origin",
             }).then(res => res.json())) as AppConfig;
-            const encryptionKey = configFromJson.encryptionKey;
-            if (!encryptionKey) throw new Error("You need to provide a valid encryption key");
+
             const api = new D2Api({ baseUrl, backend: "fetch" });
             const version = await api.getVersion();
             const instance = Instance.build({
@@ -52,8 +51,8 @@ const App = () => {
                 url: baseUrl,
                 version,
             });
-            const compositionRoot = new CompositionRoot(instance, encryptionKey);
-            await compositionRoot.app.initialize();
+            const compositionRoot = new CompositionRoot(instance);
+
             const currentUser = await compositionRoot.user.current();
             if (!currentUser) throw new Error("User not logged in");
 
@@ -94,7 +93,7 @@ const App = () => {
                 <MuiThemeProvider theme={muiTheme}>
                     <LoadingProvider>
                         <SnackbarProvider>
-                            <HeaderBar appName={appTitle} />
+                            <HeaderBar appName={appTitle ?? ""} />
 
                             <div id="app" className="content">
                                 <AppContext.Provider value={appContext}>

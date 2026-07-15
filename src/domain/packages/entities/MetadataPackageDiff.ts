@@ -1,6 +1,6 @@
 import stringify from "json-stringify-deterministic";
 import _ from "lodash";
-import { Id, models, Ref } from "../../../types/d2-api";
+import { getModelSchema, Id, Ref } from "../../../types/d2-api";
 import { MetadataEntities, MetadataEntity, MetadataPackage } from "./../../metadata/entities/MetadataEntities";
 
 export interface MetadataPackageDiff {
@@ -85,8 +85,8 @@ function getChanges(
 }
 
 function getModelTitle(modelKey: ModelKey) {
-    const schema = _(models).get(modelKey, null);
-    const modelPluralName = schema ? _.startCase(models[modelKey].displayName) : modelKey;
+    const schema = getModelSchema(modelKey);
+    const modelPluralName = schema ? _.startCase(schema.displayName) : modelKey;
     return modelPluralName;
 }
 

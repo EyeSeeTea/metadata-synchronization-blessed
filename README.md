@@ -31,9 +31,88 @@ We’d like to hear your thoughts on the app in general, improvements, new featu
 
 ## Setup
 
+## Setup
+
 ```
+$ nvm use  # uses node version in .nvmrc if present
 $ yarn install
 ```
+
+This project uses **Yarn 4** managed by **Corepack** and declares:
+
+```json
+"packageManager": "yarn@4.12.0"
+```
+
+### Recommended: disable Corepack auto-pin globally (macOS, zsh)
+
+To avoid Corepack modifying the `package.json` of **other** projects when you run `corepack enable` or `yarn` in repositories that do **not** define `packageManager`, it is recommended to disable the global auto‑pin:
+
+1. Open your shell configuration (`zsh`):
+
+```bash
+nano ~/.zshrc   # or use code/vim, etc.
+```
+
+2. Add this line at the end of the file:
+
+```bash
+export COREPACK_ENABLE_AUTO_PIN=0
+```
+
+3. Reload the configuration in the current session:
+
+```bash
+source ~/.zshrc
+```
+
+4. Verify that it is active:
+
+```bash
+echo $COREPACK_ENABLE_AUTO_PIN
+# should print: 0
+```
+
+From that point on, with `corepack enable` active, when you run `yarn` in projects **without** `packageManager`, Corepack will no longer add the `packageManager` field automatically to their `package.json`.
+
+### If you have Yarn 1 globally and see a packageManager error
+
+If running `yarn` shows an error like:
+
+> This project's package.json defines "packageManager": "yarn@4.12.0". However the current global version of Yarn is 1.22.x.
+
+do the following once on your machine:
+
+```bash
+# 1) Remove global Yarn (optional but recommended)
+npm uninstall -g yarn
+
+# 2) Enable Corepack (shipped with Node 16.9+ / 14.19+)
+corepack enable
+
+# 3) Set Yarn 1.x as the default for projects WITHOUT packageManager
+corepack prepare yarn@1.22.22 --activate
+```
+
+Then, in this project (normal case, once Corepack is enabled):
+
+```bash
+nvm use   # use the version from .nvmrc
+yarn install
+```
+
+If for some reason `yarn --version` still shows `1.x` inside this repo (for example due to old Corepack state), prepare the Yarn 4 binary without changing the global default or `package.json`:
+
+```bash
+COREPACK_ENABLE_AUTO_PIN=0 corepack prepare yarn@4.12.0
+yarn --version   # should now print 4.12.0
+yarn install
+```
+
+After this:
+
+-   This repo will use **Yarn 4.12.0**.
+-   Other repos without `packageManager` will keep using **Yarn 1.22.22** (or whatever you activated with `corepack prepare`).
 
 File `public/app-config.json` must be created by duplicating `public/app-config.template.json` and filling in the encryptionKey.
 
@@ -85,13 +164,11 @@ Notes:
 
 -   Requests to DHIS2 will be transparently proxied (see `src/setupProxy.js`) from `http://localhost:8081/dhis2/path` to `http://localhost:8080/path` to avoid CORS and cross-domain problems.
 
--   The optional environment variable `REACT_APP_DHIS2_AUTH=USERNAME:PASSWORD` forces some credentials to be used by the proxy. This variable is usually not set, so the app has the same user logged in at `REACT_APP_DHIS2_BASE_URL`.
-
--   The optional environment variable `REACT_APP_PROXY_LOG_LEVEL` can be helpful to debug the proxyfied requests (accepts: "warn" | "debug" | "info" | "error" | "silent")
+-   The optional environment variable `VITE_DHIS2_AUTH=USERNAME:PASSWORD` forces some credentials to be used by the proxy. This variable is usually not set, so the app has the same user logged in at `VITE_DHIS2_BASE_URL`.
 
 -   Create a file `.env.local` (copy it from `.env`) to customize environment variables so you can simply run `yarn start`.
 
--   [why-did-you-render](https://github.com/welldone-software/why-did-you-render) is installed, but it does not work when using standard react scripts (`yarn start`). Instead, use `yarn craco-start` to debug re-renders with WDYR. Note that hot reloading does not work out-of-the-box with [craco](https://github.com/gsoft-inc/craco).
+-   [why-did-you-render](https://github.com/welldone-software/why-did-you-render) is installed and runs in development mode by default. Edit `src/presentation/utils/wdyr.ts` to customize or disable it.
 
 ### Customization of the development server:
 
@@ -104,7 +181,7 @@ This will open the development server for the given front-end at port 8082 and w
 ### Customize DHIS2 instance url
 
 ```
-REACT_APP_DHIS2_BASE_URL=http://localhost:8080
+VITE_DHIS2_BASE_URL=http://localhost:8080
 ```
 
 To use a different DHIS2 instance url set this environment variable before running a `start` command.
@@ -117,24 +194,6 @@ Run unit tests:
 $ yarn test
 ```
 
-Run integration tests locally:
-
-```
-$ export CYPRESS_DHIS2_AUTH='admin:district'
-$ export CYPRESS_EXTERNAL_API="http://localhost:8080"
-$ export CYPRESS_ROOT_URL=http://localhost:8081
-$ export CYPRESS_ENCRYPTION_KEY=anyKey
-
-$ yarn cy:e2e:run # non-interactive
-$ yarn cy:e2e:open # interactive UI
-```
-
-Application should be running at CYPRESS_ROOT_URL with as the environment variable REACT_APP_CYPRESS set to True.
-
-For this to work in Travis CI, you will have to create an environment variables (Settings -> Environment Variables) CYPRESS_DHIS2_AUTH with the password used in your testing DHIS2 instance and CYPRESS_ENCRYPTION_KEY used to encrypt passwords of receiver instances.
-
-Note tests only pass on the testing docker instance eyeseetea/dhis2-data:2.30-datasync-sender
-
 ## Build
 
 To build all the front-ends:
@@ -146,10 +205,13 @@ $ yarn build
 To build a given front-end:
 
 ```
-$ yarn build [all|core-app|data-metadata-app|module-package-app|modules-list|package-exporter|msf-aggregate-data-app|sp-emergency-responses]
+$ yarn build [all|core-app|data-metadata-app|module-package-app|modules-list|package-exporter|msf-aggregate-data-app|sp-emergency-responses|wmr]
 ```
 
-To build the scheduler:
+`yarn build` already builds the scheduler and emits the `metadata-synchronization-server.zip` file
+alongside the front-end zips, so it is always included in releases.
+
+To build the scheduler on its own:
 
 ```
 $ yarn build-scheduler
@@ -165,6 +227,16 @@ This script generate a metadata-synchronization-server.zip file.
 $ yarn update-po
 # ... add/edit translations in po files ...
 $ yarn localize
+```
+
+These commands use `@dhis2/cli-app-scripts` through `d2-app-scripts i18n extract` and `d2-app-scripts i18n generate`.
+
+## depcheck
+
+Check for unused or missing dependencies:
+
+```
+$ yarn run depcheck
 ```
 
 <p align="center">

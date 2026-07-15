@@ -6,6 +6,6 @@ export class GetRootOrgUnitUseCase implements UseCase {
     constructor(private repositoryFactory: DynamicRepositoryFactory, private localInstance: Instance) {}
 
     public async execute(instance = this.localInstance) {
-        return this.repositoryFactory.instanceRepository(instance).getOrgUnitRoots();
+        return this.repositoryFactory.metadataRepository(instance).getOrgUnitRoots();
     }
 }
