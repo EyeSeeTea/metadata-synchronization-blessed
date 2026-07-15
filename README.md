@@ -1,4 +1,7 @@
 
+> ⚠️ **Repository Archived.** This repository is no longer maintained. To ensure you have the latest features and support, please use our updated version here: https://github.com/EyeSeeTea/metadata-synchronization
+> And don't miss out on latest developments and DHIS2 news! Follow us on [Linkedin](https://www.linkedin.com/company/eyeseetea/) and the [DHIS2 Community of Practice](https://community.dhis2.org/u/eyeseetea/activity).
+
 <img width="892" alt="logo_metadatasync" src="https://github.com/EyeSeeTea/metadata-synchronization-blessed/assets/108925044/5bfe0941-080c-42d4-9bdb-4ae5316afd93">
 
 Metadata Sync is a DHIS2 Web Application part of [EyeSeeTea's DHIS2 Suite](https://eyeseetea.com/dhis2-apps/) that simplifies and automates the process of sending data and metadata from one DHIS2 instance to one or several other DHIS2 implementations, however different they might be. You can watch a [presentation video of the app](https://www.youtube.com/watch?v=xrrNfi66dI4)
